@@ -1,0 +1,22 @@
+# BrotatoAgent WP1 benchmark configuration
+schema_version: 1
+benchmark_id: well_rounded_d0_smg
+character: character_well_rounded
+character_display: Well-Rounded
+starting_weapon: weapon_smg
+starting_weapon_fallback: weapon_stick
+danger: 0
+difficulty_multipliers: default
+endless: false
+wave_retry: false
+manual_intervention: none
+policy: teacher_v1
+policy_version: 0.1.0-wp1
+auto_start: true
+emergency_stop_action: ui_cancel
+hud_default_visible: true
+batch:
+  runs: 20
+  require_victories: 18
+  reject_endless: true
+  reject_wave_retry: true

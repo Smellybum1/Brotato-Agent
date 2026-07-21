@@ -1,0 +1,2 @@
+{"schema_version": "1.0.0", "run_id": "r", "seq": 2, "ts_ms": 1, "event": "run_start", "payload": {}}
+{"schema_version": "1.0.0", "run_id": "r", "seq": 1, "ts_ms": 2, "event": "run_end", "payload": {}}

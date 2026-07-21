@@ -1,0 +1,14 @@
+run=run_1784339763_3346
+events_age_sec=0.1
+combat_ticks=1580
+wave=16
+gold=None
+hp=None/None
+enemies=0
+loot=0
+damage_events=11
+purchase_events=198
+last_phase=None
+recent=['combat_tick', 'combat_tick', 'combat_tick', 'combat_tick', 'combat_tick', 'combat_tick', 'combat_tick', 'combat_tick', 'combat_tick', 'combat_tick', 'combat_tick', 'combat_tick']
+type_counts=[('combat_tick', 1580), ('purchase_offer', 99), ('purchase_decision', 99), ('level_up_offer', 26), ('level_up_decision', 26), ('player_damage', 11), ('recovery_attempt', 10), ('crate_offer', 7), ('crate_decision', 7), ('run_start', 1)]
+sample_keys=['consumables', 'debug', 'hp', 'loot', 'move', 'wave']

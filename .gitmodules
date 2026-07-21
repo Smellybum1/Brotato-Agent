@@ -1,0 +1,6 @@
+[submodule "third_party/brotato-full-autobot"]
+	path = third_party/brotato-full-autobot
+	url = https://github.com/HelpFreedom/brotato-full-autobot.git
+[submodule "third_party/brotatoai"]
+	path = third_party/brotatoai
+	url = https://github.com/guenichone/brotatoai.git

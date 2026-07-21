@@ -1,0 +1,15 @@
+{
+  "consumables": 0,
+  "debug": {
+    "profile": "well_rounded",
+    "enemies": 0,
+    "projectiles": 0
+  },
+  "hp": 15,
+  "loot": 0,
+  "move": {
+    "x": -0.569048,
+    "y": 0.822304
+  },
+  "wave": 1
+}

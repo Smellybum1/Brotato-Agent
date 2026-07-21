@@ -1,0 +1,134 @@
+wNone shop_reroll gold=64
+wNone BUY weapon_smg_1 effects=[] gold=63
+wNone shop_reroll gold=40
+wNone BUY weapon_smg_1 effects=[] gold=38
+wNone shop_reroll gold=15
+wNone shop_lock gold=12
+wNone shop_lock gold=12
+wNone shop_go gold=12
+wNone shop_reroll gold=66
+wNone BUY weapon_smg_1 effects=[] gold=64
+wNone shop_reroll gold=38
+wNone shop_reroll gold=35
+wNone shop_reroll gold=31
+wNone BUY weapon_smg_1 effects=[] gold=26
+wNone shop_combine gold=0
+wNone shop_combine gold=0
+wNone shop_go gold=0
+wNone shop_reroll gold=74
+wNone shop_reroll gold=71
+wNone shop_reroll gold=67
+wNone shop_reroll gold=62
+wNone shop_reroll gold=56
+wNone BUY weapon_smg_1 effects=[] gold=49
+wNone BUY item_plant effects=['stat_hp_regeneration', 'stat_lifesteal'] gold=20
+wNone shop_combine gold=3
+wNone shop_go gold=3
+wNone shop_reroll gold=103
+wNone shop_reroll gold=99
+wNone BUY weapon_smg_1 effects=[] gold=94
+wNone shop_reroll gold=62
+wNone BUY weapon_smg_1 effects=[] gold=56
+wNone BUY item_bat effects=['stat_lifesteal', 'stat_harvesting'] gold=24
+wNone shop_combine gold=1
+wNone shop_combine gold=1
+wNone shop_go gold=1
+wNone shop_reroll gold=146
+wNone BUY weapon_smg_1 effects=[] gold=141
+wNone shop_reroll gold=106
+wNone shop_reroll gold=99
+wNone shop_reroll gold=90
+wNone BUY weapon_smg_1 effects=[] gold=79
+wNone BUY item_defective_steroids effects=['stat_max_hp', 'stat_melee_damage', 'stat_attack_speed'] gold=44
+wNone shop_combine gold=17
+wNone shop_combine gold=17
+wNone shop_go gold=17
+wNone shop_reroll gold=192
+wNone shop_reroll gold=186
+wNone BUY weapon_smg_1 effects=[] gold=178
+wNone BUY weapon_double_barrel_shotgun_2 effects=[] gold=140
+wNone BUY weapon_double_barrel_shotgun_1 effects=[] gold=72
+wNone shop_combine gold=34
+wNone shop_go gold=34
+wNone BUY weapon_double_barrel_shotgun_1 effects=[] gold=221
+wNone BUY item_gambling_token effects=['stat_dodge', 'stat_armor'] gold=180
+wNone BUY item_clockwork_wasp effects=['structure_attack_speed', 'stat_speed'] gold=88
+wNone shop_combine gold=5
+wNone shop_combine gold=5
+wNone shop_go gold=5
+wNone shop_reroll gold=258
+wNone BUY weapon_smg_2 effects=[] gold=249
+wNone shop_reroll gold=171
+wNone BUY weapon_smg_2 effects=[] gold=159
+wNone BUY item_candle effects=['stat_elemental_damage', 'stat_hp_regeneration', 'number_of_enemies', 'stat_percent_damage', 'fog_visibility'] gold=81
+wNone shop_combine gold=46
+wNone shop_go gold=46
+wNone shop_reroll gold=472
+wNone BUY weapon_smg_1 effects=[] gold=463
+wNone BUY item_acid effects=['stat_max_hp', 'stat_dodge', 'knockback'] gold=416
+wNone shop_combine gold=284
+wNone shop_reroll gold=284
+wNone shop_reroll gold=272
+wNone shop_reroll gold=257
+wNone shop_reroll gold=239
+wNone shop_reroll gold=218
+wNone shop_reroll gold=194
+wNone shop_reroll gold=167
+wNone shop_reroll gold=137
+wNone BUY item_broken_mouth effects=['stat_max_hp', 'stat_hp_regeneration'] gold=104
+wNone BUY item_glasses effects=['stat_range'] gold=48
+wNone shop_combine gold=1
+wNone shop_combine gold=1
+wNone shop_go gold=1
+wNone shop_reroll gold=348
+wNone shop_reroll gold=337
+wNone shop_reroll gold=322
+wNone shop_reroll gold=303
+wNone shop_reroll gold=280
+wNone BUY weapon_double_barrel_shotgun_2 effects=[] gold=253
+wNone shop_reroll gold=165
+wNone BUY item_pile_of_books effects=['structures_can_crit', 'stat_crit_chance', 'stat_engineering'] gold=134
+wNone shop_go gold=4
+wNone shop_reroll gold=298
+wNone shop_reroll gold=286
+wNone shop_reroll gold=270
+wNone BUY weapon_double_barrel_shotgun_2 effects=[] gold=250
+wNone shop_reroll gold=158
+wNone shop_reroll gold=134
+wNone shop_combine gold=106
+wNone shop_combine gold=106
+wNone shop_go gold=106
+wNone shop_reroll gold=459
+wNone shop_reroll gold=446
+wNone BUY weapon_double_barrel_shotgun_2 effects=[] gold=429
+wNone BUY item_mushroom effects=['stat_hp_regeneration', 'stat_luck'] gold=332
+wNone shop_reroll gold=276
+wNone shop_reroll gold=255
+wNone shop_reroll gold=230
+wNone shop_reroll gold=201
+wNone shop_reroll gold=168
+wNone BUY weapon_smg_2 effects=[] gold=131
+wNone shop_go gold=34
+wNone BUY weapon_smg_2 effects=[] gold=324
+wNone BUY item_little_frog effects=['pickup_range', 'stat_harvesting', 'stat_dodge'] gold=222
+wNone shop_reroll gold=106
+wNone BUY item_lost_duck effects=['stat_luck', 'stat_elemental_damage'] gold=92
+wNone shop_go gold=22
+wNone BUY item_warrior_helmet effects=['stat_armor', 'stat_max_hp', 'stat_speed'] gold=317
+wNone shop_reroll gold=111
+wNone shop_lock gold=96
+wNone shop_reroll gold=96
+wNone shop_go gold=76
+wNone shop_sell gold=492
+wNone BUY weapon_smg_2 effects=[] gold=508
+wNone BUY weapon_ghost_flint_2 effects=['effect_gain_stat_every_killed_enemies'] gold=396
+wNone BUY item_shmoop effects=['stat_max_hp', 'stat_hp_regeneration', 'stat_melee_damage', 'stat_ranged_damage'] gold=269
+wNone shop_reroll gold=111
+wNone BUY item_mutation effects=['stat_ranged_damage', 'stat_elemental_damage', 'knockback'] gold=94
+wNone shop_go gold=17
+wNone BUY weapon_smg_2 effects=[] gold=322
+wNone BUY weapon_slingshot_2 effects=[] gold=205
+wNone shop_combine gold=72
+wNone shop_reroll gold=72
+wNone shop_lock gold=54
+wNone shop_go gold=54

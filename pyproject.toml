@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "brotato-agent"
+version = "0.1.0"
+description = "Instrumented deterministic Brotato agent (WP1 teacher baseline)"
+requires-python = ">=3.10"
+dependencies = [
+  "pyyaml>=6.0",
+  "pytest>=7.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.setuptools]
+packages = []

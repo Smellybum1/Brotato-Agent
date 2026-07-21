@@ -1,0 +1,231 @@
+{
+  "schema_version": "1.0.0",
+  "updated_at": "2026-07-21T21:13:35+10:00",
+  "game_running": true,
+  "hud": {
+    "policy_version": "teacher_v1-0.1.79-gun-wp1",
+    "wins": 1,
+    "runs": 1
+  },
+  "run": {
+    "active": true,
+    "terminal_result": null,
+    "run_id": "run_1784632327_16396",
+    "policy_version": "teacher_v1-0.1.79-gun-wp1",
+    "mod_version": "0.1.79-gun-wp1",
+    "character": "character_well_rounded",
+    "starting_weapon": "weapon_smg_1",
+    "danger": 0,
+    "event_count": 194,
+    "latest_seq": 194,
+    "latest_event": "shop_combine_dispatched",
+    "elapsed_ms": 1244871,
+    "telemetry_age_sec": 0.2,
+    "wave": 3,
+    "hp": 22,
+    "recent_min_hp": 15,
+    "enemies": 0,
+    "projectiles": 0,
+    "loot": 0,
+    "consumables": 0,
+    "damage_taken": 0.0,
+    "recoveries": 0,
+    "build_metrics": {
+      "wave": 3,
+      "offense": {
+        "ranged_damage": 2,
+        "percent_damage": 0,
+        "attack_speed": 0,
+        "crit_chance": 0,
+        "stat_score": 2,
+        "weapon_dps": 210.0387,
+        "weapon_score": 14.00258,
+        "weapon_tier_sum": 5,
+        "weapon_count": 5,
+        "previous_wave_p90_density": 5,
+        "previous_wave_peak_density": 7,
+        "total": 14.00258,
+        "target": 23.333333
+      },
+      "defense": {
+        "max_hp": 22,
+        "max_hp_policy_stat": 22,
+        "armor": 0,
+        "dodge": 0,
+        "hp_regeneration": 2,
+        "lifesteal": 0,
+        "sustain": 2,
+        "hp_target": 25,
+        "armor_target": 1.666667,
+        "sustain_target": 2.666667,
+        "total": 163,
+        "target": 300
+      }
+    },
+    "shop_counts": {
+      "shop_buy": 7,
+      "shop_combine": 1,
+      "shop_go": 2,
+      "shop_reroll": 1
+    },
+    "weapon_buys": [
+      "weapon_shredder_1",
+      "weapon_smg_1",
+      "weapon_smg_1",
+      "weapon_shredder_1",
+      "weapon_shredder_1"
+    ],
+    "item_buys": [
+      "item_lens",
+      "item_tree"
+    ],
+    "last_shop_actions": [
+      {
+        "seq": 51,
+        "type": "shop_reroll",
+        "item_id": null,
+        "score": 0,
+        "wave": 1,
+        "gold_before": 49,
+        "reroll_price": 1,
+        "lock_expired": false
+      },
+      {
+        "seq": 53,
+        "type": "shop_buy",
+        "item_id": "weapon_smg_1",
+        "score": 141.176675,
+        "wave": 1,
+        "gold_before": 48,
+        "reroll_price": 2,
+        "lock_expired": false
+      },
+      {
+        "seq": 55,
+        "type": "shop_buy",
+        "item_id": "item_lens",
+        "score": 35.945921,
+        "wave": 1,
+        "gold_before": 25,
+        "reroll_price": 2,
+        "lock_expired": false
+      },
+      {
+        "seq": 57,
+        "type": "shop_go",
+        "item_id": null,
+        "score": 0,
+        "wave": 1,
+        "gold_before": 2,
+        "reroll_price": 2,
+        "lock_expired": false
+      },
+      {
+        "seq": 117,
+        "type": "shop_buy",
+        "item_id": "weapon_smg_1",
+        "score": 75.662707,
+        "wave": 2,
+        "gold_before": 53,
+        "reroll_price": 2,
+        "lock_expired": false
+      },
+      {
+        "seq": 119,
+        "type": "shop_buy",
+        "item_id": "weapon_shredder_1",
+        "score": 13.8034,
+        "wave": 2,
+        "gold_before": 27,
+        "reroll_price": 2,
+        "lock_expired": false
+      },
+      {
+        "seq": 121,
+        "type": "shop_go",
+        "item_id": null,
+        "score": 0,
+        "wave": 2,
+        "gold_before": 7,
+        "reroll_price": 2,
+        "lock_expired": false
+      },
+      {
+        "seq": 189,
+        "type": "shop_buy",
+        "item_id": "weapon_shredder_1",
+        "score": 22.097765,
+        "wave": 3,
+        "gold_before": 75,
+        "reroll_price": 3,
+        "lock_expired": false
+      },
+      {
+        "seq": 191,
+        "type": "shop_buy",
+        "item_id": "item_tree",
+        "score": 5.5,
+        "wave": 3,
+        "gold_before": 53,
+        "reroll_price": 3,
+        "lock_expired": false
+      },
+      {
+        "seq": 193,
+        "type": "shop_combine",
+        "item_id": null,
+        "score": 70,
+        "wave": 3,
+        "gold_before": 31,
+        "reroll_price": 3,
+        "lock_expired": false
+      }
+    ],
+    "waves": [
+      {
+        "wave": 1,
+        "first_ts_ms": 1157481,
+        "last_ts_ms": 1178993,
+        "ticks": 44,
+        "first_hp": 15,
+        "last_hp": 16,
+        "min_hp": 15,
+        "max_enemies": 5,
+        "max_projectiles": 0,
+        "max_loot": 3,
+        "damage_taken": 0.0
+      },
+      {
+        "wave": 2,
+        "first_ts_ms": 1182565,
+        "last_ts_ms": 1209056,
+        "ticks": 54,
+        "first_hp": 19,
+        "last_hp": 21,
+        "min_hp": 19,
+        "max_enemies": 7,
+        "max_projectiles": 0,
+        "max_loot": 7,
+        "damage_taken": 0.0
+      },
+      {
+        "wave": 3,
+        "first_ts_ms": 1211382,
+        "last_ts_ms": 1242875,
+        "ticks": 64,
+        "first_hp": 21,
+        "last_hp": 22,
+        "min_hp": 21,
+        "max_enemies": 9,
+        "max_projectiles": 0,
+        "max_loot": 11,
+        "damage_taken": 0.0
+      }
+    ],
+    "severity": "warning",
+    "alerts": [
+      "off-plan gun families bought: weapon_shredder"
+    ],
+    "events_path": "C:\\Users\\moxhe\\AppData\\Roaming\\Brotato\\brotato_agent\\runs\\run_1784632327_16396\\events.jsonl"
+  }
+}
