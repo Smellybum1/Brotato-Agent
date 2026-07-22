@@ -141,6 +141,7 @@ def main() -> int:
     collected: list[dict[str, Any]] = []
     state: dict[str, Any] = {
         "schema_version": 1,
+        "collector_pid": os.getpid(),
         "status": "starting",
         "target_runs": args.runs,
         "completed_runs": 0,
