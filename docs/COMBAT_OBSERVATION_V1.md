@@ -10,8 +10,10 @@ most dangerous late-wave entities.
 ## Invariants
 
 - Current state only; no future game state or reward leakage.
-- The deterministic v92 teacher remains the sole controller during capture.
-- Existing v1 telemetry and policy semantics remain unchanged.
+- The deterministic teacher remains the sole controller during capture. New
+  collection uses v93; completed v92 captures remain immutable historical data.
+- Existing v1 telemetry remains unchanged; policy changes are independently
+  versioned and never inferred from the capture schema version.
 - Raw capture arrays are not padded or truncated.
 - Invalid objects are skipped and counted; every encoded group later receives
   an explicit mask and deterministic threat-aware ordering.

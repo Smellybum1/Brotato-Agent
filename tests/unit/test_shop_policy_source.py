@@ -122,16 +122,16 @@ def test_v64_blood_donation_is_vetoed_for_gate_reliability():
     assert '"item_blood_donation": {"never": true}' in requirement_block
 
 
-def test_wp2_capture_build_keeps_the_certified_v92_policy():
+def test_wp2_capture_build_versions_the_v93_wall_safety_policy():
     manifest = MANIFEST.read_text(encoding="utf-8")
     controller = CONTROLLER.read_text(encoding="utf-8")
     telemetry = TELEMETRY.read_text(encoding="utf-8")
 
-    assert '"version_number": "0.2.0"' in manifest
-    assert controller.count("teacher_v1-0.1.92-gun-wp1") == 1
-    assert controller.count("0.2.0-wp2-capture") == 1
-    assert telemetry.count("teacher_v1-0.1.92-gun-wp1") == 1
-    assert telemetry.count("0.2.0-wp2-capture") == 1
+    assert '"version_number": "0.2.1"' in manifest
+    assert controller.count("teacher_v1-0.1.93-gun-wp1") == 1
+    assert controller.count("0.2.1-wp2-capture") == 1
+    assert telemetry.count("teacher_v1-0.1.93-gun-wp1") == 1
+    assert telemetry.count("0.2.1-wp2-capture") == 1
 
 
 def test_v84_item_audit_and_conditional_effect_corrections():
@@ -428,6 +428,44 @@ def test_v92_finale_tightens_the_ring_and_bypasses_commitment_before_contact():
     )
     assert 'for key in ["enemies", "bosses", "projectiles", "loot", "consumables"]' in controller
     assert 'entity["nx"] = float(entity.get("x", 0)) - px' in controller
+
+
+def test_v93_finale_wall_recovery_is_the_last_movement_constraint():
+    config = CONFIG.read_text(encoding="utf-8")
+    potential = POTENTIAL_FIELD.read_text(encoding="utf-8")
+
+    assert "const BOSS_FINALE_WALL_RECOVERY_ENTER := 280.0" in config
+    assert "const BOSS_FINALE_WALL_RECOVERY_RELEASE := 420.0" in config
+    assert "const BOSS_FINALE_WALL_HARD_MARGIN := 96.0" in config
+    assert "func _finale_lane_score(" in potential
+    assert "boss_pos + boss_vel * future_sec" in potential
+    assert "projectile_pos + projectile_vel * future_sec" in potential
+
+    movement_tail = potential.split("var smoothed =", 1)[1].split(
+        "func _reset_finale_commit", 1
+    )[0]
+    safety_call = movement_tail.index("final_move = _finale_wall_safety(")
+    persistence = movement_tail.index("_prev_move = final_move")
+    assert safety_call < persistence
+
+    safety = potential.split("func _finale_wall_safety", 1)[1].split(
+        "func _finale_committed_escape", 1
+    )[0]
+    assert "if _finale_wall_recovery_active:" in safety
+    assert "wall_distance >= BotConfig.BOSS_FINALE_WALL_RECOVERY_RELEASE" in safety
+    assert "wall_distance <= BotConfig.BOSS_FINALE_WALL_RECOVERY_ENTER" in safety
+    assert safety.rstrip().endswith(
+        "return _clamp_finale_wall_components(pos, safe_desire, arena)"
+    )
+
+    hard_projection = potential.split("func _clamp_finale_wall_components", 1)[1].split(
+        "func _finale_lane_score", 1
+    )[0]
+    assert "if pos.x <= margin and out.x < 0.0:" in hard_projection
+    assert "elif pos.x >= w - margin and out.x > 0.0:" in hard_projection
+    assert "if pos.y <= margin and out.y < 0.0:" in hard_projection
+    assert "elif pos.y >= h - margin and out.y > 0.0:" in hard_projection
+    assert '"wall_recovery_active": _finale_wall_recovery_active' in potential
 
 
 def test_v74_preserves_early_hp_but_deemphasizes_it_after_wave_ten():

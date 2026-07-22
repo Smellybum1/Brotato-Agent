@@ -18,8 +18,9 @@ Includes run_id, timestamps, versions, character/weapon/danger/settings, result,
 
 ## Compatible combat capture extension (envelope v2.0.0)
 
-The `0.2.0-wp2-capture` build preserves every existing v1 event and summary field
-and continues to execute policy `teacher_v1-0.1.92-gun-wp1`. Instrumented runs
+The current `0.2.1-wp2-capture` build preserves every existing v1 event and
+summary field and executes policy `teacher_v1-0.1.93-gun-wp1`. Historical
+`0.2.0` / v92 captures use the same extension. Instrumented runs
 may interleave a new `combat_capture` record whose envelope has
 `schema_version: "2.0.0"`. Readers must dispatch by the schema version on each
 record; a run is not required to use one envelope version exclusively.

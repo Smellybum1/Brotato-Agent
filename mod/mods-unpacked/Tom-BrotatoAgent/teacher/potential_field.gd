@@ -15,6 +15,7 @@ var _finale_commit_dir = Vector2.ZERO
 var _finale_commit_origin = Vector2.ZERO
 var _finale_commit_ticks := 0
 var _finale_commit_distance := 0.0
+var _finale_wall_recovery_active := false
 
 
 func compute_movement(state, profile) -> Vector2:
@@ -72,6 +73,7 @@ func compute_movement(state, profile) -> Vector2:
 	var wave: int = int(state.get("wave", 1))
 	if wave < BotConfig.BOSS_FINALE_WAVE:
 		_reset_finale_commit()
+		_finale_wall_recovery_active = false
 	var hp_ratio = float(player.get("hp", 1)) / max(float(player.get("max_hp", 1)), 1.0)
 	if (wave >= BotConfig.LATE_SURVIVAL_WAVE
 		and wave < BotConfig.BOSS_FINALE_WAVE
@@ -154,7 +156,14 @@ func compute_movement(state, profile) -> Vector2:
 
 	var alpha = BotConfig.MOVE_SMOOTHING
 	var smoothed = _prev_move * (1.0 - alpha) + combined * alpha
-	_prev_move = _normalize(smoothed)
+	var final_move = _normalize(smoothed)
+	if finale:
+		# v93: this is deliberately the final movement transform. Earlier corner
+		# guards could be undone by contact escape and movement smoothing, leaving
+		# an outward command pinned against one or two arena boundaries.
+		final_move = _finale_wall_safety(
+			pos, final_move, arena, bosses, projectiles, player_speed)
+	_prev_move = final_move
 	return _prev_move
 
 
@@ -163,6 +172,115 @@ func _reset_finale_commit() -> void:
 	_finale_commit_origin = Vector2.ZERO
 	_finale_commit_ticks = 0
 	_finale_commit_distance = 0.0
+
+
+func _arena_wall_distance(pos: Vector2, arena) -> float:
+	var w := float(arena.get("width", 2048.0))
+	var h := float(arena.get("height", 1536.0))
+	return min(min(pos.x, w - pos.x), min(pos.y, h - pos.y))
+
+
+func _clamp_finale_wall_components(pos: Vector2, desired: Vector2, arena) -> Vector2:
+	var w := float(arena.get("width", 2048.0))
+	var h := float(arena.get("height", 1536.0))
+	var margin := BotConfig.BOSS_FINALE_WALL_HARD_MARGIN
+	var out := desired
+	if pos.x <= margin and out.x < 0.0:
+		out.x = 0.0
+	elif pos.x >= w - margin and out.x > 0.0:
+		out.x = 0.0
+	if pos.y <= margin and out.y < 0.0:
+		out.y = 0.0
+	elif pos.y >= h - margin and out.y > 0.0:
+		out.y = 0.0
+	if out.length() < 0.1:
+		out = Vector2(w * 0.5, h * 0.5) - pos
+	return _normalize(out)
+
+
+func _finale_lane_score(pos: Vector2, direction: Vector2, desired: Vector2,
+		arena, bosses, projectiles, player_speed: float) -> float:
+	var w := float(arena.get("width", 2048.0))
+	var h := float(arena.get("height", 1536.0))
+	var lookahead := BotConfig.BOSS_FINALE_WALL_LOOKAHEAD
+	var end_pos := pos + direction * lookahead
+	var wall_clear := min(min(end_pos.x, w - end_pos.x), min(end_pos.y, h - end_pos.y))
+	if wall_clear < BotConfig.BOSS_FINALE_WALL_HARD_MARGIN:
+		return -1.0e18
+	var center_dir := (Vector2(w * 0.5, h * 0.5) - pos).normalized()
+	var boss_clear := 650.0
+	var projectile_clear := 320.0
+	var samples := BotConfig.BOSS_FINALE_WALL_PATH_SAMPLES
+	var safe_speed := max(player_speed, 1.0)
+	for i in range(1, samples + 1):
+		var fraction := float(i) / float(samples)
+		var path_pos := pos + direction * (lookahead * fraction)
+		var future_sec := (lookahead * fraction) / safe_speed
+		for boss in bosses:
+			var boss_pos := Vector2(
+				float(boss.get("x", 0.0)), float(boss.get("y", 0.0)))
+			var boss_vel := Vector2(
+				float(boss.get("vx", 0.0)), float(boss.get("vy", 0.0)))
+			var boss_radius := float(boss.get("radius", 40.0))
+			boss_clear = min(
+				boss_clear,
+				path_pos.distance_to(boss_pos + boss_vel * future_sec) - boss_radius)
+		for projectile in projectiles:
+			var projectile_pos := Vector2(
+				float(projectile.get("x", 0.0)), float(projectile.get("y", 0.0)))
+			var projectile_vel := Vector2(
+				float(projectile.get("vx", 0.0)), float(projectile.get("vy", 0.0)))
+			var projectile_radius := float(projectile.get("radius", 12.0))
+			projectile_clear = min(projectile_clear,
+				path_pos.distance_to(projectile_pos + projectile_vel * future_sec)
+				- projectile_radius)
+	var score := (
+		min(wall_clear, BotConfig.BOSS_FINALE_WALL_RECOVERY_RELEASE)
+		* BotConfig.BOSS_FINALE_WALL_CLEAR_WEIGHT)
+	score += max(boss_clear, -100.0) * BotConfig.BOSS_FINALE_WALL_BOSS_WEIGHT
+	score += (
+		max(projectile_clear, -100.0)
+		* BotConfig.BOSS_FINALE_WALL_PROJECTILE_WEIGHT)
+	score += direction.dot(center_dir) * BotConfig.BOSS_FINALE_WALL_CENTER_WEIGHT
+	score += direction.dot(desired) * BotConfig.BOSS_FINALE_WALL_DESIRE_WEIGHT
+	score += direction.dot(_prev_move) * BotConfig.BOSS_FINALE_WALL_CONTINUITY_WEIGHT
+	return score
+
+
+func _best_finale_interior_lane(pos: Vector2, desired: Vector2, arena,
+		bosses, projectiles, player_speed: float) -> Vector2:
+	var best_dir := Vector2.ZERO
+	var best_score := -1.0e18
+	for k in range(BotConfig.ESCAPE_DIRECTIONS):
+		var angle := (TAU * k) / float(BotConfig.ESCAPE_DIRECTIONS)
+		var candidate := Vector2(cos(angle), sin(angle))
+		var score := _finale_lane_score(
+			pos, candidate, desired, arena, bosses, projectiles, player_speed)
+		if score > best_score:
+			best_score = score
+			best_dir = candidate
+	if best_dir == Vector2.ZERO:
+		var w := float(arena.get("width", 2048.0))
+		var h := float(arena.get("height", 1536.0))
+		best_dir = Vector2(w * 0.5, h * 0.5) - pos
+	return _normalize(best_dir)
+
+
+func _finale_wall_safety(pos: Vector2, desired: Vector2, arena, bosses,
+		projectiles, player_speed: float) -> Vector2:
+	var wall_distance := _arena_wall_distance(pos, arena)
+	if _finale_wall_recovery_active:
+		if wall_distance >= BotConfig.BOSS_FINALE_WALL_RECOVERY_RELEASE:
+			_finale_wall_recovery_active = false
+	elif wall_distance <= BotConfig.BOSS_FINALE_WALL_RECOVERY_ENTER:
+		_finale_wall_recovery_active = true
+	var safe_desire := desired
+	if _finale_wall_recovery_active:
+		safe_desire = _best_finale_interior_lane(
+			pos, desired, arena, bosses, projectiles, player_speed)
+	# Hard projection is unconditional and runs after lane selection so no boss,
+	# projectile, continuity, or smoothing term can command movement through a wall.
+	return _clamp_finale_wall_components(pos, safe_desire, arena)
 
 
 func _finale_committed_escape(pos: Vector2, desired: Vector2, arena, bosses) -> Vector2:
@@ -206,6 +324,7 @@ func finale_translation_debug() -> Dictionary:
 		"commit_ticks": _finale_commit_ticks,
 		"commit_x": _finale_commit_dir.x,
 		"commit_y": _finale_commit_dir.y,
+		"wall_recovery_active": _finale_wall_recovery_active,
 	}
 
 

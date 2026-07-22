@@ -141,6 +141,20 @@ const BOSS_FINALE_REVERSE_DOT := -0.35
 const BOSS_FINALE_COMMIT_DISTANCE := 120.0
 const BOSS_FINALE_COMMIT_MAX_TICKS := 16
 const BOSS_FINALE_COMMIT_DESIRE_BLEND := 0.15
+# v93: two captured wave-20 deaths reached a corner while the final command
+# continued pointing out of bounds. Start a latched interior recovery on any
+# wall before the hard boundary, and enforce the final command after smoothing.
+const BOSS_FINALE_WALL_RECOVERY_ENTER := 280.0
+const BOSS_FINALE_WALL_RECOVERY_RELEASE := 420.0
+const BOSS_FINALE_WALL_HARD_MARGIN := 96.0
+const BOSS_FINALE_WALL_LOOKAHEAD := 260.0
+const BOSS_FINALE_WALL_PATH_SAMPLES := 4
+const BOSS_FINALE_WALL_CLEAR_WEIGHT := 4.0
+const BOSS_FINALE_WALL_BOSS_WEIGHT := 1.35
+const BOSS_FINALE_WALL_PROJECTILE_WEIGHT := 1.75
+const BOSS_FINALE_WALL_CENTER_WEIGHT := 110.0
+const BOSS_FINALE_WALL_DESIRE_WEIGHT := 25.0
+const BOSS_FINALE_WALL_CONTINUITY_WEIGHT := 20.0
 # Battlefield: chase/destroy trees for crates through wave 10.
 const TREE_PRIORITY_WAVE := 10
 const TREE_ATTRACTION := 1450.0
