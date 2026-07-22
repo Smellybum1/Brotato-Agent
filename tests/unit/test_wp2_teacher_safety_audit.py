@@ -56,6 +56,30 @@ def test_wall_body_relief_audit_catches_a_held_route_through_a_pack():
     assert violation["relief_best"] >= 90.0
 
 
+def test_wall_body_relief_audit_replays_held_action_not_stale_diagnostic():
+    payload = _payload(
+        x=500.0,
+        y=1200.0,
+        action=(1.0, 0.0),
+        speed=463.0,
+        enemies=[{"x": 100.0, "y": 1200.0, "vx": 0.0, "vy": 0.0, "radius": 20.0}],
+    )
+    payload.update({"wave": 20, "capture_seq": 20546})
+    payload["entities"]["projectiles"] = []
+    payload["teacher"]["contributions"] = {
+        "finale_translation": {
+            "wall_recovery_active": True,
+            "projectile_safety_active": False,
+            # Deliberately stale and dangerous; the current carried action is
+            # already above the relief trigger and must be replayed instead.
+            "body_selected_clearance": 10.0,
+        }
+    }
+
+    assert _body_clearance(payload) >= 120.0
+    assert _wall_body_relief_violation(payload) is None
+
+
 def test_damage_audit_allows_only_the_bounded_projectile_concession():
     safe = {
         "projectile_escape_clearance": 100.0,

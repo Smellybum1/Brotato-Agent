@@ -164,7 +164,7 @@ const BOSS_FINALE_WALL_ENEMY_CRITICAL_CLEARANCE := 45.0
 const BOSS_FINALE_WALL_ENEMY_CRITICAL_WEIGHT := 0.02
 const BOSS_FINALE_WALL_ENEMY_SCORE_WEIGHT := 4.0
 const BOSS_FINALE_ENEMY_PENALTY_SLACK := 20.0
-# v111: wall recovery may temporarily concede progress when every inward lane
+# v111/v112: wall recovery may temporarily concede progress when every inward lane
 # runs through a pack but a hard-wall-safe sampled lane is materially clearer.
 # This is deliberately exceptional so the v104 recovery latch still advances
 # whenever an adequately open inward lane exists.

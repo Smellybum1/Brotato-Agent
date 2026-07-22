@@ -1,0 +1,21 @@
+{
+  "rejected_run_id": "run_1784761715_9604",
+  "dataset_eligible": false,
+  "result": "victory",
+  "last_wave": 20,
+  "captures": 21779,
+  "capture_structural_errors": 0,
+  "v112_safety_reaudit_violations": 15,
+  "hidden_wall_body_relief_violations": 10,
+  "wall_body_relief_selection_violations": 5,
+  "hard_wall_violations": 0,
+  "projectile_floor_violations": 0,
+  "sampled_action_violations": 0,
+  "avoidable_damage_violations": 0,
+  "events_sha256": "15D3BED00CA017850009EFC5BC46FEF630C07F97EA53C64EFAB94061A021958D",
+  "summary_sha256": "D5D2D67089E9B39E1893AFB044DD43CDF6AB996BB7CB103BBCFFF9FB625D41A7",
+  "repair_policy_version": "teacher_v1-0.1.112-gun-wp1",
+  "repair_mod_version": "0.2.20-wp2-capture",
+  "focused_tests": 72,
+  "full_tests": 118
+}

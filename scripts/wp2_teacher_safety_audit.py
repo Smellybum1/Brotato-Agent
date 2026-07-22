@@ -117,20 +117,10 @@ def _body_clearance_for_direction(
     return _body_clearance(replay)
 
 
-def _wall_body_relief_violation(payload: dict[str, Any]) -> dict[str, Any] | None:
-    """Find a hard-safe body escape hidden by the strict wall-progress pool."""
-    if int(payload.get("wave", 0)) < 20:
-        return None
-    debug = payload["teacher"]["contributions"]["finale_translation"]
-    if not bool(debug.get("wall_recovery_active", False)):
-        return None
-    if bool(debug.get("projectile_safety_active", False)):
-        return None
-    if payload["entities"].get("projectiles", []):
-        return None
-    selected = float(debug.get("body_selected_clearance", -1.0))
-    if selected < -0.5 or selected >= WALL_BODY_RELIEF_TRIGGER:
-        return None
+def _best_hard_safe_body_clearance(
+    payload: dict[str, Any],
+) -> tuple[float, tuple[float, float] | None]:
+    """Replay the best sampled body lane that respects the projected hard wall."""
     player = payload["player"]
     arena = payload["arena"]
     x = float(player["x"])
@@ -151,6 +141,27 @@ def _wall_body_relief_violation(payload: dict[str, Any]) -> dict[str, Any] | Non
         if clearance > best:
             best = clearance
             best_direction = direction
+    return best, best_direction
+
+
+def _wall_body_relief_violation(payload: dict[str, Any]) -> dict[str, Any] | None:
+    """Find a hard-safe body escape hidden by the strict wall-progress pool."""
+    if int(payload.get("wave", 0)) < 20:
+        return None
+    debug = payload["teacher"]["contributions"]["finale_translation"]
+    if not bool(debug.get("wall_recovery_active", False)):
+        return None
+    if bool(debug.get("projectile_safety_active", False)):
+        return None
+    if payload["entities"].get("projectiles", []):
+        return None
+    # Recompute the clearance of the action carried by this capture. Held
+    # captures can legitimately retain diagnostics from the preceding policy
+    # update while the player and threats continue to move.
+    selected = _body_clearance(payload)
+    if selected >= WALL_BODY_RELIEF_TRIGGER:
+        return None
+    best, best_direction = _best_hard_safe_body_clearance(payload)
     if best < selected + WALL_BODY_RELIEF_MIN_GAIN - FLOAT_TOLERANCE:
         return None
     return {
@@ -330,8 +341,17 @@ def audit_run(
         debug = payload["teacher"]["contributions"]["finale_translation"]
         if bool(debug.get("wall_body_relief_active", False)):
             active_wall_body_relief += 1
-            selected = float(debug.get("body_selected_clearance", -1.0))
-            relief_best = float(debug.get("wall_relief_best_body_clearance", -1.0))
+            projectiles = payload["entities"].get("projectiles", [])
+            if projectiles and not payload["teacher"].get("action_fresh", False):
+                # A held diagnostic does not contain the current projectile-tier
+                # candidate set. Projectile-specific audits cover that interval.
+                continue
+            if projectiles:
+                selected = float(debug.get("body_selected_clearance", -1.0))
+                relief_best = float(debug.get("wall_relief_best_body_clearance", -1.0))
+            else:
+                selected = _body_clearance(payload)
+                relief_best, _ = _best_hard_safe_body_clearance(payload)
             required = relief_best - BODY_SLACK
             if relief_best < 0.0 or selected < required - FLOAT_TOLERANCE:
                 wall_body_relief_selection_violations.append(

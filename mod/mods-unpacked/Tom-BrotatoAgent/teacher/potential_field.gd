@@ -455,10 +455,10 @@ func _best_finale_interior_lane(pos: Vector2, desired: Vector2, arena,
 	_finale_wall_input_body_clearance = _predictive_body_path_clearance(
 		pos, desired_n, player_speed, path_times, enemies, bosses)
 	var rows := []
-	var relief_rows := []
+	var hard_safe_rows := []
 	var lowest_enemy_penalty := INF
 	var highest_body_clearance := -INF
-	var relief_highest_body_clearance := -INF
+	var hard_safe_highest_body_clearance := -INF
 	for k in range(BotConfig.ESCAPE_DIRECTIONS):
 		var angle := (TAU * k) / float(BotConfig.ESCAPE_DIRECTIONS)
 		var candidate := Vector2(cos(angle), sin(angle))
@@ -476,30 +476,30 @@ func _best_finale_interior_lane(pos: Vector2, desired: Vector2, arena,
 				continue
 		var body_clearance := _predictive_body_path_clearance(
 			pos, candidate, player_speed, path_times, enemies, bosses)
+		hard_safe_rows.append([
+			candidate, score, enemy_penalty, body_clearance])
+		hard_safe_highest_body_clearance = max(
+			hard_safe_highest_body_clearance, body_clearance)
 		if makes_wall_progress:
 			rows.append([candidate, score, enemy_penalty, body_clearance])
 			lowest_enemy_penalty = min(lowest_enemy_penalty, enemy_penalty)
 			highest_body_clearance = max(highest_body_clearance, body_clearance)
-		else:
-			relief_rows.append([candidate, score, enemy_penalty, body_clearance])
-			relief_highest_body_clearance = max(
-				relief_highest_body_clearance, body_clearance)
 	_finale_wall_relief_best_body_clearance = (
-		relief_highest_body_clearance if not relief_rows.empty() else -1.0)
+		hard_safe_highest_body_clearance if not hard_safe_rows.empty() else -1.0)
 	var candidate_rows := rows
-	if (relief_highest_body_clearance
+	if (hard_safe_highest_body_clearance
 			>= BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE
 			and highest_body_clearance
 				< BotConfig.BOSS_FINALE_WALL_BODY_RELIEF_TRIGGER
-			and relief_highest_body_clearance
+			and hard_safe_highest_body_clearance
 				>= highest_body_clearance
 					+ BotConfig.BOSS_FINALE_WALL_BODY_RELIEF_MIN_GAIN):
-		# Frozen v110 run 2 captures 20520-20524: strict wall progress
-		# discarded a 198-267 clearance side escape and forced a 73-99
-		# clearance inward route through the pack. Permit a bounded wall
-		# concession only while the strict pool remains contact-dangerous.
-		candidate_rows = relief_rows
-		highest_body_clearance = relief_highest_body_clearance
+		# v112: compare against every hard-wall-safe lane, including any strict
+		# inward candidate that is also the clearest route. The v111 smoke
+		# showed that a non-progress-only pool could understate the available
+		# relief and let the final body pass replace it with a pack route.
+		candidate_rows = hard_safe_rows
+		highest_body_clearance = hard_safe_highest_body_clearance
 		_finale_wall_body_relief_active = true
 	_finale_wall_best_body_clearance = (
 		highest_body_clearance if not candidate_rows.empty() else -1.0)
@@ -754,6 +754,9 @@ func _finale_body_safety(pos: Vector2, desired: Vector2, player_speed: float,
 	_finale_body_input_clearance = _predictive_body_path_clearance(
 		pos, baseline, player_speed, times, enemies, bosses)
 	var rows := []
+	var hard_safe_rows := []
+	var strict_wall_body_clearance := -INF
+	var hard_safe_wall_body_clearance := -INF
 	var highest_projectile_clearance := -1.0e18
 	for k in range(BotConfig.ESCAPE_DIRECTIONS):
 		var angle := (TAU * k) / float(BotConfig.ESCAPE_DIRECTIONS)
@@ -769,12 +772,18 @@ func _finale_body_safety(pos: Vector2, desired: Vector2, player_speed: float,
 			continue
 		var enemy_penalty := _predictive_enemy_path_penalty(
 			pos, candidate, player_speed, times, enemies, bosses, 1.0)
+		var makes_wall_progress := true
 		if _finale_wall_recovery_active:
 			var wall_score := _finale_lane_score(
 				pos, candidate, baseline, arena, bosses, projectiles,
 				player_speed, enemy_penalty)
 			if wall_score <= -1.0e17:
-				continue
+				makes_wall_progress = false
+				wall_score = _finale_lane_score(
+					pos, candidate, baseline, arena, bosses, projectiles,
+					player_speed, enemy_penalty, false)
+				if wall_score <= -1.0e17:
+					continue
 		var body_clearance := _predictive_body_path_clearance(
 			pos, candidate, player_speed, times, enemies, bosses)
 		var projectile_clearance := 1000000.0
@@ -782,14 +791,40 @@ func _finale_body_safety(pos: Vector2, desired: Vector2, player_speed: float,
 			projectile_clearance = _dir_clearance(
 				pos, candidate, player_speed, projectile_context["bullets_t"],
 				projectile_context["times"], arena)
-		highest_projectile_clearance = max(
-			highest_projectile_clearance, projectile_clearance)
-		rows.append([
-			candidate, body_clearance, projectile_clearance, enemy_penalty])
+		var row := [
+			candidate, body_clearance, projectile_clearance, enemy_penalty]
+		hard_safe_rows.append(row)
+		hard_safe_wall_body_clearance = max(
+			hard_safe_wall_body_clearance, body_clearance)
+		if makes_wall_progress:
+			rows.append(row)
+			strict_wall_body_clearance = max(
+				strict_wall_body_clearance, body_clearance)
+	# v112: the final body pass is the last movement arbiter. It must preserve a
+	# relief selected by wall safety, and it may independently discover the same
+	# long-horizon pack conflict that the shorter wall lookahead cannot see.
+	if (_finale_wall_recovery_active
+			and not _finale_projectile_safety_active
+			and (_finale_wall_body_relief_active
+				or (hard_safe_wall_body_clearance
+						>= BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE
+					and strict_wall_body_clearance
+						< BotConfig.BOSS_FINALE_WALL_BODY_RELIEF_TRIGGER
+					and hard_safe_wall_body_clearance
+						>= strict_wall_body_clearance
+							+ BotConfig.BOSS_FINALE_WALL_BODY_RELIEF_MIN_GAIN))):
+		rows = hard_safe_rows
+		_finale_wall_body_relief_active = true
 	if rows.empty():
 		_finale_body_best_clearance = _finale_body_input_clearance
 		_finale_body_selected_clearance = _finale_body_input_clearance
 		return baseline
+	# The active pool may exclude hard-safe relief rows. Anchor projectile tiers
+	# only to candidates the final body pass can actually emit.
+	highest_projectile_clearance = -1.0e18
+	for row in rows:
+		highest_projectile_clearance = max(
+			highest_projectile_clearance, float(row[2]))
 	# v108: the first exact-20 v107 run exposed a gap between the projectile
 	# escape chosen before this pass and the sampled pool admitted by active wall
 	# recovery. Anchor the ordinary bounded concession to the actual
@@ -865,10 +900,20 @@ func _finale_body_safety(pos: Vector2, desired: Vector2, player_speed: float,
 		_finale_body_selected_clearance = _finale_body_input_clearance
 		return baseline
 	_finale_body_best_clearance = highest_body_clearance
+	if _finale_wall_body_relief_active:
+		# Report and enforce the best hard-safe lane that also survived the
+		# active projectile tier, so telemetry and the emitted command use the
+		# same horizon and candidate population.
+		_finale_wall_relief_best_body_clearance = highest_body_clearance
 	var body_floor := highest_body_clearance
 	if body_emergency_active:
 		body_floor = (highest_body_clearance
 			- BotConfig.BOSS_FINALE_BODY_EMERGENCY_CLEARANCE_SLACK)
+	elif _finale_wall_body_relief_active:
+		body_floor = max(
+			BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE,
+			highest_body_clearance
+				- BotConfig.BOSS_FINALE_BODY_CLEARANCE_SLACK)
 	elif (enforce_pack_clearance
 			and highest_body_clearance
 				>= BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE):
