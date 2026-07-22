@@ -60,3 +60,35 @@ telemetry is not modified or reused as v104 training data.
   to improve minimum wall clearance, zero panic-level materially safer ignored
   wall-safe lanes, and all prior projectile, hard-wall, latch, chatter, stall,
   telemetry-integrity, and dataset-capacity gates.
+
+## Deployment and smoke verification
+
+- Focused source/collector tests: **53 passed**.
+- Full suite: **99 passed**.
+- Deployed ZIP SHA-256:
+  `96E1ADA6BB2A71C76C6D7B847C86D685A0BD6F2AB44193FC6A430805C59B182A`.
+- Packaged identities were read back from the ZIP as policy
+  `teacher_v1-0.1.104-gun-wp1`, mod `0.2.12-wp2-capture`, and the unchanged
+  capture schema hash.
+- One-run smoke `run_1784730074_96068` completed as a valid wave-20 defeat with
+  20,624 valid captures spanning every wave, complete terminal telemetry, and
+  zero sequence, schema, invalid-entity, dropped/capacity, error, hang, or
+  illegal-action faults.
+- The closed safety audit found zero wall-recovery commands that failed to
+  increase the limiting wall, zero hard-margin outward commands, zero
+  blend-repair misses, zero panic-level materially safer ignored final paths,
+  and zero wall-replan regressions. Low-net-displacement windows were wide
+  loops (417-581 units travelled), not stalls.
+- Two non-decision capture snapshots projected a held command marginally past
+  the 96-unit margin. Wave-20 capture and decision cadences are phase-aliased,
+  so all such snapshots correctly reported `action_fresh=false`; actual wall
+  clearance never fell below 177.383 units and no command pointed outward from
+  inside the hard margin. This is telemetry sampling alias rather than a failed
+  v104 decision gate.
+- Raw smoke checksums: events
+  `3C42945A48ED56211AB0EF10EE0B5A6D59A16A39E1E850339DA8B9F85F4188BE`,
+  summary
+  `FEE33118CB1C4699FC30DE5779B0A91BEA3F1EAEE9FFA129786ED31233942326`.
+
+The isolated smoke gate is accepted. The smoke run remains diagnostic evidence
+and is excluded from the fresh 20-run v104 dataset campaign.
