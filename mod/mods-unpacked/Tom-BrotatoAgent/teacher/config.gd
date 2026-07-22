@@ -134,7 +134,7 @@ const BOSS_FINALE_COMMIT_DESIRE_BLEND := 0.15
 # continued pointing out of bounds. Start a latched interior recovery on any
 # wall before the hard boundary, and enforce the final command after smoothing.
 const BOSS_FINALE_WALL_RECOVERY_ENTER := 280.0
-const BOSS_FINALE_WALL_RECOVERY_RELEASE := 420.0
+const BOSS_FINALE_WALL_RECOVERY_RELEASE := 520.0
 const BOSS_FINALE_WALL_HARD_MARGIN := 96.0
 # v96: combat decisions persist for roughly 250 ms. Project the final command
 # slightly beyond that hold so a command selected just outside the hard margin

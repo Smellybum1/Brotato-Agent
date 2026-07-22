@@ -89,9 +89,13 @@ func compute_movement(state, profile) -> Vector2:
 	var wave: int = int(state.get("wave", 1))
 	if wave < BotConfig.BOSS_FINALE_WAVE:
 		_reset_finale_commit()
+		# v103: retain the v102 late-wave latch, now with a wider release buffer.
+		# v102 evidence showed that releasing at 420 units let a dense pack pull
+		# the agent immediately back into a 285-310 unit reversal stall. The 520
+		# unit release boundary keeps recovery committed through that unsafe band.
 		# v102: v101 wave-19 evidence showed the late safety tail chattering at
 		# the 280-unit entry boundary because this reset discarded the intended
-		# 280/420 hysteresis before every waves 17-19 decision. Clear the latch
+		# 280/520 hysteresis before every waves 17-19 decision. Clear the latch
 		# only before late-wave wall safety becomes active; once entered on a
 		# late wave, recovery must persist until the 420-unit release boundary.
 		if wave < BotConfig.LATE_SURVIVAL_WAVE:

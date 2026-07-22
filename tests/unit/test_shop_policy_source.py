@@ -122,17 +122,17 @@ def test_v64_blood_donation_is_vetoed_for_gate_reliability():
     assert '"item_blood_donation": {"never": true}' in requirement_block
 
 
-def test_wp2_capture_build_versions_the_v102_latched_wall_recovery_policy():
+def test_wp2_capture_build_versions_the_v103_buffered_wall_recovery_policy():
     manifest = MANIFEST.read_text(encoding="utf-8")
     controller = CONTROLLER.read_text(encoding="utf-8")
     telemetry = TELEMETRY.read_text(encoding="utf-8")
 
-    assert '"version_number": "0.2.10"' in manifest
-    assert "v102 deterministic teacher" in manifest
-    assert controller.count("teacher_v1-0.1.102-gun-wp1") == 1
-    assert controller.count("0.2.10-wp2-capture") == 1
-    assert telemetry.count("teacher_v1-0.1.102-gun-wp1") == 1
-    assert telemetry.count("0.2.10-wp2-capture") == 1
+    assert '"version_number": "0.2.11"' in manifest
+    assert "v103 deterministic teacher" in manifest
+    assert controller.count("teacher_v1-0.1.103-gun-wp1") == 1
+    assert controller.count("0.2.11-wp2-capture") == 1
+    assert telemetry.count("teacher_v1-0.1.103-gun-wp1") == 1
+    assert telemetry.count("0.2.11-wp2-capture") == 1
 
 
 def test_v84_item_audit_and_conditional_effect_corrections():
@@ -496,7 +496,7 @@ def test_v93_finale_wall_recovery_is_the_last_movement_constraint():
     potential = POTENTIAL_FIELD.read_text(encoding="utf-8")
 
     assert "const BOSS_FINALE_WALL_RECOVERY_ENTER := 280.0" in config
-    assert "const BOSS_FINALE_WALL_RECOVERY_RELEASE := 420.0" in config
+    assert "const BOSS_FINALE_WALL_RECOVERY_RELEASE := 520.0" in config
     assert "const BOSS_FINALE_WALL_HARD_MARGIN := 96.0" in config
     assert "func _finale_lane_score(" in potential
     assert "boss_pos + boss_vel * future_sec" in potential
