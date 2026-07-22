@@ -97,7 +97,7 @@ func compute_movement(state, profile) -> Vector2:
 		# the 280-unit entry boundary because this reset discarded the intended
 		# 280/520 hysteresis before every waves 17-19 decision. Clear the latch
 		# only before late-wave wall safety becomes active; once entered on a
-		# late wave, recovery must persist until the 420-unit release boundary.
+		# late wave, recovery must persist until the 520-unit release boundary.
 		if wave < BotConfig.LATE_SURVIVAL_WAVE:
 			_finale_wall_recovery_active = false
 	var hp_ratio = float(player.get("hp", 1)) / max(float(player.get("max_hp", 1)), 1.0)
@@ -255,8 +255,16 @@ func _finale_lane_score(pos: Vector2, direction: Vector2, desired: Vector2,
 	var h := float(arena.get("height", 1536.0))
 	var lookahead := BotConfig.BOSS_FINALE_WALL_LOOKAHEAD
 	var end_pos := pos + direction * lookahead
+	var current_wall_clear := min(min(pos.x, w - pos.x), min(pos.y, h - pos.y))
 	var wall_clear := min(min(end_pos.x, w - end_pos.x), min(end_pos.y, h - end_pos.y))
 	if wall_clear < BotConfig.BOSS_FINALE_WALL_HARD_MARGIN:
+		return -1.0e18
+	# v104: an active recovery lane must improve the limiting wall, not merely
+	# move toward the arena center on a different axis. v103 captures 22690-22691
+	# selected a horizontal lane while the lower wall remained the minimum, so
+	# the latch stayed active without creating any additional escape clearance.
+	if (current_wall_clear < BotConfig.BOSS_FINALE_WALL_RECOVERY_RELEASE
+			and wall_clear <= current_wall_clear + 0.001):
 		return -1.0e18
 	var center_dir := (Vector2(w * 0.5, h * 0.5) - pos).normalized()
 	var boss_clear := 650.0
@@ -421,20 +429,24 @@ func _best_wall_safe_projectile_lane(pos: Vector2, baseline: Vector2,
 			float(boss.get("x", 0.0)), float(boss.get("y", 0.0))))
 	var baseline_clear := _dir_clearance(
 		pos, baseline, player_speed, bullets_t, times, arena)
-	var baseline_penalty := _enemy_path_penalty(
-		pos, baseline, player_speed, times, enemy_pts, 1.0)
 	var best_dir := baseline
-	var best_clear := baseline_clear
-	var best_score := baseline_clear - baseline_penalty
-	best_score += BotConfig.ESCAPE_ALIGN_BONUS
-	if _prev_move.length() > 0.1:
-		best_score += BotConfig.BOSS_FINALE_ESCAPE_CONTINUITY * baseline.dot(_prev_move)
+	var best_score := -1.0e18
+	var found_clearer_lane := false
 	for k in range(BotConfig.ESCAPE_DIRECTIONS):
 		var angle := (TAU * k) / float(BotConfig.ESCAPE_DIRECTIONS)
 		var candidate := _clamp_finale_wall_components(
 			pos, Vector2(cos(angle), sin(angle)), arena, player_speed)
 		var clearance := _dir_clearance(
 			pos, candidate, player_speed, bullets_t, times, arena)
+		# v104: v103 capture 20841 exposed a panic-level clamped command with
+		# 178.7 clearance while a 233.7 wall-safe sampled lane existed. Previously
+		# a candidate first had to beat the dangerous baseline's combined score;
+		# enemy/continuity penalties could therefore prevent every safety gain from
+		# being considered. Restrict the pool to materially clearer lanes first,
+		# then use those terms only to choose among the safe improvements.
+		if (clearance < baseline_clear
+				+ BotConfig.BOSS_FINALE_PROJECTILE_WALL_MIN_GAIN):
+			continue
 		var penalty := _enemy_path_penalty(
 			pos, candidate, player_speed, times, enemy_pts, 1.0)
 		var score := clearance - penalty
@@ -444,8 +456,8 @@ func _best_wall_safe_projectile_lane(pos: Vector2, baseline: Vector2,
 		if score > best_score:
 			best_score = score
 			best_dir = candidate
-			best_clear = clearance
-	if best_clear < baseline_clear + BotConfig.BOSS_FINALE_PROJECTILE_WALL_MIN_GAIN:
+			found_clearer_lane = true
+	if not found_clearer_lane:
 		return baseline
 	return best_dir
 

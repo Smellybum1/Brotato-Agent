@@ -122,17 +122,17 @@ def test_v64_blood_donation_is_vetoed_for_gate_reliability():
     assert '"item_blood_donation": {"never": true}' in requirement_block
 
 
-def test_wp2_capture_build_versions_the_v103_buffered_wall_recovery_policy():
+def test_wp2_capture_build_versions_the_v104_strict_safety_policy():
     manifest = MANIFEST.read_text(encoding="utf-8")
     controller = CONTROLLER.read_text(encoding="utf-8")
     telemetry = TELEMETRY.read_text(encoding="utf-8")
 
-    assert '"version_number": "0.2.11"' in manifest
-    assert "v103 deterministic teacher" in manifest
-    assert controller.count("teacher_v1-0.1.103-gun-wp1") == 1
-    assert controller.count("0.2.11-wp2-capture") == 1
-    assert telemetry.count("teacher_v1-0.1.103-gun-wp1") == 1
-    assert telemetry.count("0.2.11-wp2-capture") == 1
+    assert '"version_number": "0.2.12"' in manifest
+    assert "v104 deterministic teacher" in manifest
+    assert controller.count("teacher_v1-0.1.104-gun-wp1") == 1
+    assert controller.count("0.2.12-wp2-capture") == 1
+    assert telemetry.count("teacher_v1-0.1.104-gun-wp1") == 1
+    assert telemetry.count("0.2.12-wp2-capture") == 1
 
 
 def test_v84_item_audit_and_conditional_effect_corrections():
@@ -408,14 +408,14 @@ def test_v102_late_wall_recovery_retains_hysteresis_until_release():
     assert "wall_distance >= BotConfig.BOSS_FINALE_WALL_RECOVERY_RELEASE" in safety
     assert "wall_distance <= BotConfig.BOSS_FINALE_WALL_RECOVERY_ENTER" in safety
 
-    # Reproduce the v101 boundary trace: after entering at 279, recovery must
-    # stay active through intermediate 280-420 distances and release only past
-    # the configured 420-unit boundary.
+    # Reproduce the current boundary trace: after entering at 279, recovery must
+    # stay active through intermediate 280-520 distances and release only past
+    # the configured 520-unit boundary.
     active = False
     trace = []
-    for wall_distance in (279.0, 284.0, 298.0, 277.0, 350.0, 419.0, 421.0):
+    for wall_distance in (279.0, 284.0, 298.0, 277.0, 420.0, 519.0, 521.0):
         if active:
-            if wall_distance >= 420.0:
+            if wall_distance >= 520.0:
                 active = False
         elif wall_distance <= 280.0:
             active = True
@@ -623,6 +623,57 @@ def test_v100_hard_wall_rotation_replans_over_wall_safe_projectile_lanes():
         '"projectile_wall_replan_active": _finale_projectile_wall_replan_active'
         in potential
     )
+
+
+def test_v104_recovery_and_wall_replan_require_measurable_clearance_gain():
+    potential = POTENTIAL_FIELD.read_text(encoding="utf-8")
+
+    scorer = potential.split("func _finale_lane_score", 1)[1].split(
+        "func _best_finale_interior_lane", 1
+    )[0]
+    current = scorer.index("var current_wall_clear :=")
+    improvement_gate = scorer.index(
+        "wall_clear <= current_wall_clear + 0.001"
+    )
+    rejection = scorer.index("return -1.0e18", improvement_gate)
+    weighted_score = scorer.index("var score := (")
+    assert current < improvement_gate < rejection < weighted_score
+
+    selector = potential.split("func _best_wall_safe_projectile_lane", 1)[1].split(
+        "func _finale_committed_escape", 1
+    )[0]
+    assert "var best_score := -1.0e18" in selector
+    assert "var found_clearer_lane := false" in selector
+    clearance = selector.index("var clearance := _dir_clearance(")
+    gain_gate = selector.index("if (clearance < baseline_clear")
+    skip = selector.index("continue", gain_gate)
+    penalty = selector.index("var penalty := _enemy_path_penalty(")
+    choose = selector.index("found_clearer_lane = true")
+    fallback = selector.index("if not found_clearer_lane:")
+    assert clearance < gain_gate < skip < penalty < choose < fallback
+
+    # Reproduce the two v103 counterexamples. A horizontal command at the
+    # lower-left position leaves the limiting y wall unchanged, while the
+    # inward diagonal increases it. A dangerous 178.7-clearance baseline must
+    # not win over a 233.7-clearance candidate merely because its combined
+    # enemy/continuity score is lower.
+    x, y, width, height, lookahead = 515.916199, 508.548737, 2048.0, 1536.0, 260.0
+    current_wall = min(x, y, width - x, height - y)
+    horizontal_wall = min(x + lookahead, y, width - x - lookahead, height - y)
+    diagonal_step = lookahead / (2.0**0.5)
+    diagonal_wall = min(
+        x + diagonal_step,
+        y + diagonal_step,
+        width - x - diagonal_step,
+        height - y - diagonal_step,
+    )
+    assert horizontal_wall <= current_wall + 0.001
+    assert diagonal_wall > current_wall + 0.001
+
+    baseline_clear = 178.6539
+    candidates = [(190.0, 10_000.0), (233.689697, -100.0)]
+    eligible = [row for row in candidates if row[0] >= baseline_clear + 20.0]
+    assert max(eligible, key=lambda row: row[1])[0] == 233.689697
 
 
 def test_v101_nonconvex_projectile_blend_falls_back_to_sampled_escape():
