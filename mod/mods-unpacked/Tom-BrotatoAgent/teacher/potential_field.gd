@@ -97,7 +97,16 @@ func compute_movement(state, profile) -> Vector2:
 				pos, enemies, bosses, projectiles, arena, _prev_move)
 		var smoothed_survival = (_prev_move * (1.0 - BotConfig.LATE_SURVIVAL_SMOOTHING)
 			+ survival_dir * BotConfig.LATE_SURVIVAL_SMOOTHING)
-		_prev_move = _normalize(smoothed_survival)
+		# v98: the late-survival branch used to return here before the final
+		# projectile and wall constraints. That allowed dense threats to push its
+		# command outward while physically pinned inside the hard wall margin.
+		# Apply the same ordered safety tail used by the finale before returning.
+		var safe_survival = _normalize(smoothed_survival)
+		safe_survival = _finale_projectile_safety(
+			pos, safe_survival, projectiles, player_speed, arena, enemies, bosses, profile)
+		safe_survival = _finale_wall_safety(
+			pos, safe_survival, arena, bosses, projectiles, player_speed)
+		_prev_move = safe_survival
 		return _prev_move
 	var finale = wave >= BotConfig.BOSS_FINALE_WAVE
 	var desire: Vector2

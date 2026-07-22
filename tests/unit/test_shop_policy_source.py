@@ -122,17 +122,17 @@ def test_v64_blood_donation_is_vetoed_for_gate_reliability():
     assert '"item_blood_donation": {"never": true}' in requirement_block
 
 
-def test_wp2_capture_build_versions_the_v97_centered_finale_policy():
+def test_wp2_capture_build_versions_the_v98_late_wall_safety_policy():
     manifest = MANIFEST.read_text(encoding="utf-8")
     controller = CONTROLLER.read_text(encoding="utf-8")
     telemetry = TELEMETRY.read_text(encoding="utf-8")
 
-    assert '"version_number": "0.2.5"' in manifest
-    assert "v97 deterministic teacher" in manifest
-    assert controller.count("teacher_v1-0.1.97-gun-wp1") == 1
-    assert controller.count("0.2.5-wp2-capture") == 1
-    assert telemetry.count("teacher_v1-0.1.97-gun-wp1") == 1
-    assert telemetry.count("0.2.5-wp2-capture") == 1
+    assert '"version_number": "0.2.6"' in manifest
+    assert "v98 deterministic teacher" in manifest
+    assert controller.count("teacher_v1-0.1.98-gun-wp1") == 1
+    assert controller.count("0.2.6-wp2-capture") == 1
+    assert telemetry.count("teacher_v1-0.1.98-gun-wp1") == 1
+    assert telemetry.count("0.2.6-wp2-capture") == 1
 
 
 def test_v84_item_audit_and_conditional_effect_corrections():
@@ -356,6 +356,25 @@ def test_v67_wave17_low_hp_survival_override_uses_repulsion_before_normal_kiting
     assert potential.index("wave >= BotConfig.LATE_SURVIVAL_WAVE") < potential.index(
         "var finale = wave >= BotConfig.BOSS_FINALE_WAVE"
     )
+
+
+def test_v98_late_survival_cannot_bypass_projectile_and_hard_wall_safety():
+    potential = POTENTIAL_FIELD.read_text(encoding="utf-8")
+    survival = potential.split(
+        "if (wave >= BotConfig.LATE_SURVIVAL_WAVE", 1
+    )[1].split(
+        "var finale = wave >= BotConfig.BOSS_FINALE_WAVE", 1
+    )[0]
+
+    normalized = survival.index("var safe_survival = _normalize(smoothed_survival)")
+    projectile = survival.index("safe_survival = _finale_projectile_safety(")
+    wall = survival.index("safe_survival = _finale_wall_safety(")
+    persistence = survival.index("_prev_move = safe_survival")
+    returned = survival.index("return _prev_move")
+    assert normalized < projectile < wall < persistence < returned
+    assert "projectiles, player_speed, arena, enemies, bosses, profile" in survival
+    assert "arena, bosses, projectiles, player_speed" in survival
+    assert "_prev_move = _normalize(smoothed_survival)" not in survival
 
 
 def test_v97_wave20_uses_centered_survival_without_a_boss_range_ring():
