@@ -46,3 +46,11 @@ The change is isolated in a dedicated commit so it can be reverted normally.
   recorded 555.295715), and its 300 ms projection remains outside every
   96-unit hard margin. The v101 gate replaces the 160.604614-clearance blend
   with that sampled escape.
+- Workshop and local deployment archives are byte-identical, contain 18 files,
+  and have SHA-256
+  `3687E49F5B6FBD50521137F8EA3ABF44B977990CEDF9620ECFC352D35B40FE99`.
+- The deployed manifest reports version `0.2.9` and the v101 teacher.
+- A stopped smoke launch reached `AgentController ready` with zero agent
+  parse/load errors and zero post-start APPCRASH evidence. The positively
+  identified smoke PID 28252 was stopped; Brotato is no longer running and
+  auto-start remains false.
