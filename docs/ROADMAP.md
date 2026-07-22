@@ -6,7 +6,7 @@ See also the director master roadmap. Work Package status:
 |-----------|--------|
 | M0 Environment audit | Complete (WP1) |
 | M1 Deterministic teacher + telemetry | **Complete** — v72 certified 18W/2L; v92 promoted; repository/safeguard closeout passed |
-| M2 Learned combat (WP2) | **In progress** — combat capture validated; v110 hold-horizon qualification and clean collection next |
+| M2 Learned combat (WP2) | **In progress** — combat capture validated; v110 smoke accepted; clean exact-20 collection next |
 | M3 Economy planner | Reframe pending (see note 3 below) |
 | M4 Robust D0 agent | Not started |
 | M5–M7 Danger curriculum / expert / characters | Not started |
