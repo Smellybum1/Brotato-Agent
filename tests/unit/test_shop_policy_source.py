@@ -122,16 +122,16 @@ def test_v64_blood_donation_is_vetoed_for_gate_reliability():
     assert '"item_blood_donation": {"never": true}' in requirement_block
 
 
-def test_wp2_capture_build_versions_the_v93_wall_safety_policy():
+def test_wp2_capture_build_versions_the_v94_projectile_safety_policy():
     manifest = MANIFEST.read_text(encoding="utf-8")
     controller = CONTROLLER.read_text(encoding="utf-8")
     telemetry = TELEMETRY.read_text(encoding="utf-8")
 
-    assert '"version_number": "0.2.1"' in manifest
-    assert controller.count("teacher_v1-0.1.93-gun-wp1") == 1
-    assert controller.count("0.2.1-wp2-capture") == 1
-    assert telemetry.count("teacher_v1-0.1.93-gun-wp1") == 1
-    assert telemetry.count("0.2.1-wp2-capture") == 1
+    assert '"version_number": "0.2.2"' in manifest
+    assert controller.count("teacher_v1-0.1.94-gun-wp1") == 1
+    assert controller.count("0.2.2-wp2-capture") == 1
+    assert telemetry.count("teacher_v1-0.1.94-gun-wp1") == 1
+    assert telemetry.count("0.2.2-wp2-capture") == 1
 
 
 def test_v84_item_audit_and_conditional_effect_corrections():
@@ -466,6 +466,36 @@ def test_v93_finale_wall_recovery_is_the_last_movement_constraint():
     assert "if pos.y <= margin and out.y < 0.0:" in hard_projection
     assert "elif pos.y >= h - margin and out.y > 0.0:" in hard_projection
     assert '"wall_recovery_active": _finale_wall_recovery_active' in potential
+
+
+def test_v94_finale_rechecks_projectiles_after_smoothing_and_before_wall_safety():
+    potential = POTENTIAL_FIELD.read_text(encoding="utf-8")
+
+    movement_tail = potential.split("var smoothed =", 1)[1].split(
+        "func _reset_finale_commit", 1
+    )[0]
+    smoothing = movement_tail.index("var final_move = _normalize(smoothed)")
+    projectile_safety = movement_tail.index(
+        "final_move = _finale_projectile_safety("
+    )
+    wall_safety = movement_tail.index("final_move = _finale_wall_safety(")
+    persistence = movement_tail.index("_prev_move = final_move")
+    assert smoothing < projectile_safety < wall_safety < persistence
+
+    safety = potential.split("func _finale_projectile_safety", 1)[1].split(
+        "func _finale_wall_safety", 1
+    )[0]
+    assert "_projectile_escape(" in safety
+    assert "arena, desired, enemies, bosses, profile, true" in safety
+    assert "_finale_projectile_input_clearance = float(result[2])" in safety
+    assert "_finale_projectile_escape_clearance = float(result[3])" in safety
+    assert "urgency * BotConfig.BOSS_FINALE_PROJ_URGENCY_MULT" in safety
+    assert "BotConfig.BOSS_FINALE_PROJ_URGENCY_FLOOR" in safety
+    assert "desired * (1.0 - urgency) + escape_dir * urgency" in safety
+    assert '"projectile_safety_active": _finale_projectile_safety_active' in potential
+    assert '"projectile_safety_urgency": _finale_projectile_safety_urgency' in potential
+    assert '"projectile_input_clearance": _finale_projectile_input_clearance' in potential
+    assert '"projectile_escape_clearance": _finale_projectile_escape_clearance' in potential
 
 
 def test_v74_preserves_early_hp_but_deemphasizes_it_after_wave_ten():

@@ -16,6 +16,10 @@ var _finale_commit_origin = Vector2.ZERO
 var _finale_commit_ticks := 0
 var _finale_commit_distance := 0.0
 var _finale_wall_recovery_active := false
+var _finale_projectile_safety_active := false
+var _finale_projectile_safety_urgency := 0.0
+var _finale_projectile_input_clearance := -1.0
+var _finale_projectile_escape_clearance := -1.0
 
 
 func compute_movement(state, profile) -> Vector2:
@@ -34,6 +38,10 @@ func compute_movement(state, profile) -> Vector2:
 	var arena = state.get("arena", {"width": 2048.0, "height": 1536.0})
 	var player_speed = float(player.get("speed", 350.0))
 	var can_attack_moving = state.get("can_attack_while_moving", true)
+	_finale_projectile_safety_active = false
+	_finale_projectile_safety_urgency = 0.0
+	_finale_projectile_input_clearance = -1.0
+	_finale_projectile_escape_clearance = -1.0
 
 	# FLEE-mode branches (Pacifist/Beast Master/Bull/Wounded etc).
 	if profile.flee_mode:
@@ -158,9 +166,12 @@ func compute_movement(state, profile) -> Vector2:
 	var smoothed = _prev_move * (1.0 - alpha) + combined * alpha
 	var final_move = _normalize(smoothed)
 	if finale:
-		# v93: this is deliberately the final movement transform. Earlier corner
-		# guards could be undone by contact escape and movement smoothing, leaving
-		# an outward command pinned against one or two arena boundaries.
+		# v94: re-evaluate projectile safety against the command that survived
+		# contact escape, commitment, reversal control, and movement smoothing.
+		# v93 wall safety remains last so projectile avoidance cannot point through
+		# an arena boundary while opening a safer lane.
+		final_move = _finale_projectile_safety(
+			pos, final_move, projectiles, player_speed, arena, enemies, bosses, profile)
 		final_move = _finale_wall_safety(
 			pos, final_move, arena, bosses, projectiles, player_speed)
 	_prev_move = final_move
@@ -266,6 +277,26 @@ func _best_finale_interior_lane(pos: Vector2, desired: Vector2, arena,
 	return _normalize(best_dir)
 
 
+func _finale_projectile_safety(pos: Vector2, desired: Vector2, projectiles,
+		player_speed: float, arena, enemies, bosses, profile) -> Vector2:
+	if projectiles.empty():
+		return desired
+	var result = _projectile_escape(
+		pos, projectiles, player_speed, arena, desired, enemies, bosses, profile, true)
+	var escape_dir: Vector2 = result[0]
+	var urgency := float(result[1])
+	_finale_projectile_input_clearance = float(result[2])
+	_finale_projectile_escape_clearance = float(result[3])
+	if escape_dir == Vector2.ZERO or urgency <= 0.0:
+		return desired
+	urgency = min(1.0, max(
+		urgency * BotConfig.BOSS_FINALE_PROJ_URGENCY_MULT,
+		BotConfig.BOSS_FINALE_PROJ_URGENCY_FLOOR))
+	_finale_projectile_safety_active = true
+	_finale_projectile_safety_urgency = urgency
+	return _normalize(desired * (1.0 - urgency) + escape_dir * urgency)
+
+
 func _finale_wall_safety(pos: Vector2, desired: Vector2, arena, bosses,
 		projectiles, player_speed: float) -> Vector2:
 	var wall_distance := _arena_wall_distance(pos, arena)
@@ -325,6 +356,10 @@ func finale_translation_debug() -> Dictionary:
 		"commit_x": _finale_commit_dir.x,
 		"commit_y": _finale_commit_dir.y,
 		"wall_recovery_active": _finale_wall_recovery_active,
+		"projectile_safety_active": _finale_projectile_safety_active,
+		"projectile_safety_urgency": _finale_projectile_safety_urgency,
+		"projectile_input_clearance": _finale_projectile_input_clearance,
+		"projectile_escape_clearance": _finale_projectile_escape_clearance,
 	}
 
 
@@ -895,7 +930,7 @@ func _projectile_escape(pos, projectiles, player_speed, arena, desire, enemies, 
 	var reach = player_speed * BotConfig.ESCAPE_HORIZON
 	var threats = _threatening_bullets(pos, projectiles, reach, caution)
 	if threats.empty():
-		return [Vector2.ZERO, 0.0]
+		return [Vector2.ZERO, 0.0, -1.0, -1.0]
 	var T = BotConfig.ESCAPE_TIME_SAMPLES
 	var horizon = BotConfig.ESCAPE_HORIZON
 	var times = []
@@ -917,6 +952,7 @@ func _projectile_escape(pos, projectiles, player_speed, arena, desire, enemies, 
 	var n_dirs = BotConfig.ESCAPE_DIRECTIONS
 	var best_dir = Vector2.ZERO
 	var best_score = -1.0e18
+	var best_clearance = -1.0
 	for k in range(n_dirs):
 		var ang = (TAU * k) / float(n_dirs)
 		var d = Vector2(cos(ang), sin(ang))
@@ -931,6 +967,7 @@ func _projectile_escape(pos, projectiles, player_speed, arena, desire, enemies, 
 		if score > best_score:
 			best_score = score
 			best_dir = d
+			best_clearance = clearance
 	var default_d = desire if desire.length() > 0 else Vector2.ZERO
 	var default_clear = _dir_clearance(pos, default_d, player_speed, bullets_t, times, arena)
 	var safe = BotConfig.ESCAPE_SAFE_CLEARANCE * caution
@@ -942,7 +979,7 @@ func _projectile_escape(pos, projectiles, player_speed, arena, desire, enemies, 
 		urgency = 1.0
 	else:
 		urgency = (safe - default_clear) / max(safe - panic, 1.0)
-	return [best_dir, urgency]
+	return [best_dir, urgency, default_clear, best_clearance]
 
 
 func _threatening_bullets(pos, projectiles, reach, caution = 1.0) -> Array:
