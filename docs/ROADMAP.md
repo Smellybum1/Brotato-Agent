@@ -6,7 +6,7 @@ See also the director master roadmap. Work Package status:
 |-----------|--------|
 | M0 Environment audit | Complete (WP1) |
 | M1 Deterministic teacher + telemetry | **Complete** — v72 certified 18W/2L; v92 promoted; repository/safeguard closeout passed |
-| M2 Learned combat (WP2) | **In progress** — combat capture validated; v99 all-late-wave safety collection next |
+| M2 Learned combat (WP2) | **In progress** — combat capture validated; v105 enemy-aware recovery qualification and clean collection next |
 | M3 Economy planner | Reframe pending (see note 3 below) |
 | M4 Robust D0 agent | Not started |
 | M5–M7 Danger curriculum / expert / characters | Not started |
@@ -133,19 +133,25 @@ prepared initial local commit and local `wp1-baseline` tag. WP1 is PASS.
 
 Implementation is now in the telemetry/data-collection prerequisite. The
 compatible `combat_capture` v2 envelope and provisional `combat_obs_v1`
-capacities are implemented and load-tested. Captures from v92-v98 exposed and
-repaired six teacher-label defects: voluntary finale corner stalls, a late
+capacities are implemented and load-tested. Captures from v92-v104 exposed and
+repaired teacher-label defects including voluntary finale corner stalls, a late
 transform overriding projectile avoidance, soft wall recovery replacing the final
 projectile-safe command, held movement crossing the hard wall margin between
 decisions, the wave-17–19 low-health early return bypassing the final
-projectile/wall safety stack, and the ordinary full-health wave-17 path bypassing
-the same predictive wall tail. The operator stopped v96 after four accepted runs and
+projectile/wall safety stack, the ordinary full-health wave-17 path bypassing
+the same predictive wall tail, wall-recovery hysteresis that released before
+opening usable space, recovery lanes that failed to improve the limiting wall,
+and wall recovery overriding crowd avoidance because its lane scorer omitted
+ordinary enemies. The operator stopped v96 after four accepted runs and
 requested that wave 20 no longer preserve a boss-range ring. The first v97 run
 then exposed the low-health late-wave wall bypass and was excluded together with
-its partial successor. The first v98 run exposed the remaining full-health path
-and is also excluded. A fresh v99-only 20-run capture set is the primary dataset source;
-earlier captures remain immutable diagnostic evidence and are not silently mixed
-into it.
+its partial successor. The first v98 run exposed the remaining full-health path.
+Subsequent v99-v104 runs iteratively qualified the ordered projectile, hard-wall,
+and recovery constraints; v104 then stopped at 5/20 when a wave-17 defeat proved
+that its wall-improving selector could still choose a denser enemy path over a
+safer wall-compatible lane. v105 adds predictive ordinary-enemy lane filtering.
+A fresh v105-only 20-run capture set is the primary dataset source; earlier
+captures remain immutable diagnostic evidence and are not silently mixed into it.
 
 Evidence-driven modifications to `Grok_4.5_Brotato_Work_Package_2_Prompt.md`
 (operator/director approval required — the directive says "unchanged", so these

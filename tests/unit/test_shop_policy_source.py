@@ -122,17 +122,17 @@ def test_v64_blood_donation_is_vetoed_for_gate_reliability():
     assert '"item_blood_donation": {"never": true}' in requirement_block
 
 
-def test_wp2_capture_build_versions_the_v104_strict_safety_policy():
+def test_wp2_capture_build_versions_the_v105_enemy_aware_recovery_policy():
     manifest = MANIFEST.read_text(encoding="utf-8")
     controller = CONTROLLER.read_text(encoding="utf-8")
     telemetry = TELEMETRY.read_text(encoding="utf-8")
 
-    assert '"version_number": "0.2.12"' in manifest
-    assert "v104 deterministic teacher" in manifest
-    assert controller.count("teacher_v1-0.1.104-gun-wp1") == 1
-    assert controller.count("0.2.12-wp2-capture") == 1
-    assert telemetry.count("teacher_v1-0.1.104-gun-wp1") == 1
-    assert telemetry.count("0.2.12-wp2-capture") == 1
+    assert '"version_number": "0.2.13"' in manifest
+    assert "v105 deterministic teacher" in manifest
+    assert controller.count("teacher_v1-0.1.105-gun-wp1") == 1
+    assert controller.count("0.2.13-wp2-capture") == 1
+    assert telemetry.count("teacher_v1-0.1.105-gun-wp1") == 1
+    assert telemetry.count("0.2.13-wp2-capture") == 1
 
 
 def test_v84_item_audit_and_conditional_effect_corrections():
@@ -615,8 +615,8 @@ def test_v100_hard_wall_rotation_replans_over_wall_safe_projectile_lanes():
     assert "_projectile_clearance_context(" in safety
     assert "candidate := _clamp_finale_wall_components(" in selector
     assert "clearance := _dir_clearance(" in selector
-    assert "penalty := _enemy_path_penalty(" in selector
-    assert "times, enemy_pts, 1.0" in selector
+    assert "penalty := _predictive_enemy_path_penalty(" in selector
+    assert "times, enemies, bosses, 1.0" in selector
     assert "BOSS_FINALE_PROJECTILE_WALL_MIN_GAIN" in selector
     assert '"projectile_final_clearance": _finale_projectile_final_clearance' in potential
     assert (
@@ -647,7 +647,7 @@ def test_v104_recovery_and_wall_replan_require_measurable_clearance_gain():
     clearance = selector.index("var clearance := _dir_clearance(")
     gain_gate = selector.index("if (clearance < baseline_clear")
     skip = selector.index("continue", gain_gate)
-    penalty = selector.index("var penalty := _enemy_path_penalty(")
+    penalty = selector.index("var penalty := _predictive_enemy_path_penalty(")
     choose = selector.index("found_clearer_lane = true")
     fallback = selector.index("if not found_clearer_lane:")
     assert clearance < gain_gate < skip < penalty < choose < fallback
@@ -674,6 +674,87 @@ def test_v104_recovery_and_wall_replan_require_measurable_clearance_gain():
     candidates = [(190.0, 10_000.0), (233.689697, -100.0)]
     eligible = [row for row in candidates if row[0] >= baseline_clear + 20.0]
     assert max(eligible, key=lambda row: row[1])[0] == 233.689697
+
+
+def test_v105_wall_recovery_filters_out_materially_denser_enemy_lanes():
+    config = CONFIG.read_text(encoding="utf-8")
+    potential = POTENTIAL_FIELD.read_text(encoding="utf-8")
+
+    for declaration in (
+        "const BOSS_FINALE_WALL_ENEMY_AVOID_CLEARANCE := 120.0",
+        "const BOSS_FINALE_WALL_ENEMY_CRITICAL_CLEARANCE := 45.0",
+        "const BOSS_FINALE_WALL_ENEMY_CRITICAL_WEIGHT := 0.02",
+        "const BOSS_FINALE_WALL_ENEMY_SCORE_WEIGHT := 4.0",
+        "const BOSS_FINALE_ENEMY_PENALTY_SLACK := 20.0",
+    ):
+        assert declaration in config
+
+    helper = potential.split("func _finale_enemy_path_penalty", 1)[1].split(
+        "func _finale_lane_score", 1
+    )[0]
+    assert 'float(enemy.get("vx", 0.0))' in helper
+    assert 'float(enemy.get("vy", 0.0))' in helper
+    assert 'float(enemy.get("radius", 18.0))' in helper
+    assert "enemy_pos + enemy_vel * future_sec" in helper
+    assert "critical_gap * critical_gap" in helper
+
+    selector = potential.split("func _best_finale_interior_lane", 1)[1].split(
+        "func _finale_projectile_safety", 1
+    )[0]
+    penalty = selector.index("var enemy_penalty := _finale_enemy_path_penalty(")
+    eligible = selector.index("if score <= -1.0e17:")
+    collect = selector.index("rows.append([candidate, score, enemy_penalty])")
+    second_pass = selector.index("for row in rows:")
+    safety_gate = selector.index(
+        "enemy_penalty > lowest_enemy_penalty", second_pass
+    )
+    choose = selector.index("if score > best_score:", safety_gate)
+    assert penalty < eligible < collect < second_pass < safety_gate < choose
+    assert "pos, desired, arena, enemies, bosses, projectiles, player_speed" in potential
+    for field in (
+        '"wall_input_enemy_penalty": _finale_wall_input_enemy_penalty',
+        '"wall_best_enemy_penalty": _finale_wall_best_enemy_penalty',
+        '"wall_selected_enemy_penalty": _finale_wall_selected_enemy_penalty',
+    ):
+        assert field in potential
+
+    predictive = potential.split("func _predictive_enemy_path_penalty", 1)[1].split(
+        "func _panic_dodge", 1
+    )[0]
+    assert 'float(threat.get("vx", 0.0))' in predictive
+    assert 'float(threat.get("vy", 0.0))' in predictive
+    assert 'float(threat.get("radius", 18.0))' in predictive
+    assert "threat_pos + threat_vel * future_sec" in predictive
+
+    projectile = potential.split("func _projectile_escape", 1)[1].split(
+        "func _projectile_clearance_context", 1
+    )[0]
+    assert "_predictive_enemy_path_penalty(" in projectile
+    tier = projectile.index("var clearance_floor := -1.0e18")
+    safe_tier = projectile.index("if max_clearance >= safe:", tier)
+    gate = projectile.index("if row_clearance < clearance_floor:", safe_tier)
+    pick = projectile.index("if row_score > best_score:", gate)
+    assert tier < safe_tier < gate < pick
+
+    blend = potential.split("func _finale_projectile_safety", 1)[1].split(
+        "func _finale_wall_safety", 1
+    )[0]
+    assert "_finale_projectile_blended_enemy_penalty" in blend
+    crowd_gate = blend.index(
+        "_finale_projectile_blended_enemy_penalty > crowd_safe_penalty"
+    )
+    crowd_return = blend.index("return crowd_safe_dir", crowd_gate)
+    assert crowd_gate < crowd_return
+
+    # Reduced reproduction of v104 run_1784735721_60788 capture 17413. Both
+    # candidates increase the limiting wall. The selected v104 lane crossed a
+    # pack (raw predictive penalty 280.075), whereas an adjacent wall-safe lane
+    # had 166.0. The v105 two-pass gate excludes the former before base score.
+    current_wall = 279.4
+    v104_wall, v104_penalty = 504.6, 280.075
+    safer_wall, safer_penalty = 409.4, 166.0
+    assert v104_wall > current_wall and safer_wall > current_wall
+    assert v104_penalty > safer_penalty + 20.0
 
 
 def test_v101_nonconvex_projectile_blend_falls_back_to_sampled_escape():

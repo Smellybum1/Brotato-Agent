@@ -152,6 +152,15 @@ const BOSS_FINALE_WALL_PROJECTILE_WEIGHT := 1.75
 const BOSS_FINALE_WALL_CENTER_WEIGHT := 110.0
 const BOSS_FINALE_WALL_DESIRE_WEIGHT := 25.0
 const BOSS_FINALE_WALL_CONTINUITY_WEIGHT := 20.0
+# v105: wall recovery remains a hard space-opening constraint, but ordinary
+# enemies are now a first-class lane-safety term.  The selector admits only
+# lanes close to the least crowded wall-improving option before the existing
+# wall/center/desire/continuity score breaks ties.
+const BOSS_FINALE_WALL_ENEMY_AVOID_CLEARANCE := 120.0
+const BOSS_FINALE_WALL_ENEMY_CRITICAL_CLEARANCE := 45.0
+const BOSS_FINALE_WALL_ENEMY_CRITICAL_WEIGHT := 0.02
+const BOSS_FINALE_WALL_ENEMY_SCORE_WEIGHT := 4.0
+const BOSS_FINALE_ENEMY_PENALTY_SLACK := 20.0
 # Battlefield: chase/destroy trees for crates through wave 10.
 const TREE_PRIORITY_WAVE := 10
 const TREE_ATTRACTION := 1450.0
