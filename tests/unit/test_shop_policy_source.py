@@ -122,17 +122,17 @@ def test_v64_blood_donation_is_vetoed_for_gate_reliability():
     assert '"item_blood_donation": {"never": true}' in requirement_block
 
 
-def test_wp2_capture_build_versions_the_v101_blend_safe_projectile_policy():
+def test_wp2_capture_build_versions_the_v102_latched_wall_recovery_policy():
     manifest = MANIFEST.read_text(encoding="utf-8")
     controller = CONTROLLER.read_text(encoding="utf-8")
     telemetry = TELEMETRY.read_text(encoding="utf-8")
 
-    assert '"version_number": "0.2.9"' in manifest
-    assert "v101 deterministic teacher" in manifest
-    assert controller.count("teacher_v1-0.1.101-gun-wp1") == 1
-    assert controller.count("0.2.9-wp2-capture") == 1
-    assert telemetry.count("teacher_v1-0.1.101-gun-wp1") == 1
-    assert telemetry.count("0.2.9-wp2-capture") == 1
+    assert '"version_number": "0.2.10"' in manifest
+    assert "v102 deterministic teacher" in manifest
+    assert controller.count("teacher_v1-0.1.102-gun-wp1") == 1
+    assert controller.count("0.2.10-wp2-capture") == 1
+    assert telemetry.count("teacher_v1-0.1.102-gun-wp1") == 1
+    assert telemetry.count("0.2.10-wp2-capture") == 1
 
 
 def test_v84_item_audit_and_conditional_effect_corrections():
@@ -388,6 +388,39 @@ def test_v99_every_late_wave_command_gets_final_projectile_and_wall_safety():
     wall = tail.index("final_move = _finale_wall_safety(")
     assert guard < projectile < wall
     assert "if finale:" not in tail[guard:projectile]
+
+
+def test_v102_late_wall_recovery_retains_hysteresis_until_release():
+    potential = POTENTIAL_FIELD.read_text(encoding="utf-8")
+    reset_block = potential.split(
+        "if wave < BotConfig.BOSS_FINALE_WAVE:", 1
+    )[1].split("var hp_ratio", 1)[0]
+
+    late_guard = reset_block.index("if wave < BotConfig.LATE_SURVIVAL_WAVE:")
+    reset = reset_block.index("_finale_wall_recovery_active = false")
+    assert late_guard < reset
+    assert reset_block.count("_finale_wall_recovery_active = false") == 1
+
+    safety = potential.split("func _finale_wall_safety", 1)[1].split(
+        "func _best_wall_safe_projectile_lane", 1
+    )[0]
+    assert "if _finale_wall_recovery_active:" in safety
+    assert "wall_distance >= BotConfig.BOSS_FINALE_WALL_RECOVERY_RELEASE" in safety
+    assert "wall_distance <= BotConfig.BOSS_FINALE_WALL_RECOVERY_ENTER" in safety
+
+    # Reproduce the v101 boundary trace: after entering at 279, recovery must
+    # stay active through intermediate 280-420 distances and release only past
+    # the configured 420-unit boundary.
+    active = False
+    trace = []
+    for wall_distance in (279.0, 284.0, 298.0, 277.0, 350.0, 419.0, 421.0):
+        if active:
+            if wall_distance >= 420.0:
+                active = False
+        elif wall_distance <= 280.0:
+            active = True
+        trace.append(active)
+    assert trace == [True, True, True, True, True, True, False]
 
 
 def test_v97_wave20_uses_centered_survival_without_a_boss_range_ring():

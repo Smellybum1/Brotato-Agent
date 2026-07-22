@@ -89,7 +89,13 @@ func compute_movement(state, profile) -> Vector2:
 	var wave: int = int(state.get("wave", 1))
 	if wave < BotConfig.BOSS_FINALE_WAVE:
 		_reset_finale_commit()
-		_finale_wall_recovery_active = false
+		# v102: v101 wave-19 evidence showed the late safety tail chattering at
+		# the 280-unit entry boundary because this reset discarded the intended
+		# 280/420 hysteresis before every waves 17-19 decision. Clear the latch
+		# only before late-wave wall safety becomes active; once entered on a
+		# late wave, recovery must persist until the 420-unit release boundary.
+		if wave < BotConfig.LATE_SURVIVAL_WAVE:
+			_finale_wall_recovery_active = false
 	var hp_ratio = float(player.get("hp", 1)) / max(float(player.get("max_hp", 1)), 1.0)
 	if (wave >= BotConfig.LATE_SURVIVAL_WAVE
 		and wave < BotConfig.BOSS_FINALE_WAVE
