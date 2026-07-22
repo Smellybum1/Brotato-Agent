@@ -67,8 +67,8 @@ def test_launch_game_uses_steam_route(tmp_path: Path, monkeypatch):
 
 def test_summary_fault_accepts_clean_current_terminal_summary():
     summary = {
-        "policy_version": "teacher_v1-0.1.99-gun-wp1",
-        "mod_version": "0.2.7-wp2-capture",
+        "policy_version": "teacher_v1-0.1.100-gun-wp1",
+        "mod_version": "0.2.8-wp2-capture",
         "telemetry_complete": True,
         "errors": 0,
         "hangs": 0,

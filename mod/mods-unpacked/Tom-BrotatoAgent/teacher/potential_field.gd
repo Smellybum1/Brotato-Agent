@@ -20,6 +20,8 @@ var _finale_projectile_safety_active := false
 var _finale_projectile_safety_urgency := 0.0
 var _finale_projectile_input_clearance := -1.0
 var _finale_projectile_escape_clearance := -1.0
+var _finale_projectile_final_clearance := -1.0
+var _finale_projectile_wall_replan_active := false
 
 
 func compute_movement(state, profile) -> Vector2:
@@ -42,6 +44,8 @@ func compute_movement(state, profile) -> Vector2:
 	_finale_projectile_safety_urgency = 0.0
 	_finale_projectile_input_clearance = -1.0
 	_finale_projectile_escape_clearance = -1.0
+	_finale_projectile_final_clearance = -1.0
+	_finale_projectile_wall_replan_active = false
 
 	# FLEE-mode branches (Pacifist/Beast Master/Bull/Wounded etc).
 	if profile.flee_mode:
@@ -105,7 +109,8 @@ func compute_movement(state, profile) -> Vector2:
 		safe_survival = _finale_projectile_safety(
 			pos, safe_survival, projectiles, player_speed, arena, enemies, bosses, profile)
 		safe_survival = _finale_wall_safety(
-			pos, safe_survival, arena, bosses, projectiles, player_speed)
+			pos, safe_survival, arena, bosses, projectiles, player_speed,
+			enemies, profile)
 		_prev_move = safe_survival
 		return _prev_move
 	var finale = wave >= BotConfig.BOSS_FINALE_WAVE
@@ -175,7 +180,8 @@ func compute_movement(state, profile) -> Vector2:
 		final_move = _finale_projectile_safety(
 			pos, final_move, projectiles, player_speed, arena, enemies, bosses, profile)
 		final_move = _finale_wall_safety(
-			pos, final_move, arena, bosses, projectiles, player_speed)
+			pos, final_move, arena, bosses, projectiles, player_speed,
+			enemies, profile)
 	_prev_move = final_move
 	return _prev_move
 
@@ -318,7 +324,7 @@ func _finale_projectile_safety(pos: Vector2, desired: Vector2, projectiles,
 
 
 func _finale_wall_safety(pos: Vector2, desired: Vector2, arena, bosses,
-		projectiles, player_speed: float) -> Vector2:
+		projectiles, player_speed: float, enemies = [], profile = null) -> Vector2:
 	var wall_distance := _arena_wall_distance(pos, arena)
 	if _finale_wall_recovery_active:
 		if wall_distance >= BotConfig.BOSS_FINALE_WALL_RECOVERY_RELEASE:
@@ -335,7 +341,79 @@ func _finale_wall_safety(pos: Vector2, desired: Vector2, arena, bosses,
 			pos, desired, arena, bosses, projectiles, player_speed)
 	# Hard projection is unconditional and runs after lane selection so no boss,
 	# projectile, continuity, or smoothing term can command movement through a wall.
-	return _clamp_finale_wall_components(pos, safe_desire, arena, player_speed)
+	var clamped := _clamp_finale_wall_components(
+		pos, safe_desire, arena, player_speed)
+	# v100: v99 telemetry proved that zeroing one unsafe wall component could turn
+	# a good diagonal dodge into a dangerous cardinal command. Only when the hard
+	# clamp materially rotates an active projectile-safe command, resample the same
+	# projectile/enemy objective over directions that survive the hard clamp.
+	var safe_n := _normalize(safe_desire)
+	var final_context := {}
+	if _finale_projectile_safety_active and not projectiles.empty():
+		final_context = _projectile_clearance_context(
+			pos, projectiles, player_speed, profile, true)
+	if (_finale_projectile_safety_active and not projectiles.empty()
+			and clamped.dot(safe_n) < 0.999 and not final_context.empty()):
+		var clamped_clear := _dir_clearance(
+			pos, clamped, player_speed, final_context["bullets_t"],
+			final_context["times"], arena)
+		var panic_clear := (
+			BotConfig.ESCAPE_PANIC_CLEARANCE * float(final_context["caution"]))
+		if clamped_clear < panic_clear:
+			var replanned := _best_wall_safe_projectile_lane(
+				pos, clamped, player_speed, arena, enemies, bosses, final_context)
+			if replanned != clamped:
+				clamped = replanned
+				_finale_projectile_wall_replan_active = true
+	if not final_context.empty():
+		_finale_projectile_final_clearance = _dir_clearance(
+			pos, clamped, player_speed, final_context["bullets_t"],
+			final_context["times"], arena)
+	return clamped
+
+
+func _best_wall_safe_projectile_lane(pos: Vector2, baseline: Vector2,
+		player_speed: float, arena, enemies, bosses, context: Dictionary) -> Vector2:
+	if context.empty():
+		return baseline
+	var times: Array = context["times"]
+	var bullets_t: Array = context["bullets_t"]
+	var enemy_pts := []
+	for enemy in enemies:
+		enemy_pts.append(Vector2(
+			float(enemy.get("x", 0.0)), float(enemy.get("y", 0.0))))
+	for boss in bosses:
+		enemy_pts.append(Vector2(
+			float(boss.get("x", 0.0)), float(boss.get("y", 0.0))))
+	var baseline_clear := _dir_clearance(
+		pos, baseline, player_speed, bullets_t, times, arena)
+	var baseline_penalty := _enemy_path_penalty(
+		pos, baseline, player_speed, times, enemy_pts, 1.0)
+	var best_dir := baseline
+	var best_clear := baseline_clear
+	var best_score := baseline_clear - baseline_penalty
+	best_score += BotConfig.ESCAPE_ALIGN_BONUS
+	if _prev_move.length() > 0.1:
+		best_score += BotConfig.BOSS_FINALE_ESCAPE_CONTINUITY * baseline.dot(_prev_move)
+	for k in range(BotConfig.ESCAPE_DIRECTIONS):
+		var angle := (TAU * k) / float(BotConfig.ESCAPE_DIRECTIONS)
+		var candidate := _clamp_finale_wall_components(
+			pos, Vector2(cos(angle), sin(angle)), arena, player_speed)
+		var clearance := _dir_clearance(
+			pos, candidate, player_speed, bullets_t, times, arena)
+		var penalty := _enemy_path_penalty(
+			pos, candidate, player_speed, times, enemy_pts, 1.0)
+		var score := clearance - penalty
+		score += BotConfig.ESCAPE_ALIGN_BONUS * candidate.dot(baseline)
+		if _prev_move.length() > 0.1:
+			score += BotConfig.BOSS_FINALE_ESCAPE_CONTINUITY * candidate.dot(_prev_move)
+		if score > best_score:
+			best_score = score
+			best_dir = candidate
+			best_clear = clearance
+	if best_clear < baseline_clear + BotConfig.BOSS_FINALE_PROJECTILE_WALL_MIN_GAIN:
+		return baseline
+	return best_dir
 
 
 func _finale_committed_escape(pos: Vector2, desired: Vector2, arena, bosses) -> Vector2:
@@ -384,6 +462,8 @@ func finale_translation_debug() -> Dictionary:
 		"projectile_safety_urgency": _finale_projectile_safety_urgency,
 		"projectile_input_clearance": _finale_projectile_input_clearance,
 		"projectile_escape_clearance": _finale_projectile_escape_clearance,
+		"projectile_final_clearance": _finale_projectile_final_clearance,
+		"projectile_wall_replan_active": _finale_projectile_wall_replan_active,
 	}
 
 
@@ -871,28 +951,13 @@ func _closest_approach(pos, obj) -> Vector2:
 # ─────────────────────── projectile escape (default kiter dodge) ──────────────
 
 func _projectile_escape(pos, projectiles, player_speed, arena, desire, enemies, bosses, profile = null, finale = false) -> Array:
-	var caution = 1.0
-	if profile != null:
-		caution = max(float(profile.dodge_caution), 0.5)
-	if finale:
-		caution *= BotConfig.BOSS_FINALE_PROJ_CAUTION
-	var reach = player_speed * BotConfig.ESCAPE_HORIZON
-	var threats = _threatening_bullets(pos, projectiles, reach, caution)
-	if threats.empty():
+	var context := _projectile_clearance_context(
+		pos, projectiles, player_speed, profile, finale)
+	if context.empty():
 		return [Vector2.ZERO, 0.0, -1.0, -1.0]
-	var T = BotConfig.ESCAPE_TIME_SAMPLES
-	var horizon = BotConfig.ESCAPE_HORIZON
-	var times = []
-	for i in range(T):
-		var t = (float(i) / max(T - 1, 1)) * horizon
-		times.append(t)
-	var bullets_t = []
-	for ti in range(T):
-		var ts = times[ti]
-		var row = []
-		for tr in threats:
-			row.append(tr[0] + tr[1] * ts)
-		bullets_t.append(row)
+	var caution := float(context["caution"])
+	var times: Array = context["times"]
+	var bullets_t: Array = context["bullets_t"]
 	var enemy_pts = []
 	for e in enemies:
 		enemy_pts.append(Vector2(e.get("x", 0.0), e.get("y", 0.0)))
@@ -929,6 +994,37 @@ func _projectile_escape(pos, projectiles, player_speed, arena, desire, enemies, 
 	else:
 		urgency = (safe - default_clear) / max(safe - panic, 1.0)
 	return [best_dir, urgency, default_clear, best_clearance]
+
+
+func _projectile_clearance_context(pos, projectiles, player_speed, profile = null,
+		finale = false) -> Dictionary:
+	var caution = 1.0
+	if profile != null:
+		caution = max(float(profile.dodge_caution), 0.5)
+	if finale:
+		caution *= BotConfig.BOSS_FINALE_PROJ_CAUTION
+	var reach = player_speed * BotConfig.ESCAPE_HORIZON
+	var threats = _threatening_bullets(pos, projectiles, reach, caution)
+	if threats.empty():
+		return {}
+	var sample_count = BotConfig.ESCAPE_TIME_SAMPLES
+	var horizon = BotConfig.ESCAPE_HORIZON
+	var times = []
+	for i in range(sample_count):
+		var t = (float(i) / max(sample_count - 1, 1)) * horizon
+		times.append(t)
+	var bullets_t = []
+	for ti in range(sample_count):
+		var ts = times[ti]
+		var row = []
+		for threat in threats:
+			row.append(threat[0] + threat[1] * ts)
+		bullets_t.append(row)
+	return {
+		"caution": caution,
+		"times": times,
+		"bullets_t": bullets_t,
+	}
 
 
 func _threatening_bullets(pos, projectiles, reach, caution = 1.0) -> Array:

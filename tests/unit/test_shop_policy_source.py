@@ -122,17 +122,17 @@ def test_v64_blood_donation_is_vetoed_for_gate_reliability():
     assert '"item_blood_donation": {"never": true}' in requirement_block
 
 
-def test_wp2_capture_build_versions_the_v99_all_late_wall_safety_policy():
+def test_wp2_capture_build_versions_the_v100_wall_safe_projectile_policy():
     manifest = MANIFEST.read_text(encoding="utf-8")
     controller = CONTROLLER.read_text(encoding="utf-8")
     telemetry = TELEMETRY.read_text(encoding="utf-8")
 
-    assert '"version_number": "0.2.7"' in manifest
-    assert "v99 deterministic teacher" in manifest
-    assert controller.count("teacher_v1-0.1.99-gun-wp1") == 1
-    assert controller.count("0.2.7-wp2-capture") == 1
-    assert telemetry.count("teacher_v1-0.1.99-gun-wp1") == 1
-    assert telemetry.count("0.2.7-wp2-capture") == 1
+    assert '"version_number": "0.2.8"' in manifest
+    assert "v100 deterministic teacher" in manifest
+    assert controller.count("teacher_v1-0.1.100-gun-wp1") == 1
+    assert controller.count("0.2.8-wp2-capture") == 1
+    assert telemetry.count("teacher_v1-0.1.100-gun-wp1") == 1
+    assert telemetry.count("0.2.8-wp2-capture") == 1
 
 
 def test_v84_item_audit_and_conditional_effect_corrections():
@@ -477,7 +477,7 @@ def test_v93_finale_wall_recovery_is_the_last_movement_constraint():
     assert safety_call < persistence
 
     safety = potential.split("func _finale_wall_safety", 1)[1].split(
-        "func _finale_committed_escape", 1
+        "func _best_wall_safe_projectile_lane", 1
     )[0]
     assert (
         "if _finale_wall_recovery_active and not _finale_projectile_safety_active:"
@@ -485,9 +485,7 @@ def test_v93_finale_wall_recovery_is_the_last_movement_constraint():
     )
     assert "wall_distance >= BotConfig.BOSS_FINALE_WALL_RECOVERY_RELEASE" in safety
     assert "wall_distance <= BotConfig.BOSS_FINALE_WALL_RECOVERY_ENTER" in safety
-    assert safety.rstrip().endswith(
-        "return _clamp_finale_wall_components(pos, safe_desire, arena, player_speed)"
-    )
+    assert safety.rstrip().endswith("return clamped")
 
     hard_projection = potential.split("func _clamp_finale_wall_components", 1)[1].split(
         "func _finale_lane_score", 1
@@ -532,7 +530,7 @@ def test_v94_finale_rechecks_projectiles_after_smoothing_and_before_wall_safety(
 def test_v95_soft_wall_recovery_cannot_override_active_projectile_safety():
     potential = POTENTIAL_FIELD.read_text(encoding="utf-8")
     safety = potential.split("func _finale_wall_safety", 1)[1].split(
-        "func _finale_committed_escape", 1
+        "func _best_wall_safe_projectile_lane", 1
     )[0]
 
     assert (
@@ -542,9 +540,7 @@ def test_v95_soft_wall_recovery_cannot_override_active_projectile_safety():
     assert safety.index("not _finale_projectile_safety_active") < safety.index(
         "_best_finale_interior_lane("
     )
-    assert safety.rstrip().endswith(
-        "return _clamp_finale_wall_components(pos, safe_desire, arena, player_speed)"
-    )
+    assert safety.rstrip().endswith("return clamped")
 
 
 def test_v96_hard_wall_projection_covers_the_held_command_horizon():
@@ -561,6 +557,38 @@ def test_v96_hard_wall_projection_covers_the_held_command_horizon():
     assert projection.count("projected = pos + out * travel") == 1
     assert projection.index("out = _normalize(out)") < projection.index(
         "projected = pos + out * travel"
+    )
+
+
+def test_v100_hard_wall_rotation_replans_over_wall_safe_projectile_lanes():
+    config = CONFIG.read_text(encoding="utf-8")
+    potential = POTENTIAL_FIELD.read_text(encoding="utf-8")
+
+    assert "const BOSS_FINALE_PROJECTILE_WALL_MIN_GAIN := 20.0" in config
+    safety = potential.split("func _finale_wall_safety", 1)[1].split(
+        "func _best_wall_safe_projectile_lane", 1
+    )[0]
+    hard_clamp = safety.index("var clamped := _clamp_finale_wall_components(")
+    rotation_check = safety.index("clamped.dot(safe_n) < 0.999")
+    panic_check = safety.index("if clamped_clear < panic_clear:")
+    replan = safety.index("_best_wall_safe_projectile_lane(")
+    final_clearance = safety.index("_finale_projectile_final_clearance =")
+    assert hard_clamp < rotation_check < panic_check < replan < final_clearance
+
+    selector = potential.split("func _best_wall_safe_projectile_lane", 1)[1].split(
+        "func _finale_committed_escape", 1
+    )[0]
+    assert "context: Dictionary" in selector
+    assert "_projectile_clearance_context(" in safety
+    assert "candidate := _clamp_finale_wall_components(" in selector
+    assert "clearance := _dir_clearance(" in selector
+    assert "penalty := _enemy_path_penalty(" in selector
+    assert "times, enemy_pts, 1.0" in selector
+    assert "BOSS_FINALE_PROJECTILE_WALL_MIN_GAIN" in selector
+    assert '"projectile_final_clearance": _finale_projectile_final_clearance' in potential
+    assert (
+        '"projectile_wall_replan_active": _finale_projectile_wall_replan_active'
+        in potential
     )
 
 
