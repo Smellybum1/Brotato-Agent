@@ -1,0 +1,36 @@
+import json
+from pathlib import Path
+
+from scripts.wp2_collect_teacher import atomic_json, latest_capture, summary_fault, tail_lines
+
+
+def test_atomic_json_and_tail_lines(tmp_path: Path):
+    path = tmp_path / "state.json"
+    atomic_json(path, {"status": "running"})
+    assert json.loads(path.read_text(encoding="utf-8")) == {"status": "running"}
+    events = tmp_path / "events.jsonl"
+    events.write_text("\n".join(str(index) for index in range(100)) + "\n", encoding="utf-8")
+    assert tail_lines(events, 3) == ["97", "98", "99"]
+
+
+def test_latest_capture_skips_partial_tail_line():
+    complete = json.dumps({"event": "combat_capture", "payload": {"wave": 3}})
+    assert latest_capture([complete, '{"event":"combat_capture"']) == {
+        "event": "combat_capture",
+        "payload": {"wave": 3},
+    }
+
+
+def test_summary_fault_accepts_clean_v92_terminal_summary():
+    summary = {
+        "policy_version": "teacher_v1-0.1.92-gun-wp1",
+        "mod_version": "0.2.0-wp2-capture",
+        "telemetry_complete": True,
+        "errors": 0,
+        "hangs": 0,
+        "illegal_actions": 0,
+        "result": "defeat",
+    }
+    assert summary_fault(summary) is None
+    summary["errors"] = 1
+    assert summary_fault(summary) == "errors=1"
