@@ -35,7 +35,7 @@ def test_damage_audit_allows_only_the_bounded_projectile_concession():
         "projectile_escape_clearance": 100.0,
         "projectile_final_clearance": 40.0,
         "body_best_clearance": 70.0,
-        "body_selected_clearance": 45.0,
+        "body_selected_clearance": 50.0,
     }
     unsafe = {**safe, "projectile_final_clearance": 39.0}
 
@@ -65,7 +65,26 @@ def test_body_emergency_audit_requires_near_best_escape():
     emergency = {"body_best_clearance": 86.5, "body_emergency_active": True}
 
     assert _required_body_floor(ordinary) == 45.0
+    assert _required_body_floor(ordinary, True) == 66.5
     assert _required_body_floor(emergency) == 81.5
+
+
+def test_v110_ordinary_body_tier_rejects_observed_worse_pack_lane():
+    # Frozen v109 exact-20 run 2 capture 21282. Both lanes passed the active
+    # projectile tier, but the emitted route gave away 57.7 units of body
+    # clearance and was followed by a 20-damage hit one capture later.
+    observed = {
+        "wave": 20,
+        "projectile_escape_clearance": 223.772247,
+        "projectile_final_clearance": 304.690308,
+        "body_best_clearance": 182.581696,
+        "body_selected_clearance": 124.864822,
+    }
+
+    assert _required_body_floor(observed, True) == 160.0
+    assert _avoidable_damage_violations([observed])[0]["reasons"] == [
+        "selected body path missed the required near-best tier"
+    ]
 
 
 def test_projectile_floor_unavailable_only_accepts_unchanged_no_repair_fallback():

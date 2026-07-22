@@ -6,7 +6,7 @@ See also the director master roadmap. Work Package status:
 |-----------|--------|
 | M0 Environment audit | Complete (WP1) |
 | M1 Deterministic teacher + telemetry | **Complete** — v72 certified 18W/2L; v92 promoted; repository/safeguard closeout passed |
-| M2 Learned combat (WP2) | **In progress** — combat capture validated; v109 sampled-lane qualification and clean collection next |
+| M2 Learned combat (WP2) | **In progress** — combat capture validated; v110 hold-horizon qualification and clean collection next |
 | M3 Economy planner | Reframe pending (see note 3 below) |
 | M4 Robust D0 agent | Not started |
 | M5–M7 Danger curriculum / expert / characters | Not started |
@@ -174,8 +174,21 @@ clearance, while a lane costing 45.6 projectile-clearance units remained above
 panic and opened 86.5 body clearance. v109 removes non-sampled clamp fallbacks
 and permits that bounded body escape only for a gain of at least 20 units,
 requiring the final choice to stay within five units of the best body lane. A
-fresh v109-only 20-run capture set is the primary dataset source; earlier
-captures remain immutable diagnostic evidence and are not silently mixed into it.
+The second v109 exact-20 source then exposed four wave-20 captures where a
+command that was safe at its 20 Hz decision origin no longer passed a fresh
+300 ms projection on the intervening 60 Hz ticks. The player did not cross the
+hard margin, but the stronger continuous hold contract correctly rejected the
+source. v110 extends the decision-time projection by one full 50 ms recompute
+interval, preserving a 300 ms safety reserve throughout the hold. Operator
+review of that terminal sequence also identified a route through the pack;
+frozen capture 21282 retained only 124.9 body-clearance units despite a
+same-projectile-tier sampled lane with 182.6. v110 therefore requires ordinary
+wave-20 body lanes to retain up to 160 clearance units when the same projectile
+tier exposes them, staying within 20 units of the best lane below that cap and
+preserving the existing 45-unit contact-safe floor. Waves 17-19 remain
+unchanged. A fresh v110-only 20-run capture set is the primary dataset source;
+earlier captures remain immutable diagnostic evidence and are not silently
+mixed into it.
 
 Evidence-driven modifications to `Grok_4.5_Brotato_Work_Package_2_Prompt.md`
 (operator/director approval required — the directive says "unchanged", so these

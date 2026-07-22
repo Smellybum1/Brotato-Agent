@@ -123,17 +123,17 @@ def test_v64_blood_donation_is_vetoed_for_gate_reliability():
     assert '"item_blood_donation": {"never": true}' in requirement_block
 
 
-def test_wp2_capture_build_versions_the_v109_sampled_body_lane_policy():
+def test_wp2_capture_build_versions_the_v110_hold_horizon_policy():
     manifest = MANIFEST.read_text(encoding="utf-8")
     controller = CONTROLLER.read_text(encoding="utf-8")
     telemetry = TELEMETRY.read_text(encoding="utf-8")
 
-    assert '"version_number": "0.2.17"' in manifest
-    assert "v109 deterministic teacher" in manifest
-    assert controller.count("teacher_v1-0.1.109-gun-wp1") == 1
-    assert controller.count("0.2.17-wp2-capture") == 1
-    assert telemetry.count("teacher_v1-0.1.109-gun-wp1") == 1
-    assert telemetry.count("0.2.17-wp2-capture") == 1
+    assert '"version_number": "0.2.18"' in manifest
+    assert "v110 deterministic teacher" in manifest
+    assert controller.count("teacher_v1-0.1.110-gun-wp1") == 1
+    assert controller.count("0.2.18-wp2-capture") == 1
+    assert telemetry.count("teacher_v1-0.1.110-gun-wp1") == 1
+    assert telemetry.count("0.2.18-wp2-capture") == 1
 
 
 def test_v84_item_audit_and_conditional_effect_corrections():
@@ -577,11 +577,12 @@ def test_v95_soft_wall_recovery_cannot_override_active_projectile_safety():
     assert safety.rstrip().endswith("return clamped")
 
 
-def test_v96_hard_wall_projection_covers_the_held_command_horizon():
+def test_v110_hard_wall_projection_reserves_a_full_recompute_interval():
     config = CONFIG.read_text(encoding="utf-8")
     potential = POTENTIAL_FIELD.read_text(encoding="utf-8")
 
-    assert "const BOSS_FINALE_WALL_COMMAND_HORIZON := 0.30" in config
+    assert "const BOSS_FINALE_RECOMPUTE_DIVISOR := 3" in config
+    assert "const BOSS_FINALE_WALL_COMMAND_HORIZON := 0.35" in config
     projection = potential.split("func _clamp_finale_wall_components", 1)[1].split(
         "func _finale_lane_score", 1
     )[0]
@@ -996,6 +997,31 @@ def test_v109_bounded_projectile_concession_prefers_materially_clearer_body_lane
     assert escape_projectile >= panic
     assert escape_body >= strict_body + 20.0
     assert strict_body < escape_body - 5.0
+
+
+def test_v110_final_body_gate_stays_near_best_inside_the_projectile_tier():
+    potential = POTENTIAL_FIELD.read_text(encoding="utf-8")
+    safety = potential.split("func _finale_body_safety", 1)[1].split(
+        "func _finale_committed_escape", 1
+    )[0]
+    ordinary_floor = safety.split(
+        "elif (enforce_pack_clearance",
+        1,
+    )[1].split("else:", 1)[0]
+
+    assert "projectiles, profile, finale)" in potential
+    assert "enforce_pack_clearance := false" in safety
+    assert "body_floor = max(" in ordinary_floor
+    assert "BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE" in ordinary_floor
+    assert "BotConfig.BOSS_FINALE_BODY_PACK_CLEARANCE" in ordinary_floor
+    assert "BotConfig.BOSS_FINALE_BODY_CLEARANCE_SLACK" in ordinary_floor
+
+    # Frozen v109 exact-20 run 2 capture 21282. The selected lane and a much
+    # clearer alternative both satisfied the active projectile tier.
+    selected_body = 124.864822
+    best_body = 182.581696
+    required_body = max(45.0, min(160.0, best_body - 20.0))
+    assert selected_body < required_body
 
 
 def test_v101_nonconvex_projectile_blend_falls_back_to_sampled_escape():

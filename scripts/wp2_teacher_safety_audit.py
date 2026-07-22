@@ -15,6 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 LATE_WAVE = 17
 BODY_TIER = 45.0
 BODY_SLACK = 20.0
+BODY_PACK_CLEARANCE = 160.0
 BODY_EMERGENCY_SLACK = 5.0
 HARD_WALL_MARGIN = 96.0
 COMMAND_HORIZON_SEC = 0.30
@@ -39,10 +40,14 @@ def _normalise(action: dict[str, Any]) -> tuple[float, float] | None:
     return x / magnitude, y / magnitude
 
 
-def _required_body_floor(debug: dict[str, Any]) -> float:
+def _required_body_floor(
+    debug: dict[str, Any], enforce_pack_clearance: bool = False
+) -> float:
     best_clearance = float(debug["body_best_clearance"])
     if bool(debug.get("body_emergency_active", False)):
         return best_clearance - BODY_EMERGENCY_SLACK
+    if enforce_pack_clearance and best_clearance >= BODY_TIER:
+        return max(BODY_TIER, min(BODY_PACK_CLEARANCE, best_clearance - BODY_SLACK))
     if best_clearance >= BODY_TIER:
         return BODY_TIER
     return best_clearance - BODY_SLACK
@@ -181,6 +186,7 @@ def _late_damage_rows(events: list[dict[str, Any]], first_late_ts: int | None) -
                     "projectile_final_clearance": debug.get("projectile_final_clearance"),
                     "body_best_clearance": debug.get("body_best_clearance"),
                     "body_selected_clearance": debug.get("body_selected_clearance"),
+                    "body_emergency_active": debug.get("body_emergency_active", False),
                 }
             )
         rows.append(row)
@@ -205,8 +211,10 @@ def _avoidable_damage_violations(rows: list[dict[str, Any]]) -> list[dict[str, A
             and not body_emergency_is_best_available
         ):
             reasons.append("projectile concession exceeds 60 units")
-        if body_best >= BODY_TIER and body_selected < BODY_TIER - FLOAT_TOLERANCE:
-            reasons.append("selected body path missed available 45-unit tier")
+        if body_best >= 0.0:
+            required_body = _required_body_floor(row, int(row.get("wave", 0)) >= 20)
+            if body_selected < required_body - FLOAT_TOLERANCE:
+                reasons.append("selected body path missed the required near-best tier")
         if reasons:
             violations.append({**row, "reasons": reasons})
     return violations
@@ -260,7 +268,7 @@ def audit_run(
         input_clearance = float(debug["body_input_clearance"])
         best_clearance = float(debug["body_best_clearance"])
         selected_clearance = float(debug["body_selected_clearance"])
-        body_floor = _required_body_floor(debug)
+        body_floor = _required_body_floor(debug, int(payload.get("wave", 0)) >= 20)
         active_body_emergencies += bool(debug.get("body_emergency_active", False))
         if selected_clearance < body_floor - FLOAT_TOLERANCE:
             body_tier_violations.append(

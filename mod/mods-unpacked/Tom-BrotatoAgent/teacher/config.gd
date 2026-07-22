@@ -139,7 +139,10 @@ const BOSS_FINALE_WALL_HARD_MARGIN := 96.0
 # v96: combat decisions persist for roughly 250 ms. Project the final command
 # slightly beyond that hold so a command selected just outside the hard margin
 # cannot carry the player through it before the next decision.
-const BOSS_FINALE_WALL_COMMAND_HORIZON := 0.30
+# v110: wave 20 recomputes at 20 Hz. Reserve one complete 50 ms control
+# interval beyond the audited 300 ms hold so the command remains 300 ms-safe
+# from every intervening 60 Hz physics tick, not only its decision origin.
+const BOSS_FINALE_WALL_COMMAND_HORIZON := 0.35
 # v100: the hard component clamp can rotate a projectile-safe diagonal into a
 # dangerous cardinal command. Require a material clearance gain before a
 # wall-safe projectile replan replaces the clamped baseline.
@@ -161,11 +164,15 @@ const BOSS_FINALE_WALL_ENEMY_CRITICAL_CLEARANCE := 45.0
 const BOSS_FINALE_WALL_ENEMY_CRITICAL_WEIGHT := 0.02
 const BOSS_FINALE_WALL_ENEMY_SCORE_WEIGHT := 4.0
 const BOSS_FINALE_ENEMY_PENALTY_SLACK := 20.0
-# v106: a soft aggregate crowd score must never buy wall/projectile clearance
-# by predicting a body collision. Preserve a contact-safe lane when one exists;
-# if every lane is contact-dangerous, stay close to the best body clearance.
+# v106/v110: a soft aggregate crowd score must never buy wall/projectile
+# clearance with a bad body route. Preserve a contact-safe lane when one exists
+# and stay within the configured slack of the clearest same-tier lane; if every
+# lane is contact-dangerous, the same near-best rule still applies.
 const BOSS_FINALE_BODY_CRITICAL_CLEARANCE := 45.0
 const BOSS_FINALE_BODY_CLEARANCE_SLACK := 20.0
+# On wave 20, prefer a genuinely open lane when the active projectile tier
+# exposes one; body-clearance values above this cap are already comfortably open.
+const BOSS_FINALE_BODY_PACK_CLEARANCE := 160.0
 # If a bounded projectile tier hides a materially clearer body lane, an
 # emergency concession may broaden the projectile tier by at most 60 units and
 # never below panic while a panic-safe lane exists. In that exceptional case

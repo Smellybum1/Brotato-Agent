@@ -245,7 +245,7 @@ func compute_movement(state, profile) -> Vector2:
 			enemies, profile)
 		final_move = _finale_body_safety(
 			pos, final_move, player_speed, arena, enemies, bosses,
-			projectiles, profile)
+			projectiles, profile, finale)
 	_prev_move = final_move
 	return _prev_move
 
@@ -694,7 +694,8 @@ func _best_wall_safe_projectile_lane(pos: Vector2, baseline: Vector2,
 
 
 func _finale_body_safety(pos: Vector2, desired: Vector2, player_speed: float,
-		arena, enemies, bosses, projectiles, profile) -> Vector2:
+		arena, enemies, bosses, projectiles, profile,
+		enforce_pack_clearance := false) -> Vector2:
 	# v107: projectile selection and wall projection each reasoned about body
 	# clearance, but the final wall clamp could rotate a safe diagonal back through
 	# a pack. Ordinary late movement also had no final body gate at all. Re-sample
@@ -829,6 +830,18 @@ func _finale_body_safety(pos: Vector2, desired: Vector2, player_speed: float,
 	if body_emergency_active:
 		body_floor = (highest_body_clearance
 			- BotConfig.BOSS_FINALE_BODY_EMERGENCY_CLEARANCE_SLACK)
+	elif (enforce_pack_clearance
+			and highest_body_clearance
+				>= BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE):
+		# v110: once a projectile-tier-safe lane has opened meaningful body
+		# clearance on the boss wave, prefer a genuinely open route and stay
+		# close to the best lane until the capped clearance is reached. The old
+		# fixed 45-unit floor could admit a visibly worse route through a pack.
+		body_floor = max(
+			BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE,
+			min(BotConfig.BOSS_FINALE_BODY_PACK_CLEARANCE,
+				highest_body_clearance
+					- BotConfig.BOSS_FINALE_BODY_CLEARANCE_SLACK))
 	elif highest_body_clearance >= BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE:
 		body_floor = BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE
 	else:
