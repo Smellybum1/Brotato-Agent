@@ -45,5 +45,15 @@ passed their capture-level audits; they are not changed here.
 - Expected capture schema hash:
   `95B6444796A21FD44E94113B75BA2097BC381D5F72ED784F9B9A4A99DD46D951`.
 
-Deployment and fresh runtime collection evidence are recorded separately after
-the tested source is packaged.
+## Deployment verification
+
+- Packaged and deployed `Tom-BrotatoAgent.zip` with 18 entries, 325,225 bytes,
+  SHA-256
+  `CD156A5C535A6175A28297B1BC43678F9689A8C150214F29F55BAB937E440D3E`.
+- The stopped load smoke reached `AgentController ready` at 22:34:17 with zero
+  matching script, parse, load, or exception faults in the ModLoader tail.
+- The positively identified smoke Brotato process was stopped; no Brotato or
+  teacher-collector process remains, auto-start is false, and no post-smoke
+  Brotato APPCRASH event was found.
+
+Fresh v102-only runtime collection evidence is recorded separately.
