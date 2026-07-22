@@ -6,7 +6,7 @@ See also the director master roadmap. Work Package status:
 |-----------|--------|
 | M0 Environment audit | Complete (WP1) |
 | M1 Deterministic teacher + telemetry | **Complete** — v72 certified 18W/2L; v92 promoted; repository/safeguard closeout passed |
-| M2 Learned combat (WP2) | **In progress** — combat capture validated; v107 final body-safety qualification and clean collection next |
+| M2 Learned combat (WP2) | **In progress** — combat capture validated; v108 projectile-floor qualification and clean collection next |
 | M3 Economy planner | Reframe pending (see note 3 below) |
 | M4 Robust D0 agent | Not started |
 | M5–M7 Danger curriculum / expert / characters | Not started |
@@ -155,9 +155,17 @@ projectile clearance remained lexically above predicted body clearance. v106
 added contact-clearance tiers inside the wall and projectile selectors, but its
 winning isolated smoke proved that the final wall clamp could reintroduce an
 unsafe body path and that ordinary late movement still lacked a final body gate.
-v107 adds a post-clamp body-safety pass that preserves projectile tiers and active
-wall recovery while rejecting avoidable pack entry. A fresh v107-only 20-run
-capture set is the primary dataset source; earlier
+v107 added a post-clamp body-safety pass that preserves projectile tiers and
+active wall recovery while rejecting avoidable pack entry. Its first exact-20
+run passed every body and wall invariant but exposed a remaining ordering gap:
+active wall recovery reduced the projectile reference used by final body repair,
+allowing a 77.5-unit clearance concession immediately before 20 damage. The
+same frozen decision also chose a body lane 8.4 units worse than the best
+available escape, matching the observed path through the pack. v108 anchors
+the ordinary projectile concession to the already-emitted escape. If that
+strict tier predicts body overlap, it may broaden only as a body emergency and
+must stay within five units of the best available body lane. A fresh v108-only
+20-run capture set is the primary dataset source; earlier
 captures remain immutable diagnostic evidence and are not silently mixed into it.
 
 Evidence-driven modifications to `Grok_4.5_Brotato_Work_Package_2_Prompt.md`

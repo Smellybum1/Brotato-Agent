@@ -15,6 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 LATE_WAVE = 17
 BODY_TIER = 45.0
 BODY_SLACK = 20.0
+BODY_EMERGENCY_SLACK = 5.0
 HARD_WALL_MARGIN = 96.0
 COMMAND_HORIZON_SEC = 0.30
 WALL_LOOKAHEAD = 260.0
@@ -160,7 +161,15 @@ def _avoidable_damage_violations(rows: list[dict[str, Any]]) -> list[dict[str, A
         body_best = float(row.get("body_best_clearance", -1.0))
         body_selected = float(row.get("body_selected_clearance", -1.0))
         reasons: list[str] = []
-        if escape >= 0.0 and final < escape - 60.0 - FLOAT_TOLERANCE:
+        body_emergency_is_best_available = (
+            body_best >= 0.0
+            and body_selected >= body_best - BODY_EMERGENCY_SLACK - FLOAT_TOLERANCE
+        )
+        if (
+            escape >= 0.0
+            and final < escape - 60.0 - FLOAT_TOLERANCE
+            and not body_emergency_is_best_available
+        ):
             reasons.append("projectile concession exceeds 60 units")
         if body_best >= BODY_TIER and body_selected < BODY_TIER - FLOAT_TOLERANCE:
             reasons.append("selected body path missed available 45-unit tier")

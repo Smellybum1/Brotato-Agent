@@ -166,6 +166,12 @@ const BOSS_FINALE_ENEMY_PENALTY_SLACK := 20.0
 # if every lane is contact-dangerous, stay close to the best body clearance.
 const BOSS_FINALE_BODY_CRITICAL_CLEARANCE := 45.0
 const BOSS_FINALE_BODY_CLEARANCE_SLACK := 20.0
+# If the projectile-bounded tier predicts a body overlap, an emergency
+# concession may broaden the projectile tier. In that exceptional case stay
+# within five units of the best available body lane; continuity and soft crowd
+# scoring must not send the player back through the pack.
+const BOSS_FINALE_BODY_EMERGENCY_CLEARANCE_SLACK := 5.0
+const BOSS_FINALE_BODY_EMERGENCY_MIN_GAIN := 20.0
 # When every sampled projectile lane is below panic clearance, allow a bounded
 # projectile-clearance concession to avoid an otherwise predicted body impact.
 const BOSS_FINALE_BODY_ESCAPE_PROJECTILE_SLACK := 60.0

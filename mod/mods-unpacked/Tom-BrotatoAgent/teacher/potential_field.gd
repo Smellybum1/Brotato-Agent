@@ -728,7 +728,29 @@ func _finale_body_safety(pos: Vector2, desired: Vector2, player_speed: float,
 		_finale_body_best_clearance = _finale_body_input_clearance
 		_finale_body_selected_clearance = _finale_body_input_clearance
 		return baseline
+	# v108: the first exact-20 v107 run exposed a gap between the projectile
+	# escape chosen before this pass and the sampled pool admitted by active wall
+	# recovery. Anchor the ordinary bounded concession to the actual
+	# projectile-safe command as well as the sampled pool. If that strict tier
+	# predicts a body overlap while the original bounded tier has a materially
+	# better escape, permit the body emergency but require the final command to
+	# stay very close to the best available body lane. This prevents continuity
+	# or soft crowd scoring from choosing a visibly worse path through the pack.
+	var baseline_projectile_clearance := 1000000.0
+	if not projectile_context.empty():
+		baseline_projectile_clearance = _dir_clearance(
+			pos, baseline, player_speed, projectile_context["bullets_t"],
+			projectile_context["times"], arena)
+	var projectile_reference_clearance := highest_projectile_clearance
+	if _finale_projectile_safety_active and not projectile_context.empty():
+		projectile_reference_clearance = max(
+			projectile_reference_clearance, baseline_projectile_clearance)
+		if _finale_projectile_escape_clearance >= 0.0:
+			projectile_reference_clearance = max(
+				projectile_reference_clearance,
+				_finale_projectile_escape_clearance)
 	var projectile_floor := -1.0e18
+	var body_emergency_active := false
 	if not projectile_context.empty():
 		var caution := float(projectile_context["caution"])
 		var safe_clear := BotConfig.ESCAPE_SAFE_CLEARANCE * caution
@@ -740,6 +762,26 @@ func _finale_body_safety(pos: Vector2, desired: Vector2, player_speed: float,
 		else:
 			projectile_floor = (highest_projectile_clearance
 				- BotConfig.BOSS_FINALE_BODY_ESCAPE_PROJECTILE_SLACK)
+		var relaxed_projectile_floor := projectile_floor
+		if (_finale_projectile_safety_active
+				and projectile_reference_clearance > -1.0e17):
+			projectile_floor = max(
+				projectile_floor,
+				projectile_reference_clearance
+					- BotConfig.BOSS_FINALE_BODY_ESCAPE_PROJECTILE_SLACK)
+		var strict_body_best := -1.0e18
+		var relaxed_body_best := -1.0e18
+		for row in rows:
+			if float(row[2]) >= projectile_floor:
+				strict_body_best = max(strict_body_best, float(row[1]))
+			if float(row[2]) >= relaxed_projectile_floor:
+				relaxed_body_best = max(relaxed_body_best, float(row[1]))
+		if (_finale_projectile_safety_active
+				and strict_body_best < 0.0
+				and relaxed_body_best >= strict_body_best
+					+ BotConfig.BOSS_FINALE_BODY_EMERGENCY_MIN_GAIN):
+			projectile_floor = relaxed_projectile_floor
+			body_emergency_active = true
 	_finale_body_projectile_floor = projectile_floor
 	var highest_body_clearance := -1.0e18
 	for row in rows:
@@ -752,7 +794,10 @@ func _finale_body_safety(pos: Vector2, desired: Vector2, player_speed: float,
 		return baseline
 	_finale_body_best_clearance = highest_body_clearance
 	var body_floor := highest_body_clearance
-	if highest_body_clearance >= BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE:
+	if body_emergency_active:
+		body_floor = (highest_body_clearance
+			- BotConfig.BOSS_FINALE_BODY_EMERGENCY_CLEARANCE_SLACK)
+	elif highest_body_clearance >= BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE:
 		body_floor = BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE
 	else:
 		body_floor = (highest_body_clearance
@@ -762,11 +807,6 @@ func _finale_body_safety(pos: Vector2, desired: Vector2, player_speed: float,
 		if (float(row[2]) >= projectile_floor
 				and float(row[1]) >= body_floor):
 			lowest_enemy_penalty = min(lowest_enemy_penalty, float(row[3]))
-	var baseline_projectile_clearance := 1000000.0
-	if not projectile_context.empty():
-		baseline_projectile_clearance = _dir_clearance(
-			pos, baseline, player_speed, projectile_context["bullets_t"],
-			projectile_context["times"], arena)
 	var baseline_enemy_penalty := _predictive_enemy_path_penalty(
 		pos, baseline, player_speed, times, enemies, bosses, 1.0)
 	if (_finale_body_input_clearance >= body_floor

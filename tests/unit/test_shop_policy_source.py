@@ -122,17 +122,17 @@ def test_v64_blood_donation_is_vetoed_for_gate_reliability():
     assert '"item_blood_donation": {"never": true}' in requirement_block
 
 
-def test_wp2_capture_build_versions_the_v107_final_body_safety_policy():
+def test_wp2_capture_build_versions_the_v108_projectile_floor_policy():
     manifest = MANIFEST.read_text(encoding="utf-8")
     controller = CONTROLLER.read_text(encoding="utf-8")
     telemetry = TELEMETRY.read_text(encoding="utf-8")
 
-    assert '"version_number": "0.2.15"' in manifest
-    assert "v107 deterministic teacher" in manifest
-    assert controller.count("teacher_v1-0.1.107-gun-wp1") == 1
-    assert controller.count("0.2.15-wp2-capture") == 1
-    assert telemetry.count("teacher_v1-0.1.107-gun-wp1") == 1
-    assert telemetry.count("0.2.15-wp2-capture") == 1
+    assert '"version_number": "0.2.16"' in manifest
+    assert "v108 deterministic teacher" in manifest
+    assert controller.count("teacher_v1-0.1.108-gun-wp1") == 1
+    assert controller.count("0.2.16-wp2-capture") == 1
+    assert telemetry.count("teacher_v1-0.1.108-gun-wp1") == 1
+    assert telemetry.count("0.2.16-wp2-capture") == 1
 
 
 def test_v84_item_audit_and_conditional_effect_corrections():
@@ -877,6 +877,63 @@ def test_v107_final_body_gate_runs_after_wall_projection_and_preserves_safety_ti
     # a sampled contact-safe alternative and therefore fail the v107 45-unit tier.
     assert -3.1983 < 45.0 <= 366.59
     assert 33.3 < 45.0 <= 50.8
+
+
+def test_v108_final_body_gate_anchors_projectile_concession_and_preserves_body_escape():
+    potential = POTENTIAL_FIELD.read_text(encoding="utf-8")
+    safety = potential.split("func _finale_body_safety", 1)[1].split(
+        "func _finale_committed_escape", 1
+    )[0]
+
+    baseline = safety.index("var baseline_projectile_clearance := 1000000.0")
+    reference = safety.index("var projectile_reference_clearance :=")
+    escape_anchor = safety.index("_finale_projectile_escape_clearance)", reference)
+    floor = safety.index("var projectile_floor := -1.0e18")
+    bounded = safety.index(
+        "projectile_reference_clearance\n\t\t\t\t\t- "
+        "BotConfig.BOSS_FINALE_BODY_ESCAPE_PROJECTILE_SLACK",
+        floor,
+    )
+    emergency = safety.index("var strict_body_best := -1.0e18", bounded)
+    emergency_gain = safety.index(
+        "BotConfig.BOSS_FINALE_BODY_EMERGENCY_MIN_GAIN", emergency
+    )
+    emergency_slack = safety.index(
+        "BotConfig.BOSS_FINALE_BODY_EMERGENCY_CLEARANCE_SLACK", emergency_gain
+    )
+    candidate_gate = safety.index("projectile_clearance < projectile_floor")
+    assert (
+        baseline
+        < reference
+        < escape_anchor
+        < floor
+        < bounded
+        < emergency
+        < emergency_gain
+        < emergency_slack
+        < candidate_gate
+    )
+
+    # Frozen v107 exact-20 capture 20609. Active wall recovery restricted the
+    # sampled pool to 73.623917 clearance even though the emitted projectile
+    # escape retained 98.0783. The strict 38.0783 floor left only a predicted
+    # body overlap (-9.482), while the original bounded tier exposed a 41.602264
+    # escape. The emergency therefore broadens the projectile tier but its
+    # five-unit body floor rejects the damaging 33.194206 lane.
+    sampled_max = 73.623917
+    emitted_escape = 98.0783
+    strict_body_best = -9.482
+    relaxed_body_best = 41.602264
+    damaging_body_lane = 33.194206
+    relaxed_projectile_floor = sampled_max - 60.0
+    strict_projectile_floor = max(
+        relaxed_projectile_floor, emitted_escape - 60.0
+    )
+    assert strict_projectile_floor == 38.0783
+    assert strict_body_best < 0.0
+    assert relaxed_body_best >= strict_body_best + 20.0
+    emergency_body_floor = relaxed_body_best - 5.0
+    assert damaging_body_lane < emergency_body_floor
 
 
 def test_v101_nonconvex_projectile_blend_falls_back_to_sampled_escape():

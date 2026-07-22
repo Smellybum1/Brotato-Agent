@@ -41,3 +41,18 @@ def test_damage_audit_allows_only_the_bounded_projectile_concession():
     assert _avoidable_damage_violations([unsafe])[0]["reasons"] == [
         "projectile concession exceeds 60 units"
     ]
+
+
+def test_damage_audit_allows_unbounded_concession_only_for_best_body_emergency():
+    best_available = {
+        "projectile_escape_clearance": 98.0783,
+        "projectile_final_clearance": 17.575,
+        "body_best_clearance": 41.602264,
+        "body_selected_clearance": 41.602264,
+    }
+    worse_pack_lane = {**best_available, "body_selected_clearance": 33.194206}
+
+    assert _avoidable_damage_violations([best_available]) == []
+    assert _avoidable_damage_violations([worse_pack_lane])[0]["reasons"] == [
+        "projectile concession exceeds 60 units"
+    ]
