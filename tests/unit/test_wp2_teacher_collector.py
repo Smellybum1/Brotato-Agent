@@ -41,10 +41,10 @@ def test_latest_capture_skips_partial_tail_line():
     }
 
 
-def test_summary_fault_accepts_clean_v93_terminal_summary():
+def test_summary_fault_accepts_clean_current_terminal_summary():
     summary = {
-        "policy_version": "teacher_v1-0.1.94-gun-wp1",
-        "mod_version": "0.2.2-wp2-capture",
+        "policy_version": "teacher_v1-0.1.95-gun-wp1",
+        "mod_version": "0.2.3-wp2-capture",
         "telemetry_complete": True,
         "errors": 0,
         "hangs": 0,

@@ -11,7 +11,7 @@ most dangerous late-wave entities.
 
 - Current state only; no future game state or reward leakage.
 - The deterministic teacher remains the sole controller during capture. New
-  collection uses v94; completed v92/v93 captures remain immutable historical data.
+  collection uses v95; completed v92-v94 captures remain immutable historical data.
 - Existing v1 telemetry remains unchanged; policy changes are independently
   versioned and never inferred from the capture schema version.
 - Raw capture arrays are not padded or truncated.

@@ -122,16 +122,16 @@ def test_v64_blood_donation_is_vetoed_for_gate_reliability():
     assert '"item_blood_donation": {"never": true}' in requirement_block
 
 
-def test_wp2_capture_build_versions_the_v94_projectile_safety_policy():
+def test_wp2_capture_build_versions_the_v95_projectile_wall_fusion_policy():
     manifest = MANIFEST.read_text(encoding="utf-8")
     controller = CONTROLLER.read_text(encoding="utf-8")
     telemetry = TELEMETRY.read_text(encoding="utf-8")
 
-    assert '"version_number": "0.2.2"' in manifest
-    assert controller.count("teacher_v1-0.1.94-gun-wp1") == 1
-    assert controller.count("0.2.2-wp2-capture") == 1
-    assert telemetry.count("teacher_v1-0.1.94-gun-wp1") == 1
-    assert telemetry.count("0.2.2-wp2-capture") == 1
+    assert '"version_number": "0.2.3"' in manifest
+    assert controller.count("teacher_v1-0.1.95-gun-wp1") == 1
+    assert controller.count("0.2.3-wp2-capture") == 1
+    assert telemetry.count("teacher_v1-0.1.95-gun-wp1") == 1
+    assert telemetry.count("0.2.3-wp2-capture") == 1
 
 
 def test_v84_item_audit_and_conditional_effect_corrections():
@@ -451,7 +451,10 @@ def test_v93_finale_wall_recovery_is_the_last_movement_constraint():
     safety = potential.split("func _finale_wall_safety", 1)[1].split(
         "func _finale_committed_escape", 1
     )[0]
-    assert "if _finale_wall_recovery_active:" in safety
+    assert (
+        "if _finale_wall_recovery_active and not _finale_projectile_safety_active:"
+        in safety
+    )
     assert "wall_distance >= BotConfig.BOSS_FINALE_WALL_RECOVERY_RELEASE" in safety
     assert "wall_distance <= BotConfig.BOSS_FINALE_WALL_RECOVERY_ENTER" in safety
     assert safety.rstrip().endswith(
@@ -496,6 +499,24 @@ def test_v94_finale_rechecks_projectiles_after_smoothing_and_before_wall_safety(
     assert '"projectile_safety_urgency": _finale_projectile_safety_urgency' in potential
     assert '"projectile_input_clearance": _finale_projectile_input_clearance' in potential
     assert '"projectile_escape_clearance": _finale_projectile_escape_clearance' in potential
+
+
+def test_v95_soft_wall_recovery_cannot_override_active_projectile_safety():
+    potential = POTENTIAL_FIELD.read_text(encoding="utf-8")
+    safety = potential.split("func _finale_wall_safety", 1)[1].split(
+        "func _finale_committed_escape", 1
+    )[0]
+
+    assert (
+        "if _finale_wall_recovery_active and not _finale_projectile_safety_active:"
+        in safety
+    )
+    assert safety.index("not _finale_projectile_safety_active") < safety.index(
+        "_best_finale_interior_lane("
+    )
+    assert safety.rstrip().endswith(
+        "return _clamp_finale_wall_components(pos, safe_desire, arena)"
+    )
 
 
 def test_v74_preserves_early_hp_but_deemphasizes_it_after_wave_ten():

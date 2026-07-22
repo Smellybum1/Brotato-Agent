@@ -306,7 +306,11 @@ func _finale_wall_safety(pos: Vector2, desired: Vector2, arena, bosses,
 	elif wall_distance <= BotConfig.BOSS_FINALE_WALL_RECOVERY_ENTER:
 		_finale_wall_recovery_active = true
 	var safe_desire := desired
-	if _finale_wall_recovery_active:
+	# v95: the final projectile pass has already selected a safer lane using
+	# wall-aware clearance. Do not let the softer center-recovery selector replace
+	# that command; the unconditional hard projection below still prevents an
+	# active dodge from pointing through the arena boundary.
+	if _finale_wall_recovery_active and not _finale_projectile_safety_active:
 		safe_desire = _best_finale_interior_lane(
 			pos, desired, arena, bosses, projectiles, player_speed)
 	# Hard projection is unconditional and runs after lane selection so no boss,
