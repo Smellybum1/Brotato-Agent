@@ -58,3 +58,19 @@ The projectile and consumable capacities also respect the certified WP1
 aggregate maxima (32 and 17). These capacities are provisional until multiple
 complete v2 runs confirm the tails; all overflow remains deterministically
 threat-sorted and explicitly counted.
+
+## Frozen encoder contract
+
+`configs/wp2/observation_v1.yaml` defines the current encoder contract with
+schema hash
+`C653D836F3EBC821A51AFC70482D3772FC7B7B927D393A6B9BBADC2718BB9B2A`.
+It emits 48 ordered global features plus seven fixed-capacity entity tensors,
+each with 15 features and an explicit mask. Entity rows are player-relative and
+ranked by predicted contact risk, time/closest approach, distance, and stable
+identity. Zero padding is inert; overflow counts remain visible.
+
+The golden fixture digest is
+`D62D26F3FCAE019A9A6E02A8C617B2C95DA8911983F3342402B645EC47E84F25`.
+Inputs with NaN/Inf, a source-schema mismatch, or malformed groups are rejected.
+Shop/wave gaps above 250 ms remain valid snapshots but set `temporal_valid` to
+false so they cannot become ordinary one-step transitions.

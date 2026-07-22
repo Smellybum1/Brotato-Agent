@@ -1,0 +1,38 @@
+{
+  "capture_schema_id": "combat_capture_v2",
+  "capture_schema_hash": "95B6444796A21FD44E94113B75BA2097BC381D5F72ED784F9B9A4A99DD46D951",
+  "capture_seq": 42,
+  "observation_ts_ms": 1000,
+  "observation_age_ms": 1,
+  "control_dt_ms": 50,
+  "valid": true,
+  "wave": 20,
+  "wave_time": {"elapsed_sec": 40.0, "remaining_sec": 50.0, "duration_sec": 90.0, "valid": true},
+  "player": {"x": 500.0, "y": 400.0, "vx": 100.0, "vy": 0.0, "measured_vx": 90.0, "measured_vy": 10.0, "hp": 30.0, "max_hp": 60.0, "hp_ratio": 0.5, "speed": 450.0, "armor": 8.0, "dodge": 0.2, "hp_regeneration": 4.0, "lifesteal": 10.0},
+  "teacher": {
+    "action": {"x": 0.8, "y": -0.6},
+    "previous_action": {"x": 1.0, "y": 0.0},
+    "action_fresh": true,
+    "reason": "potential_field",
+    "contributions": {"enemies": 2, "projectiles": 1, "finale_translation": {"commit_distance": 64.0, "commit_ticks": 3, "commit_x": 0.0, "commit_y": 1.0}}
+  },
+  "entities": {
+    "enemies": [
+      {"x": 800.0, "y": 400.0, "vx": -100.0, "vy": 0.0, "radius": 24.0, "health_ratio": 1.0, "speed": 250.0, "instance_id": 2, "type_id": "enemy_far"},
+      {"x": 560.0, "y": 400.0, "vx": -150.0, "vy": 0.0, "radius": 24.0, "health_ratio": 0.5, "speed": 300.0, "instance_id": 1, "type_id": "enemy_close"}
+    ],
+    "bosses": [{"x": 900.0, "y": 500.0, "vx": -50.0, "vy": 0.0, "radius": 48.0, "health_ratio": 0.75, "speed": 200.0, "instance_id": 3, "type_id": "boss"}],
+    "projectiles": [{"x": 650.0, "y": 400.0, "vx": -500.0, "vy": 0.0, "radius": 8.0, "instance_id": 4, "type_id": "enemy_projectile"}],
+    "materials": [{"x": 450.0, "y": 420.0, "vx": 0.0, "vy": 0.0, "radius": 8.0, "instance_id": 5, "type_id": "gold"}],
+    "consumables": [{"x": 520.0, "y": 450.0, "vx": 0.0, "vy": 0.0, "radius": 12.0, "instance_id": 6, "id": "consumable_fruit"}],
+    "crates": [],
+    "obstacles": [{"x": 300.0, "y": 300.0, "vx": 0.0, "vy": 0.0, "radius": 32.0, "instance_id": 7, "type_id": "tree"}]
+  },
+  "weapons": [
+    {"type": "ranged", "max_range": 500.0, "damage": 40.0, "cooldown": 20.0},
+    {"type": "ranged", "max_range": 600.0, "damage": 60.0, "cooldown": 30.0}
+  ],
+  "arena": {"width": 2000.0, "height": 1200.0},
+  "invalid_counts": {"players": 0, "enemies": 0, "bosses": 0, "projectiles": 0, "materials": 0, "consumables": 0, "obstacles": 0},
+  "dropped_counts": {"enemies": 0, "bosses": 0, "projectiles": 0, "materials": 0, "consumables": 0, "crates": 0, "obstacles": 0}
+}

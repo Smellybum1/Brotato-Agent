@@ -23,3 +23,11 @@ Result: **capture validation PASS; teacher episode DEFEAT at wave 20**
 The defeat is ordinary teacher outcome evidence, not an instrumentation
 failure. It is retained for rare wave-20 failure-state training and excluded
 from any claim that the capture build improved gameplay.
+
+## Observation encoder validation
+
+The frozen `combat_obs_v1` encoder processed all 20,830 captures without an
+error at 3,800.8 rows/second on this machine. All snapshots were valid, 20
+shop-to-wave discontinuities were correctly marked `temporal_valid: false`, and
+no group overflowed its provisional capacity. This is an encoder smoke and
+capacity sanity check, not the later 10,000-fixture Godot/Python parity gate.

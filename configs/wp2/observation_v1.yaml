@@ -1,0 +1,94 @@
+schema_id: combat_obs_v1
+schema_version: 1.0.0
+source_capture_schema_id: combat_capture_v2
+source_capture_schema_hash: 95B6444796A21FD44E94113B75BA2097BC381D5F72ED784F9B9A4A99DD46D951
+control_hz: 20
+max_transition_gap_ms: 250
+closest_approach_horizon_sec: 2.0
+player_radius: 24.0
+normalization:
+  wave: 20.0
+  max_hp: 200.0
+  speed: 500.0
+  armor: 30.0
+  dodge: 1.0
+  hp_regeneration: 20.0
+  lifesteal: 50.0
+  weapon_range: 1000.0
+  weapon_cooldown: 100.0
+  weapon_damage: 200.0
+  entity_radius: 128.0
+  entity_speed: 1000.0
+global_features:
+  - wave
+  - wave_elapsed
+  - wave_remaining
+  - control_dt
+  - player_x
+  - player_y
+  - player_vx
+  - player_vy
+  - hp_ratio
+  - max_hp
+  - movement_speed
+  - armor
+  - dodge
+  - hp_regeneration
+  - lifesteal
+  - teacher_action_x
+  - teacher_action_y
+  - previous_action_x
+  - previous_action_y
+  - wall_left
+  - wall_right
+  - wall_top
+  - wall_bottom
+  - weapon_count
+  - ranged_fraction
+  - weapon_min_range
+  - weapon_max_range
+  - weapon_mean_range
+  - weapon_mean_cooldown
+  - weapon_total_damage
+  - weapon_damage_rate
+  - observation_age
+  - temporal_valid
+  - invalid_entity_count
+  - source_dropped_count
+  - teacher_enemy_count
+  - teacher_projectile_count
+  - finale_commit_distance
+  - finale_commit_ticks
+  - finale_commit_x
+  - finale_commit_y
+  - enemy_count
+  - boss_count
+  - projectile_count
+  - material_count
+  - consumable_count
+  - crate_count
+  - obstacle_count
+entity_features:
+  - relative_x
+  - relative_y
+  - relative_vx
+  - relative_vy
+  - radius
+  - distance
+  - bearing_sin
+  - bearing_cos
+  - health_ratio
+  - speed
+  - threat_code
+  - contact_risk
+  - time_to_closest
+  - closest_distance
+  - type_hash
+groups:
+  enemies: {capacity: 64, threat_code: 0.75}
+  bosses: {capacity: 2, threat_code: 1.0}
+  projectiles: {capacity: 32, threat_code: 1.0}
+  materials: {capacity: 64, threat_code: -0.5}
+  consumables: {capacity: 24, threat_code: -0.25}
+  crates: {capacity: 2, threat_code: 0.25}
+  obstacles: {capacity: 8, threat_code: 0.5}
