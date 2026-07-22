@@ -32,6 +32,10 @@ the corresponding version identifiers.
 
 - Focused policy/collector tests: `52 passed`.
 - Full suite: `98 passed`.
+- Deployment ZIP SHA-256:
+  `51998FDD361A2F5C3EC0EEA2C9D94E7EA4A538CB487D9E78E91BAD646CBE15AF`.
+- Smoke launch: `1/1`; mod ready, zero loader fault matches, zero recent
+  Brotato/Godot WER reports, Brotato stopped, and auto-start restored to false.
 - Live proof remains required before accepting v103 teacher data: zero
   260-520-unit threshold-chatter windows, zero false latch drops below 520, and
   all existing projectile, hard-wall, centered-finale, telemetry, and schema
