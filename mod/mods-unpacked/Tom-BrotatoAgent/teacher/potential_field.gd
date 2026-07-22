@@ -167,11 +167,11 @@ func compute_movement(state, profile) -> Vector2:
 	var alpha = BotConfig.MOVE_SMOOTHING
 	var smoothed = _prev_move * (1.0 - alpha) + combined * alpha
 	var final_move = _normalize(smoothed)
-	if finale:
-		# v94: re-evaluate projectile safety against the command that survived
-		# contact escape, commitment, reversal control, and movement smoothing.
-		# v93 wall safety remains last so projectile avoidance cannot point through
-		# an arena boundary while opening a safer lane.
+	if wave >= BotConfig.LATE_SURVIVAL_WAVE:
+		# v99: every late-wave command must pass the same final safety tail. v98
+		# protected the low-health early return, but ordinary full-health movement
+		# on waves 17-19 could still project through the hard margin after smoothing.
+		# Re-evaluate projectile safety first and predictive wall safety last.
 		final_move = _finale_projectile_safety(
 			pos, final_move, projectiles, player_speed, arena, enemies, bosses, profile)
 		final_move = _finale_wall_safety(

@@ -122,17 +122,17 @@ def test_v64_blood_donation_is_vetoed_for_gate_reliability():
     assert '"item_blood_donation": {"never": true}' in requirement_block
 
 
-def test_wp2_capture_build_versions_the_v98_late_wall_safety_policy():
+def test_wp2_capture_build_versions_the_v99_all_late_wall_safety_policy():
     manifest = MANIFEST.read_text(encoding="utf-8")
     controller = CONTROLLER.read_text(encoding="utf-8")
     telemetry = TELEMETRY.read_text(encoding="utf-8")
 
-    assert '"version_number": "0.2.6"' in manifest
-    assert "v98 deterministic teacher" in manifest
-    assert controller.count("teacher_v1-0.1.98-gun-wp1") == 1
-    assert controller.count("0.2.6-wp2-capture") == 1
-    assert telemetry.count("teacher_v1-0.1.98-gun-wp1") == 1
-    assert telemetry.count("0.2.6-wp2-capture") == 1
+    assert '"version_number": "0.2.7"' in manifest
+    assert "v99 deterministic teacher" in manifest
+    assert controller.count("teacher_v1-0.1.99-gun-wp1") == 1
+    assert controller.count("0.2.7-wp2-capture") == 1
+    assert telemetry.count("teacher_v1-0.1.99-gun-wp1") == 1
+    assert telemetry.count("0.2.7-wp2-capture") == 1
 
 
 def test_v84_item_audit_and_conditional_effect_corrections():
@@ -375,6 +375,19 @@ def test_v98_late_survival_cannot_bypass_projectile_and_hard_wall_safety():
     assert "projectiles, player_speed, arena, enemies, bosses, profile" in survival
     assert "arena, bosses, projectiles, player_speed" in survival
     assert "_prev_move = _normalize(smoothed_survival)" not in survival
+
+
+def test_v99_every_late_wave_command_gets_final_projectile_and_wall_safety():
+    potential = POTENTIAL_FIELD.read_text(encoding="utf-8")
+    tail = potential.split("var alpha = BotConfig.MOVE_SMOOTHING", 1)[1].split(
+        "_prev_move = final_move", 1
+    )[0]
+
+    guard = tail.index("if wave >= BotConfig.LATE_SURVIVAL_WAVE:")
+    projectile = tail.index("final_move = _finale_projectile_safety(")
+    wall = tail.index("final_move = _finale_wall_safety(")
+    assert guard < projectile < wall
+    assert "if finale:" not in tail[guard:projectile]
 
 
 def test_v97_wave20_uses_centered_survival_without_a_boss_range_ring():
