@@ -48,6 +48,31 @@ def _required_body_floor(debug: dict[str, Any]) -> float:
     return best_clearance - BODY_SLACK
 
 
+def _body_projectile_floor_unavailable(debug: dict[str, Any]) -> bool:
+    """Identify the no-eligible-sample fallback without forgiving a body choice.
+
+    The runtime preserves its incoming projectile-safe command when none of the
+    body layer's sampled directions meets the projectile floor. That branch
+    reports identical input/best/selected body clearance, leaves the selected
+    projectile diagnostic at its -1 sentinel, and does not activate a repair.
+    """
+    if bool(debug.get("body_safety_active", False)):
+        return False
+    if bool(debug.get("body_emergency_active", False)):
+        return False
+    if float(debug.get("body_projectile_floor", -1.0e18)) <= -1.0e17:
+        return False
+    if float(debug.get("body_selected_projectile_clearance", -1.0)) != -1.0:
+        return False
+    input_clearance = float(debug.get("body_input_clearance", -1.0))
+    best_clearance = float(debug.get("body_best_clearance", -1.0))
+    selected_clearance = float(debug.get("body_selected_clearance", -1.0))
+    return (
+        abs(input_clearance - best_clearance) <= FLOAT_TOLERANCE
+        and abs(input_clearance - selected_clearance) <= FLOAT_TOLERANCE
+    )
+
+
 def _body_clearance(payload: dict[str, Any]) -> float:
     direction = _normalise(payload["teacher"]["action"])
     if direction is None:
@@ -210,6 +235,7 @@ def audit_run(
     body_repair_violations: list[dict[str, Any]] = []
     body_diagnostic_mismatches: list[dict[str, Any]] = []
     projectile_floor_violations: list[dict[str, Any]] = []
+    unavailable_projectile_floor_samples: list[dict[str, Any]] = []
     sampled_action_violations: list[int] = []
     wall_recovery_violations: list[dict[str, Any]] = []
     hard_wall_violations: list[dict[str, Any]] = []
@@ -264,7 +290,15 @@ def audit_run(
                 )
         projectile_floor = float(debug.get("body_projectile_floor", -1.0e18))
         selected_projectile = float(debug.get("body_selected_projectile_clearance", -1.0))
-        if selected_projectile < projectile_floor - FLOAT_TOLERANCE:
+        if _body_projectile_floor_unavailable(debug):
+            unavailable_projectile_floor_samples.append(
+                {
+                    "capture_seq": payload["capture_seq"],
+                    "floor": projectile_floor,
+                    "preserved_body_clearance": selected_clearance,
+                }
+            )
+        elif selected_projectile < projectile_floor - FLOAT_TOLERANCE:
             projectile_floor_violations.append(
                 {
                     "capture_seq": payload["capture_seq"],
@@ -359,6 +393,7 @@ def audit_run(
         "body_tier_violations": body_tier_violations,
         "body_repair_violations": body_repair_violations,
         "body_diagnostic_mismatches": body_diagnostic_mismatches,
+        "unavailable_projectile_floor_samples": unavailable_projectile_floor_samples,
         "projectile_floor_violations": projectile_floor_violations,
         "sampled_action_violations": sampled_action_violations,
         "wall_recovery_violations": wall_recovery_violations,
@@ -392,6 +427,8 @@ def render_markdown(audit: dict[str, Any]) -> str:
                 f"- Late damage events retained for review: {len(run['late_damage_events'])}.",
                 f"- Avoidable damage-path violations: "
                 f"{len(run['avoidable_damage_violations'])}.",
+                f"- Preserved-command body fallbacks with no eligible projectile-floor "
+                f"sample: {len(run['unavailable_projectile_floor_samples'])}.",
                 f"- Events SHA-256: `{run['events_sha256']}`.",
                 f"- Summary SHA-256: `{run['summary_sha256']}`.",
                 "",

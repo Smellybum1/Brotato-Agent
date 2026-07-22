@@ -1,0 +1,309 @@
+{
+  "run_count": 1,
+  "accepted_run_count": 1,
+  "violation_count": 0,
+  "runs": [
+    {
+      "run_id": "run_1784751818_75406",
+      "policy_version": "teacher_v1-0.1.109-gun-wp1",
+      "mod_version": "0.2.17-wp2-capture",
+      "result": "victory",
+      "last_wave": 20,
+      "telemetry_complete": true,
+      "summary_errors": 0,
+      "summary_hangs": 0,
+      "summary_illegal_actions": 0,
+      "terminal_valid": true,
+      "event_count": 24150,
+      "capture_count": 21545,
+      "waves_represented": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "late_capture_count": 5210,
+      "fresh_late_capture_count": 3752,
+      "body_diagnostic_capture_count": 3471,
+      "active_body_repairs": 704,
+      "active_body_emergencies": 0,
+      "active_projectile_safety": 379,
+      "active_wall_recovery": 781,
+      "malformed_lines": [],
+      "identity_violations": [],
+      "summary_violations": [],
+      "telemetry_error_events": 0,
+      "body_tier_violations": [],
+      "body_repair_violations": [],
+      "body_diagnostic_mismatches": [],
+      "unavailable_projectile_floor_samples": [
+        {
+          "capture_seq": 16688,
+          "floor": 569.907654,
+          "preserved_body_clearance": 245.760193
+        },
+        {
+          "capture_seq": 17352,
+          "floor": 580.186157,
+          "preserved_body_clearance": 618.904791
+        },
+        {
+          "capture_seq": 17413,
+          "floor": 581.134888,
+          "preserved_body_clearance": 304.456762
+        },
+        {
+          "capture_seq": 17414,
+          "floor": 564.424011,
+          "preserved_body_clearance": 220.96929
+        },
+        {
+          "capture_seq": 17415,
+          "floor": 507.575745,
+          "preserved_body_clearance": 89.019873
+        },
+        {
+          "capture_seq": 17416,
+          "floor": 474.920532,
+          "preserved_body_clearance": 93.283895
+        },
+        {
+          "capture_seq": 17417,
+          "floor": 540.982056,
+          "preserved_body_clearance": 150.379538
+        },
+        {
+          "capture_seq": 18398,
+          "floor": 539.742126,
+          "preserved_body_clearance": 447.030396
+        },
+        {
+          "capture_seq": 18399,
+          "floor": 534.546936,
+          "preserved_body_clearance": 503.059937
+        },
+        {
+          "capture_seq": 18400,
+          "floor": 538.779907,
+          "preserved_body_clearance": 513.520203
+        },
+        {
+          "capture_seq": 18403,
+          "floor": 513.393738,
+          "preserved_body_clearance": 471.549225
+        },
+        {
+          "capture_seq": 18574,
+          "floor": 278.256561,
+          "preserved_body_clearance": 484.018951
+        },
+        {
+          "capture_seq": 18575,
+          "floor": 276.335663,
+          "preserved_body_clearance": 562.190689
+        },
+        {
+          "capture_seq": 18576,
+          "floor": 274.544708,
+          "preserved_body_clearance": 564.239029
+        },
+        {
+          "capture_seq": 18577,
+          "floor": 272.885193,
+          "preserved_body_clearance": 566.41774
+        },
+        {
+          "capture_seq": 18578,
+          "floor": 228.724762,
+          "preserved_body_clearance": 560.1772
+        },
+        {
+          "capture_seq": 18579,
+          "floor": 223.095062,
+          "preserved_body_clearance": 560.182083
+        },
+        {
+          "capture_seq": 18580,
+          "floor": 217.465637,
+          "preserved_body_clearance": 560.470108
+        },
+        {
+          "capture_seq": 18581,
+          "floor": 211.836517,
+          "preserved_body_clearance": 561.021133
+        },
+        {
+          "capture_seq": 18582,
+          "floor": 206.207703,
+          "preserved_body_clearance": 561.815933
+        },
+        {
+          "capture_seq": 18583,
+          "floor": 200.579193,
+          "preserved_body_clearance": 562.83638
+        },
+        {
+          "capture_seq": 18584,
+          "floor": 160.238327,
+          "preserved_body_clearance": 280.068008
+        },
+        {
+          "capture_seq": 18715,
+          "floor": 546.221802,
+          "preserved_body_clearance": 267.341141
+        },
+        {
+          "capture_seq": 18717,
+          "floor": 581.285034,
+          "preserved_body_clearance": 246.186966
+        },
+        {
+          "capture_seq": 18719,
+          "floor": 626.695984,
+          "preserved_body_clearance": 470.993515
+        },
+        {
+          "capture_seq": 18721,
+          "floor": 673.074951,
+          "preserved_body_clearance": 437.27272
+        },
+        {
+          "capture_seq": 18723,
+          "floor": 629.439331,
+          "preserved_body_clearance": 392.922531
+        },
+        {
+          "capture_seq": 18725,
+          "floor": 598.580261,
+          "preserved_body_clearance": 351.970444
+        },
+        {
+          "capture_seq": 18727,
+          "floor": 559.870422,
+          "preserved_body_clearance": 453.792435
+        },
+        {
+          "capture_seq": 18729,
+          "floor": 526.479614,
+          "preserved_body_clearance": 427.47023
+        },
+        {
+          "capture_seq": 18731,
+          "floor": 512.334717,
+          "preserved_body_clearance": 263.264313
+        },
+        {
+          "capture_seq": 18732,
+          "floor": 504.190735,
+          "preserved_body_clearance": 357.601807
+        },
+        {
+          "capture_seq": 18733,
+          "floor": 505.634521,
+          "preserved_body_clearance": 358.18042
+        },
+        {
+          "capture_seq": 18757,
+          "floor": 538.282471,
+          "preserved_body_clearance": 636.696594
+        },
+        {
+          "capture_seq": 18759,
+          "floor": 530.750854,
+          "preserved_body_clearance": 492.76416
+        },
+        {
+          "capture_seq": 18760,
+          "floor": 508.469299,
+          "preserved_body_clearance": 632.897278
+        },
+        {
+          "capture_seq": 18761,
+          "floor": 495.088318,
+          "preserved_body_clearance": 583.368469
+        },
+        {
+          "capture_seq": 18764,
+          "floor": 504.837585,
+          "preserved_body_clearance": 474.360229
+        },
+        {
+          "capture_seq": 18765,
+          "floor": 500.578064,
+          "preserved_body_clearance": 440.86145
+        },
+        {
+          "capture_seq": 18766,
+          "floor": 498.976501,
+          "preserved_body_clearance": 474.46167
+        }
+      ],
+      "projectile_floor_violations": [],
+      "sampled_action_violations": [],
+      "wall_recovery_violations": [],
+      "hard_wall_violations": [],
+      "late_damage_events": [
+        {
+          "event_seq": 22939,
+          "ts_ms": 1137494,
+          "amount": 23,
+          "hp": 54,
+          "capture_seq": 20447,
+          "wave": 20,
+          "projectile_safety_active": false,
+          "projectile_escape_clearance": -1,
+          "projectile_final_clearance": -1,
+          "body_best_clearance": 45.570862,
+          "body_selected_clearance": 45.570862
+        },
+        {
+          "event_seq": 22984,
+          "ts_ms": 1139502,
+          "amount": 18,
+          "hp": 42,
+          "capture_seq": 20487,
+          "wave": 20,
+          "projectile_safety_active": true,
+          "projectile_escape_clearance": 16.703857,
+          "projectile_final_clearance": 16.703857,
+          "body_best_clearance": 242.710999,
+          "body_selected_clearance": 326.977173
+        },
+        {
+          "event_seq": 23015,
+          "ts_ms": 1140880,
+          "amount": 18,
+          "hp": 27,
+          "capture_seq": 20514,
+          "wave": 20,
+          "projectile_safety_active": true,
+          "projectile_escape_clearance": 14.895178,
+          "projectile_final_clearance": 14.895178,
+          "body_best_clearance": 137.273621,
+          "body_selected_clearance": 137.273621
+        }
+      ],
+      "avoidable_damage_violations": [],
+      "events_sha256": "CD53D5B3FEB21503EBD0CFBA12997BDE6D3298C5124CBA3F9AA874E34B7857F6",
+      "summary_sha256": "2CAA03CC3B3BE4A6173FB0F46D87DC2C18723C7981D5701E974E2FFA54D402D4",
+      "violation_count": 0,
+      "accepted": true
+    }
+  ]
+}

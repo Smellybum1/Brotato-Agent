@@ -1,0 +1,688 @@
+{
+  "capture_schema_hash": "95B6444796A21FD44E94113B75BA2097BC381D5F72ED784F9B9A4A99DD46D951",
+  "runs": [
+    {
+      "run_id": "run_1784751818_75406",
+      "captures": 21545,
+      "terminal": true,
+      "errors": 0,
+      "damage_events": 9,
+      "bytes": 199921642
+    }
+  ],
+  "run_count": 1,
+  "terminal_run_count": 1,
+  "capture_count": 21545,
+  "valid_transition_estimate": 21545,
+  "gap_to_200000": 178455,
+  "malformed_lines": 0,
+  "schema_mismatches": 0,
+  "invalid_captures": 0,
+  "invalid_actions": 0,
+  "timing_ms": {
+    "control_dt": {
+      "count": 21544,
+      "p50": 51.0,
+      "p90": 51.0,
+      "p95": 51.0,
+      "p99": 53.0,
+      "max": 9858.0
+    },
+    "observation_age": {
+      "count": 21545,
+      "p50": 0.0,
+      "p90": 1.0,
+      "p95": 2.0,
+      "p99": 4.0,
+      "max": 7.0
+    }
+  },
+  "action_magnitude": {
+    "count": 21545,
+    "p50": 1.000000002525,
+    "p90": 1.000000387415025,
+    "p95": 1.0000004610208937,
+    "p99": 1.0000005672761791,
+    "max": 1.0000007339217307
+  },
+  "entity_counts": {
+    "enemies": {
+      "count": 21545,
+      "p50": 7.0,
+      "p90": 16.0,
+      "p95": 19.0,
+      "p99": 24.0,
+      "max": 29
+    },
+    "bosses": {
+      "count": 21545,
+      "p50": 0.0,
+      "p90": 0.0,
+      "p95": 1.0,
+      "p99": 1.0,
+      "max": 1
+    },
+    "projectiles": {
+      "count": 21545,
+      "p50": 0.0,
+      "p90": 1.0,
+      "p95": 4.0,
+      "p99": 26.0,
+      "max": 30
+    },
+    "materials": {
+      "count": 21545,
+      "p50": 9.0,
+      "p90": 23.0,
+      "p95": 30.0,
+      "p99": 43.0,
+      "max": 49
+    },
+    "consumables": {
+      "count": 21545,
+      "p50": 1.0,
+      "p90": 4.0,
+      "p95": 5.0,
+      "p99": 7.0,
+      "max": 8
+    },
+    "crates": {
+      "count": 21545,
+      "p50": 0.0,
+      "p90": 0.0,
+      "p95": 1.0,
+      "p99": 2.0,
+      "max": 3
+    },
+    "obstacles": {
+      "count": 21545,
+      "p50": 0.0,
+      "p90": 1.0,
+      "p95": 1.0,
+      "p99": 1.0,
+      "max": 1
+    }
+  },
+  "entity_counts_by_wave_band": {
+    "1-5": {
+      "enemies": {
+        "count": 3233,
+        "p50": 3.0,
+        "p90": 7.0,
+        "p95": 8.0,
+        "p99": 11.0,
+        "max": 13
+      },
+      "bosses": {
+        "count": 3233,
+        "p50": 0.0,
+        "p90": 0.0,
+        "p95": 0.0,
+        "p99": 0.0,
+        "max": 0
+      },
+      "projectiles": {
+        "count": 3233,
+        "p50": 0.0,
+        "p90": 0.0,
+        "p95": 0.0,
+        "p99": 1.0,
+        "max": 2
+      },
+      "materials": {
+        "count": 3233,
+        "p50": 2.0,
+        "p90": 9.0,
+        "p95": 12.0,
+        "p99": 15.0,
+        "max": 17
+      },
+      "consumables": {
+        "count": 3233,
+        "p50": 0.0,
+        "p90": 1.0,
+        "p95": 1.0,
+        "p99": 2.0,
+        "max": 2
+      },
+      "crates": {
+        "count": 3233,
+        "p50": 0.0,
+        "p90": 0.0,
+        "p95": 0.0,
+        "p99": 1.0,
+        "max": 1
+      },
+      "obstacles": {
+        "count": 3233,
+        "p50": 0.0,
+        "p90": 1.0,
+        "p95": 1.0,
+        "p99": 1.0,
+        "max": 1
+      }
+    },
+    "11-15": {
+      "enemies": {
+        "count": 6228,
+        "p50": 8.0,
+        "p90": 14.0,
+        "p95": 16.0,
+        "p99": 20.0,
+        "max": 28
+      },
+      "bosses": {
+        "count": 6228,
+        "p50": 0.0,
+        "p90": 0.0,
+        "p95": 0.0,
+        "p99": 0.0,
+        "max": 0
+      },
+      "projectiles": {
+        "count": 6228,
+        "p50": 0.0,
+        "p90": 1.0,
+        "p95": 2.0,
+        "p99": 3.0,
+        "max": 6
+      },
+      "materials": {
+        "count": 6228,
+        "p50": 13.0,
+        "p90": 21.0,
+        "p95": 23.0,
+        "p99": 27.0,
+        "max": 31
+      },
+      "consumables": {
+        "count": 6228,
+        "p50": 1.0,
+        "p90": 3.0,
+        "p95": 4.0,
+        "p99": 6.0,
+        "max": 6
+      },
+      "crates": {
+        "count": 6228,
+        "p50": 0.0,
+        "p90": 0.0,
+        "p95": 0.0,
+        "p99": 1.0,
+        "max": 1
+      },
+      "obstacles": {
+        "count": 6228,
+        "p50": 0.0,
+        "p90": 0.0,
+        "p95": 1.0,
+        "p99": 1.0,
+        "max": 1
+      }
+    },
+    "16-19": {
+      "enemies": {
+        "count": 4998,
+        "p50": 9.0,
+        "p90": 20.0,
+        "p95": 22.0,
+        "p99": 27.0,
+        "max": 29
+      },
+      "bosses": {
+        "count": 4998,
+        "p50": 0.0,
+        "p90": 0.0,
+        "p95": 0.0,
+        "p99": 0.0,
+        "max": 0
+      },
+      "projectiles": {
+        "count": 4998,
+        "p50": 0.0,
+        "p90": 1.0,
+        "p95": 2.0,
+        "p99": 4.0,
+        "max": 4
+      },
+      "materials": {
+        "count": 4998,
+        "p50": 18.0,
+        "p90": 38.0,
+        "p95": 42.0,
+        "p99": 47.0,
+        "max": 49
+      },
+      "consumables": {
+        "count": 4998,
+        "p50": 2.0,
+        "p90": 6.0,
+        "p95": 7.0,
+        "p99": 7.0,
+        "max": 7
+      },
+      "crates": {
+        "count": 4998,
+        "p50": 0.0,
+        "p90": 1.0,
+        "p95": 1.0,
+        "p99": 2.0,
+        "max": 2
+      },
+      "obstacles": {
+        "count": 4998,
+        "p50": 0.0,
+        "p90": 1.0,
+        "p95": 1.0,
+        "p99": 1.0,
+        "max": 1
+      }
+    },
+    "20-20": {
+      "enemies": {
+        "count": 1458,
+        "p50": 7.0,
+        "p90": 12.0,
+        "p95": 14.0,
+        "p99": 15.0,
+        "max": 15
+      },
+      "bosses": {
+        "count": 1458,
+        "p50": 1.0,
+        "p90": 1.0,
+        "p95": 1.0,
+        "p99": 1.0,
+        "max": 1
+      },
+      "projectiles": {
+        "count": 1458,
+        "p50": 24.0,
+        "p90": 29.0,
+        "p95": 30.0,
+        "p99": 30.0,
+        "max": 30
+      },
+      "materials": {
+        "count": 1458,
+        "p50": 7.0,
+        "p90": 14.0,
+        "p95": 16.0,
+        "p99": 17.0,
+        "max": 21
+      },
+      "consumables": {
+        "count": 1458,
+        "p50": 2.0,
+        "p90": 3.0,
+        "p95": 3.0,
+        "p99": 3.0,
+        "max": 3
+      },
+      "crates": {
+        "count": 1458,
+        "p50": 0.0,
+        "p90": 2.0,
+        "p95": 2.0,
+        "p99": 2.0,
+        "max": 3
+      },
+      "obstacles": {
+        "count": 1458,
+        "p50": 0.0,
+        "p90": 0.0,
+        "p95": 1.0,
+        "p99": 1.0,
+        "max": 1
+      }
+    },
+    "6-10": {
+      "enemies": {
+        "count": 5628,
+        "p50": 8.0,
+        "p90": 17.0,
+        "p95": 20.0,
+        "p99": 24.0,
+        "max": 26
+      },
+      "bosses": {
+        "count": 5628,
+        "p50": 0.0,
+        "p90": 0.0,
+        "p95": 0.0,
+        "p99": 0.0,
+        "max": 0
+      },
+      "projectiles": {
+        "count": 5628,
+        "p50": 0.0,
+        "p90": 0.0,
+        "p95": 0.0,
+        "p99": 1.0,
+        "max": 2
+      },
+      "materials": {
+        "count": 5628,
+        "p50": 7.0,
+        "p90": 18.0,
+        "p95": 22.0,
+        "p99": 27.0,
+        "max": 34
+      },
+      "consumables": {
+        "count": 5628,
+        "p50": 1.0,
+        "p90": 4.0,
+        "p95": 5.0,
+        "p99": 7.0,
+        "max": 8
+      },
+      "crates": {
+        "count": 5628,
+        "p50": 0.0,
+        "p90": 0.0,
+        "p95": 0.0,
+        "p99": 0.0,
+        "max": 1
+      },
+      "obstacles": {
+        "count": 5628,
+        "p50": 0.0,
+        "p90": 1.0,
+        "p95": 1.0,
+        "p99": 1.0,
+        "max": 1
+      }
+    }
+  },
+  "invalid_entity_totals": {
+    "bosses": 0,
+    "consumables": 0,
+    "enemies": 0,
+    "materials": 0,
+    "obstacles": 0,
+    "players": 0,
+    "projectiles": 0
+  },
+  "dropped_entity_totals": {
+    "bosses": 0,
+    "consumables": 0,
+    "crates": 0,
+    "enemies": 0,
+    "materials": 0,
+    "obstacles": 0,
+    "projectiles": 0
+  },
+  "wave_capture_counts": {
+    "1": 440,
+    "2": 546,
+    "3": 640,
+    "4": 756,
+    "5": 851,
+    "6": 945,
+    "7": 1040,
+    "8": 1146,
+    "9": 1251,
+    "10": 1246,
+    "11": 1245,
+    "12": 1251,
+    "13": 1251,
+    "14": 1240,
+    "15": 1241,
+    "16": 1246,
+    "17": 1250,
+    "18": 1251,
+    "19": 1251,
+    "20": 1458
+  },
+  "severe_state_counts": {
+    "boss": 1435,
+    "charger": 8215,
+    "corner": 13,
+    "dense_projectiles": 1035,
+    "near_wall": 20
+  },
+  "teacher_contributions": {
+    "teacher.enemies": {
+      "count": 21545,
+      "p50": 7.0,
+      "p90": 16.0,
+      "p95": 19.0,
+      "p99": 24.0,
+      "max": 29.0
+    },
+    "teacher.finale_translation.body_best_clearance": {
+      "count": 21545,
+      "p50": -1.0,
+      "p90": 391.4527406,
+      "p95": 510.6760371999998,
+      "p99": 717.2945785200001,
+      "max": 1198.221924
+    },
+    "teacher.finale_translation.body_input_clearance": {
+      "count": 21545,
+      "p50": -1.0,
+      "p90": 305.8608438000002,
+      "p95": 447.19942499999985,
+      "p99": 663.0154536400005,
+      "max": 1193.830933
+    },
+    "teacher.finale_translation.body_projectile_floor": {
+      "count": 21545,
+      "p50": -1.0,
+      "p90": -1.0,
+      "p95": 32.0056916,
+      "p99": 576.6,
+      "max": 845.904663
+    },
+    "teacher.finale_translation.body_selected_clearance": {
+      "count": 21545,
+      "p50": -1.0,
+      "p90": 299.69663060000005,
+      "p95": 444.3518483999999,
+      "p99": 662.0902656800022,
+      "max": 1193.830933
+    },
+    "teacher.finale_translation.body_selected_projectile_clearance": {
+      "count": 21545,
+      "p50": -1.0,
+      "p90": 1000000.0,
+      "p95": 1000000.0,
+      "p99": 1000000.0,
+      "max": 1000000.0
+    },
+    "teacher.finale_translation.commit_distance": {
+      "count": 21545,
+      "p50": 0.0,
+      "p90": 0.0,
+      "p95": 0.0,
+      "p99": 86.66137624000001,
+      "max": 119.827347
+    },
+    "teacher.finale_translation.commit_ticks": {
+      "count": 21545,
+      "p50": 0.0,
+      "p90": 0.0,
+      "p95": 0.0,
+      "p99": 10.0,
+      "max": 15.0
+    },
+    "teacher.finale_translation.commit_x": {
+      "count": 21545,
+      "p50": 0.0,
+      "p90": 0.0,
+      "p95": 0.0,
+      "p99": 0.866025,
+      "max": 1.0
+    },
+    "teacher.finale_translation.commit_y": {
+      "count": 21545,
+      "p50": 0.0,
+      "p90": 0.0,
+      "p95": 0.0,
+      "p99": 0.866025,
+      "max": 0.996617
+    },
+    "teacher.finale_translation.projectile_blended_body_clearance": {
+      "count": 21545,
+      "p50": -1.0,
+      "p90": -1.0,
+      "p95": 274.87722139999966,
+      "p99": 600.2310498000015,
+      "max": 937.605164
+    },
+    "teacher.finale_translation.projectile_blended_clearance": {
+      "count": 21545,
+      "p50": -1.0,
+      "p90": -1.0,
+      "p95": 36.595550999999965,
+      "p99": 474.7574696400016,
+      "max": 796.27356
+    },
+    "teacher.finale_translation.projectile_blended_enemy_penalty": {
+      "count": 21545,
+      "p50": -1.0,
+      "p90": -1.0,
+      "p95": 0.0,
+      "p99": 4228.656434880058,
+      "max": 19488.892833
+    },
+    "teacher.finale_translation.projectile_escape_body_clearance": {
+      "count": 21545,
+      "p50": -1.0,
+      "p90": -1.0,
+      "p95": 287.08968479999965,
+      "p99": 603.1454519200006,
+      "max": 951.113525
+    },
+    "teacher.finale_translation.projectile_escape_clearance": {
+      "count": 21545,
+      "p50": -1.0,
+      "p90": -1.0,
+      "p95": 49.545971999999935,
+      "p99": 625.4637790000006,
+      "max": 969.992249
+    },
+    "teacher.finale_translation.projectile_escape_enemy_penalty": {
+      "count": 21545,
+      "p50": -1.0,
+      "p90": -1.0,
+      "p95": 0.0,
+      "p99": 3914.8636047200025,
+      "max": 18667.381496
+    },
+    "teacher.finale_translation.projectile_final_body_clearance": {
+      "count": 21545,
+      "p50": -1.0,
+      "p90": -1.0,
+      "p95": 289.62568359999995,
+      "p99": 599.1976588800012,
+      "max": 951.113525
+    },
+    "teacher.finale_translation.projectile_final_clearance": {
+      "count": 21545,
+      "p50": -1.0,
+      "p90": -1.0,
+      "p95": 39.112421799999915,
+      "p99": 543.5755734400001,
+      "max": 892.548096
+    },
+    "teacher.finale_translation.projectile_final_enemy_penalty": {
+      "count": 21545,
+      "p50": -1.0,
+      "p90": -1.0,
+      "p95": 0.0,
+      "p99": 4027.038733560007,
+      "max": 52609.56192
+    },
+    "teacher.finale_translation.projectile_input_body_clearance": {
+      "count": 21545,
+      "p50": -1.0,
+      "p90": -1.0,
+      "p95": 231.02867259999977,
+      "p99": 590.080407160001,
+      "max": 948.592773
+    },
+    "teacher.finale_translation.projectile_input_clearance": {
+      "count": 21545,
+      "p50": -1.0,
+      "p90": -1.0,
+      "p95": 32.6730562,
+      "p99": 599.642444040001,
+      "max": 969.920288
+    },
+    "teacher.finale_translation.projectile_input_enemy_penalty": {
+      "count": 21545,
+      "p50": -1.0,
+      "p90": -1.0,
+      "p95": 0.0,
+      "p99": 5281.521774200046,
+      "max": 37539.37304
+    },
+    "teacher.finale_translation.projectile_safety_urgency": {
+      "count": 21545,
+      "p50": 0.0,
+      "p90": 0.0,
+      "p95": 1.0,
+      "p99": 1.0,
+      "max": 1.0
+    },
+    "teacher.finale_translation.wall_best_body_clearance": {
+      "count": 21545,
+      "p50": -1.0,
+      "p90": -1.0,
+      "p95": -1.0,
+      "p99": 442.99156752000204,
+      "max": 1000000.0
+    },
+    "teacher.finale_translation.wall_best_enemy_penalty": {
+      "count": 21545,
+      "p50": -1.0,
+      "p90": -1.0,
+      "p95": -1.0,
+      "p99": 0.0,
+      "max": 40.744619
+    },
+    "teacher.finale_translation.wall_input_body_clearance": {
+      "count": 21545,
+      "p50": -1.0,
+      "p90": -1.0,
+      "p95": -1.0,
+      "p99": 363.0100621600021,
+      "max": 1000000.0
+    },
+    "teacher.finale_translation.wall_input_enemy_penalty": {
+      "count": 21545,
+      "p50": -1.0,
+      "p90": -1.0,
+      "p95": -1.0,
+      "p99": 0.0,
+      "max": 109.671831
+    },
+    "teacher.finale_translation.wall_selected_body_clearance": {
+      "count": 21545,
+      "p50": -1.0,
+      "p90": -1.0,
+      "p95": -1.0,
+      "p99": 339.60265392000167,
+      "max": 1000000.0
+    },
+    "teacher.finale_translation.wall_selected_enemy_penalty": {
+      "count": 21545,
+      "p50": -1.0,
+      "p90": -1.0,
+      "p95": -1.0,
+      "p99": 0.0,
+      "max": 40.744619
+    },
+    "teacher.projectiles": {
+      "count": 21545,
+      "p50": 0.0,
+      "p90": 1.0,
+      "p95": 4.0,
+      "p99": 27.0,
+      "max": 30.0
+    }
+  },
+  "near_duplicate_fraction": 0.022418194476676725
+}

@@ -1,6 +1,7 @@
 from scripts.wp2_teacher_safety_audit import (
     _avoidable_damage_violations,
     _body_clearance,
+    _body_projectile_floor_unavailable,
     _hard_wall_faults,
     _required_body_floor,
 )
@@ -65,3 +66,29 @@ def test_body_emergency_audit_requires_near_best_escape():
 
     assert _required_body_floor(ordinary) == 45.0
     assert _required_body_floor(emergency) == 81.5
+
+
+def test_projectile_floor_unavailable_only_accepts_unchanged_no_repair_fallback():
+    fallback = {
+        "body_input_clearance": 89.019873,
+        "body_best_clearance": 89.019873,
+        "body_selected_clearance": 89.019873,
+        "body_projectile_floor": 507.575745,
+        "body_selected_projectile_clearance": -1.0,
+        "body_safety_active": False,
+        "body_emergency_active": False,
+    }
+
+    assert _body_projectile_floor_unavailable(fallback)
+    assert not _body_projectile_floor_unavailable(
+        {**fallback, "body_safety_active": True}
+    )
+    assert not _body_projectile_floor_unavailable(
+        {**fallback, "body_selected_clearance": 50.0}
+    )
+    assert not _body_projectile_floor_unavailable(
+        {**fallback, "body_selected_projectile_clearance": -2.0}
+    )
+    assert not _body_projectile_floor_unavailable(
+        {**fallback, "body_projectile_floor": -1.0e18}
+    )
