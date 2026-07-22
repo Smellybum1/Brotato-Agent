@@ -6,6 +6,7 @@ from scripts.wp2_collect_teacher import (
     atomic_json,
     latest_capture,
     launch_game,
+    read_json_when_ready,
     summary_fault,
     tail_lines,
 )
@@ -48,6 +49,27 @@ def test_latest_capture_skips_partial_tail_line():
     }
 
 
+def test_read_json_when_ready_retries_partial_summary(tmp_path: Path, monkeypatch):
+    path = tmp_path / "summary.json"
+    path.write_text("", encoding="utf-8")
+    real_read_text = Path.read_text
+    reads = 0
+
+    def completing_read_text(source: Path, *args, **kwargs):
+        nonlocal reads
+        reads += 1
+        if source == path and reads == 2:
+            source.write_text('{"result":"victory"}\n', encoding="utf-8")
+        return real_read_text(source, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "read_text", completing_read_text)
+
+    assert read_json_when_ready(path, timeout_sec=0.2, poll_sec=0.001) == {
+        "result": "victory"
+    }
+    assert reads == 2
+
+
 def test_launch_game_uses_steam_route(tmp_path: Path, monkeypatch):
     calls: list[list[str]] = []
     monkeypatch.setattr(
@@ -67,8 +89,8 @@ def test_launch_game_uses_steam_route(tmp_path: Path, monkeypatch):
 
 def test_summary_fault_accepts_clean_current_terminal_summary():
     summary = {
-        "policy_version": "teacher_v1-0.1.106-gun-wp1",
-        "mod_version": "0.2.14-wp2-capture",
+        "policy_version": "teacher_v1-0.1.107-gun-wp1",
+        "mod_version": "0.2.15-wp2-capture",
         "telemetry_complete": True,
         "errors": 0,
         "hangs": 0,

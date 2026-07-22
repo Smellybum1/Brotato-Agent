@@ -19,10 +19,12 @@ from typing import Any
 
 
 CAPTURE_SCHEMA_HASH = "95B6444796A21FD44E94113B75BA2097BC381D5F72ED784F9B9A4A99DD46D951"
-POLICY_VERSION = "teacher_v1-0.1.106-gun-wp1"
-MOD_VERSION = "0.2.14-wp2-capture"
+POLICY_VERSION = "teacher_v1-0.1.107-gun-wp1"
+MOD_VERSION = "0.2.15-wp2-capture"
 ATOMIC_REPLACE_ATTEMPTS = 10
 ATOMIC_REPLACE_BASE_DELAY_SEC = 0.02
+SUMMARY_READ_TIMEOUT_SEC = 2.0
+SUMMARY_READ_POLL_SEC = 0.02
 
 
 def utc_now() -> str:
@@ -46,6 +48,31 @@ def atomic_json(path: Path, payload: dict[str, Any]) -> None:
 
 def list_summaries(runs_dir: Path) -> dict[str, Path]:
     return {path.parent.name: path for path in runs_dir.glob("*/summary.json")}
+
+
+def read_json_when_ready(
+    path: Path,
+    timeout_sec: float = SUMMARY_READ_TIMEOUT_SEC,
+    poll_sec: float = SUMMARY_READ_POLL_SEC,
+) -> dict[str, Any]:
+    """Read a summary after the producer has finished its non-atomic write."""
+    deadline = time.monotonic() + timeout_sec
+    last_error: json.JSONDecodeError | None = None
+    while True:
+        try:
+            payload = json.loads(path.read_text(encoding="utf-8"))
+            if not isinstance(payload, dict):
+                raise TypeError(f"expected JSON object in {path}")
+            return payload
+        except json.JSONDecodeError as exc:
+            last_error = exc
+        except FileNotFoundError:
+            pass
+        if time.monotonic() >= deadline:
+            if last_error is not None:
+                raise last_error
+            raise FileNotFoundError(path)
+        time.sleep(poll_sec)
 
 
 def newest_run(runs_dir: Path, excluded: set[str]) -> Path | None:
@@ -189,7 +216,7 @@ def main() -> int:
                 raise RuntimeError("Brotato exited before collection completed")
             summaries = list_summaries(runs_dir)
             for run_id in sorted(set(summaries) - baseline - {row["run_id"] for row in collected}):
-                summary = json.loads(summaries[run_id].read_text(encoding="utf-8"))
+                summary = read_json_when_ready(summaries[run_id])
                 fault = summary_fault(summary)
                 if fault:
                     raise RuntimeError(f"run {run_id}: {fault}")

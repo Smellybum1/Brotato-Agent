@@ -1,0 +1,35 @@
+{
+  "run_id": "run_1784741387_38832",
+  "policy_version": "teacher_v1-0.1.106-gun-wp1",
+  "mod_version": "0.2.14-wp2-capture",
+  "result": "victory",
+  "accepted_for_collection": false,
+  "telemetry_complete": true,
+  "telemetry_errors": 0,
+  "capture_count": 20784,
+  "waves_represented": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+  "post_wall_projectile_body_clearance_violations": [
+    {"capture_seq": 16721, "final_body_clearance": 30.1045},
+    {"capture_seq": 16722, "final_body_clearance": 28.7765},
+    {"capture_seq": 17068, "final_body_clearance": 24.5571},
+    {"capture_seq": 17073, "final_body_clearance": -3.1983},
+    {"capture_seq": 17076, "final_body_clearance": 13.0632},
+    {"capture_seq": 17083, "final_body_clearance": 10.6789},
+    {"capture_seq": 17086, "final_body_clearance": -0.2319},
+    {"capture_seq": 17452, "final_body_clearance": 43.1379},
+    {"capture_seq": 17453, "final_body_clearance": 32.4473},
+    {"capture_seq": 17456, "final_body_clearance": 24.5755}
+  ],
+  "ordinary_late_body_failure": {
+    "wave": 17,
+    "damage_event_seq": 19463,
+    "damage": 15,
+    "pre_damage_captures": [
+      {"capture_seq": 17327, "final_body_clearance": 15.8, "best_sampled_body_clearance": 90.1, "safe_sampled_lanes": 12},
+      {"capture_seq": 17328, "final_body_clearance": 42.5, "best_sampled_body_clearance": 70.3, "safe_sampled_lanes": 12},
+      {"capture_seq": 17329, "final_body_clearance": 33.3, "best_sampled_body_clearance": 50.8, "safe_sampled_lanes": 9}
+    ]
+  },
+  "collector_stop_reason": "summary.json was observed during its non-atomic write and was temporarily empty",
+  "repair_required": "post-clamp final body-safety gate plus bounded summary-read retry"
+}

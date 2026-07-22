@@ -122,17 +122,17 @@ def test_v64_blood_donation_is_vetoed_for_gate_reliability():
     assert '"item_blood_donation": {"never": true}' in requirement_block
 
 
-def test_wp2_capture_build_versions_the_v106_body_clearance_policy():
+def test_wp2_capture_build_versions_the_v107_final_body_safety_policy():
     manifest = MANIFEST.read_text(encoding="utf-8")
     controller = CONTROLLER.read_text(encoding="utf-8")
     telemetry = TELEMETRY.read_text(encoding="utf-8")
 
-    assert '"version_number": "0.2.14"' in manifest
-    assert "v106 deterministic teacher" in manifest
-    assert controller.count("teacher_v1-0.1.106-gun-wp1") == 1
-    assert controller.count("0.2.14-wp2-capture") == 1
-    assert telemetry.count("teacher_v1-0.1.106-gun-wp1") == 1
-    assert telemetry.count("0.2.14-wp2-capture") == 1
+    assert '"version_number": "0.2.15"' in manifest
+    assert "v107 deterministic teacher" in manifest
+    assert controller.count("teacher_v1-0.1.107-gun-wp1") == 1
+    assert controller.count("0.2.15-wp2-capture") == 1
+    assert telemetry.count("teacher_v1-0.1.107-gun-wp1") == 1
+    assert telemetry.count("0.2.15-wp2-capture") == 1
 
 
 def test_v84_item_audit_and_conditional_effect_corrections():
@@ -826,6 +826,57 @@ def test_v106_body_clearance_tier_rejects_avoidable_contact_paths():
     assert 8.1 < 45.0 <= 59.1
     assert 71.8 >= 81.6 - 20.0 and 2.2 < 45.0 <= 61.4
     assert 84.7 < 204.6 and 84.7 - 40.9 <= 60.0
+
+
+def test_v107_final_body_gate_runs_after_wall_projection_and_preserves_safety_tiers():
+    potential = POTENTIAL_FIELD.read_text(encoding="utf-8")
+    movement = potential.split("func compute_movement", 1)[1].split(
+        "func _reset_finale_commit", 1
+    )[0]
+
+    survival = movement.split("var safe_survival =", 1)[1].split(
+        "return _prev_move", 1
+    )[0]
+    assert survival.index("_finale_projectile_safety(") < survival.index(
+        "_finale_wall_safety("
+    ) < survival.index("_finale_body_safety(")
+
+    ordinary = movement.split("var final_move =", 1)[1]
+    assert ordinary.index("_finale_projectile_safety(") < ordinary.index(
+        "_finale_wall_safety("
+    ) < ordinary.index("_finale_body_safety(")
+
+    safety = potential.split("func _finale_body_safety", 1)[1].split(
+        "func _finale_committed_escape", 1
+    )[0]
+    clamp = safety.index("var candidate := _clamp_finale_wall_components(")
+    body = safety.index("var body_clearance := _predictive_body_path_clearance(")
+    wall_gate = safety.index("if _finale_wall_recovery_active:")
+    projectile_floor = safety.index("var projectile_floor := -1.0e18")
+    safe_tier = safety.index("highest_projectile_clearance >= safe_clear")
+    panic_tier = safety.index("highest_projectile_clearance >= panic_clear")
+    concession = safety.index("BOSS_FINALE_BODY_ESCAPE_PROJECTILE_SLACK")
+    body_tier = safety.index("var body_floor := highest_body_clearance")
+    body_gate = safety.index(
+        "projectile_clearance < projectile_floor or body_clearance < body_floor"
+    )
+    assert clamp < wall_gate < body < projectile_floor
+    assert projectile_floor < safe_tier < panic_tier < concession < body_tier < body_gate
+
+    for field in (
+        '"body_safety_active": _finale_body_safety_active',
+        '"body_input_clearance": _finale_body_input_clearance',
+        '"body_best_clearance": _finale_body_best_clearance',
+        '"body_selected_clearance": _finale_body_selected_clearance',
+        '"body_projectile_floor": _finale_body_projectile_floor',
+    ):
+        assert field in potential
+
+    # Frozen v106 smoke evidence. The final wall clamp reintroduced avoidable
+    # contact at capture 17073, and ordinary movement did so at 17329. Both have
+    # a sampled contact-safe alternative and therefore fail the v107 45-unit tier.
+    assert -3.1983 < 45.0 <= 366.59
+    assert 33.3 < 45.0 <= 50.8
 
 
 def test_v101_nonconvex_projectile_blend_falls_back_to_sampled_escape():

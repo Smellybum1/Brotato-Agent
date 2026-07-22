@@ -1,0 +1,32 @@
+# WP2 combat-capture audit
+
+- Runs with captures: 1 (1 terminal)
+- Captures: 20784
+- Valid transition estimate: 20784
+- Gap to 200,000: 179216
+- Schema mismatches: 0
+- Invalid captures/actions: 0 / 0
+- Near-duplicate fraction: 0.0228
+
+## Entity count percentiles
+
+| Group | p50 | p90 | p95 | p99 | max |
+|---|---:|---:|---:|---:|---:|
+| enemies | 8.0 | 19.0 | 22.0 | 28.0 | 41 |
+| bosses | 0.0 | 0.0 | 0.0 | 1.0 | 1 |
+| projectiles | 0.0 | 1.0 | 3.0 | 24.0 | 30 |
+| materials | 10.0 | 42.0 | 50.0 | 50.0 | 50 |
+| consumables | 3.0 | 8.0 | 9.0 | 10.0 | 13 |
+| crates | 0.0 | 0.0 | 1.0 | 2.0 | 2 |
+| obstacles | 0.0 | 2.0 | 2.0 | 3.0 | 4 |
+
+## Severe-state capture counts
+
+- boss: 683
+- charger: 8337
+- corner: 19
+- dense_projectiles: 458
+- near_wall: 34
+
+Capacities remain provisional until complete runs cover every wave band,
+including representative late-projectile and wave-20 boss states.
