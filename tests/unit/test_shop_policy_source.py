@@ -725,6 +725,17 @@ def test_v105_wall_recovery_filters_out_materially_denser_enemy_lanes():
     assert 'float(threat.get("vy", 0.0))' in predictive
     assert 'float(threat.get("radius", 18.0))' in predictive
     assert "threat_pos + threat_vel * future_sec" in predictive
+    # These expressions include untyped helper parameters. Godot 3 cannot
+    # infer `:=` types for them even though Python source checks accept them.
+    for typed_local in (
+        "var avoid: float =",
+        "var critical: float =",
+        "var player_pos: Vector2 =",
+        "var clearance: float =",
+    ):
+        assert typed_local in predictive
+    assert "var avoid :=" not in predictive
+    assert "var critical :=" not in predictive
 
     projectile = potential.split("func _projectile_escape", 1)[1].split(
         "func _projectile_clearance_context", 1

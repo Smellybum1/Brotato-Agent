@@ -1262,29 +1262,31 @@ func _predictive_enemy_path_penalty(pos, d, player_speed, times, enemies,
 		bosses, caution = 1.0) -> float:
 	if enemies.empty() and bosses.empty():
 		return 0.0
-	var threats := []
+	var threats: Array = []
 	for enemy in enemies:
 		threats.append(enemy)
 	for boss in bosses:
 		threats.append(boss)
-	var avoid := BotConfig.ENEMY_AVOID_DIST * caution
-	var critical := BotConfig.BOSS_FINALE_WALL_ENEMY_CRITICAL_CLEARANCE * caution
-	var penalty := 0.0
+	var avoid: float = float(BotConfig.ENEMY_AVOID_DIST) * float(caution)
+	var critical: float = (
+		float(BotConfig.BOSS_FINALE_WALL_ENEMY_CRITICAL_CLEARANCE)
+		* float(caution))
+	var penalty: float = 0.0
 	for ti in range(times.size()):
-		var future_sec := float(times[ti])
-		var player_pos := pos + d * (player_speed * future_sec)
+		var future_sec: float = float(times[ti])
+		var player_pos: Vector2 = pos + d * (player_speed * future_sec)
 		for threat in threats:
-			var threat_pos := Vector2(
+			var threat_pos: Vector2 = Vector2(
 				float(threat.get("x", 0.0)), float(threat.get("y", 0.0)))
-			var threat_vel := Vector2(
+			var threat_vel: Vector2 = Vector2(
 				float(threat.get("vx", 0.0)), float(threat.get("vy", 0.0)))
-			var threat_radius := max(float(threat.get("radius", 18.0)), 0.0)
-			var clearance := player_pos.distance_to(
+			var threat_radius: float = max(float(threat.get("radius", 18.0)), 0.0)
+			var clearance: float = player_pos.distance_to(
 				threat_pos + threat_vel * future_sec) - threat_radius
 			if clearance < avoid:
 				penalty += avoid - clearance
 				if clearance < critical:
-					var critical_gap := critical - clearance
+					var critical_gap: float = critical - clearance
 					penalty += (critical_gap * critical_gap
 						* BotConfig.BOSS_FINALE_WALL_ENEMY_CRITICAL_WEIGHT)
 	return (penalty / float(max(times.size(), 1))

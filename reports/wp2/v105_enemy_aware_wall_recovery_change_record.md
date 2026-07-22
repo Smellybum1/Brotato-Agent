@@ -73,4 +73,13 @@ commit restores exact v104 behavior. Raw telemetry is never rewritten.
   769.5, and reduces the predictive enemy penalty from 71,602.5 to 55,859.2.
   The runtime smoke remains the authoritative behavioral gate.
 - Full suite: **100 passed**.
-- Deployment and smoke: pending.
+- The first deployment smoke produced no run data and was stopped at the main
+  menu. Godot reported a parse error at `potential_field.gd:1270`: Godot 3
+  could not infer the type of a `:=` local whose expression included the
+  untyped `caution` parameter. The collector, game, and auto-start were stopped
+  cleanly; the preserved error log has SHA-256
+  `E9619BD6D5D8E56A28CF799F856FCC44E1BC5A27931CF360F46BBA96FFABF8B6`.
+- The compile-only correction gives all dynamic predictive-helper locals
+  explicit Godot types and adds a source regression assertion. Focused tests
+  pass **54/54** and the full suite passes **100/100** after the correction.
+- Replacement deployment and smoke: pending.
