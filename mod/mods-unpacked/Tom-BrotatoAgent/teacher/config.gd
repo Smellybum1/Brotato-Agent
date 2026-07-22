@@ -161,6 +161,14 @@ const BOSS_FINALE_WALL_ENEMY_CRITICAL_CLEARANCE := 45.0
 const BOSS_FINALE_WALL_ENEMY_CRITICAL_WEIGHT := 0.02
 const BOSS_FINALE_WALL_ENEMY_SCORE_WEIGHT := 4.0
 const BOSS_FINALE_ENEMY_PENALTY_SLACK := 20.0
+# v106: a soft aggregate crowd score must never buy wall/projectile clearance
+# by predicting a body collision. Preserve a contact-safe lane when one exists;
+# if every lane is contact-dangerous, stay close to the best body clearance.
+const BOSS_FINALE_BODY_CRITICAL_CLEARANCE := 45.0
+const BOSS_FINALE_BODY_CLEARANCE_SLACK := 20.0
+# When every sampled projectile lane is below panic clearance, allow a bounded
+# projectile-clearance concession to avoid an otherwise predicted body impact.
+const BOSS_FINALE_BODY_ESCAPE_PROJECTILE_SLACK := 60.0
 # Battlefield: chase/destroy trees for crates through wave 10.
 const TREE_PRIORITY_WAVE := 10
 const TREE_ATTRACTION := 1450.0

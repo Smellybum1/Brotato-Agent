@@ -2,7 +2,7 @@ extends Reference
 # Append-only JSONL telemetry writer. Failures never crash the controller.
 
 const SCHEMA_VERSION := "1.0.0"
-const POLICY_VERSION := "teacher_v1-0.1.105-gun-wp1"
+const POLICY_VERSION := "teacher_v1-0.1.106-gun-wp1"
 
 var run_id: String = ""
 var seq: int = 0
@@ -34,7 +34,7 @@ func begin_run(meta: Dictionary) -> void:
 		"endless": meta.get("endless", false),
 		"wave_retry": meta.get("wave_retry", false),
 		"game_version": meta.get("game_version", ""),
-		"mod_version": meta.get("mod_version", "0.2.13-wp2-capture"),
+		"mod_version": meta.get("mod_version", "0.2.14-wp2-capture"),
 		"config_id": meta.get("config_id", "well_rounded_d0_smg"),
 		"result": "incomplete",
 		"last_wave": 0,

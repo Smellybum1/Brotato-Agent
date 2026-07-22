@@ -82,4 +82,14 @@ commit restores exact v104 behavior. Raw telemetry is never rewritten.
 - The compile-only correction gives all dynamic predictive-helper locals
   explicit Godot types and adds a source regression assertion. Focused tests
   pass **54/54** and the full suite passes **100/100** after the correction.
-- Replacement deployment and smoke: pending.
+- Replacement deployment ZIP SHA-256:
+  `F37C1CB69A8A873E31D0A84095835C401B9CC08F1B3C7FAEA821B4723C26C887`.
+  The isolated smoke `run_1784738604_58496` completed all 20 waves with 20,560
+  structurally valid captures, zero telemetry errors, and the expected v105
+  identity.
+- Behavioral qualification **failed**. Captures 20226-20229 predicted and then
+  entered boss contact under non-projectile wall recovery, producing 21 damage;
+  captures 20432-20434 repeated the class under projectile safety before a
+  second 21-damage contact. In both cases materially safer body-clearance lanes
+  existed. The smoke remains immutable diagnostic evidence and is excluded
+  from the primary dataset; v106 provides the versioned repair.

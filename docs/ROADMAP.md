@@ -6,7 +6,7 @@ See also the director master roadmap. Work Package status:
 |-----------|--------|
 | M0 Environment audit | Complete (WP1) |
 | M1 Deterministic teacher + telemetry | **Complete** — v72 certified 18W/2L; v92 promoted; repository/safeguard closeout passed |
-| M2 Learned combat (WP2) | **In progress** — combat capture validated; v105 enemy-aware recovery qualification and clean collection next |
+| M2 Learned combat (WP2) | **In progress** — combat capture validated; v106 body-clearance qualification and clean collection next |
 | M3 Economy planner | Reframe pending (see note 3 below) |
 | M4 Robust D0 agent | Not started |
 | M5–M7 Danger curriculum / expert / characters | Not started |
@@ -149,8 +149,12 @@ its partial successor. The first v98 run exposed the remaining full-health path.
 Subsequent v99-v104 runs iteratively qualified the ordered projectile, hard-wall,
 and recovery constraints; v104 then stopped at 5/20 when a wave-17 defeat proved
 that its wall-improving selector could still choose a denser enemy path over a
-safer wall-compatible lane. v105 adds predictive ordinary-enemy lane filtering.
-A fresh v105-only 20-run capture set is the primary dataset source; earlier
+safer wall-compatible lane. v105 added predictive ordinary-enemy lane filtering,
+but its isolated smoke exposed two avoidable boss-contact paths because wall and
+projectile clearance remained lexically above predicted body clearance. v106
+adds a hard contact-clearance tier with a bounded projectile concession when
+every projectile lane is already below panic. A fresh v106-only 20-run capture
+set is the primary dataset source; earlier
 captures remain immutable diagnostic evidence and are not silently mixed into it.
 
 Evidence-driven modifications to `Grok_4.5_Brotato_Work_Package_2_Prompt.md`

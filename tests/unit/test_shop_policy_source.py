@@ -122,17 +122,17 @@ def test_v64_blood_donation_is_vetoed_for_gate_reliability():
     assert '"item_blood_donation": {"never": true}' in requirement_block
 
 
-def test_wp2_capture_build_versions_the_v105_enemy_aware_recovery_policy():
+def test_wp2_capture_build_versions_the_v106_body_clearance_policy():
     manifest = MANIFEST.read_text(encoding="utf-8")
     controller = CONTROLLER.read_text(encoding="utf-8")
     telemetry = TELEMETRY.read_text(encoding="utf-8")
 
-    assert '"version_number": "0.2.13"' in manifest
-    assert "v105 deterministic teacher" in manifest
-    assert controller.count("teacher_v1-0.1.105-gun-wp1") == 1
-    assert controller.count("0.2.13-wp2-capture") == 1
-    assert telemetry.count("teacher_v1-0.1.105-gun-wp1") == 1
-    assert telemetry.count("0.2.13-wp2-capture") == 1
+    assert '"version_number": "0.2.14"' in manifest
+    assert "v106 deterministic teacher" in manifest
+    assert controller.count("teacher_v1-0.1.106-gun-wp1") == 1
+    assert controller.count("0.2.14-wp2-capture") == 1
+    assert telemetry.count("teacher_v1-0.1.106-gun-wp1") == 1
+    assert telemetry.count("0.2.14-wp2-capture") == 1
 
 
 def test_v84_item_audit_and_conditional_effect_corrections():
@@ -703,7 +703,9 @@ def test_v105_wall_recovery_filters_out_materially_denser_enemy_lanes():
     )[0]
     penalty = selector.index("var enemy_penalty := _finale_enemy_path_penalty(")
     eligible = selector.index("if score <= -1.0e17:")
-    collect = selector.index("rows.append([candidate, score, enemy_penalty])")
+    collect = selector.index(
+        "rows.append([candidate, score, enemy_penalty, body_clearance])"
+    )
     second_pass = selector.index("for row in rows:")
     safety_gate = selector.index(
         "enemy_penalty > lowest_enemy_penalty", second_pass
@@ -766,6 +768,64 @@ def test_v105_wall_recovery_filters_out_materially_denser_enemy_lanes():
     safer_wall, safer_penalty = 409.4, 166.0
     assert v104_wall > current_wall and safer_wall > current_wall
     assert v104_penalty > safer_penalty + 20.0
+
+
+def test_v106_body_clearance_tier_rejects_avoidable_contact_paths():
+    config = CONFIG.read_text(encoding="utf-8")
+    potential = POTENTIAL_FIELD.read_text(encoding="utf-8")
+
+    for declaration in (
+        "const BOSS_FINALE_BODY_CRITICAL_CLEARANCE := 45.0",
+        "const BOSS_FINALE_BODY_CLEARANCE_SLACK := 20.0",
+        "const BOSS_FINALE_BODY_ESCAPE_PROJECTILE_SLACK := 60.0",
+    ):
+        assert declaration in config
+
+    helper = potential.split("func _predictive_body_path_clearance", 1)[1].split(
+        "func _finale_lane_score", 1
+    )[0]
+    assert "if future_sec <= 0.0:" in helper
+    assert 'float(threat.get("vx", 0.0))' in helper
+    assert 'float(threat.get("vy", 0.0))' in helper
+    assert 'float(threat.get("radius", 18.0))' in helper
+    assert "threat_pos + threat_vel * future_sec" in helper
+
+    selector = potential.split("func _best_finale_interior_lane", 1)[1].split(
+        "func _finale_projectile_safety", 1
+    )[0]
+    body_collect = selector.index(
+        "rows.append([candidate, score, enemy_penalty, body_clearance])"
+    )
+    body_floor = selector.index("var body_clearance_floor :=", body_collect)
+    body_gate = selector.index("if body_clearance < body_clearance_floor:", body_floor)
+    enemy_gate = selector.index("enemy_penalty > lowest_enemy_penalty", body_gate)
+    choose = selector.index("if score > best_score:", enemy_gate)
+    assert body_collect < body_floor < body_gate < enemy_gate < choose
+
+    projectile = potential.split("func _projectile_escape", 1)[1].split(
+        "func _projectile_clearance_context", 1
+    )[0]
+    assert "var tier_max_body_clearance := -1.0e18" in projectile
+    assert "max_clearance < panic" in projectile
+    assert "BOSS_FINALE_BODY_ESCAPE_PROJECTILE_SLACK" in projectile
+    assert "if finale and float(row[3]) < body_clearance_floor:" in projectile
+
+    for field in (
+        '"wall_best_body_clearance": _finale_wall_best_body_clearance',
+        '"wall_selected_body_clearance": _finale_wall_selected_body_clearance',
+        '"projectile_escape_body_clearance": _finale_projectile_escape_body_clearance',
+        '"projectile_final_body_clearance": _finale_projectile_final_body_clearance',
+    ):
+        assert field in potential
+
+    # Frozen v105 smoke evidence. At capture 20226, wall recovery chose a
+    # predicted 8.1-unit boss path although another wall-improving lane offered
+    # 59.1. At capture 20433, the body-safe projectile alternative stayed in
+    # the same clearance tier. At 20432 every projectile lane was below panic,
+    # and avoiding contact cost only 43.8 clearance, within the bounded 60.
+    assert 8.1 < 45.0 <= 59.1
+    assert 71.8 >= 81.6 - 20.0 and 2.2 < 45.0 <= 61.4
+    assert 84.7 < 204.6 and 84.7 - 40.9 <= 60.0
 
 
 def test_v101_nonconvex_projectile_blend_falls_back_to_sampled_escape():

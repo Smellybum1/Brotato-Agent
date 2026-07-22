@@ -27,11 +27,18 @@ var _finale_projectile_wall_replan_active := false
 var _finale_wall_input_enemy_penalty := -1.0
 var _finale_wall_best_enemy_penalty := -1.0
 var _finale_wall_selected_enemy_penalty := -1.0
+var _finale_wall_input_body_clearance := -1.0
+var _finale_wall_best_body_clearance := -1.0
+var _finale_wall_selected_body_clearance := -1.0
 var _finale_projectile_input_enemy_penalty := -1.0
 var _finale_projectile_escape_enemy_penalty := -1.0
 var _finale_projectile_blended_enemy_penalty := -1.0
 var _finale_projectile_enemy_blend_repair_active := false
 var _finale_projectile_final_enemy_penalty := -1.0
+var _finale_projectile_input_body_clearance := -1.0
+var _finale_projectile_escape_body_clearance := -1.0
+var _finale_projectile_blended_body_clearance := -1.0
+var _finale_projectile_final_body_clearance := -1.0
 
 
 func compute_movement(state, profile) -> Vector2:
@@ -61,11 +68,18 @@ func compute_movement(state, profile) -> Vector2:
 	_finale_wall_input_enemy_penalty = -1.0
 	_finale_wall_best_enemy_penalty = -1.0
 	_finale_wall_selected_enemy_penalty = -1.0
+	_finale_wall_input_body_clearance = -1.0
+	_finale_wall_best_body_clearance = -1.0
+	_finale_wall_selected_body_clearance = -1.0
 	_finale_projectile_input_enemy_penalty = -1.0
 	_finale_projectile_escape_enemy_penalty = -1.0
 	_finale_projectile_blended_enemy_penalty = -1.0
 	_finale_projectile_enemy_blend_repair_active = false
 	_finale_projectile_final_enemy_penalty = -1.0
+	_finale_projectile_input_body_clearance = -1.0
+	_finale_projectile_escape_body_clearance = -1.0
+	_finale_projectile_blended_body_clearance = -1.0
+	_finale_projectile_final_body_clearance = -1.0
 
 	# FLEE-mode branches (Pacifist/Beast Master/Bull/Wounded etc).
 	if profile.flee_mode:
@@ -297,6 +311,39 @@ func _finale_enemy_path_penalty(pos: Vector2, direction: Vector2, enemies,
 	return penalty / float(max(samples, 1))
 
 
+func _predictive_body_path_clearance(pos: Vector2, direction: Vector2,
+		player_speed: float, times: Array, enemies, bosses) -> float:
+	var safe_direction: Vector2 = _normalize(direction)
+	if safe_direction == Vector2.ZERO:
+		return -1.0e18
+	if enemies.empty() and bosses.empty():
+		return 1000000.0
+	var threats: Array = []
+	for enemy in enemies:
+		threats.append(enemy)
+	for boss in bosses:
+		threats.append(boss)
+	var clearance: float = 1000000.0
+	for time_value in times:
+		var future_sec: float = float(time_value)
+		# Every direction shares the current overlap. Start at the first future
+		# sample so the tier distinguishes escape from deeper penetration.
+		if future_sec <= 0.0:
+			continue
+		var player_pos: Vector2 = (
+			pos + safe_direction * (max(player_speed, 1.0) * future_sec))
+		for threat in threats:
+			var threat_pos: Vector2 = Vector2(
+				float(threat.get("x", 0.0)), float(threat.get("y", 0.0)))
+			var threat_vel: Vector2 = Vector2(
+				float(threat.get("vx", 0.0)), float(threat.get("vy", 0.0)))
+			var threat_radius: float = max(
+				float(threat.get("radius", 18.0)), 0.0)
+			clearance = min(clearance, player_pos.distance_to(
+				threat_pos + threat_vel * future_sec) - threat_radius)
+	return clearance
+
+
 func _finale_lane_score(pos: Vector2, direction: Vector2, desired: Vector2,
 		arena, bosses, projectiles, player_speed: float,
 		enemy_path_penalty: float) -> float:
@@ -362,10 +409,17 @@ func _best_finale_interior_lane(pos: Vector2, desired: Vector2, arena,
 	var lookahead := BotConfig.BOSS_FINALE_WALL_LOOKAHEAD
 	var samples := BotConfig.BOSS_FINALE_WALL_PATH_SAMPLES
 	var desired_n := _normalize(desired)
+	var path_times := []
+	for i in range(1, samples + 1):
+		path_times.append(
+			(lookahead * (float(i) / float(samples))) / max(player_speed, 1.0))
 	_finale_wall_input_enemy_penalty = _finale_enemy_path_penalty(
 		pos, desired_n, enemies, player_speed, lookahead, samples)
+	_finale_wall_input_body_clearance = _predictive_body_path_clearance(
+		pos, desired_n, player_speed, path_times, enemies, bosses)
 	var rows := []
 	var lowest_enemy_penalty := INF
+	var highest_body_clearance := -INF
 	for k in range(BotConfig.ESCAPE_DIRECTIONS):
 		var angle := (TAU * k) / float(BotConfig.ESCAPE_DIRECTIONS)
 		var candidate := Vector2(cos(angle), sin(angle))
@@ -376,16 +430,37 @@ func _best_finale_interior_lane(pos: Vector2, desired: Vector2, arena,
 			enemy_penalty)
 		if score <= -1.0e17:
 			continue
-		rows.append([candidate, score, enemy_penalty])
+		var body_clearance := _predictive_body_path_clearance(
+			pos, candidate, player_speed, path_times, enemies, bosses)
+		rows.append([candidate, score, enemy_penalty, body_clearance])
 		lowest_enemy_penalty = min(lowest_enemy_penalty, enemy_penalty)
+		highest_body_clearance = max(highest_body_clearance, body_clearance)
+	_finale_wall_best_body_clearance = (
+		highest_body_clearance if not rows.empty() else -1.0)
+	var body_clearance_floor := highest_body_clearance
+	if highest_body_clearance >= BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE:
+		body_clearance_floor = BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE
+	else:
+		body_clearance_floor = (
+			highest_body_clearance - BotConfig.BOSS_FINALE_BODY_CLEARANCE_SLACK)
+	# Compare crowd density only inside the accepted body-clearance tier. A
+	# contact-dangerous zero-penalty lane must not make every safe lane fail the
+	# subsequent v105 crowd-slack gate.
+	lowest_enemy_penalty = INF
+	for row in rows:
+		if float(row[3]) >= body_clearance_floor:
+			lowest_enemy_penalty = min(lowest_enemy_penalty, float(row[2]))
 	_finale_wall_best_enemy_penalty = (
-		lowest_enemy_penalty if not rows.empty() else -1.0)
+		lowest_enemy_penalty if lowest_enemy_penalty < INF else -1.0)
 	var best_dir := Vector2.ZERO
 	var best_score := -1.0e18
 	for row in rows:
 		var candidate: Vector2 = row[0]
 		var score: float = row[1]
 		var enemy_penalty: float = row[2]
+		var body_clearance: float = row[3]
+		if body_clearance < body_clearance_floor:
+			continue
 		if (enemy_penalty > lowest_enemy_penalty
 				+ BotConfig.BOSS_FINALE_ENEMY_PENALTY_SLACK):
 			continue
@@ -393,12 +468,15 @@ func _best_finale_interior_lane(pos: Vector2, desired: Vector2, arena,
 			best_score = score
 			best_dir = candidate
 			_finale_wall_selected_enemy_penalty = enemy_penalty
+			_finale_wall_selected_body_clearance = body_clearance
 	if best_dir == Vector2.ZERO:
 		var w := float(arena.get("width", 2048.0))
 		var h := float(arena.get("height", 1536.0))
 		best_dir = Vector2(w * 0.5, h * 0.5) - pos
 		_finale_wall_selected_enemy_penalty = _finale_enemy_path_penalty(
 			pos, best_dir, enemies, player_speed, lookahead, samples)
+		_finale_wall_selected_body_clearance = _predictive_body_path_clearance(
+			pos, best_dir, player_speed, path_times, enemies, bosses)
 	return _normalize(best_dir)
 
 
@@ -431,6 +509,12 @@ func _finale_projectile_safety(pos: Vector2, desired: Vector2, projectiles,
 		_finale_projectile_blended_clearance = _dir_clearance(
 			pos, blended, player_speed, blend_context["bullets_t"],
 			blend_context["times"], arena)
+		_finale_projectile_input_body_clearance = _predictive_body_path_clearance(
+			pos, desired, player_speed, blend_context["times"], enemies, bosses)
+		_finale_projectile_escape_body_clearance = _predictive_body_path_clearance(
+			pos, escape_dir, player_speed, blend_context["times"], enemies, bosses)
+		_finale_projectile_blended_body_clearance = _predictive_body_path_clearance(
+			pos, blended, player_speed, blend_context["times"], enemies, bosses)
 		var panic_clear := (
 			BotConfig.ESCAPE_PANIC_CLEARANCE * float(blend_context["caution"]))
 		_finale_projectile_input_enemy_penalty = _predictive_enemy_path_penalty(
@@ -513,6 +597,8 @@ func _finale_wall_safety(pos: Vector2, desired: Vector2, arena, bosses,
 		_finale_projectile_final_enemy_penalty = _predictive_enemy_path_penalty(
 			pos, clamped, player_speed, final_context["times"], enemies, bosses,
 			float(final_context["caution"]))
+		_finale_projectile_final_body_clearance = _predictive_body_path_clearance(
+			pos, clamped, player_speed, final_context["times"], enemies, bosses)
 	return clamped
 
 
@@ -527,6 +613,10 @@ func _best_wall_safe_projectile_lane(pos: Vector2, baseline: Vector2,
 	var best_dir := baseline
 	var best_score := -1.0e18
 	var found_clearer_lane := false
+	var baseline_body_clearance := _predictive_body_path_clearance(
+		pos, baseline, player_speed, times, enemies, bosses)
+	var highest_body_clearance := baseline_body_clearance
+	var rows := []
 	for k in range(BotConfig.ESCAPE_DIRECTIONS):
 		var angle := (TAU * k) / float(BotConfig.ESCAPE_DIRECTIONS)
 		var candidate := _clamp_finale_wall_components(
@@ -544,13 +634,27 @@ func _best_wall_safe_projectile_lane(pos: Vector2, baseline: Vector2,
 			continue
 		var penalty := _predictive_enemy_path_penalty(
 			pos, candidate, player_speed, times, enemies, bosses, 1.0)
+		var body_clearance := _predictive_body_path_clearance(
+			pos, candidate, player_speed, times, enemies, bosses)
 		var score := clearance - penalty
 		score += BotConfig.ESCAPE_ALIGN_BONUS * candidate.dot(baseline)
 		if _prev_move.length() > 0.1:
 			score += BotConfig.BOSS_FINALE_ESCAPE_CONTINUITY * candidate.dot(_prev_move)
-		if score > best_score:
-			best_score = score
-			best_dir = candidate
+		rows.append([candidate, score, body_clearance])
+		highest_body_clearance = max(highest_body_clearance, body_clearance)
+	var body_clearance_floor := highest_body_clearance
+	if highest_body_clearance >= BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE:
+		body_clearance_floor = BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE
+	else:
+		body_clearance_floor = (
+			highest_body_clearance - BotConfig.BOSS_FINALE_BODY_CLEARANCE_SLACK)
+	for row in rows:
+		if float(row[2]) < body_clearance_floor:
+			continue
+		var row_score: float = row[1]
+		if row_score > best_score:
+			best_score = row_score
+			best_dir = row[0]
 			found_clearer_lane = true
 	if not found_clearer_lane:
 		return baseline
@@ -610,11 +714,18 @@ func finale_translation_debug() -> Dictionary:
 		"wall_input_enemy_penalty": _finale_wall_input_enemy_penalty,
 		"wall_best_enemy_penalty": _finale_wall_best_enemy_penalty,
 		"wall_selected_enemy_penalty": _finale_wall_selected_enemy_penalty,
+		"wall_input_body_clearance": _finale_wall_input_body_clearance,
+		"wall_best_body_clearance": _finale_wall_best_body_clearance,
+		"wall_selected_body_clearance": _finale_wall_selected_body_clearance,
 		"projectile_input_enemy_penalty": _finale_projectile_input_enemy_penalty,
 		"projectile_escape_enemy_penalty": _finale_projectile_escape_enemy_penalty,
 		"projectile_blended_enemy_penalty": _finale_projectile_blended_enemy_penalty,
 		"projectile_enemy_blend_repair_active": _finale_projectile_enemy_blend_repair_active,
 		"projectile_final_enemy_penalty": _finale_projectile_final_enemy_penalty,
+		"projectile_input_body_clearance": _finale_projectile_input_body_clearance,
+		"projectile_escape_body_clearance": _finale_projectile_escape_body_clearance,
+		"projectile_blended_body_clearance": _finale_projectile_blended_body_clearance,
+		"projectile_final_body_clearance": _finale_projectile_final_body_clearance,
 	}
 
 
@@ -1120,6 +1231,7 @@ func _projectile_escape(pos, projectiles, player_speed, arena, desire, enemies, 
 	var best_clearance = -1.0
 	var rows := []
 	var max_clearance := -1.0e18
+	var max_body_clearance := -1.0e18
 	for k in range(n_dirs):
 		var ang = (TAU * k) / float(n_dirs)
 		var d = Vector2(cos(ang), sin(ang))
@@ -1132,11 +1244,14 @@ func _projectile_escape(pos, projectiles, player_speed, arena, desire, enemies, 
 		if finale:
 			penalty = _predictive_enemy_path_penalty(
 				pos, d, player_speed, times, enemies, bosses, caution)
+		var body_clearance := _predictive_body_path_clearance(
+			pos, d, player_speed, times, enemies, bosses)
 		var score = clearance + BotConfig.ESCAPE_ALIGN_BONUS * align - penalty
 		if finale and _prev_move.length() > 0.1:
 			score += BotConfig.BOSS_FINALE_ESCAPE_CONTINUITY * d.dot(_prev_move)
-		rows.append([d, score, clearance])
+		rows.append([d, score, clearance, body_clearance])
 		max_clearance = max(max_clearance, clearance)
+		max_body_clearance = max(max_body_clearance, body_clearance)
 	var safe = BotConfig.ESCAPE_SAFE_CLEARANCE * caution
 	var panic = BotConfig.ESCAPE_PANIC_CLEARANCE * caution
 	var clearance_floor := -1.0e18
@@ -1148,11 +1263,51 @@ func _projectile_escape(pos, projectiles, player_speed, arena, desire, enemies, 
 		else:
 			clearance_floor = (
 				max_clearance - BotConfig.BOSS_FINALE_PROJECTILE_WALL_MIN_GAIN)
+	# v106: choose a future body-clearance tier before the soft crowd score.
+	# Preserve the existing projectile tier whenever it contains a contact-safe
+	# lane. If every projectile lane is below panic, permit only a bounded
+	# clearance concession to avoid a predicted body impact.
+	var body_clearance_floor := -1.0e18
+	if finale:
+		var tier_max_body_clearance := -1.0e18
+		for row in rows:
+			if float(row[2]) >= clearance_floor:
+				tier_max_body_clearance = max(
+					tier_max_body_clearance, float(row[3]))
+		if (tier_max_body_clearance
+				>= BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE):
+			body_clearance_floor = BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE
+		elif (max_clearance < panic
+				and max_body_clearance
+					>= BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE):
+			var broadened_clearance_floor := (
+				max_clearance
+					- BotConfig.BOSS_FINALE_BODY_ESCAPE_PROJECTILE_SLACK)
+			var broadened_max_body_clearance := -1.0e18
+			for row in rows:
+				if float(row[2]) >= broadened_clearance_floor:
+					broadened_max_body_clearance = max(
+						broadened_max_body_clearance, float(row[3]))
+			if (broadened_max_body_clearance
+					>= BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE):
+				clearance_floor = broadened_clearance_floor
+				body_clearance_floor = (
+					BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE)
+			else:
+				body_clearance_floor = (
+					tier_max_body_clearance
+						- BotConfig.BOSS_FINALE_BODY_CLEARANCE_SLACK)
+		else:
+			body_clearance_floor = (
+				tier_max_body_clearance
+					- BotConfig.BOSS_FINALE_BODY_CLEARANCE_SLACK)
 	for row in rows:
 		var row_dir: Vector2 = row[0]
 		var row_score: float = row[1]
 		var row_clearance: float = row[2]
 		if row_clearance < clearance_floor:
+			continue
+		if finale and float(row[3]) < body_clearance_floor:
 			continue
 		if row_score > best_score:
 			best_score = row_score
