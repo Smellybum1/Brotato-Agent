@@ -122,16 +122,16 @@ def test_v64_blood_donation_is_vetoed_for_gate_reliability():
     assert '"item_blood_donation": {"never": true}' in requirement_block
 
 
-def test_wp2_capture_build_versions_the_v95_projectile_wall_fusion_policy():
+def test_wp2_capture_build_versions_the_v96_predictive_wall_policy():
     manifest = MANIFEST.read_text(encoding="utf-8")
     controller = CONTROLLER.read_text(encoding="utf-8")
     telemetry = TELEMETRY.read_text(encoding="utf-8")
 
-    assert '"version_number": "0.2.3"' in manifest
-    assert controller.count("teacher_v1-0.1.95-gun-wp1") == 1
-    assert controller.count("0.2.3-wp2-capture") == 1
-    assert telemetry.count("teacher_v1-0.1.95-gun-wp1") == 1
-    assert telemetry.count("0.2.3-wp2-capture") == 1
+    assert '"version_number": "0.2.4"' in manifest
+    assert controller.count("teacher_v1-0.1.96-gun-wp1") == 1
+    assert controller.count("0.2.4-wp2-capture") == 1
+    assert telemetry.count("teacher_v1-0.1.96-gun-wp1") == 1
+    assert telemetry.count("0.2.4-wp2-capture") == 1
 
 
 def test_v84_item_audit_and_conditional_effect_corrections():
@@ -458,16 +458,16 @@ def test_v93_finale_wall_recovery_is_the_last_movement_constraint():
     assert "wall_distance >= BotConfig.BOSS_FINALE_WALL_RECOVERY_RELEASE" in safety
     assert "wall_distance <= BotConfig.BOSS_FINALE_WALL_RECOVERY_ENTER" in safety
     assert safety.rstrip().endswith(
-        "return _clamp_finale_wall_components(pos, safe_desire, arena)"
+        "return _clamp_finale_wall_components(pos, safe_desire, arena, player_speed)"
     )
 
     hard_projection = potential.split("func _clamp_finale_wall_components", 1)[1].split(
         "func _finale_lane_score", 1
     )[0]
-    assert "if pos.x <= margin and out.x < 0.0:" in hard_projection
-    assert "elif pos.x >= w - margin and out.x > 0.0:" in hard_projection
-    assert "if pos.y <= margin and out.y < 0.0:" in hard_projection
-    assert "elif pos.y >= h - margin and out.y > 0.0:" in hard_projection
+    assert "min(pos.x, projected.x) <= margin" in hard_projection
+    assert "max(pos.x, projected.x) >= w - margin" in hard_projection
+    assert "min(pos.y, projected.y) <= margin" in hard_projection
+    assert "max(pos.y, projected.y) >= h - margin" in hard_projection
     assert '"wall_recovery_active": _finale_wall_recovery_active' in potential
 
 
@@ -515,7 +515,24 @@ def test_v95_soft_wall_recovery_cannot_override_active_projectile_safety():
         "_best_finale_interior_lane("
     )
     assert safety.rstrip().endswith(
-        "return _clamp_finale_wall_components(pos, safe_desire, arena)"
+        "return _clamp_finale_wall_components(pos, safe_desire, arena, player_speed)"
+    )
+
+
+def test_v96_hard_wall_projection_covers_the_held_command_horizon():
+    config = CONFIG.read_text(encoding="utf-8")
+    potential = POTENTIAL_FIELD.read_text(encoding="utf-8")
+
+    assert "const BOSS_FINALE_WALL_COMMAND_HORIZON := 0.30" in config
+    projection = potential.split("func _clamp_finale_wall_components", 1)[1].split(
+        "func _finale_lane_score", 1
+    )[0]
+    assert "player_speed: float" in projection
+    assert "BotConfig.BOSS_FINALE_WALL_COMMAND_HORIZON" in projection
+    assert "var projected := pos + out * travel" in projection
+    assert projection.count("projected = pos + out * travel") == 1
+    assert projection.index("out = _normalize(out)") < projection.index(
+        "projected = pos + out * travel"
     )
 
 

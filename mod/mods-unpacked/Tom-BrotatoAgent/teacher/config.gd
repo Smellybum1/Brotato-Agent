@@ -147,6 +147,10 @@ const BOSS_FINALE_COMMIT_DESIRE_BLEND := 0.15
 const BOSS_FINALE_WALL_RECOVERY_ENTER := 280.0
 const BOSS_FINALE_WALL_RECOVERY_RELEASE := 420.0
 const BOSS_FINALE_WALL_HARD_MARGIN := 96.0
+# v96: combat decisions persist for roughly 250 ms. Project the final command
+# slightly beyond that hold so a command selected just outside the hard margin
+# cannot carry the player through it before the next decision.
+const BOSS_FINALE_WALL_COMMAND_HORIZON := 0.30
 const BOSS_FINALE_WALL_LOOKAHEAD := 260.0
 const BOSS_FINALE_WALL_PATH_SAMPLES := 4
 const BOSS_FINALE_WALL_CLEAR_WEIGHT := 4.0

@@ -191,18 +191,36 @@ func _arena_wall_distance(pos: Vector2, arena) -> float:
 	return min(min(pos.x, w - pos.x), min(pos.y, h - pos.y))
 
 
-func _clamp_finale_wall_components(pos: Vector2, desired: Vector2, arena) -> Vector2:
+func _clamp_finale_wall_components(pos: Vector2, desired: Vector2, arena,
+		player_speed: float) -> Vector2:
 	var w := float(arena.get("width", 2048.0))
 	var h := float(arena.get("height", 1536.0))
 	var margin := BotConfig.BOSS_FINALE_WALL_HARD_MARGIN
 	var out := desired
-	if pos.x <= margin and out.x < 0.0:
+	var travel := max(player_speed, 0.0) * BotConfig.BOSS_FINALE_WALL_COMMAND_HORIZON
+	var projected := pos + out * travel
+	if out.x < 0.0 and min(pos.x, projected.x) <= margin:
 		out.x = 0.0
-	elif pos.x >= w - margin and out.x > 0.0:
+	elif out.x > 0.0 and max(pos.x, projected.x) >= w - margin:
 		out.x = 0.0
-	if pos.y <= margin and out.y < 0.0:
+	if out.y < 0.0 and min(pos.y, projected.y) <= margin:
 		out.y = 0.0
-	elif pos.y >= h - margin and out.y > 0.0:
+	elif out.y > 0.0 and max(pos.y, projected.y) >= h - margin:
+		out.y = 0.0
+	if out.length() < 0.1:
+		out = Vector2(w * 0.5, h * 0.5) - pos
+	# Removing one component changes the normalized magnitude of the other.
+	# Recheck that normalized command so the final return cannot reintroduce a
+	# crossing on the remaining axis.
+	out = _normalize(out)
+	projected = pos + out * travel
+	if out.x < 0.0 and min(pos.x, projected.x) <= margin:
+		out.x = 0.0
+	elif out.x > 0.0 and max(pos.x, projected.x) >= w - margin:
+		out.x = 0.0
+	if out.y < 0.0 and min(pos.y, projected.y) <= margin:
+		out.y = 0.0
+	elif out.y > 0.0 and max(pos.y, projected.y) >= h - margin:
 		out.y = 0.0
 	if out.length() < 0.1:
 		out = Vector2(w * 0.5, h * 0.5) - pos
@@ -315,7 +333,7 @@ func _finale_wall_safety(pos: Vector2, desired: Vector2, arena, bosses,
 			pos, desired, arena, bosses, projectiles, player_speed)
 	# Hard projection is unconditional and runs after lane selection so no boss,
 	# projectile, continuity, or smoothing term can command movement through a wall.
-	return _clamp_finale_wall_components(pos, safe_desire, arena)
+	return _clamp_finale_wall_components(pos, safe_desire, arena, player_speed)
 
 
 func _finale_committed_escape(pos: Vector2, desired: Vector2, arena, bosses) -> Vector2:
