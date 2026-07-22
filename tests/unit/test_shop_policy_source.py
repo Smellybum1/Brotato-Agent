@@ -122,16 +122,16 @@ def test_v64_blood_donation_is_vetoed_for_gate_reliability():
     assert '"item_blood_donation": {"never": true}' in requirement_block
 
 
-def test_v92_policy_versions_are_consistent():
+def test_wp2_capture_build_keeps_the_certified_v92_policy():
     manifest = MANIFEST.read_text(encoding="utf-8")
     controller = CONTROLLER.read_text(encoding="utf-8")
     telemetry = TELEMETRY.read_text(encoding="utf-8")
 
-    assert '"version_number": "0.1.92"' in manifest
+    assert '"version_number": "0.2.0"' in manifest
     assert controller.count("teacher_v1-0.1.92-gun-wp1") == 1
-    assert controller.count("0.1.92-gun-wp1") == 2
+    assert controller.count("0.2.0-wp2-capture") == 1
     assert telemetry.count("teacher_v1-0.1.92-gun-wp1") == 1
-    assert telemetry.count("0.1.92-gun-wp1") == 2
+    assert telemetry.count("0.2.0-wp2-capture") == 1
 
 
 def test_v84_item_audit_and_conditional_effect_corrections():
@@ -419,8 +419,10 @@ def test_v92_finale_tightens_the_ring_and_bypasses_commitment_before_contact():
     )
     assert '"player": state.get("player", {})' in controller
     assert '"bosses": state.get("bosses", [])' in controller
-    assert '"hp": b.current_stats.health, "max_hp": b.max_stats.health' in controller
-    assert '"speed": b.current_stats.speed, "name": str(b.name)' in controller
+    assert '_combat_unit_snapshot(b, "boss")' in controller
+    assert '"hp": hp, "max_hp": max_hp, "health_ratio": hp / max_hp' in controller
+    assert '"speed": unit.current_stats.speed' in controller
+    assert '"name": str(unit.name)' in controller
     assert controller.index('state["bosses"] = bosses') < controller.index(
         "_normalize_combat_relative(state)"
     )

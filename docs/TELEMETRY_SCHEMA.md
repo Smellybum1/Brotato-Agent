@@ -15,3 +15,27 @@ Decisions include legal alternatives and teacher score/reason breakdown when ava
 ## Summary (`summary.json`)
 
 Includes run_id, timestamps, versions, character/weapon/danger/settings, result, last wave, duration, materials/rerolls/locks/purchases/upgrades/crates, damage taken, recoveries/errors/hangs, telemetry completeness.
+
+## Compatible combat capture extension (envelope v2.0.0)
+
+The `0.2.0-wp2-capture` build preserves every existing v1 event and summary field
+and continues to execute policy `teacher_v1-0.1.92-gun-wp1`. Instrumented runs
+may interleave a new `combat_capture` record whose envelope has
+`schema_version: "2.0.0"`. Readers must dispatch by the schema version on each
+record; a run is not required to use one envelope version exclusively.
+
+The raw payload contract is tracked in
+`configs/wp2/combat_capture_v2.schema.json`. It is deliberately unpadded and
+untruncated so focused teacher runs can establish defensible entity capacities
+before `combat_obs_v1` is frozen. The event records:
+
+- a 20 Hz capture sequence, timing, validity, and observation age;
+- current and previous deterministic-teacher movement actions;
+- player position, live/measured velocity, combat stats, wave timer, weapons,
+  and arena dimensions;
+- raw enemies, bosses, hostile-projectile candidates, materials, consumables,
+  crates, and obstacle arrays;
+- invalid/freed-object and dropped-entity counts.
+
+The capture schema hash is the SHA-256 of the schema file bytes. Historical v1
+records remain valid and are never rewritten.

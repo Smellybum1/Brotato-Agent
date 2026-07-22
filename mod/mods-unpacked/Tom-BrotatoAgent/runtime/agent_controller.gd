@@ -21,6 +21,10 @@ var _run_started: bool = false
 var _last_hp: float = -1.0
 var _last_known_max_hp: float = -1.0
 var _combat_tick_counter: int = 0
+var _wp2_capture_seq: int = 0
+var _wp2_previous_action: Vector2 = Vector2.ZERO
+var _wp2_last_capture_player_pos: Vector2 = Vector2.ZERO
+var _wp2_last_capture_ts_ms: int = -1
 var _density_wave: int = -1
 var _density_enemy_samples := []
 var _last_wave_p90_density := 0.0
@@ -28,6 +32,10 @@ var _last_wave_peak_density := 0.0
 var _batch_wins: int = 0
 var _batch_runs: int = 0
 const _BATCH_STATS_PATH := "user://brotato_agent/batch_hud.json"
+const _WP2_CAPTURE_SCHEMA_VERSION := "2.0.0"
+const _WP2_CAPTURE_SCHEMA_ID := "combat_capture_v2"
+const _WP2_CAPTURE_SCHEMA_HASH := "95B6444796A21FD44E94113B75BA2097BC381D5F72ED784F9B9A4A99DD46D951"
+const _WP2_CAPTURE_DIVISOR := 3 # 60 Hz physics / 3 = 20 capture decisions per second.
 
 const _PROFILES_SCRIPT = preload("res://mods-unpacked/Tom-BrotatoAgent/teacher/build_profiles.gd")
 const _SHOP_SCRIPT = preload("res://mods-unpacked/Tom-BrotatoAgent/teacher/shop_strategy.gd")
@@ -173,6 +181,8 @@ func _handle_combat(main) -> void:
 	if _orch != null and current_move_vector.length() > 0.01:
 		_orch.note_move()
 	_combat_tick_counter += 1
+	if _combat_tick_counter % _WP2_CAPTURE_DIVISOR == 0:
+		_emit_wp2_combat_capture(main, state, recompute_move)
 	if _combat_tick_counter % 30 == 0:
 		_record_density_sample(int(state.get("wave", 0)), state.get("enemies", []).size())
 		var live_max_hp := float(state.get("player", {}).get("max_hp", -1))
@@ -218,6 +228,11 @@ func _gather_combat_state(main) -> Dictionary:
 		"phase": "combat",
 		"wave": RunData.current_wave,
 		"character": _character_id(),
+		"observation_ts_ms": OS.get_ticks_msec(),
+		"invalid_entities": {
+			"players": 0, "enemies": 0, "bosses": 0, "projectiles": 0,
+			"materials": 0, "consumables": 0, "obstacles": 0,
+		},
 	}
 	var es = main.get_node_or_null("EntitySpawner")
 	if es == null: return state
@@ -225,13 +240,26 @@ func _gather_combat_state(main) -> Dictionary:
 	# Player
 	var players = []
 	for p in es._players:
-		if not is_instance_valid(p) or p.dead: continue
+		if not is_instance_valid(p):
+			state["invalid_entities"]["players"] += 1
+			continue
+		if p.dead: continue
+		var player_velocity := Vector2.ZERO
+		if p.has_method("get_next_velocity"):
+			player_velocity = p.get_next_velocity()
 		players.append({
 			"x": p.global_position.x,
 			"y": p.global_position.y,
+			"vx": player_velocity.x,
+			"vy": player_velocity.y,
 			"hp": p.current_stats.health,
 			"max_hp": p.max_stats.health,
+			"hp_ratio": float(p.current_stats.health) / max(float(p.max_stats.health), 1.0),
 			"speed": p.max_stats.speed,
+			"armor": p.current_stats.armor,
+			"dodge": p.current_stats.dodge,
+			"hp_regeneration": float(Utils.get_stat(Keys.generate_hash("stat_hp_regeneration"), 0)),
+			"lifesteal": float(Utils.get_stat(Keys.generate_hash("stat_lifesteal"), 0)),
 		})
 	state["players"] = players
 	if not players.empty(): state["player"] = players[0]
@@ -239,17 +267,20 @@ func _gather_combat_state(main) -> Dictionary:
 	# Enemies / bosses
 	var enemies = []
 	for e in es.enemies:
-		if not is_instance_valid(e) or e.dead: continue
-		enemies.append({"x": e.global_position.x, "y": e.global_position.y,
-			"hp": e.current_stats.health, "speed": e.current_stats.speed})
+		if not is_instance_valid(e):
+			state["invalid_entities"]["enemies"] += 1
+			continue
+		if e.dead: continue
+		enemies.append(_combat_unit_snapshot(e, "enemy"))
 	state["enemies"] = enemies
 
 	var bosses = []
 	for b in es.bosses:
-		if not is_instance_valid(b) or b.dead: continue
-		bosses.append({"x": b.global_position.x, "y": b.global_position.y,
-			"hp": b.current_stats.health, "max_hp": b.max_stats.health,
-			"speed": b.current_stats.speed, "name": str(b.name)})
+		if not is_instance_valid(b):
+			state["invalid_entities"]["bosses"] += 1
+			continue
+		if b.dead: continue
+		bosses.append(_combat_unit_snapshot(b, "boss"))
 	state["bosses"] = bosses
 
 	# Projectiles (vanilla Main uses $Projectiles; older bots looked for %EnemyProjectiles)
@@ -259,13 +290,20 @@ func _gather_combat_state(main) -> Dictionary:
 		projs_node = main.get_node_or_null("%EnemyProjectiles")
 	if projs_node:
 		for proj in projs_node.get_children():
-			if not is_instance_valid(proj) or not proj.visible: continue
+			if not is_instance_valid(proj):
+				state["invalid_entities"]["projectiles"] += 1
+				continue
+			if not proj.visible: continue
 			if not ("global_position" in proj): continue
 			var vel = Vector2.ZERO
 			if "velocity" in proj:
 				vel = proj.velocity
 			projs.append({"x": proj.global_position.x, "y": proj.global_position.y,
-				"vx": vel.x, "vy": vel.y})
+				"vx": vel.x, "vy": vel.y,
+				"instance_id": proj.get_instance_id(),
+				"type_id": _node_script_path(proj),
+				"radius": _collision_radius(proj, 8.0),
+				"damage": proj.get_damage() if proj.has_method("get_damage") else 0})
 	state["projectiles"] = projs
 
 	# Materials / gold — Main keeps the live list in `_golds` under `$Items`
@@ -291,6 +329,146 @@ func _gather_combat_state(main) -> Dictionary:
 		state["arena"] = {"width": 2048, "height": 1536}
 	_normalize_combat_relative(state)
 	return state
+
+
+func _combat_unit_snapshot(unit, category: String) -> Dictionary:
+	var velocity := Vector2.ZERO
+	if unit.has_method("get_next_velocity"):
+		velocity = unit.get_next_velocity()
+	var hp := float(unit.current_stats.health)
+	var max_hp := max(float(unit.max_stats.health), 1.0)
+	var stats_path := ""
+	if unit.stats != null and "resource_path" in unit.stats:
+		stats_path = str(unit.stats.resource_path)
+	var attack_path := ""
+	if "_current_attack_behavior" in unit and unit._current_attack_behavior != null:
+		attack_path = _node_script_path(unit._current_attack_behavior)
+	return {
+		"x": unit.global_position.x, "y": unit.global_position.y,
+		"vx": velocity.x, "vy": velocity.y,
+		"hp": hp, "max_hp": max_hp, "health_ratio": hp / max_hp,
+		"speed": unit.current_stats.speed,
+		"armor": unit.current_stats.armor,
+		"instance_id": unit.get_instance_id(),
+		"name": str(unit.name),
+		"category": category,
+		"type_id": stats_path,
+		"script_path": _node_script_path(unit),
+		"attack_path": attack_path,
+		"radius": _collision_radius(unit, 24.0),
+		"is_boosted": bool(unit.is_boosted) if "is_boosted" in unit else false,
+	}
+
+
+func _node_script_path(node) -> String:
+	if node == null:
+		return ""
+	var script = node.get_script()
+	if script != null and "resource_path" in script:
+		return str(script.resource_path)
+	return ""
+
+
+func _collision_radius(node, fallback: float) -> float:
+	if node == null:
+		return fallback
+	var collision = node.get_node_or_null("Collision")
+	if collision == null:
+		collision = node.get_node_or_null("Hitbox/Collision")
+	if collision == null or not ("shape" in collision) or collision.shape == null:
+		return fallback
+	var radius = collision.shape.get("radius")
+	if radius != null:
+		return max(float(radius), 0.0)
+	var extents = collision.shape.get("extents")
+	if typeof(extents) == TYPE_VECTOR2:
+		return max(float(extents.x), float(extents.y))
+	return fallback
+
+
+func _emit_wp2_combat_capture(main, state: Dictionary, teacher_action_fresh: bool) -> void:
+	if _telem == null or not _telem.has_method("emit_versioned"):
+		return
+	var player: Dictionary = state.get("player", {})
+	if player.empty():
+		return
+	var now_ms := OS.get_ticks_msec()
+	var player_pos := Vector2(float(player.get("x", 0.0)), float(player.get("y", 0.0)))
+	var measured_velocity := Vector2(float(player.get("vx", 0.0)), float(player.get("vy", 0.0)))
+	var control_dt_ms := 0
+	if _wp2_last_capture_ts_ms >= 0:
+		control_dt_ms = max(now_ms - _wp2_last_capture_ts_ms, 0)
+		if control_dt_ms > 0:
+			measured_velocity = (player_pos - _wp2_last_capture_player_pos) * (1000.0 / float(control_dt_ms))
+	var timer = _wave_timer_snapshot(main)
+	var consumables := []
+	var crates := []
+	for item in state.get("consumables", []):
+		if _is_crate_id(str(item.get("id", ""))):
+			crates.append(item)
+		else:
+			consumables.append(item)
+	_wp2_capture_seq += 1
+	var payload = {
+		"capture_schema_id": _WP2_CAPTURE_SCHEMA_ID,
+		"capture_schema_hash": _WP2_CAPTURE_SCHEMA_HASH,
+		"capture_seq": _wp2_capture_seq,
+		"observation_ts_ms": int(state.get("observation_ts_ms", now_ms)),
+		"observation_age_ms": max(now_ms - int(state.get("observation_ts_ms", now_ms)), 0),
+		"control_dt_ms": control_dt_ms,
+		"valid": true,
+		"wave": int(state.get("wave", 0)),
+		"wave_time": timer,
+		"player": player.duplicate(true),
+		"teacher": {
+			"action": {"x": current_move_vector.x, "y": current_move_vector.y},
+			"previous_action": {"x": _wp2_previous_action.x, "y": _wp2_previous_action.y},
+			"action_fresh": teacher_action_fresh,
+			"reason": str(last_move_debug.get("reason", "potential_field")),
+			"contributions": last_move_debug.get("debug", {}).duplicate(true),
+		},
+		"entities": {
+			"enemies": state.get("enemies", []),
+			"bosses": state.get("bosses", []),
+			"projectiles": state.get("projectiles", []),
+			"materials": state.get("loot", []),
+			"consumables": consumables,
+			"crates": crates,
+			"obstacles": state.get("trees", []),
+		},
+		"weapons": state.get("weapons", []),
+		"arena": state.get("arena", {}),
+		"invalid_counts": state.get("invalid_entities", {}),
+		"dropped_counts": {
+			"enemies": 0, "bosses": 0, "projectiles": 0, "materials": 0,
+			"consumables": 0, "crates": 0, "obstacles": 0,
+		},
+	}
+	payload["player"]["measured_vx"] = measured_velocity.x
+	payload["player"]["measured_vy"] = measured_velocity.y
+	_telem.emit_versioned("combat_capture", payload, _WP2_CAPTURE_SCHEMA_VERSION)
+	_wp2_previous_action = current_move_vector
+	_wp2_last_capture_player_pos = player_pos
+	_wp2_last_capture_ts_ms = now_ms
+
+
+func _wave_timer_snapshot(main) -> Dictionary:
+	var timer = main.get("_wave_timer")
+	if timer == null:
+		return {"elapsed_sec": 0.0, "remaining_sec": 0.0, "duration_sec": 0.0, "valid": false}
+	var duration := float(timer.wait_time)
+	var remaining := float(timer.time_left)
+	return {
+		"elapsed_sec": max(duration - remaining, 0.0),
+		"remaining_sec": max(remaining, 0.0),
+		"duration_sec": max(duration, 0.0),
+		"valid": true,
+	}
+
+
+func _is_crate_id(item_id: String) -> bool:
+	var lowered := item_id.to_lower()
+	return lowered.find("item_box") >= 0 or lowered.find("crate") >= 0
 
 
 func _normalize_combat_relative(state: Dictionary) -> void:
@@ -368,7 +546,7 @@ func _collect_loot(main) -> Array:
 				continue
 			if ("visible" in item) and not item.visible:
 				continue
-			loot.append({"x": item.global_position.x, "y": item.global_position.y})
+			loot.append(_pickup_snapshot(item, "material", ""))
 		return loot
 	var items = main.get_node_or_null("Items")
 	if items == null:
@@ -377,7 +555,7 @@ func _collect_loot(main) -> Array:
 		for item in items.get_children():
 			if not is_instance_valid(item) or not item.visible:
 				continue
-			loot.append({"x": item.global_position.x, "y": item.global_position.y})
+			loot.append(_pickup_snapshot(item, "material", ""))
 	return loot
 
 
@@ -395,7 +573,7 @@ func _collect_trees(es) -> Array:
 			continue
 		if ("dead" in n) and n.dead:
 			continue
-		trees.append({"x": n.global_position.x, "y": n.global_position.y})
+		trees.append(_pickup_snapshot(n, "obstacle", "tree"))
 	return trees
 
 
@@ -412,7 +590,7 @@ func _collect_consumables(main) -> Array:
 			var data = c.get("consumable_data")
 			if data != null and ("my_id" in data):
 				id = str(data.my_id)
-			cons.append({"x": c.global_position.x, "y": c.global_position.y, "id": id})
+			cons.append(_pickup_snapshot(c, "consumable", id))
 		return cons
 	var cons_node = main.get_node_or_null("Consumables")
 	if cons_node == null:
@@ -425,8 +603,27 @@ func _collect_consumables(main) -> Array:
 			var data2 = c.get("consumable_data")
 			if data2 != null and ("my_id" in data2):
 				id2 = str(data2.my_id)
-			cons.append({"x": c.global_position.x, "y": c.global_position.y, "id": id2})
+			cons.append(_pickup_snapshot(c, "consumable", id2))
 	return cons
+
+
+func _pickup_snapshot(node, category: String, item_id: String) -> Dictionary:
+	var velocity := Vector2.ZERO
+	if "velocity" in node:
+		velocity = node.velocity
+	elif node.has_method("get_next_velocity"):
+		velocity = node.get_next_velocity()
+	return {
+		"x": node.global_position.x,
+		"y": node.global_position.y,
+		"vx": velocity.x,
+		"vy": velocity.y,
+		"instance_id": node.get_instance_id(),
+		"id": item_id,
+		"category": category,
+		"type_id": _node_script_path(node),
+		"radius": _collision_radius(node, 12.0),
+	}
 
 
 # ───────────────────────────── shop ───────────────────────────────────────────
@@ -1388,6 +1585,10 @@ func on_manual_override() -> void:
 func _start_run() -> void:
 	_run_started = true
 	_combat_tick_counter = 0
+	_wp2_capture_seq = 0
+	_wp2_previous_action = Vector2.ZERO
+	_wp2_last_capture_player_pos = Vector2.ZERO
+	_wp2_last_capture_ts_ms = -1
 	_density_wave = -1
 	_density_enemy_samples = []
 	_last_wave_p90_density = 0.0
@@ -1411,7 +1612,7 @@ func _start_run() -> void:
 		"endless": false,
 		"wave_retry": false,
 		"game_version": "1.1.15.4",
-		"mod_version": "0.1.92-gun-wp1",
+		"mod_version": "0.2.0-wp2-capture",
 		"config_id": "well_rounded_d0_anyranged",
 		"policy_version": policy_version,
 	}

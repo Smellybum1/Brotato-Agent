@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:brotato-agent:combat-capture:v2",
+  "title": "BrotatoAgent raw combat capture v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "capture_schema_id",
+    "capture_schema_hash",
+    "capture_seq",
+    "observation_ts_ms",
+    "observation_age_ms",
+    "control_dt_ms",
+    "valid",
+    "wave",
+    "wave_time",
+    "player",
+    "teacher",
+    "entities",
+    "weapons",
+    "arena",
+    "invalid_counts",
+    "dropped_counts"
+  ],
+  "properties": {
+    "capture_schema_id": {"const": "combat_capture_v2"},
+    "capture_schema_hash": {"type": "string", "pattern": "^[A-F0-9]{64}$"},
+    "capture_seq": {"type": "integer", "minimum": 1},
+    "observation_ts_ms": {"type": "integer", "minimum": 0},
+    "observation_age_ms": {"type": "integer", "minimum": 0},
+    "control_dt_ms": {"type": "integer", "minimum": 0},
+    "valid": {"type": "boolean"},
+    "wave": {"type": "integer", "minimum": 0},
+    "wave_time": {"$ref": "#/$defs/wave_time"},
+    "player": {"$ref": "#/$defs/player"},
+    "teacher": {"$ref": "#/$defs/teacher"},
+    "entities": {"$ref": "#/$defs/entities"},
+    "weapons": {"type": "array", "items": {"type": "object"}},
+    "arena": {"type": "object"},
+    "invalid_counts": {"$ref": "#/$defs/counts"},
+    "dropped_counts": {"$ref": "#/$defs/counts"}
+  },
+  "$defs": {
+    "vec2": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y"],
+      "properties": {
+        "x": {"type": "number"},
+        "y": {"type": "number"}
+      }
+    },
+    "wave_time": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["elapsed_sec", "remaining_sec", "duration_sec", "valid"],
+      "properties": {
+        "elapsed_sec": {"type": "number", "minimum": 0},
+        "remaining_sec": {"type": "number", "minimum": 0},
+        "duration_sec": {"type": "number", "minimum": 0},
+        "valid": {"type": "boolean"}
+      }
+    },
+    "player": {
+      "type": "object",
+      "required": ["x", "y", "vx", "vy", "measured_vx", "measured_vy", "hp", "max_hp", "hp_ratio", "speed", "armor", "dodge", "hp_regeneration", "lifesteal"],
+      "properties": {
+        "x": {"type": "number"},
+        "y": {"type": "number"},
+        "vx": {"type": "number"},
+        "vy": {"type": "number"},
+        "measured_vx": {"type": "number"},
+        "measured_vy": {"type": "number"},
+        "hp": {"type": "number"},
+        "max_hp": {"type": "number"},
+        "hp_ratio": {"type": "number"},
+        "speed": {"type": "number"},
+        "armor": {"type": "number"},
+        "dodge": {"type": "number"},
+        "hp_regeneration": {"type": "number"},
+        "lifesteal": {"type": "number"}
+      }
+    },
+    "teacher": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["action", "previous_action", "action_fresh", "reason", "contributions"],
+      "properties": {
+        "action": {"$ref": "#/$defs/vec2"},
+        "previous_action": {"$ref": "#/$defs/vec2"},
+        "action_fresh": {"type": "boolean"},
+        "reason": {"type": "string"},
+        "contributions": {"type": "object"}
+      }
+    },
+    "entities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["enemies", "bosses", "projectiles", "materials", "consumables", "crates", "obstacles"],
+      "properties": {
+        "enemies": {"$ref": "#/$defs/entity_array"},
+        "bosses": {"$ref": "#/$defs/entity_array"},
+        "projectiles": {"$ref": "#/$defs/entity_array"},
+        "materials": {"$ref": "#/$defs/entity_array"},
+        "consumables": {"$ref": "#/$defs/entity_array"},
+        "crates": {"$ref": "#/$defs/entity_array"},
+        "obstacles": {"$ref": "#/$defs/entity_array"}
+      }
+    },
+    "entity_array": {"type": "array", "items": {"type": "object"}},
+    "counts": {
+      "type": "object",
+      "additionalProperties": {"type": "integer", "minimum": 0}
+    }
+  }
+}

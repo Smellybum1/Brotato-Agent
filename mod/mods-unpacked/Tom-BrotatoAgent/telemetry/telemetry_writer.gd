@@ -34,7 +34,7 @@ func begin_run(meta: Dictionary) -> void:
 		"endless": meta.get("endless", false),
 		"wave_retry": meta.get("wave_retry", false),
 		"game_version": meta.get("game_version", ""),
-		"mod_version": meta.get("mod_version", "0.1.92-gun-wp1"),
+		"mod_version": meta.get("mod_version", "0.2.0-wp2-capture"),
 		"config_id": meta.get("config_id", "well_rounded_d0_smg"),
 		"result": "incomplete",
 		"last_wave": 0,
@@ -55,11 +55,19 @@ func begin_run(meta: Dictionary) -> void:
 	emit("run_start", meta)
 
 func emit(event_type: String, payload: Dictionary = {}) -> void:
+	_emit_with_schema(event_type, payload, SCHEMA_VERSION)
+
+func emit_versioned(event_type: String, payload: Dictionary, schema_version: String) -> void:
+	# New append-only event families can opt into a new envelope version without
+	# changing the certified v1 records or rewriting historical telemetry.
+	_emit_with_schema(event_type, payload, schema_version)
+
+func _emit_with_schema(event_type: String, payload: Dictionary, schema_version: String) -> void:
 	if not enabled:
 		return
 	seq += 1
 	var ev = {
-		"schema_version": SCHEMA_VERSION,
+		"schema_version": schema_version,
 		"run_id": run_id,
 		"seq": seq,
 		"ts_ms": OS.get_ticks_msec(),

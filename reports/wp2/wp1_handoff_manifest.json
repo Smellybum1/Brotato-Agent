@@ -1,0 +1,58 @@
+{
+  "schema_version": "wp2_handoff_v1",
+  "generated_at": "2026-07-22T09:56:54+10:00",
+  "result": "PASS",
+  "wp1": {
+    "tag": "wp1-baseline",
+    "commit": "9a390f47c5c5268d36d27cca5e47ff04ab9317e8",
+    "branch_created_from_tag": "wp2-combat-learning",
+    "certified_policy": "v72",
+    "teacher_candidate_policy": "teacher_v1-0.1.92-gun-wp1",
+    "teacher_candidate_mod_version": "0.1.92-gun-wp1",
+    "runs": 20,
+    "wins": 18,
+    "losses": 2,
+    "errors": 0,
+    "hangs": 0,
+    "illegal_actions": 0,
+    "telemetry_validation_passed": 20,
+    "telemetry_validation_failed": 0
+  },
+  "safeguards": {
+    "run_id": "run_1784677381_46728",
+    "excluded_from_evaluation": true,
+    "manual_override_seq": 728,
+    "emergency_stop_seq": 729,
+    "events_sha256": "851043F75F194ED504DC10DAE8E62EE6F74C3B4A2EF86632A6190C0A34A42B90",
+    "clean_shutdown": true,
+    "auto_start_after_exercise": false
+  },
+  "backup": {
+    "path": "backups/userdata_20260722_081559",
+    "files": 776,
+    "bytes": 355794972,
+    "active_v3_json_readable": true
+  },
+  "fixed_benchmark": {
+    "character": "character_well_rounded",
+    "starting_weapon": "weapon_smg_1",
+    "danger": 0,
+    "endless": false,
+    "wave_retry": false,
+    "normal_game_speed": true,
+    "default_enemy_multipliers": true
+  },
+  "installed": {
+    "game_version": "1.1.15.4",
+    "steam_build_id": "23429717",
+    "brotato_exe_sha256": "F69A1217FD15DAF46300CC6224DD34F7ECD4F56288FC71E95ED6344EFF753AE4",
+    "brotato_pck_sha256": "BE303F0A320CB099001FDC39C3B807CDD657E93426DC09867CEE1D36F5385ACF",
+    "v92_archive_sha256": "A0911C7F56BA8233C48E3B5D60AB4F4AFF4BD00FA2E5FAD070CAC5AA2DFAA639"
+  },
+  "repository": {
+    "clean_at_branch_creation": true,
+    "pushed": false,
+    "brotato_full_autobot_commit": "b5190436b85a99000327f2908e25e07b60509bd3",
+    "brotatoai_commit": "34172206de5e3ee590e140d0c02d7d62ebeefa1f"
+  }
+}

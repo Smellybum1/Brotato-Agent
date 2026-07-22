@@ -1,0 +1,284 @@
+{
+  "schema_version": "wp1_telemetry_audit_v1",
+  "runs_dir": ".tmp\\v72-certification-20260722-081318",
+  "runs": 20,
+  "terminal_runs": 20,
+  "results": {
+    "defeat": 2,
+    "victory": 18
+  },
+  "combat_ticks": 40491,
+  "cleaned_transition_estimate": 40491,
+  "target_transition_gap": 159509,
+  "malformed_events": 0,
+  "invalid_or_nonfinite_actions": 0,
+  "tick_gap_ms": {
+    "min": 361.0,
+    "p50": 500.0,
+    "p90": 501.0,
+    "p95": 501.0,
+    "p99": 518.0,
+    "max": 12424.0
+  },
+  "tick_gaps_over_750ms": 370,
+  "tick_gaps_over_1000ms": 368,
+  "action_magnitude": {
+    "min": 0.0,
+    "p50": 1.000000001077,
+    "p90": 1.0000003966884214,
+    "p95": 1.000000466986891,
+    "p99": 1.0000005721026863,
+    "max": 1.0000007241447377
+  },
+  "entity_count_percentiles": {
+    "consumables": {
+      "min": 0.0,
+      "p50": 1.0,
+      "p90": 5.0,
+      "p95": 7.0,
+      "p99": 10.0,
+      "max": 17.0
+    },
+    "enemies": {
+      "min": 0.0,
+      "p50": 8.0,
+      "p90": 19.0,
+      "p95": 24.0,
+      "p99": 39.0,
+      "max": 109.0
+    },
+    "materials": {
+      "min": 0.0,
+      "p50": 7.0,
+      "p90": 29.0,
+      "p95": 39.5,
+      "p99": 50.0,
+      "max": 50.0
+    },
+    "projectiles": {
+      "min": 0.0,
+      "p50": 0.0,
+      "p90": 2.0,
+      "p95": 5.0,
+      "p99": 24.0,
+      "max": 32.0
+    }
+  },
+  "field_availability": {
+    "player_position": {
+      "ticks_present": 0,
+      "fraction": 0.0
+    },
+    "player_velocity": {
+      "ticks_present": 0,
+      "fraction": 0.0
+    },
+    "wave_timer": {
+      "ticks_present": 0,
+      "fraction": 0.0
+    },
+    "enemy_entities": {
+      "ticks_present": 0,
+      "fraction": 0.0
+    },
+    "projectile_entities": {
+      "ticks_present": 0,
+      "fraction": 0.0
+    },
+    "material_entities": {
+      "ticks_present": 0,
+      "fraction": 0.0
+    },
+    "consumable_entities": {
+      "ticks_present": 0,
+      "fraction": 0.0
+    },
+    "crate_entities": {
+      "ticks_present": 0,
+      "fraction": 0.0
+    },
+    "obstacle_entities": {
+      "ticks_present": 0,
+      "fraction": 0.0
+    },
+    "teacher_action": {
+      "ticks_present": 40491,
+      "fraction": 1.0
+    },
+    "previous_action": {
+      "ticks_present": 0,
+      "fraction": 0.0
+    },
+    "teacher_contributions": {
+      "ticks_present": 0,
+      "fraction": 0.0
+    },
+    "observation_age": {
+      "ticks_present": 0,
+      "fraction": 0.0
+    }
+  },
+  "damage_events": 389,
+  "low_health_ticks": 0,
+  "low_health_observable_ticks": 0,
+  "wave_tick_counts": {
+    "1": 880,
+    "2": 1085,
+    "3": 1283,
+    "4": 1491,
+    "5": 1691,
+    "6": 1886,
+    "7": 2086,
+    "8": 2294,
+    "9": 2466,
+    "10": 2366,
+    "11": 2368,
+    "12": 2362,
+    "13": 2363,
+    "14": 2368,
+    "15": 2371,
+    "16": 2359,
+    "17": 2239,
+    "18": 2248,
+    "19": 2238,
+    "20": 2047
+  },
+  "exact_signature_duplicate_ticks": 1438,
+  "exact_signature_duplicate_fraction": 0.035514064853918156,
+  "capacity_blockers": [
+    "Per-entity enemy arrays are absent; count percentiles cannot define a threat-aware capacity.",
+    "Per-entity hostile projectile arrays are absent.",
+    "Materials and consumables are counts only; positions and velocities are absent.",
+    "Crate and obstacle counts/entities are absent."
+  ],
+  "semantic_blockers": [
+    "Player position/velocity and wave timer are absent from the certified v72 corpus.",
+    "Observation-to-action delay and observation age are not recorded.",
+    "Previous action and teacher field contributions are absent.",
+    "Enemy/projectile identity, position, velocity, radius, health, and threat features are absent.",
+    "Charger/elite/boss categories cannot be derived reliably from v72 ticks.",
+    "Invalid/freed-object incidence is not explicitly observable in v72 telemetry."
+  ],
+  "per_run": [
+    {
+      "run_id": "run_1784573193_53233",
+      "combat_ticks": 723,
+      "terminal": true,
+      "result": "defeat"
+    },
+    {
+      "run_id": "run_1784573591_74360",
+      "combat_ticks": 2148,
+      "terminal": true,
+      "result": "victory"
+    },
+    {
+      "run_id": "run_1784574748_23466",
+      "combat_ticks": 2103,
+      "terminal": true,
+      "result": "victory"
+    },
+    {
+      "run_id": "run_1784575900_67865",
+      "combat_ticks": 2167,
+      "terminal": true,
+      "result": "victory"
+    },
+    {
+      "run_id": "run_1784577106_32149",
+      "combat_ticks": 2117,
+      "terminal": true,
+      "result": "victory"
+    },
+    {
+      "run_id": "run_1784578248_64761",
+      "combat_ticks": 2141,
+      "terminal": true,
+      "result": "victory"
+    },
+    {
+      "run_id": "run_1784579427_97655",
+      "combat_ticks": 2116,
+      "terminal": true,
+      "result": "victory"
+    },
+    {
+      "run_id": "run_1784580600_85567",
+      "combat_ticks": 2124,
+      "terminal": true,
+      "result": "victory"
+    },
+    {
+      "run_id": "run_1784581760_10742",
+      "combat_ticks": 2045,
+      "terminal": true,
+      "result": "victory"
+    },
+    {
+      "run_id": "run_1784582893_33112",
+      "combat_ticks": 2151,
+      "terminal": true,
+      "result": "victory"
+    },
+    {
+      "run_id": "run_1784584067_93061",
+      "combat_ticks": 2074,
+      "terminal": true,
+      "result": "victory"
+    },
+    {
+      "run_id": "run_1784585216_1710",
+      "combat_ticks": 2186,
+      "terminal": true,
+      "result": "victory"
+    },
+    {
+      "run_id": "run_1784586419_74481",
+      "combat_ticks": 2132,
+      "terminal": true,
+      "result": "victory"
+    },
+    {
+      "run_id": "run_1784587581_2974",
+      "combat_ticks": 2079,
+      "terminal": true,
+      "result": "victory"
+    },
+    {
+      "run_id": "run_1784588734_4891",
+      "combat_ticks": 2098,
+      "terminal": true,
+      "result": "victory"
+    },
+    {
+      "run_id": "run_1784589879_83585",
+      "combat_ticks": 2080,
+      "terminal": true,
+      "result": "victory"
+    },
+    {
+      "run_id": "run_1784591005_31080",
+      "combat_ticks": 2186,
+      "terminal": true,
+      "result": "victory"
+    },
+    {
+      "run_id": "run_1784592192_98412",
+      "combat_ticks": 2087,
+      "terminal": true,
+      "result": "victory"
+    },
+    {
+      "run_id": "run_1784593331_58683",
+      "combat_ticks": 1627,
+      "terminal": true,
+      "result": "defeat"
+    },
+    {
+      "run_id": "run_1784594223_91323",
+      "combat_ticks": 2107,
+      "terminal": true,
+      "result": "victory"
+    }
+  ]
+}

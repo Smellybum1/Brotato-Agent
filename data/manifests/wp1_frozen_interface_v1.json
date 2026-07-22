@@ -1,0 +1,18 @@
+{
+  "schema_version": "wp1_frozen_interface_v1",
+  "wp1_tag": "wp1-baseline",
+  "wp1_commit": "9a390f47c5c5268d36d27cca5e47ff04ab9317e8",
+  "artifacts": [
+    {"path": "reports/WP1_FINAL_REPORT.md", "sha256": "0F8E6069E30234EBCDDBF68070DCE98BAE549C5CD87B5A201C5A7F7304029CE6", "bytes": 12506},
+    {"path": "reports/WP1_SAFEGUARD_EXERCISE.md", "sha256": "315E9BC036ECBE5EC2D1D6F524A746DD9C16A8D16DF72E7321EAFC3C88C5A640", "bytes": 1861},
+    {"path": "configs/well_rounded_d0_smg.yaml", "sha256": "AFF8BEE4016D6E3F1FE23D1F29333AE8AD18E7A926F6B0E8926D90603598F4B4", "bytes": 541},
+    {"path": "docs/TELEMETRY_SCHEMA.md", "sha256": "13F52D965EFC25899B05B951F70F5C1794D43787127C42ADBCCCD1AF4400D306", "bytes": 829},
+    {"path": "mod/mods-unpacked/Tom-BrotatoAgent/telemetry/telemetry_writer.gd", "sha256": "7FB8EDE6B3C9332F40F7903A4E32E02CE902BD094B01B0A2B2CF05737E5A27C7", "bytes": 4231},
+    {"path": "mod/mods-unpacked/Tom-BrotatoAgent/runtime/agent_controller.gd", "sha256": "9B4C5E8B45DA5E7549A155CA1AD995F94BCA39753F9E4E059E9757AC8276E1A8", "bytes": 63016},
+    {"path": "reports/gate_state_v72.json", "sha256": "A53275B3F3028800752D5FE2C6C5501A65A09EAD0573F75D50DE372A51CAA594", "bytes": 7342},
+    {"path": "reports/batch_overnight_20_v72.csv", "sha256": "659C5C088F344044853D6B3ADB6FC4B8326F6D44756E05BF1E24D44F51476E8B", "bytes": 1049},
+    {"path": "reports/batch_overnight_20_v72.md", "sha256": "3D6C6A166E4FAA3FE139C5BF338A6A4B87C005C8B48ADB4D1ADB06380FE065FA", "bytes": 1418},
+    {"path": "reports/v92_change_record.md", "sha256": "816BEB020F236A47C1B9905E4B1A04BE74F390A629EA4B1805F86A279AFCF22A", "bytes": 4218},
+    {"path": "docs/pro/Grok_4.5_Brotato_Work_Package_2_Prompt.md", "sha256": "EFADF505ED05BF760E55FEE7CA0379842F93A783D53C565EB29164C9CF971399", "bytes": 37209}
+  ]
+}
