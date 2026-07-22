@@ -1,3 +1,4 @@
+import math
 import re
 from pathlib import Path
 
@@ -122,17 +123,17 @@ def test_v64_blood_donation_is_vetoed_for_gate_reliability():
     assert '"item_blood_donation": {"never": true}' in requirement_block
 
 
-def test_wp2_capture_build_versions_the_v108_projectile_floor_policy():
+def test_wp2_capture_build_versions_the_v109_sampled_body_lane_policy():
     manifest = MANIFEST.read_text(encoding="utf-8")
     controller = CONTROLLER.read_text(encoding="utf-8")
     telemetry = TELEMETRY.read_text(encoding="utf-8")
 
-    assert '"version_number": "0.2.16"' in manifest
-    assert "v108 deterministic teacher" in manifest
-    assert controller.count("teacher_v1-0.1.108-gun-wp1") == 1
-    assert controller.count("0.2.16-wp2-capture") == 1
-    assert telemetry.count("teacher_v1-0.1.108-gun-wp1") == 1
-    assert telemetry.count("0.2.16-wp2-capture") == 1
+    assert '"version_number": "0.2.17"' in manifest
+    assert "v109 deterministic teacher" in manifest
+    assert controller.count("teacher_v1-0.1.109-gun-wp1") == 1
+    assert controller.count("0.2.17-wp2-capture") == 1
+    assert telemetry.count("teacher_v1-0.1.109-gun-wp1") == 1
+    assert telemetry.count("0.2.17-wp2-capture") == 1
 
 
 def test_v84_item_audit_and_conditional_effect_corrections():
@@ -806,7 +807,8 @@ def test_v106_body_clearance_tier_rejects_avoidable_contact_paths():
         "func _projectile_clearance_context", 1
     )[0]
     assert "var tier_max_body_clearance := -1.0e18" in projectile
-    assert "max_clearance < panic" in projectile
+    assert "var broadened_clearance_floor := (" in projectile
+    assert "if max_clearance >= panic:" in projectile
     assert "BOSS_FINALE_BODY_ESCAPE_PROJECTILE_SLACK" in projectile
     assert "if finale and float(row[3]) < body_clearance_floor:" in projectile
 
@@ -934,6 +936,66 @@ def test_v108_final_body_gate_anchors_projectile_concession_and_preserves_body_e
     assert relaxed_body_best >= strict_body_best + 20.0
     emergency_body_floor = relaxed_body_best - 5.0
     assert damaging_body_lane < emergency_body_floor
+
+
+def test_v109_final_body_pool_rejects_non_sampled_wall_fallbacks():
+    potential = POTENTIAL_FIELD.read_text(encoding="utf-8")
+    helper = potential.split("func _is_finale_sampled_direction", 1)[1].split(
+        "func _finale_enemy_path_penalty", 1
+    )[0]
+    safety = potential.split("func _finale_body_safety", 1)[1].split(
+        "func _finale_committed_escape", 1
+    )[0]
+
+    assert "for k in range(BotConfig.ESCAPE_DIRECTIONS):" in helper
+    assert "safe_direction.dot(sampled) >= 0.99999" in helper
+    clamp = safety.index("var candidate := _clamp_finale_wall_components(")
+    sampled_gate = safety.index("if not _is_finale_sampled_direction(candidate):")
+    body_score = safety.index("var body_clearance := _predictive_body_path_clearance(")
+    assert clamp < sampled_gate < body_score
+
+    # Frozen v108 exact-20 capture 20755. At (184.35, 347.26), an outward
+    # sample had both components removed by the hard-wall clamp. Its generic
+    # center fallback pointed 26.615 degrees, outside the 15-degree sample grid,
+    # but was labelled as an active sampled body repair. v109 excludes it so an
+    # actual audited inward sample wins instead.
+    player_x, player_y = 184.349487, 347.257813
+    center_x, center_y = 1024.0, 768.0
+    center_angle = math.degrees(math.atan2(center_y - player_y, center_x - player_x))
+    nearest_sample = round(center_angle / 15.0) * 15.0
+    assert abs(center_angle - nearest_sample) > 3.0
+
+
+def test_v109_bounded_projectile_concession_prefers_materially_clearer_body_lane():
+    potential = POTENTIAL_FIELD.read_text(encoding="utf-8")
+    projectile = potential.split("func _projectile_escape", 1)[1].split(
+        "func _projectile_clearance_context", 1
+    )[0]
+    final_body = potential.split("func _finale_body_safety", 1)[1].split(
+        "func _finale_committed_escape", 1
+    )[0]
+
+    for selector in (projectile, final_body):
+        assert "BOSS_FINALE_BODY_ESCAPE_PROJECTILE_SLACK" in selector
+        assert "BOSS_FINALE_BODY_EMERGENCY_MIN_GAIN" in selector
+        assert "BOSS_FINALE_BODY_EMERGENCY_CLEARANCE_SLACK" in selector
+    assert "broadened_clearance_floor = max(panic, broadened_clearance_floor)" in projectile
+    assert "relaxed_projectile_floor = max(" in final_body
+    assert "relaxed_projectile_floor < projectile_floor" in final_body
+    assert '"body_emergency_active": _finale_body_emergency_active' in potential
+
+    # Frozen v108 exact-20 capture 20604. The old safe-tier gate admitted only
+    # the 150-degree lane even though a bounded, panic-safe concession exposed
+    # a materially clearer 195-degree escape. v109 admits the latter tier and
+    # then requires the selection to remain within five units of its best body
+    # clearance.
+    strict_projectile, strict_body = 223.323166, 61.504105
+    escape_projectile, escape_body = 177.7, 86.5
+    panic = 72.6
+    assert strict_projectile - escape_projectile < 60.0
+    assert escape_projectile >= panic
+    assert escape_body >= strict_body + 20.0
+    assert strict_body < escape_body - 5.0
 
 
 def test_v101_nonconvex_projectile_blend_falls_back_to_sampled_escape():

@@ -39,6 +39,15 @@ def _normalise(action: dict[str, Any]) -> tuple[float, float] | None:
     return x / magnitude, y / magnitude
 
 
+def _required_body_floor(debug: dict[str, Any]) -> float:
+    best_clearance = float(debug["body_best_clearance"])
+    if bool(debug.get("body_emergency_active", False)):
+        return best_clearance - BODY_EMERGENCY_SLACK
+    if best_clearance >= BODY_TIER:
+        return BODY_TIER
+    return best_clearance - BODY_SLACK
+
+
 def _body_clearance(payload: dict[str, Any]) -> float:
     direction = _normalise(payload["teacher"]["action"])
     if direction is None:
@@ -205,6 +214,7 @@ def audit_run(
     wall_recovery_violations: list[dict[str, Any]] = []
     hard_wall_violations: list[dict[str, Any]] = []
     active_body_repairs = 0
+    active_body_emergencies = 0
     active_projectile_safety = 0
     active_wall_recovery = 0
     body_diagnostic_captures = 0
@@ -224,7 +234,8 @@ def audit_run(
         input_clearance = float(debug["body_input_clearance"])
         best_clearance = float(debug["body_best_clearance"])
         selected_clearance = float(debug["body_selected_clearance"])
-        body_floor = BODY_TIER if best_clearance >= BODY_TIER else best_clearance - BODY_SLACK
+        body_floor = _required_body_floor(debug)
+        active_body_emergencies += bool(debug.get("body_emergency_active", False))
         if selected_clearance < body_floor - FLOAT_TOLERANCE:
             body_tier_violations.append(
                 {
@@ -338,6 +349,7 @@ def audit_run(
         "fresh_late_capture_count": len(fresh),
         "body_diagnostic_capture_count": body_diagnostic_captures,
         "active_body_repairs": active_body_repairs,
+        "active_body_emergencies": active_body_emergencies,
         "active_projectile_safety": active_projectile_safety,
         "active_wall_recovery": active_wall_recovery,
         "malformed_lines": malformed_lines,

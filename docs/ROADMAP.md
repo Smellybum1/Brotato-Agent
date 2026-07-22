@@ -6,7 +6,7 @@ See also the director master roadmap. Work Package status:
 |-----------|--------|
 | M0 Environment audit | Complete (WP1) |
 | M1 Deterministic teacher + telemetry | **Complete** — v72 certified 18W/2L; v92 promoted; repository/safeguard closeout passed |
-| M2 Learned combat (WP2) | **In progress** — combat capture validated; v108 projectile-floor qualification and clean collection next |
+| M2 Learned combat (WP2) | **In progress** — combat capture validated; v109 sampled-lane qualification and clean collection next |
 | M3 Economy planner | Reframe pending (see note 3 below) |
 | M4 Robust D0 agent | Not started |
 | M5–M7 Danger curriculum / expert / characters | Not started |
@@ -164,8 +164,17 @@ same frozen decision also chose a body lane 8.4 units worse than the best
 available escape, matching the observed path through the pack. v108 anchors
 the ordinary projectile concession to the already-emitted escape. If that
 strict tier predicts body overlap, it may broaden only as a body emergency and
-must stay within five units of the best available body lane. A fresh v108-only
-20-run capture set is the primary dataset source; earlier
+must stay within five units of the best available body lane. The first v108
+exact-20 source reached wave 20 with complete telemetry, but its mandatory audit
+rejected one active body repair: a doubly clamped outward sample silently used
+the generic arena-center fallback, producing a 26.6-degree command outside the
+24-direction sample grid. The same source also confirmed an operator-observed
+pack-through decision: the only strict-safe projectile lane offered 61.5 body
+clearance, while a lane costing 45.6 projectile-clearance units remained above
+panic and opened 86.5 body clearance. v109 removes non-sampled clamp fallbacks
+and permits that bounded body escape only for a gain of at least 20 units,
+requiring the final choice to stay within five units of the best body lane. A
+fresh v109-only 20-run capture set is the primary dataset source; earlier
 captures remain immutable diagnostic evidence and are not silently mixed into it.
 
 Evidence-driven modifications to `Grok_4.5_Brotato_Work_Package_2_Prompt.md`

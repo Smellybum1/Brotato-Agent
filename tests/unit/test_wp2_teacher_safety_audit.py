@@ -2,6 +2,7 @@ from scripts.wp2_teacher_safety_audit import (
     _avoidable_damage_violations,
     _body_clearance,
     _hard_wall_faults,
+    _required_body_floor,
 )
 
 
@@ -56,3 +57,11 @@ def test_damage_audit_allows_unbounded_concession_only_for_best_body_emergency()
     assert _avoidable_damage_violations([worse_pack_lane])[0]["reasons"] == [
         "projectile concession exceeds 60 units"
     ]
+
+
+def test_body_emergency_audit_requires_near_best_escape():
+    ordinary = {"body_best_clearance": 86.5}
+    emergency = {"body_best_clearance": 86.5, "body_emergency_active": True}
+
+    assert _required_body_floor(ordinary) == 45.0
+    assert _required_body_floor(emergency) == 81.5

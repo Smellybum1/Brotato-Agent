@@ -18,9 +18,9 @@ Includes run_id, timestamps, versions, character/weapon/danger/settings, result,
 
 ## Compatible combat capture extension (envelope v2.0.0)
 
-The current `0.2.16-wp2-capture` build preserves every existing v1 event and
-summary field and executes policy `teacher_v1-0.1.108-gun-wp1`. Historical
-`0.2.0` / v92 through `0.2.15` / v107 captures use the same extension. Instrumented runs
+The current `0.2.17-wp2-capture` build preserves every existing v1 event and
+summary field and executes policy `teacher_v1-0.1.109-gun-wp1`. Historical
+`0.2.0` / v92 through `0.2.16` / v108 captures use the same extension. Instrumented runs
 may interleave a new `combat_capture` record whose envelope has
 `schema_version: "2.0.0"`. Readers must dispatch by the schema version on each
 record; a run is not required to use one envelope version exclusively.
@@ -35,7 +35,7 @@ before `combat_obs_v1` is frozen. The event records:
 - finale safety diagnostics, including pre-safety, sampled-escape, blended, and
   final emitted-command projectile clearance plus blend-repair and wall-safe
   replan activation, along with predicted body clearance for wall and
-  projectile candidate tiers;
+  projectile candidate tiers and bounded body-emergency activation;
 - player position, live/measured velocity, combat stats, wave timer, weapons,
   and arena dimensions;
 - raw enemies, bosses, hostile-projectile candidates, materials, consumables,

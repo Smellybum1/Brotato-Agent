@@ -40,6 +40,7 @@ var _finale_projectile_escape_body_clearance := -1.0
 var _finale_projectile_blended_body_clearance := -1.0
 var _finale_projectile_final_body_clearance := -1.0
 var _finale_body_safety_active := false
+var _finale_body_emergency_active := false
 var _finale_body_input_clearance := -1.0
 var _finale_body_best_clearance := -1.0
 var _finale_body_selected_clearance := -1.0
@@ -87,6 +88,7 @@ func compute_movement(state, profile) -> Vector2:
 	_finale_projectile_blended_body_clearance = -1.0
 	_finale_projectile_final_body_clearance = -1.0
 	_finale_body_safety_active = false
+	_finale_body_emergency_active = false
 	_finale_body_input_clearance = -1.0
 	_finale_body_best_clearance = -1.0
 	_finale_body_selected_clearance = -1.0
@@ -295,6 +297,18 @@ func _clamp_finale_wall_components(pos: Vector2, desired: Vector2, arena,
 	if out.length() < 0.1:
 		out = Vector2(w * 0.5, h * 0.5) - pos
 	return _normalize(out)
+
+
+func _is_finale_sampled_direction(direction: Vector2) -> bool:
+	var safe_direction := _normalize(direction)
+	if safe_direction == Vector2.ZERO:
+		return false
+	for k in range(BotConfig.ESCAPE_DIRECTIONS):
+		var angle := (TAU * k) / float(BotConfig.ESCAPE_DIRECTIONS)
+		var sampled := Vector2(cos(angle), sin(angle))
+		if safe_direction.dot(sampled) >= 0.99999:
+			return true
+	return false
 
 
 func _finale_enemy_path_penalty(pos: Vector2, direction: Vector2, enemies,
@@ -703,8 +717,16 @@ func _finale_body_safety(pos: Vector2, desired: Vector2, player_speed: float,
 	var highest_projectile_clearance := -1.0e18
 	for k in range(BotConfig.ESCAPE_DIRECTIONS):
 		var angle := (TAU * k) / float(BotConfig.ESCAPE_DIRECTIONS)
+		var sampled_candidate := Vector2(cos(angle), sin(angle))
 		var candidate := _clamp_finale_wall_components(
-			pos, Vector2(cos(angle), sin(angle)), arena, player_speed)
+			pos, sampled_candidate, arena, player_speed)
+		# v109: when both components of an outward sample cross the hard wall,
+		# the clamp deliberately falls back toward arena center. That fallback is
+		# not one of the 24 directions whose body/projectile tiers this pass audits.
+		# Do not admit it under a sampled-lane diagnostic; an actual inward sample
+		# remains available and keeps the emitted repair reproducible.
+		if not _is_finale_sampled_direction(candidate):
+			continue
 		var enemy_penalty := _predictive_enemy_path_penalty(
 			pos, candidate, player_speed, times, enemies, bosses, 1.0)
 		if _finale_wall_recovery_active:
@@ -762,11 +784,20 @@ func _finale_body_safety(pos: Vector2, desired: Vector2, player_speed: float,
 		else:
 			projectile_floor = (highest_projectile_clearance
 				- BotConfig.BOSS_FINALE_BODY_ESCAPE_PROJECTILE_SLACK)
-		var relaxed_projectile_floor := projectile_floor
+		var relaxed_projectile_floor := (
+			highest_projectile_clearance
+				- BotConfig.BOSS_FINALE_BODY_ESCAPE_PROJECTILE_SLACK)
+		if highest_projectile_clearance >= panic_clear:
+			relaxed_projectile_floor = max(
+				panic_clear, relaxed_projectile_floor)
 		if (_finale_projectile_safety_active
 				and projectile_reference_clearance > -1.0e17):
 			projectile_floor = max(
 				projectile_floor,
+				projectile_reference_clearance
+					- BotConfig.BOSS_FINALE_BODY_ESCAPE_PROJECTILE_SLACK)
+			relaxed_projectile_floor = max(
+				relaxed_projectile_floor,
 				projectile_reference_clearance
 					- BotConfig.BOSS_FINALE_BODY_ESCAPE_PROJECTILE_SLACK)
 		var strict_body_best := -1.0e18
@@ -777,11 +808,12 @@ func _finale_body_safety(pos: Vector2, desired: Vector2, player_speed: float,
 			if float(row[2]) >= relaxed_projectile_floor:
 				relaxed_body_best = max(relaxed_body_best, float(row[1]))
 		if (_finale_projectile_safety_active
-				and strict_body_best < 0.0
+				and relaxed_projectile_floor < projectile_floor
 				and relaxed_body_best >= strict_body_best
 					+ BotConfig.BOSS_FINALE_BODY_EMERGENCY_MIN_GAIN):
 			projectile_floor = relaxed_projectile_floor
 			body_emergency_active = true
+			_finale_body_emergency_active = true
 	_finale_body_projectile_floor = projectile_floor
 	var highest_body_clearance := -1.0e18
 	for row in rows:
@@ -913,6 +945,7 @@ func finale_translation_debug() -> Dictionary:
 		"projectile_blended_body_clearance": _finale_projectile_blended_body_clearance,
 		"projectile_final_body_clearance": _finale_projectile_final_body_clearance,
 		"body_safety_active": _finale_body_safety_active,
+		"body_emergency_active": _finale_body_emergency_active,
 		"body_input_clearance": _finale_body_input_clearance,
 		"body_best_clearance": _finale_body_best_clearance,
 		"body_selected_clearance": _finale_body_selected_clearance,
@@ -1423,7 +1456,6 @@ func _projectile_escape(pos, projectiles, player_speed, arena, desire, enemies, 
 	var best_clearance = -1.0
 	var rows := []
 	var max_clearance := -1.0e18
-	var max_body_clearance := -1.0e18
 	for k in range(n_dirs):
 		var ang = (TAU * k) / float(n_dirs)
 		var d = Vector2(cos(ang), sin(ang))
@@ -1443,7 +1475,6 @@ func _projectile_escape(pos, projectiles, player_speed, arena, desire, enemies, 
 			score += BotConfig.BOSS_FINALE_ESCAPE_CONTINUITY * d.dot(_prev_move)
 		rows.append([d, score, clearance, body_clearance])
 		max_clearance = max(max_clearance, clearance)
-		max_body_clearance = max(max_body_clearance, body_clearance)
 	var safe = BotConfig.ESCAPE_SAFE_CLEARANCE * caution
 	var panic = BotConfig.ESCAPE_PANIC_CLEARANCE * caution
 	var clearance_floor := -1.0e18
@@ -1456,9 +1487,10 @@ func _projectile_escape(pos, projectiles, player_speed, arena, desire, enemies, 
 			clearance_floor = (
 				max_clearance - BotConfig.BOSS_FINALE_PROJECTILE_WALL_MIN_GAIN)
 	# v106: choose a future body-clearance tier before the soft crowd score.
-	# Preserve the existing projectile tier whenever it contains a contact-safe
-	# lane. If every projectile lane is below panic, permit only a bounded
-	# clearance concession to avoid a predicted body impact.
+	# v109: a single lane barely above the safe projectile threshold must not
+	# make every materially clearer body lane inadmissible. Broaden by at most the
+	# existing 60-unit concession, never below panic when a panic-safe lane exists,
+	# and only when that buys at least 20 units of predicted body clearance.
 	var body_clearance_floor := -1.0e18
 	if finale:
 		var tier_max_body_clearance := -1.0e18
@@ -1466,29 +1498,24 @@ func _projectile_escape(pos, projectiles, player_speed, arena, desire, enemies, 
 			if float(row[2]) >= clearance_floor:
 				tier_max_body_clearance = max(
 					tier_max_body_clearance, float(row[3]))
-		if (tier_max_body_clearance
+		var broadened_clearance_floor := (
+			max_clearance - BotConfig.BOSS_FINALE_BODY_ESCAPE_PROJECTILE_SLACK)
+		if max_clearance >= panic:
+			broadened_clearance_floor = max(panic, broadened_clearance_floor)
+		var broadened_max_body_clearance := -1.0e18
+		for row in rows:
+			if float(row[2]) >= broadened_clearance_floor:
+				broadened_max_body_clearance = max(
+					broadened_max_body_clearance, float(row[3]))
+		if (broadened_clearance_floor < clearance_floor
+				and broadened_max_body_clearance >= tier_max_body_clearance
+					+ BotConfig.BOSS_FINALE_BODY_EMERGENCY_MIN_GAIN):
+			clearance_floor = broadened_clearance_floor
+			body_clearance_floor = (broadened_max_body_clearance
+				- BotConfig.BOSS_FINALE_BODY_EMERGENCY_CLEARANCE_SLACK)
+		elif (tier_max_body_clearance
 				>= BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE):
 			body_clearance_floor = BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE
-		elif (max_clearance < panic
-				and max_body_clearance
-					>= BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE):
-			var broadened_clearance_floor := (
-				max_clearance
-					- BotConfig.BOSS_FINALE_BODY_ESCAPE_PROJECTILE_SLACK)
-			var broadened_max_body_clearance := -1.0e18
-			for row in rows:
-				if float(row[2]) >= broadened_clearance_floor:
-					broadened_max_body_clearance = max(
-						broadened_max_body_clearance, float(row[3]))
-			if (broadened_max_body_clearance
-					>= BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE):
-				clearance_floor = broadened_clearance_floor
-				body_clearance_floor = (
-					BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE)
-			else:
-				body_clearance_floor = (
-					tier_max_body_clearance
-						- BotConfig.BOSS_FINALE_BODY_CLEARANCE_SLACK)
 		else:
 			body_clearance_floor = (
 				tier_max_body_clearance
