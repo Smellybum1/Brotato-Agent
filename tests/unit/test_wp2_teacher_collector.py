@@ -13,6 +13,26 @@ def test_atomic_json_and_tail_lines(tmp_path: Path):
     assert tail_lines(events, 3) == ["97", "98", "99"]
 
 
+def test_atomic_json_retries_transient_windows_replace_denial(tmp_path: Path, monkeypatch):
+    path = tmp_path / "state.json"
+    path.write_text('{"status":"old"}\n', encoding="utf-8")
+    real_replace = Path.replace
+    attempts = 0
+
+    def flaky_replace(source: Path, target: Path):
+        nonlocal attempts
+        attempts += 1
+        if attempts < 3:
+            raise PermissionError(5, "Access is denied", str(target))
+        return real_replace(source, target)
+
+    monkeypatch.setattr(Path, "replace", flaky_replace)
+    atomic_json(path, {"status": "running"})
+
+    assert attempts == 3
+    assert json.loads(path.read_text(encoding="utf-8")) == {"status": "running"}
+
+
 def test_latest_capture_skips_partial_tail_line():
     complete = json.dumps({"event": "combat_capture", "payload": {"wave": 3}})
     assert latest_capture([complete, '{"event":"combat_capture"']) == {

@@ -21,6 +21,8 @@ from typing import Any
 CAPTURE_SCHEMA_HASH = "95B6444796A21FD44E94113B75BA2097BC381D5F72ED784F9B9A4A99DD46D951"
 POLICY_VERSION = "teacher_v1-0.1.92-gun-wp1"
 MOD_VERSION = "0.2.0-wp2-capture"
+ATOMIC_REPLACE_ATTEMPTS = 10
+ATOMIC_REPLACE_BASE_DELAY_SEC = 0.02
 
 
 def utc_now() -> str:
@@ -31,7 +33,15 @@ def atomic_json(path: Path, payload: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = path.with_suffix(path.suffix + ".tmp")
     temporary.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
-    temporary.replace(path)
+    for attempt in range(ATOMIC_REPLACE_ATTEMPTS):
+        try:
+            temporary.replace(path)
+            return
+        except PermissionError:
+            if attempt + 1 == ATOMIC_REPLACE_ATTEMPTS:
+                raise
+            delay = min(ATOMIC_REPLACE_BASE_DELAY_SEC * (2**attempt), 0.2)
+            time.sleep(delay)
 
 
 def list_summaries(runs_dir: Path) -> dict[str, Path]:
