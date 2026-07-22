@@ -1,7 +1,14 @@
 import json
+import sys
 from pathlib import Path
 
-from scripts.wp2_collect_teacher import atomic_json, latest_capture, summary_fault, tail_lines
+from scripts.wp2_collect_teacher import (
+    atomic_json,
+    latest_capture,
+    launch_game,
+    summary_fault,
+    tail_lines,
+)
 
 
 def test_atomic_json_and_tail_lines(tmp_path: Path):
@@ -39,6 +46,23 @@ def test_latest_capture_skips_partial_tail_line():
         "event": "combat_capture",
         "payload": {"wave": 3},
     }
+
+
+def test_launch_game_uses_steam_route(tmp_path: Path, monkeypatch):
+    calls: list[list[str]] = []
+    monkeypatch.setattr(
+        "scripts.wp2_collect_teacher.subprocess.check_call",
+        lambda command: calls.append(command),
+    )
+
+    launch_game(tmp_path)
+
+    assert calls == [
+        [
+            sys.executable,
+            str(tmp_path / "scripts" / "launch_benchmark.py"),
+        ]
+    ]
 
 
 def test_summary_fault_accepts_clean_current_terminal_summary():

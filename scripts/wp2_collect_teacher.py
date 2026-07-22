@@ -110,7 +110,10 @@ def set_auto_start(enabled: bool) -> None:
 
 
 def launch_game(root: Path) -> None:
-    subprocess.check_call([sys.executable, str(root / "scripts" / "launch_benchmark.py"), "--via", "exe"])
+    # Use the proven Steam route so ModLoader can enumerate subscribed ZIPs.
+    # Direct EXE launches may restart through Steam without an initialized UGC
+    # interface, leaving the capture mod unloaded even though the ZIP is valid.
+    subprocess.check_call([sys.executable, str(root / "scripts" / "launch_benchmark.py")])
 
 
 def summary_fault(summary: dict[str, Any]) -> str | None:
