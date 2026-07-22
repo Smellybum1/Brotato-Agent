@@ -122,16 +122,17 @@ def test_v64_blood_donation_is_vetoed_for_gate_reliability():
     assert '"item_blood_donation": {"never": true}' in requirement_block
 
 
-def test_wp2_capture_build_versions_the_v96_predictive_wall_policy():
+def test_wp2_capture_build_versions_the_v97_centered_finale_policy():
     manifest = MANIFEST.read_text(encoding="utf-8")
     controller = CONTROLLER.read_text(encoding="utf-8")
     telemetry = TELEMETRY.read_text(encoding="utf-8")
 
-    assert '"version_number": "0.2.4"' in manifest
-    assert controller.count("teacher_v1-0.1.96-gun-wp1") == 1
-    assert controller.count("0.2.4-wp2-capture") == 1
-    assert telemetry.count("teacher_v1-0.1.96-gun-wp1") == 1
-    assert telemetry.count("0.2.4-wp2-capture") == 1
+    assert '"version_number": "0.2.5"' in manifest
+    assert "v97 deterministic teacher" in manifest
+    assert controller.count("teacher_v1-0.1.97-gun-wp1") == 1
+    assert controller.count("0.2.5-wp2-capture") == 1
+    assert telemetry.count("teacher_v1-0.1.97-gun-wp1") == 1
+    assert telemetry.count("0.2.5-wp2-capture") == 1
 
 
 def test_v84_item_audit_and_conditional_effect_corrections():
@@ -357,7 +358,7 @@ def test_v67_wave17_low_hp_survival_override_uses_repulsion_before_normal_kiting
     )
 
 
-def test_v85_wave20_uses_dedicated_finale_instead_of_generic_low_hp_flee():
+def test_v97_wave20_uses_centered_survival_without_a_boss_range_ring():
     potential = POTENTIAL_FIELD.read_text(encoding="utf-8")
     survival_guard = potential.split(
         "if (wave >= BotConfig.LATE_SURVIVAL_WAVE", 1
@@ -368,42 +369,37 @@ def test_v85_wave20_uses_dedicated_finale_instead_of_generic_low_hp_flee():
     assert "and wave < BotConfig.BOSS_FINALE_WAVE" in survival_guard
     assert "return _prev_move" in survival_guard
     assert "_boss_finale_desire" not in survival_guard
-    assert "desire = _boss_finale_desire" in potential
+    finale_block = potential.split("if finale:", 1)[1].split("\n\telse:", 1)[0]
+    assert "desire = _pure_repulsion_flee(" in finale_block
+    assert "desire = finale_survival" in finale_block
+    assert "_boss_finale_desire" not in potential
+    assert "_boss_finale_recovery_desire" not in potential
     assert "_projectile_escape" in potential
     assert "_finale_committed_escape" in potential
 
 
-def test_v92_finale_tightens_the_ring_and_bypasses_commitment_before_contact():
+def test_v97_finale_removes_range_ring_and_bypasses_commitment_before_contact():
     config = CONFIG.read_text(encoding="utf-8")
     potential = POTENTIAL_FIELD.read_text(encoding="utf-8")
     adapter = ADAPTER.read_text(encoding="utf-8")
     controller = CONTROLLER.read_text(encoding="utf-8")
 
-    assert "const BOSS_FINALE_RECOVERY_RANGE_FRAC := 0.82" in config
-    assert "const BOSS_FINALE_RECOVERY_RING_DEADBAND := 50.0" in config
-    assert "const BOSS_FINALE_RECOVERY_RADIAL_GAIN := 1.75" in config
-    assert "const BOSS_FINALE_RECOVERY_TANGENT_GAIN := 1.85" in config
-    assert "const BOSS_FINALE_CRITICAL_HP_RATIO := 0.50" in config
-    assert "const BOSS_FINALE_CRITICAL_TANGENT_MULT := 1.35" in config
+    assert "BOSS_FINALE_RANGE_FRAC" not in config
+    assert "BOSS_FINALE_SPRING_K" not in config
+    assert "BOSS_FINALE_RECOVERY_RANGE_FRAC" not in config
+    assert "BOSS_FINALE_RECOVERY_RING_DEADBAND" not in config
     assert "const BOSS_FINALE_CONTACT_ESCAPE_DISTANCE := 420.0" in config
     assert "if (hp_ratio <= BotConfig.LATE_SURVIVAL_HP_RATIO" in potential
     assert "var finale_survival = _panic_dodge(" in potential
     assert "finale_survival = _pure_repulsion_flee(" in potential
-    assert "desire = _boss_finale_recovery_desire(" in potential
-    assert "func _boss_finale_recovery_desire(" in potential
-    assert "survival_desire - radial * survival_desire.dot(radial)" in potential
-    assert "distance - ideal" in potential
-    assert "BOSS_FINALE_RECOVERY_RING_DEADBAND" in potential
-    assert "if hp_ratio <= BotConfig.BOSS_FINALE_CRITICAL_HP_RATIO:" in potential
+    assert "desire = finale_survival" in potential
+    assert "_boss_finale_recovery_desire" not in potential
+    assert "BOSS_FINALE_RECOVERY_RING_DEADBAND" not in potential
     projectile_blend = potential.index("combined = _normalize(combined)")
-    post_escape_projection = potential.index(
-        "combined = _boss_finale_recovery_desire(", projectile_blend
-    )
     reversal_guard = potential.index(
         "combined = _finale_turn_without_reversal", projectile_blend
     )
-    assert projectile_blend < post_escape_projection < reversal_guard
-    assert "pos, bosses, weapons, arena, desire, combined, hp_ratio" in potential
+    assert projectile_blend < reversal_guard
     assert "_finale_committed_escape(pos, combined, arena, bosses)" in potential
     committed = potential.split("func _finale_committed_escape", 1)[1].split(
         "func finale_translation_debug", 1
@@ -670,7 +666,6 @@ def test_v77_wave20_movement_holds_decisions_and_turns_through_reversals():
 
     assert "const BOSS_FINALE_RECOMPUTE_DIVISOR := 3" in config
     assert "const BOSS_FINALE_ESCAPE_CONTINUITY := 85.0" in config
-    assert "const BOSS_FINALE_STRAFE_SWITCH_MARGIN := 1.00" in config
     assert "const BOSS_FINALE_REVERSE_DOT := -0.35" in config
     assert "var _finale_move_tick := 0" in controller
     assert "_finale_move_tick % _CONFIG_SCRIPT.BOSS_FINALE_RECOMPUTE_DIVISOR" in controller

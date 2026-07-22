@@ -99,30 +99,17 @@ const LATE_CORNER_KEEP_MOVE := 0.25
 # Waves 17-19 repeatedly produced fatal hit chains even after v66 fixed the
 # build's early HP deficit. Once a late-wave hit removes meaningful health,
 # disengage promptly into the proven pure-repulsion path until the build
-# recovers. Wave 20 is excluded: its dedicated finale controller must keep the
-# boss inside gun range while applying its own projectile and corner avoidance.
+# recovers. Wave 20 is excluded: its dedicated finale controller prioritizes
+# central map control, projectile clearance, and corner avoidance.
 const LATE_SURVIVAL_WAVE := 17
 const LATE_SURVIVAL_HP_RATIO := 0.85
 const LATE_SURVIVAL_SMOOTHING := 0.70
-# Wave 20 finale: ignore loot, hold boss at shortest-weapon max range, dodge bullets hard.
+# Wave 20 finale: ignore loot and prioritize survival near the arena interior.
+# Automatic fire supplies boss damage without a movement-enforced range ring.
 const BOSS_FINALE_WAVE := 20
-const BOSS_FINALE_RANGE_FRAC := 1.00
-const BOSS_FINALE_SPRING_K := 0.055
-const BOSS_FINALE_STRAFE := 1.55
-const BOSS_FINALE_ADD_REPEL := 1.35
 const BOSS_FINALE_PROJ_CAUTION := 2.40
 const BOSS_FINALE_PROJ_URGENCY_FLOOR := 0.55
 const BOSS_FINALE_PROJ_URGENCY_MULT := 1.35
-# v88: v87's generic low-health flee produced large radial range excursions.
-# Preserve the boss-range spring at low HP and use the proven panic/repulsion
-# direction only to choose the safer orbit tangent. Target slightly inside the
-# shortest weapon's maximum range so movement jitter does not interrupt fire.
-const BOSS_FINALE_RECOVERY_RANGE_FRAC := 0.82
-const BOSS_FINALE_RECOVERY_RING_DEADBAND := 50.0
-const BOSS_FINALE_RECOVERY_RADIAL_GAIN := 1.75
-const BOSS_FINALE_RECOVERY_TANGENT_GAIN := 1.85
-const BOSS_FINALE_CRITICAL_HP_RATIO := 0.50
-const BOSS_FINALE_CRITICAL_TANGENT_MULT := 1.35
 # v92: v91's 320-unit floor worked when sampled inside it, but three lethal
 # 16-damage hits were sampled with the boss at 350-406 units. Begin the direct
 # outward correction outside that measured charge envelope while remaining in
@@ -133,7 +120,6 @@ const BOSS_FINALE_CONTACT_ESCAPE_DISTANCE := 420.0
 # an already-open escape lane, and turn across a reversal instead of cancelling.
 const BOSS_FINALE_RECOMPUTE_DIVISOR := 3
 const BOSS_FINALE_ESCAPE_CONTINUITY := 85.0
-const BOSS_FINALE_STRAFE_SWITCH_MARGIN := 1.00
 const BOSS_FINALE_REVERSE_DOT := -0.35
 # v78: direction continuity was not enough: all v77 wave-20 runs translated at
 # most 10% of commanded path length. Commit to a lane until actual displacement

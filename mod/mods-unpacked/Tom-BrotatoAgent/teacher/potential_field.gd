@@ -90,7 +90,7 @@ func compute_movement(state, profile) -> Vector2:
 		# v67: all three v66 gate losses reached wave 17 with 67-76 HP, then
 		# died to chained hits. On waves 17-19, stop re-engaging at low health
 		# and use the battle-tested panic/pure-repulsion path until recovery.
-		# Wave 20 instead keeps the boss in range through the finale controller.
+		# Wave 20 instead uses its center-biased finale survival controller.
 		var survival_dir = _panic_dodge(pos, enemies, bosses, projectiles, arena)
 		if survival_dir == Vector2.ZERO:
 			survival_dir = _pure_repulsion_flee(
@@ -102,7 +102,10 @@ func compute_movement(state, profile) -> Vector2:
 	var finale = wave >= BotConfig.BOSS_FINALE_WAVE
 	var desire: Vector2
 	if finale:
-		desire = _boss_finale_desire(pos, enemies, bosses, weapons, arena, profile, player)
+		# v97: survival and central map control are the finale's base objective.
+		# Automatic fire does not require movement to preserve a boss-range ring.
+		desire = _pure_repulsion_flee(
+			pos, enemies, bosses, projectiles, arena, _prev_move)
 		if (hp_ratio <= BotConfig.LATE_SURVIVAL_HP_RATIO
 			and (not enemies.empty() or not bosses.empty() or not projectiles.empty())):
 			var finale_survival = _panic_dodge(
@@ -110,8 +113,7 @@ func compute_movement(state, profile) -> Vector2:
 			if finale_survival == Vector2.ZERO:
 				finale_survival = _pure_repulsion_flee(
 					pos, enemies, bosses, projectiles, arena, _prev_move)
-			desire = _boss_finale_recovery_desire(
-				pos, bosses, weapons, arena, desire, finale_survival, hp_ratio)
+			desire = finale_survival
 	else:
 		desire = _build_desire(pos, enemies, bosses, loot, consumables, trees, weapons, arena, profile, player, wave)
 
@@ -139,15 +141,6 @@ func compute_movement(state, profile) -> Vector2:
 	else:
 		combined = desire
 	combined = _normalize(combined)
-	if (finale
-			and hp_ratio <= BotConfig.LATE_SURVIVAL_HP_RATIO
-			and (not enemies.empty() or not bosses.empty() or not projectiles.empty())):
-		# v89: projectile escape is evaluated after the low-HP ring controller.
-		# Re-project the blended safe direction so projectile urgency can choose
-		# the orbit tangent without restoring the radial disengagement seen in
-		# both v88 losses.
-		combined = _boss_finale_recovery_desire(
-			pos, bosses, weapons, arena, desire, combined, hp_ratio)
 	if finale:
 		combined = _finale_turn_without_reversal(_prev_move, combined, pos, arena)
 
@@ -386,81 +379,6 @@ func finale_translation_debug() -> Dictionary:
 
 
 # ─────────────────────── desire field (default kiter) ─────────────────────────
-
-func _boss_finale_desire(pos, enemies, bosses, weapons, arena, profile, player) -> Vector2:
-	# Wave 20: ignore loot, focus the boss at shortest-weapon max range, strafe adds off.
-	var weapon_max = _shortest_weapon_range(weapons)
-	var ideal = max(weapon_max * BotConfig.BOSS_FINALE_RANGE_FRAC, BotConfig.MIN_ENGAGE_DISTANCE)
-	var boss_pos = _nearest_threat_pos(pos, [], bosses)
-	if boss_pos == null:
-		# No boss tagged yet — fall back to densest / nearest elite threat.
-		boss_pos = _nearest_threat_pos(pos, enemies, bosses)
-	if boss_pos == null:
-		return _normalize(_wall_repulsion(pos, arena))
-
-	var to_boss = boss_pos - pos
-	var d = max(to_boss.length(), 1.0)
-	var dir_to = to_boss / d
-	var force = Vector2.ZERO
-	# Spring onto the max-range ring around the boss.
-	var err = d - ideal
-	force += dir_to * err * BotConfig.BOSS_FINALE_SPRING_K
-	# Orbit the clearer flank while staying on the ring.
-	var left = Vector2(-dir_to.y, dir_to.x)
-	var right = -left
-	var left_score = _score_strafe_side(pos, left, enemies, bosses, arena)
-	var right_score = _score_strafe_side(pos, right, enemies, bosses, arena)
-	var side = left if left_score >= right_score else right
-	if (_prev_move.length() > 0.1
-		and abs(left_score - right_score) < BotConfig.BOSS_FINALE_STRAFE_SWITCH_MARGIN):
-		side = left if _prev_move.dot(left) >= _prev_move.dot(right) else right
-	force += side * BotConfig.BOSS_FINALE_STRAFE
-	# Soft shove from trash mobs so we don't get body-blocked off the boss.
-	for e in enemies:
-		var ep = Vector2(e.get("x", 0.0), e.get("y", 0.0))
-		var diff = pos - ep
-		var ed = max(diff.length(), 1.0)
-		if ed < BotConfig.CONTACT_DANGER * 1.6:
-			force += (diff / ed) * BotConfig.BOSS_FINALE_ADD_REPEL * (BotConfig.CONTACT_DANGER * 1.6 - ed) / ed
-	# Keep some wall awareness so we don't pin ourselves.
-	force += _wall_repulsion(pos, arena) * 0.85
-	return _normalize(force)
-
-
-func _boss_finale_recovery_desire(pos, bosses, weapons, arena,
-		base_desire: Vector2, survival_desire: Vector2, hp_ratio: float) -> Vector2:
-	# Generic flee helped survival in v87, but its radial component repeatedly
-	# carried the boss outside gun range. Keep the radial command dedicated to
-	# the weapon-range ring and project threat avoidance onto the orbit tangent.
-	var boss_pos = _nearest_threat_pos(pos, [], bosses)
-	if boss_pos == null:
-		return base_desire
-	var to_boss: Vector2 = boss_pos - pos
-	var distance := max(to_boss.length(), 1.0)
-	var radial := to_boss / distance
-	var ideal := max(
-		_shortest_weapon_range(weapons) * BotConfig.BOSS_FINALE_RECOVERY_RANGE_FRAC,
-		BotConfig.MIN_ENGAGE_DISTANCE)
-	var radial_command := clamp(
-		(distance - ideal) / BotConfig.BOSS_FINALE_RECOVERY_RING_DEADBAND,
-		-1.0, 1.0)
-
-	var tangent := survival_desire - radial * survival_desire.dot(radial)
-	if tangent.length() < 0.10:
-		tangent = base_desire - radial * base_desire.dot(radial)
-	if tangent.length() < 0.10:
-		var left := Vector2(-radial.y, radial.x)
-		tangent = left if _prev_move.dot(left) >= 0.0 else -left
-	tangent = tangent.normalized()
-
-	var tangent_gain := BotConfig.BOSS_FINALE_RECOVERY_TANGENT_GAIN
-	if hp_ratio <= BotConfig.BOSS_FINALE_CRITICAL_HP_RATIO:
-		tangent_gain *= BotConfig.BOSS_FINALE_CRITICAL_TANGENT_MULT
-	var force := (radial * radial_command * BotConfig.BOSS_FINALE_RECOVERY_RADIAL_GAIN
-		+ tangent * tangent_gain)
-	force += _wall_repulsion(pos, arena) * 0.35
-	return _normalize(force)
-
 
 func _finale_turn_without_reversal(prev: Vector2, desired: Vector2,
 	pos: Vector2, arena) -> Vector2:

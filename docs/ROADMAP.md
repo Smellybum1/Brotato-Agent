@@ -6,7 +6,7 @@ See also the director master roadmap. Work Package status:
 |-----------|--------|
 | M0 Environment audit | Complete (WP1) |
 | M1 Deterministic teacher + telemetry | **Complete** — v72 certified 18W/2L; v92 promoted; repository/safeguard closeout passed |
-| M2 Learned combat (WP2) | **In progress** — combat capture validated; v96 teacher collection next |
+| M2 Learned combat (WP2) | **In progress** — combat capture validated; v97 centered-finale collection next |
 | M3 Economy planner | Reframe pending (see note 3 below) |
 | M4 Robust D0 agent | Not started |
 | M5–M7 Danger curriculum / expert / characters | Not started |
@@ -133,13 +133,15 @@ prepared initial local commit and local `wp1-baseline` tag. WP1 is PASS.
 
 Implementation is now in the telemetry/data-collection prerequisite. The
 compatible `combat_capture` v2 envelope and provisional `combat_obs_v1`
-capacities are implemented and load-tested. Captures from v92-v95 exposed and
+capacities are implemented and load-tested. Captures from v92-v96 exposed and
 repaired four teacher-label defects: voluntary finale corner stalls, a late
 transform overriding projectile avoidance, soft wall recovery replacing the final
 projectile-safe command, and held movement crossing the hard wall margin between
-decisions. A fresh v96-only 20-run capture set is the primary dataset source;
-earlier captures remain immutable diagnostic evidence and are not silently mixed
-into it.
+decisions. The operator stopped v96 after four accepted runs and requested that
+wave 20 no longer preserve a boss-range ring: center-biased survival already keeps
+automatic fire useful while leaving movement free to choose safer lanes. A fresh
+v97-only 20-run capture set is the primary dataset source; earlier captures remain
+immutable diagnostic evidence and are not silently mixed into it.
 
 Evidence-driven modifications to `Grok_4.5_Brotato_Work_Package_2_Prompt.md`
 (operator/director approval required — the directive says "unchanged", so these
