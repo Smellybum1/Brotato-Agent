@@ -110,6 +110,9 @@ const BOSS_FINALE_WAVE := 20
 const BOSS_FINALE_PROJ_CAUTION := 2.40
 const BOSS_FINALE_PROJ_URGENCY_FLOOR := 0.55
 const BOSS_FINALE_PROJ_URGENCY_MULT := 1.35
+# v101: direction-space clearance is non-convex, so a weighted blend of a
+# desired path and a safer sampled path can be worse than both endpoints.
+const BOSS_FINALE_PROJECTILE_BLEND_MIN_GAIN := 20.0
 # v92: v91's 320-unit floor worked when sampled inside it, but three lethal
 # 16-damage hits were sampled with the boss at 350-406 units. Begin the direct
 # outward correction outside that measured charge envelope while remaining in

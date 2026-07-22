@@ -122,17 +122,17 @@ def test_v64_blood_donation_is_vetoed_for_gate_reliability():
     assert '"item_blood_donation": {"never": true}' in requirement_block
 
 
-def test_wp2_capture_build_versions_the_v100_wall_safe_projectile_policy():
+def test_wp2_capture_build_versions_the_v101_blend_safe_projectile_policy():
     manifest = MANIFEST.read_text(encoding="utf-8")
     controller = CONTROLLER.read_text(encoding="utf-8")
     telemetry = TELEMETRY.read_text(encoding="utf-8")
 
-    assert '"version_number": "0.2.8"' in manifest
-    assert "v100 deterministic teacher" in manifest
-    assert controller.count("teacher_v1-0.1.100-gun-wp1") == 1
-    assert controller.count("0.2.8-wp2-capture") == 1
-    assert telemetry.count("teacher_v1-0.1.100-gun-wp1") == 1
-    assert telemetry.count("0.2.8-wp2-capture") == 1
+    assert '"version_number": "0.2.9"' in manifest
+    assert "v101 deterministic teacher" in manifest
+    assert controller.count("teacher_v1-0.1.101-gun-wp1") == 1
+    assert controller.count("0.2.9-wp2-capture") == 1
+    assert telemetry.count("teacher_v1-0.1.101-gun-wp1") == 1
+    assert telemetry.count("0.2.9-wp2-capture") == 1
 
 
 def test_v84_item_audit_and_conditional_effect_corrections():
@@ -588,6 +588,31 @@ def test_v100_hard_wall_rotation_replans_over_wall_safe_projectile_lanes():
     assert '"projectile_final_clearance": _finale_projectile_final_clearance' in potential
     assert (
         '"projectile_wall_replan_active": _finale_projectile_wall_replan_active'
+        in potential
+    )
+
+
+def test_v101_nonconvex_projectile_blend_falls_back_to_sampled_escape():
+    config = CONFIG.read_text(encoding="utf-8")
+    potential = POTENTIAL_FIELD.read_text(encoding="utf-8")
+
+    assert "const BOSS_FINALE_PROJECTILE_BLEND_MIN_GAIN := 20.0" in config
+    safety = potential.split("func _finale_projectile_safety", 1)[1].split(
+        "func _finale_wall_safety", 1
+    )[0]
+    blend = safety.index(
+        "var blended := _normalize(desired * (1.0 - urgency) + escape_dir * urgency)"
+    )
+    context = safety.index("var blend_context := _projectile_clearance_context(")
+    clearance = safety.index("_finale_projectile_blended_clearance = _dir_clearance(")
+    panic = safety.index("var panic_clear := (")
+    gain = safety.index("BotConfig.BOSS_FINALE_PROJECTILE_BLEND_MIN_GAIN")
+    fallback = safety.index("return escape_dir")
+    normal_return = safety.index("return blended")
+    assert blend < context < clearance < panic < gain < fallback < normal_return
+    assert '"projectile_blended_clearance": _finale_projectile_blended_clearance' in potential
+    assert (
+        '"projectile_blend_repair_active": _finale_projectile_blend_repair_active'
         in potential
     )
 

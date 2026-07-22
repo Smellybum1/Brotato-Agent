@@ -20,6 +20,8 @@ var _finale_projectile_safety_active := false
 var _finale_projectile_safety_urgency := 0.0
 var _finale_projectile_input_clearance := -1.0
 var _finale_projectile_escape_clearance := -1.0
+var _finale_projectile_blended_clearance := -1.0
+var _finale_projectile_blend_repair_active := false
 var _finale_projectile_final_clearance := -1.0
 var _finale_projectile_wall_replan_active := false
 
@@ -44,6 +46,8 @@ func compute_movement(state, profile) -> Vector2:
 	_finale_projectile_safety_urgency = 0.0
 	_finale_projectile_input_clearance = -1.0
 	_finale_projectile_escape_clearance = -1.0
+	_finale_projectile_blended_clearance = -1.0
+	_finale_projectile_blend_repair_active = false
 	_finale_projectile_final_clearance = -1.0
 	_finale_projectile_wall_replan_active = false
 
@@ -320,7 +324,27 @@ func _finale_projectile_safety(pos: Vector2, desired: Vector2, projectiles,
 		BotConfig.BOSS_FINALE_PROJ_URGENCY_FLOOR))
 	_finale_projectile_safety_active = true
 	_finale_projectile_safety_urgency = urgency
-	return _normalize(desired * (1.0 - urgency) + escape_dir * urgency)
+	var blended := _normalize(desired * (1.0 - urgency) + escape_dir * urgency)
+	# v101: v100 telemetry captured a fresh decision where the 0.55 blend had
+	# lower clearance than both endpoints. Validate the actual blended direction
+	# in the same projectile context and use the sampled escape when the blend is
+	# below panic and the sampled lane is materially safer. Final wall safety still
+	# runs afterward and can invoke the v100 wall-safe replan if it rotates this.
+	var blend_context := _projectile_clearance_context(
+		pos, projectiles, player_speed, profile, true)
+	if not blend_context.empty():
+		_finale_projectile_blended_clearance = _dir_clearance(
+			pos, blended, player_speed, blend_context["bullets_t"],
+			blend_context["times"], arena)
+		var panic_clear := (
+			BotConfig.ESCAPE_PANIC_CLEARANCE * float(blend_context["caution"]))
+		if (_finale_projectile_blended_clearance < panic_clear
+				and _finale_projectile_escape_clearance
+					>= _finale_projectile_blended_clearance
+						+ BotConfig.BOSS_FINALE_PROJECTILE_BLEND_MIN_GAIN):
+			_finale_projectile_blend_repair_active = true
+			return escape_dir
+	return blended
 
 
 func _finale_wall_safety(pos: Vector2, desired: Vector2, arena, bosses,
@@ -462,6 +486,8 @@ func finale_translation_debug() -> Dictionary:
 		"projectile_safety_urgency": _finale_projectile_safety_urgency,
 		"projectile_input_clearance": _finale_projectile_input_clearance,
 		"projectile_escape_clearance": _finale_projectile_escape_clearance,
+		"projectile_blended_clearance": _finale_projectile_blended_clearance,
+		"projectile_blend_repair_active": _finale_projectile_blend_repair_active,
 		"projectile_final_clearance": _finale_projectile_final_clearance,
 		"projectile_wall_replan_active": _finale_projectile_wall_replan_active,
 	}
