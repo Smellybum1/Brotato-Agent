@@ -30,6 +30,8 @@ var _finale_wall_selected_enemy_penalty := -1.0
 var _finale_wall_input_body_clearance := -1.0
 var _finale_wall_best_body_clearance := -1.0
 var _finale_wall_selected_body_clearance := -1.0
+var _finale_wall_body_relief_active := false
+var _finale_wall_relief_best_body_clearance := -1.0
 var _finale_projectile_input_enemy_penalty := -1.0
 var _finale_projectile_escape_enemy_penalty := -1.0
 var _finale_projectile_blended_enemy_penalty := -1.0
@@ -78,6 +80,8 @@ func compute_movement(state, profile) -> Vector2:
 	_finale_wall_input_body_clearance = -1.0
 	_finale_wall_best_body_clearance = -1.0
 	_finale_wall_selected_body_clearance = -1.0
+	_finale_wall_body_relief_active = false
+	_finale_wall_relief_best_body_clearance = -1.0
 	_finale_projectile_input_enemy_penalty = -1.0
 	_finale_projectile_escape_enemy_penalty = -1.0
 	_finale_projectile_blended_enemy_penalty = -1.0
@@ -378,7 +382,7 @@ func _predictive_body_path_clearance(pos: Vector2, direction: Vector2,
 
 func _finale_lane_score(pos: Vector2, direction: Vector2, desired: Vector2,
 		arena, bosses, projectiles, player_speed: float,
-		enemy_path_penalty: float) -> float:
+		enemy_path_penalty: float, require_wall_progress := true) -> float:
 	var w := float(arena.get("width", 2048.0))
 	var h := float(arena.get("height", 1536.0))
 	var lookahead := BotConfig.BOSS_FINALE_WALL_LOOKAHEAD
@@ -391,7 +395,8 @@ func _finale_lane_score(pos: Vector2, direction: Vector2, desired: Vector2,
 	# move toward the arena center on a different axis. v103 captures 22690-22691
 	# selected a horizontal lane while the lower wall remained the minimum, so
 	# the latch stayed active without creating any additional escape clearance.
-	if (current_wall_clear < BotConfig.BOSS_FINALE_WALL_RECOVERY_RELEASE
+	if (require_wall_progress
+			and current_wall_clear < BotConfig.BOSS_FINALE_WALL_RECOVERY_RELEASE
 			and wall_clear <= current_wall_clear + 0.001):
 		return -1.0e18
 	var center_dir := (Vector2(w * 0.5, h * 0.5) - pos).normalized()
@@ -450,8 +455,10 @@ func _best_finale_interior_lane(pos: Vector2, desired: Vector2, arena,
 	_finale_wall_input_body_clearance = _predictive_body_path_clearance(
 		pos, desired_n, player_speed, path_times, enemies, bosses)
 	var rows := []
+	var relief_rows := []
 	var lowest_enemy_penalty := INF
 	var highest_body_clearance := -INF
+	var relief_highest_body_clearance := -INF
 	for k in range(BotConfig.ESCAPE_DIRECTIONS):
 		var angle := (TAU * k) / float(BotConfig.ESCAPE_DIRECTIONS)
 		var candidate := Vector2(cos(angle), sin(angle))
@@ -460,17 +467,49 @@ func _best_finale_interior_lane(pos: Vector2, desired: Vector2, arena,
 		var score := _finale_lane_score(
 			pos, candidate, desired_n, arena, bosses, projectiles, player_speed,
 			enemy_penalty)
-		if score <= -1.0e17:
-			continue
+		var makes_wall_progress := score > -1.0e17
+		if not makes_wall_progress:
+			score = _finale_lane_score(
+				pos, candidate, desired_n, arena, bosses, projectiles,
+				player_speed, enemy_penalty, false)
+			if score <= -1.0e17:
+				continue
 		var body_clearance := _predictive_body_path_clearance(
 			pos, candidate, player_speed, path_times, enemies, bosses)
-		rows.append([candidate, score, enemy_penalty, body_clearance])
-		lowest_enemy_penalty = min(lowest_enemy_penalty, enemy_penalty)
-		highest_body_clearance = max(highest_body_clearance, body_clearance)
+		if makes_wall_progress:
+			rows.append([candidate, score, enemy_penalty, body_clearance])
+			lowest_enemy_penalty = min(lowest_enemy_penalty, enemy_penalty)
+			highest_body_clearance = max(highest_body_clearance, body_clearance)
+		else:
+			relief_rows.append([candidate, score, enemy_penalty, body_clearance])
+			relief_highest_body_clearance = max(
+				relief_highest_body_clearance, body_clearance)
+	_finale_wall_relief_best_body_clearance = (
+		relief_highest_body_clearance if not relief_rows.empty() else -1.0)
+	var candidate_rows := rows
+	if (relief_highest_body_clearance
+			>= BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE
+			and highest_body_clearance
+				< BotConfig.BOSS_FINALE_WALL_BODY_RELIEF_TRIGGER
+			and relief_highest_body_clearance
+				>= highest_body_clearance
+					+ BotConfig.BOSS_FINALE_WALL_BODY_RELIEF_MIN_GAIN):
+		# Frozen v110 run 2 captures 20520-20524: strict wall progress
+		# discarded a 198-267 clearance side escape and forced a 73-99
+		# clearance inward route through the pack. Permit a bounded wall
+		# concession only while the strict pool remains contact-dangerous.
+		candidate_rows = relief_rows
+		highest_body_clearance = relief_highest_body_clearance
+		_finale_wall_body_relief_active = true
 	_finale_wall_best_body_clearance = (
-		highest_body_clearance if not rows.empty() else -1.0)
+		highest_body_clearance if not candidate_rows.empty() else -1.0)
 	var body_clearance_floor := highest_body_clearance
-	if highest_body_clearance >= BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE:
+	if _finale_wall_body_relief_active:
+		body_clearance_floor = max(
+			BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE,
+			highest_body_clearance
+				- BotConfig.BOSS_FINALE_BODY_CLEARANCE_SLACK)
+	elif highest_body_clearance >= BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE:
 		body_clearance_floor = BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE
 	else:
 		body_clearance_floor = (
@@ -479,14 +518,14 @@ func _best_finale_interior_lane(pos: Vector2, desired: Vector2, arena,
 	# contact-dangerous zero-penalty lane must not make every safe lane fail the
 	# subsequent v105 crowd-slack gate.
 	lowest_enemy_penalty = INF
-	for row in rows:
+	for row in candidate_rows:
 		if float(row[3]) >= body_clearance_floor:
 			lowest_enemy_penalty = min(lowest_enemy_penalty, float(row[2]))
 	_finale_wall_best_enemy_penalty = (
 		lowest_enemy_penalty if lowest_enemy_penalty < INF else -1.0)
 	var best_dir := Vector2.ZERO
 	var best_score := -1.0e18
-	for row in rows:
+	for row in candidate_rows:
 		var candidate: Vector2 = row[0]
 		var score: float = row[1]
 		var enemy_penalty: float = row[2]
@@ -948,6 +987,8 @@ func finale_translation_debug() -> Dictionary:
 		"wall_input_body_clearance": _finale_wall_input_body_clearance,
 		"wall_best_body_clearance": _finale_wall_best_body_clearance,
 		"wall_selected_body_clearance": _finale_wall_selected_body_clearance,
+		"wall_body_relief_active": _finale_wall_body_relief_active,
+		"wall_relief_best_body_clearance": _finale_wall_relief_best_body_clearance,
 		"projectile_input_enemy_penalty": _finale_projectile_input_enemy_penalty,
 		"projectile_escape_enemy_penalty": _finale_projectile_escape_enemy_penalty,
 		"projectile_blended_enemy_penalty": _finale_projectile_blended_enemy_penalty,

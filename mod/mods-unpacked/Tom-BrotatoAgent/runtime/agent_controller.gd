@@ -13,7 +13,7 @@ const LOG_NAME = "Tom:BrotatoAgent:Runner"
 var active: bool = false
 var auto_start_benchmark: bool = true
 var current_move_vector: Vector2 = Vector2.ZERO
-var policy_version: String = "teacher_v1-0.1.110-gun-wp1"
+var policy_version: String = "teacher_v1-0.1.111-gun-wp1"
 var last_move_debug: Dictionary = {}
 var last_meta_debug: Dictionary = {}
 var _manual_override: bool = false
@@ -1612,7 +1612,7 @@ func _start_run() -> void:
 		"endless": false,
 		"wave_retry": false,
 		"game_version": "1.1.15.4",
-		"mod_version": "0.2.18-wp2-capture",
+		"mod_version": "0.2.19-wp2-capture",
 		"config_id": "well_rounded_d0_anyranged",
 		"policy_version": policy_version,
 	}

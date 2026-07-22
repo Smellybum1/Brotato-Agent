@@ -123,17 +123,17 @@ def test_v64_blood_donation_is_vetoed_for_gate_reliability():
     assert '"item_blood_donation": {"never": true}' in requirement_block
 
 
-def test_wp2_capture_build_versions_the_v110_hold_horizon_policy():
+def test_wp2_capture_build_versions_the_v111_wall_body_relief_policy():
     manifest = MANIFEST.read_text(encoding="utf-8")
     controller = CONTROLLER.read_text(encoding="utf-8")
     telemetry = TELEMETRY.read_text(encoding="utf-8")
 
-    assert '"version_number": "0.2.18"' in manifest
-    assert "v110 deterministic teacher" in manifest
-    assert controller.count("teacher_v1-0.1.110-gun-wp1") == 1
-    assert controller.count("0.2.18-wp2-capture") == 1
-    assert telemetry.count("teacher_v1-0.1.110-gun-wp1") == 1
-    assert telemetry.count("0.2.18-wp2-capture") == 1
+    assert '"version_number": "0.2.19"' in manifest
+    assert "v111 deterministic teacher" in manifest
+    assert controller.count("teacher_v1-0.1.111-gun-wp1") == 1
+    assert controller.count("0.2.19-wp2-capture") == 1
+    assert telemetry.count("teacher_v1-0.1.111-gun-wp1") == 1
+    assert telemetry.count("0.2.19-wp2-capture") == 1
 
 
 def test_v84_item_audit_and_conditional_effect_corrections():
@@ -708,7 +708,7 @@ def test_v105_wall_recovery_filters_out_materially_denser_enemy_lanes():
     collect = selector.index(
         "rows.append([candidate, score, enemy_penalty, body_clearance])"
     )
-    second_pass = selector.index("for row in rows:")
+    second_pass = selector.index("for row in candidate_rows:")
     safety_gate = selector.index(
         "enemy_penalty > lowest_enemy_penalty", second_pass
     )
@@ -1022,6 +1022,32 @@ def test_v110_final_body_gate_stays_near_best_inside_the_projectile_tier():
     best_body = 182.581696
     required_body = max(45.0, min(160.0, best_body - 20.0))
     assert selected_body < required_body
+
+
+def test_v111_wall_recovery_can_take_a_materially_safer_bounded_relief_lane():
+    config = CONFIG.read_text(encoding="utf-8")
+    potential = POTENTIAL_FIELD.read_text(encoding="utf-8")
+    selector = potential.split("func _best_finale_interior_lane", 1)[1].split(
+        "func _finale_projectile_safety", 1
+    )[0]
+
+    assert "const BOSS_FINALE_WALL_BODY_RELIEF_TRIGGER := 120.0" in config
+    assert "const BOSS_FINALE_WALL_BODY_RELIEF_MIN_GAIN := 60.0" in config
+    assert "candidate_rows = relief_rows" in selector
+    assert "highest_body_clearance - BotConfig.BOSS_FINALE_BODY_CLEARANCE_SLACK" in selector
+    assert '"wall_body_relief_active": _finale_wall_body_relief_active' in potential
+    assert (
+        '"wall_relief_best_body_clearance": '
+        "_finale_wall_relief_best_body_clearance"
+    ) in potential
+
+    # Frozen v110 run 2 capture 20520. Strict wall progress chose the
+    # inward-right route through the pack; a hard-wall-safe relief lane was
+    # more than 180 units clearer.
+    selected_body = 85.795204
+    relief_body = 267.219028
+    assert selected_body < 120.0
+    assert relief_body >= selected_body + 60.0
 
 
 def test_v101_nonconvex_projectile_blend_falls_back_to_sampled_escape():

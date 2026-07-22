@@ -1,0 +1,48 @@
+{
+  "campaign": "v110_exact20_retry",
+  "status": "stopped_for_repair",
+  "stopped_at": "2026-07-23T08:56:36+10:00",
+  "collector_pid": 22760,
+  "brotato_pid": 44880,
+  "auto_start": false,
+  "policy_version": "teacher_v1-0.1.110-gun-wp1",
+  "mod_version": "0.2.18-wp2-capture",
+  "terminal_runs": [
+    {
+      "run_id": "run_1784758292_31305",
+      "result": "defeat",
+      "events_sha256": "DE87FA5E54F47C05BA78F8A35CFAFE4645E1F895D4AD5674024CA6BDDA8D6496",
+      "summary_sha256": "F71AF5F8EA4BC102D7EDC18F1CED4AF9A723F241EB0EC7A447AEAA87BC0F7C48",
+      "hidden_wall_relief_faults": 7,
+      "dataset_eligible": false
+    },
+    {
+      "run_id": "run_1784759417_37573",
+      "result": "defeat",
+      "events_sha256": "346178B8543ABE054061C39E1C51A44E457F230072F7B5C743F8A23BF69846CA",
+      "summary_sha256": "F1988E79CF874A1F6AF7C1173085486127DCF7DECE55E1042A14077C3C8FA83B",
+      "hidden_wall_relief_faults": 25,
+      "dataset_eligible": false
+    }
+  ],
+  "interrupted_run": {
+    "run_id": "run_1784760578_83805",
+    "last_wave": 9,
+    "last_capture_seq": 7472,
+    "events_sha256": "89095268B00767DFD48C330F31C78D3E9C9419145C6E9F0CBB998F7F0E553893",
+    "dataset_eligible": false
+  },
+  "observed_fault_captures": [20520, 20521, 20522, 20523, 20524],
+  "repair": {
+    "policy_version": "teacher_v1-0.1.111-gun-wp1",
+    "mod_version": "0.2.19-wp2-capture",
+    "wall_body_relief_trigger": 120.0,
+    "wall_body_relief_min_gain": 60.0,
+    "relief_near_best_slack": 20.0
+  },
+  "verification": {
+    "focused_tests_passed": 70,
+    "full_tests_passed": 116,
+    "frozen_reaudit_violations": 32
+  }
+}

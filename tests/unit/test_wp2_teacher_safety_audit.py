@@ -4,6 +4,7 @@ from scripts.wp2_teacher_safety_audit import (
     _body_projectile_floor_unavailable,
     _hard_wall_faults,
     _required_body_floor,
+    _wall_body_relief_violation,
 )
 
 
@@ -28,6 +29,31 @@ def test_hard_wall_audit_checks_the_held_command_projection():
     payload = _payload(x=100.0, action=(-1.0, 0.0), speed=100.0)
 
     assert _hard_wall_faults(payload) == ["left"]
+
+
+def test_wall_body_relief_audit_catches_a_held_route_through_a_pack():
+    payload = _payload(
+        x=500.0,
+        y=1200.0,
+        action=(1.0, 0.0),
+        speed=463.0,
+        enemies=[{"x": 600.0, "y": 1200.0, "vx": 0.0, "vy": 0.0, "radius": 20.0}],
+    )
+    payload.update({"wave": 20, "capture_seq": 20520})
+    payload["entities"]["projectiles"] = []
+    payload["teacher"]["contributions"] = {
+        "finale_translation": {
+            "wall_recovery_active": True,
+            "projectile_safety_active": False,
+            "body_selected_clearance": 30.0,
+        }
+    }
+
+    violation = _wall_body_relief_violation(payload)
+
+    assert violation is not None
+    assert violation["capture_seq"] == 20520
+    assert violation["relief_best"] >= 90.0
 
 
 def test_damage_audit_allows_only_the_bounded_projectile_concession():

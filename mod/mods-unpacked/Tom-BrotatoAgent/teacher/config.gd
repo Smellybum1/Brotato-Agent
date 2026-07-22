@@ -164,6 +164,12 @@ const BOSS_FINALE_WALL_ENEMY_CRITICAL_CLEARANCE := 45.0
 const BOSS_FINALE_WALL_ENEMY_CRITICAL_WEIGHT := 0.02
 const BOSS_FINALE_WALL_ENEMY_SCORE_WEIGHT := 4.0
 const BOSS_FINALE_ENEMY_PENALTY_SLACK := 20.0
+# v111: wall recovery may temporarily concede progress when every inward lane
+# runs through a pack but a hard-wall-safe sampled lane is materially clearer.
+# This is deliberately exceptional so the v104 recovery latch still advances
+# whenever an adequately open inward lane exists.
+const BOSS_FINALE_WALL_BODY_RELIEF_TRIGGER := 120.0
+const BOSS_FINALE_WALL_BODY_RELIEF_MIN_GAIN := 60.0
 # v106/v110: a soft aggregate crowd score must never buy wall/projectile
 # clearance with a bad body route. Preserve a contact-safe lane when one exists
 # and stay within the configured slack of the clearest same-tier lane; if every

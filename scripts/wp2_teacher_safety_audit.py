@@ -17,6 +17,8 @@ BODY_TIER = 45.0
 BODY_SLACK = 20.0
 BODY_PACK_CLEARANCE = 160.0
 BODY_EMERGENCY_SLACK = 5.0
+WALL_BODY_RELIEF_TRIGGER = 120.0
+WALL_BODY_RELIEF_MIN_GAIN = 60.0
 HARD_WALL_MARGIN = 96.0
 COMMAND_HORIZON_SEC = 0.30
 WALL_LOOKAHEAD = 260.0
@@ -100,6 +102,67 @@ def _body_clearance(payload: dict[str, Any]) -> float:
             radius = max(float(threat.get("radius", 18.0)), 0.0)
             result = min(result, math.hypot(player_x - threat_x, player_y - threat_y) - radius)
     return result
+
+
+def _body_clearance_for_direction(
+    payload: dict[str, Any], direction: tuple[float, float]
+) -> float:
+    replay = {
+        **payload,
+        "teacher": {
+            **payload["teacher"],
+            "action": {"x": direction[0], "y": direction[1]},
+        },
+    }
+    return _body_clearance(replay)
+
+
+def _wall_body_relief_violation(payload: dict[str, Any]) -> dict[str, Any] | None:
+    """Find a hard-safe body escape hidden by the strict wall-progress pool."""
+    if int(payload.get("wave", 0)) < 20:
+        return None
+    debug = payload["teacher"]["contributions"]["finale_translation"]
+    if not bool(debug.get("wall_recovery_active", False)):
+        return None
+    if bool(debug.get("projectile_safety_active", False)):
+        return None
+    if payload["entities"].get("projectiles", []):
+        return None
+    selected = float(debug.get("body_selected_clearance", -1.0))
+    if selected < -0.5 or selected >= WALL_BODY_RELIEF_TRIGGER:
+        return None
+    player = payload["player"]
+    arena = payload["arena"]
+    x = float(player["x"])
+    y = float(player["y"])
+    width = float(arena.get("width", 2048.0))
+    height = float(arena.get("height", 1536.0))
+    best = -1.0e18
+    best_direction: tuple[float, float] | None = None
+    for index in range(ESCAPE_DIRECTIONS):
+        angle = math.tau * index / ESCAPE_DIRECTIONS
+        direction = (math.cos(angle), math.sin(angle))
+        future_x = x + direction[0] * WALL_LOOKAHEAD
+        future_y = y + direction[1] * WALL_LOOKAHEAD
+        future_wall = min(future_x, width - future_x, future_y, height - future_y)
+        if future_wall < HARD_WALL_MARGIN:
+            continue
+        clearance = _body_clearance_for_direction(payload, direction)
+        if clearance > best:
+            best = clearance
+            best_direction = direction
+    if best < selected + WALL_BODY_RELIEF_MIN_GAIN - FLOAT_TOLERANCE:
+        return None
+    return {
+        "capture_seq": payload["capture_seq"],
+        "selected": selected,
+        "relief_best": best,
+        "required_gain": WALL_BODY_RELIEF_MIN_GAIN,
+        "relief_direction": {
+            "x": best_direction[0],
+            "y": best_direction[1],
+        },
+    }
 
 
 def _wall_distances(payload: dict[str, Any]) -> tuple[float, float]:
@@ -246,11 +309,14 @@ def audit_run(
     unavailable_projectile_floor_samples: list[dict[str, Any]] = []
     sampled_action_violations: list[int] = []
     wall_recovery_violations: list[dict[str, Any]] = []
+    wall_body_relief_violations: list[dict[str, Any]] = []
+    wall_body_relief_selection_violations: list[dict[str, Any]] = []
     hard_wall_violations: list[dict[str, Any]] = []
     active_body_repairs = 0
     active_body_emergencies = 0
     active_projectile_safety = 0
     active_wall_recovery = 0
+    active_wall_body_relief = 0
     body_diagnostic_captures = 0
     for payload in late:
         faults = _hard_wall_faults(payload)
@@ -258,6 +324,24 @@ def audit_run(
             hard_wall_violations.append(
                 {"capture_seq": payload["capture_seq"], "walls": faults}
             )
+        relief_fault = _wall_body_relief_violation(payload)
+        if relief_fault is not None:
+            wall_body_relief_violations.append(relief_fault)
+        debug = payload["teacher"]["contributions"]["finale_translation"]
+        if bool(debug.get("wall_body_relief_active", False)):
+            active_wall_body_relief += 1
+            selected = float(debug.get("body_selected_clearance", -1.0))
+            relief_best = float(debug.get("wall_relief_best_body_clearance", -1.0))
+            required = relief_best - BODY_SLACK
+            if relief_best < 0.0 or selected < required - FLOAT_TOLERANCE:
+                wall_body_relief_selection_violations.append(
+                    {
+                        "capture_seq": payload["capture_seq"],
+                        "selected": selected,
+                        "relief_best": relief_best,
+                        "required": required,
+                    }
+                )
     for payload in fresh:
         debug = payload["teacher"]["contributions"]["finale_translation"]
         active_projectile_safety += bool(debug.get("projectile_safety_active", False))
@@ -368,6 +452,8 @@ def audit_run(
         + len(projectile_floor_violations)
         + len(sampled_action_violations)
         + len(wall_recovery_violations)
+        + len(wall_body_relief_violations)
+        + len(wall_body_relief_selection_violations)
         + len(hard_wall_violations)
         + len(avoidable_damage_violations)
         + telemetry_error_events
@@ -394,6 +480,7 @@ def audit_run(
         "active_body_emergencies": active_body_emergencies,
         "active_projectile_safety": active_projectile_safety,
         "active_wall_recovery": active_wall_recovery,
+        "active_wall_body_relief": active_wall_body_relief,
         "malformed_lines": malformed_lines,
         "identity_violations": identity_violations,
         "summary_violations": summary_violations,
@@ -405,6 +492,8 @@ def audit_run(
         "projectile_floor_violations": projectile_floor_violations,
         "sampled_action_violations": sampled_action_violations,
         "wall_recovery_violations": wall_recovery_violations,
+        "wall_body_relief_violations": wall_body_relief_violations,
+        "wall_body_relief_selection_violations": wall_body_relief_selection_violations,
         "hard_wall_violations": hard_wall_violations,
         "late_damage_events": late_damage_events,
         "avoidable_damage_violations": avoidable_damage_violations,
@@ -430,11 +519,14 @@ def render_markdown(audit: dict[str, Any]) -> str:
                 f"{run['fresh_late_capture_count']} fresh late decisions.",
                 f"- Safety activations: {run['active_body_repairs']} body, "
                 f"{run['active_projectile_safety']} projectile, "
-                f"{run['active_wall_recovery']} wall.",
+                f"{run['active_wall_recovery']} wall, "
+                f"{run['active_wall_body_relief']} wall-body relief.",
                 f"- Violations: **{run['violation_count']}**.",
                 f"- Late damage events retained for review: {len(run['late_damage_events'])}.",
                 f"- Avoidable damage-path violations: "
                 f"{len(run['avoidable_damage_violations'])}.",
+                f"- Hidden wall-relief body lanes: "
+                f"{len(run['wall_body_relief_violations'])}.",
                 f"- Preserved-command body fallbacks with no eligible projectile-floor "
                 f"sample: {len(run['unavailable_projectile_floor_samples'])}.",
                 f"- Events SHA-256: `{run['events_sha256']}`.",
