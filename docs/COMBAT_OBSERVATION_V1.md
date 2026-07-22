@@ -1,6 +1,6 @@
 # Combat observation v1 — Stage A design record
 
-Status: **capacity selection blocked on focused v2 capture evidence**
+Status: **provisional capacities selected; multi-run tail validation pending**
 
 The certified WP1 corpus contains aggregate counts but not entity arrays. WP2
 therefore introduces the compatible `combat_capture` v2 event before freezing
@@ -30,3 +30,31 @@ most dangerous late-wave entities.
 Teacher contribution fields in the raw capture initially carry the controller's
 existing diagnostic breakdown. Major risk and attraction components must be
 made explicit before residual-policy training begins.
+
+## First complete-run evidence
+
+Run `run_1784679399_37598` reached wave 20 and yielded 20,830 valid captures
+under schema hash
+`95B6444796A21FD44E94113B75BA2097BC381D5F72ED784F9B9A4A99DD46D951`.
+It had no malformed records, invalid actions, invalid entities, dropped
+entities, telemetry errors, hangs, or illegal actions. Median/p99 within-stream
+capture intervals were 51/54 ms and observation age was 0/1 ms. The 11.3-second
+maximum control interval is the expected shop-to-next-wave discontinuity and
+must be masked when transitions are built.
+
+Measured whole-run p99/max counts were:
+
+| Group | p99 | max | provisional capacity |
+|---|---:|---:|---:|
+| enemies | 44 | 53 | 64 |
+| bosses | 1 | 1 | 2 |
+| hostile-projectile candidates | 8 | 16 | 32 |
+| materials | 38 | 49 | 64 |
+| consumables | 5 | 9 | 24 |
+| crates | 0 | 1 | 2 |
+| obstacles | 2 | 3 | 8 |
+
+The projectile and consumable capacities also respect the certified WP1
+aggregate maxima (32 and 17). These capacities are provisional until multiple
+complete v2 runs confirm the tails; all overflow remains deterministically
+threat-sorted and explicitly counted.

@@ -89,7 +89,7 @@ def audit_capture_runs(
 ) -> dict[str, Any]:
     expected_hash = _schema_hash(schema_path)
     run_summaries: list[dict[str, Any]] = []
-    captures: list[dict[str, Any]] = []
+    capture_count = 0
     count_values: dict[str, list[int]] = defaultdict(list)
     band_counts: dict[str, dict[str, list[int]]] = defaultdict(lambda: defaultdict(list))
     invalid_totals: Counter[str] = Counter()
@@ -138,7 +138,7 @@ def audit_capture_runs(
                 schema_mismatches += 1
                 continue
             run_captures += 1
-            captures.append(payload)
+            capture_count += 1
             wave = int(payload.get("wave", 0))
             wave_capture_counts[wave] += 1
             band = _wave_band(wave)
@@ -234,7 +234,7 @@ def audit_capture_runs(
     duplicate_rows = sum(max(count - 1, 0) for count in signatures.values())
     valid_transition_estimate = max(
         0,
-        len(captures) - invalid_captures - invalid_actions - schema_mismatches,
+        capture_count - invalid_captures - invalid_actions - schema_mismatches,
     )
     band_distributions = {
         band: {group: _distribution(values) for group, values in groups.items()}
@@ -245,7 +245,7 @@ def audit_capture_runs(
         "runs": run_summaries,
         "run_count": len(run_summaries),
         "terminal_run_count": sum(run["terminal"] for run in run_summaries),
-        "capture_count": len(captures),
+        "capture_count": capture_count,
         "valid_transition_estimate": valid_transition_estimate,
         "gap_to_200000": max(200_000 - valid_transition_estimate, 0),
         "malformed_lines": malformed_lines,
@@ -263,7 +263,7 @@ def audit_capture_runs(
         "teacher_contributions": {
             key: _distribution(values) for key, values in sorted(contribution_values.items())
         },
-        "near_duplicate_fraction": duplicate_rows / len(captures) if captures else 0.0,
+        "near_duplicate_fraction": duplicate_rows / capture_count if capture_count else 0.0,
     }
 
 
