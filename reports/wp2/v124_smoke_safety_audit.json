@@ -1,0 +1,333 @@
+{
+  "run_count": 1,
+  "accepted_run_count": 1,
+  "violation_count": 0,
+  "runs": [
+    {
+      "run_id": "run_1784817058_71742",
+      "policy_version": "teacher_v1-0.1.124-gun-wp1",
+      "mod_version": "0.2.32-wp2-capture",
+      "result": "defeat",
+      "last_wave": 17,
+      "telemetry_complete": true,
+      "summary_errors": 0,
+      "summary_hangs": 0,
+      "summary_illegal_actions": 0,
+      "terminal_valid": true,
+      "event_count": 19266,
+      "capture_count": 17188,
+      "waves_represented": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ],
+      "late_capture_count": 880,
+      "fresh_capture_count": 17188,
+      "fresh_late_capture_count": 880,
+      "body_diagnostic_capture_count": 15432,
+      "active_body_repairs": 7622,
+      "active_body_emergencies": 0,
+      "active_projectile_safety": 153,
+      "active_wall_recovery": 564,
+      "active_wall_body_relief": 297,
+      "malformed_lines": [],
+      "identity_violations": [],
+      "summary_violations": [],
+      "telemetry_error_events": 0,
+      "body_tier_violations": [],
+      "body_repair_violations": [],
+      "body_diagnostic_mismatches": [],
+      "missing_body_diagnostic_captures": [],
+      "unavailable_projectile_floor_samples": [
+        {
+          "capture_seq": 17078,
+          "floor": 461.523682,
+          "preserved_body_clearance": 232.574377
+        },
+        {
+          "capture_seq": 17081,
+          "floor": 384.627716,
+          "preserved_body_clearance": 206.388266
+        },
+        {
+          "capture_seq": 17082,
+          "floor": 394.074219,
+          "preserved_body_clearance": 189.914663
+        },
+        {
+          "capture_seq": 17083,
+          "floor": 389.667053,
+          "preserved_body_clearance": 184.368948
+        },
+        {
+          "capture_seq": 17086,
+          "floor": 397.361816,
+          "preserved_body_clearance": 164.752905
+        },
+        {
+          "capture_seq": 17087,
+          "floor": 400.443817,
+          "preserved_body_clearance": 164.098013
+        },
+        {
+          "capture_seq": 17088,
+          "floor": 403.326416,
+          "preserved_body_clearance": 165.185858
+        },
+        {
+          "capture_seq": 17089,
+          "floor": 405.773193,
+          "preserved_body_clearance": 168.599569
+        },
+        {
+          "capture_seq": 17109,
+          "floor": 235.204407,
+          "preserved_body_clearance": 210.658834
+        },
+        {
+          "capture_seq": 17110,
+          "floor": 235.204315,
+          "preserved_body_clearance": 214.062506
+        },
+        {
+          "capture_seq": 17111,
+          "floor": 235.204224,
+          "preserved_body_clearance": 219.48107
+        },
+        {
+          "capture_seq": 17159,
+          "floor": 669.688782,
+          "preserved_body_clearance": 125.729828
+        },
+        {
+          "capture_seq": 17161,
+          "floor": 636.743835,
+          "preserved_body_clearance": 128.880188
+        },
+        {
+          "capture_seq": 17163,
+          "floor": 594.715271,
+          "preserved_body_clearance": 111.205656
+        },
+        {
+          "capture_seq": 17164,
+          "floor": 627.635437,
+          "preserved_body_clearance": 148.859573
+        },
+        {
+          "capture_seq": 17165,
+          "floor": 600.056763,
+          "preserved_body_clearance": 106.291639
+        },
+        {
+          "capture_seq": 17166,
+          "floor": 621.423523,
+          "preserved_body_clearance": 160.40206
+        },
+        {
+          "capture_seq": 17167,
+          "floor": 608.069336,
+          "preserved_body_clearance": 103.419531
+        },
+        {
+          "capture_seq": 17168,
+          "floor": 619.194946,
+          "preserved_body_clearance": 149.011114
+        }
+      ],
+      "projectile_floor_violations": [],
+      "sampled_action_violations": [],
+      "wall_recovery_violations": [],
+      "wall_body_relief_violations": [],
+      "wall_body_relief_selection_violations": [],
+      "hard_wall_violations": [],
+      "nonfresh_finale_capture_count": 0,
+      "nonfresh_finale_capture_sample": [],
+      "loot_dash_capture_count": 1956,
+      "loot_dash_violations": [],
+      "strength_violations": [],
+      "damage_events": [
+        {
+          "event_seq": 3593,
+          "ts_ms": 184426,
+          "amount": 1,
+          "hp": 21,
+          "capture_seq": 3212,
+          "wave": 6,
+          "projectile_safety_active": false,
+          "projectile_escape_clearance": -1,
+          "projectile_final_clearance": -1,
+          "body_best_clearance": -1,
+          "body_selected_clearance": -1,
+          "body_emergency_active": false,
+          "loot_dash_active": false,
+          "build_strength": 0.742,
+          "strength_tier": "weak",
+          "route_replay": {
+            "emitted_body_clearance": 1000000.0,
+            "emitted_projectile_clearance": 1000000.0,
+            "best_body_clearance": 1000000.0,
+            "best_projectile_clearance": 1000000.0
+          }
+        },
+        {
+          "event_seq": 6126,
+          "ts_ms": 311441,
+          "amount": 8,
+          "hp": 15,
+          "capture_seq": 5469,
+          "wave": 8,
+          "projectile_safety_active": false,
+          "projectile_escape_clearance": -1,
+          "projectile_final_clearance": 290.201691,
+          "body_best_clearance": 31.868704,
+          "body_selected_clearance": 28.701803,
+          "body_emergency_active": false,
+          "loot_dash_active": true,
+          "build_strength": 0.543,
+          "strength_tier": "weak",
+          "route_replay": {
+            "emitted_body_clearance": 28.701802294411962,
+            "emitted_projectile_clearance": 290.2016441916811,
+            "best_body_clearance": 36.3608655092999,
+            "best_projectile_clearance": 277.61364771099664
+          }
+        },
+        {
+          "event_seq": 9705,
+          "ts_ms": 485998,
+          "amount": 8,
+          "hp": 32,
+          "capture_seq": 8670,
+          "wave": 10,
+          "projectile_safety_active": false,
+          "projectile_escape_clearance": -1,
+          "projectile_final_clearance": -1,
+          "body_best_clearance": 67.788416,
+          "body_selected_clearance": 61.796846,
+          "body_emergency_active": false,
+          "loot_dash_active": false,
+          "build_strength": 0.588,
+          "strength_tier": "weak",
+          "route_replay": {
+            "emitted_body_clearance": 61.79685098000245,
+            "emitted_projectile_clearance": 1000000.0,
+            "best_body_clearance": 67.78841416251564,
+            "best_projectile_clearance": 1000000.0
+          }
+        },
+        {
+          "event_seq": 9719,
+          "ts_ms": 486577,
+          "amount": 8,
+          "hp": 25,
+          "capture_seq": 8682,
+          "wave": 10,
+          "projectile_safety_active": false,
+          "projectile_escape_clearance": -1,
+          "projectile_final_clearance": -1,
+          "body_best_clearance": 44.122223,
+          "body_selected_clearance": 26.659317,
+          "body_emergency_active": false,
+          "loot_dash_active": false,
+          "build_strength": 0.588,
+          "strength_tier": "weak",
+          "route_replay": {
+            "emitted_body_clearance": 26.65932255765093,
+            "emitted_projectile_clearance": 1000000.0,
+            "best_body_clearance": 44.122219610723235,
+            "best_projectile_clearance": 1000000.0
+          }
+        },
+        {
+          "event_seq": 19028,
+          "ts_ms": 951162,
+          "amount": 17,
+          "hp": 30,
+          "capture_seq": 16974,
+          "wave": 17,
+          "projectile_safety_active": true,
+          "projectile_escape_clearance": 786.69873,
+          "projectile_final_clearance": 786.69873,
+          "body_best_clearance": 7.340046,
+          "body_selected_clearance": 1.324233,
+          "body_emergency_active": false,
+          "loot_dash_active": false,
+          "build_strength": 0.497,
+          "strength_tier": "weak",
+          "route_replay": {
+            "emitted_body_clearance": 1.3242292807561142,
+            "emitted_projectile_clearance": 786.6986713532616,
+            "best_body_clearance": 35.82912817314741,
+            "best_projectile_clearance": 786.6986713532616
+          }
+        },
+        {
+          "event_seq": 19168,
+          "ts_ms": 957474,
+          "amount": 21,
+          "hp": 26,
+          "capture_seq": 17100,
+          "wave": 17,
+          "projectile_safety_active": true,
+          "projectile_escape_clearance": 322.085938,
+          "projectile_final_clearance": 402.032135,
+          "body_best_clearance": 24.298323,
+          "body_selected_clearance": 24.298323,
+          "body_emergency_active": false,
+          "loot_dash_active": false,
+          "build_strength": 0.497,
+          "strength_tier": "weak",
+          "route_replay": {
+            "emitted_body_clearance": 24.29831960413022,
+            "emitted_projectile_clearance": 402.0321374723132,
+            "best_body_clearance": 33.53407658355649,
+            "best_projectile_clearance": 402.0321374723132
+          }
+        },
+        {
+          "event_seq": 19254,
+          "ts_ms": 961383,
+          "amount": 17,
+          "hp": 15,
+          "capture_seq": 17178,
+          "wave": 17,
+          "projectile_safety_active": true,
+          "projectile_escape_clearance": 668.302002,
+          "projectile_final_clearance": 630.768799,
+          "body_best_clearance": -3.709659,
+          "body_selected_clearance": -3.709659,
+          "body_emergency_active": false,
+          "loot_dash_active": false,
+          "build_strength": 0.497,
+          "strength_tier": "weak",
+          "route_replay": {
+            "emitted_body_clearance": -3.7096563399868714,
+            "emitted_projectile_clearance": 630.7687072586507,
+            "best_body_clearance": 18.508787798650935,
+            "best_projectile_clearance": 668.3020130805032
+          }
+        }
+      ],
+      "avoidable_damage_violations": [],
+      "events_sha256": "681D36B20F1117468E349047A3EA2083FD8C776A56B52C5D1A41BC8932A08319",
+      "summary_sha256": "848E8E8D1B2A36DAB1F1E2427729576C5D252059F465259E3E6CD6B01B1B6131",
+      "violation_count": 0,
+      "accepted": true
+    }
+  ]
+}
