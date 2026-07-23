@@ -664,3 +664,161 @@ def test_v123_audit_run_rejects_inconsistent_strength_and_low_hp_dash(tmp_path):
     # The healthy strong-tier dash at hp 0.30 (floor 0.19) is NOT flagged.
     assert all(v["capture_seq"] != 1 for v in audit["loot_dash_violations"])
     assert not audit["accepted"]
+
+
+# ── v122 exact-20 over-firing gate corrections (frozen fixtures) ─────────────────
+
+import json as _json
+from pathlib import Path as _Path
+
+_FIXTURES = _Path(__file__).resolve().parents[1] / "fixtures" / "wp2"
+
+
+def _run_dir_from_fixture(tmp_path, fixture_name):
+    """Materialise a fixture's frozen capture window as a runnable audit dir."""
+    data = _json.loads((_FIXTURES / fixture_name).read_text(encoding="utf-8"))
+    events = sorted(data["captures"].values(), key=lambda e: e.get("ts_ms", 0))
+    last_ts = max((e.get("ts_ms", 0) for e in events), default=0) + 1
+    events = events + [{"event": "run_end", "ts_ms": last_ts, "payload": {}}]
+    run_dir = tmp_path / data["run_id"]
+    run_dir.mkdir()
+    (run_dir / "events.jsonl").write_text(
+        "\n".join(_json.dumps(e) for e in events) + "\n", encoding="utf-8"
+    )
+    (run_dir / "summary.json").write_text(_json.dumps({
+        "policy_version": data["policy_version"],
+        "mod_version": data["mod_version"],
+        "telemetry_complete": True, "errors": 0, "hangs": 0,
+        "illegal_actions": 0, "result": data.get("result", "victory"),
+        "last_wave": 20,
+    }), encoding="utf-8")
+    return data, run_dir
+
+
+def _replay_clears_focus(tmp_path, fixture_name):
+    from scripts.wp2_teacher_safety_audit import audit_run
+
+    data, run_dir = _run_dir_from_fixture(tmp_path, fixture_name)
+    audit = audit_run(run_dir)
+    kind = data["violation_kind"]
+    focus = data["focus_capture_seq"]
+    flagged = {v.get("capture_seq") for v in audit[kind]}
+    return focus, flagged
+
+
+def test_v122a_relief_selection_gate_accepts_the_v121_fallback(tmp_path):
+    # run_1784787688 capture 18676: relief active, negative pool-best (-21.0) but
+    # the v121 fallback preserved a far clearer command (131.6). Now cleared.
+    focus, flagged = _replay_clears_focus(
+        tmp_path, "v122_exact20_viol_a_1784787688.json"
+    )
+    assert focus not in flagged
+
+
+def test_v122b_body_tier_gate_accepts_the_below_tier_dash(tmp_path):
+    # run_1784804435 capture 17442: deliberate loot-dash (19.03) with a relief
+    # transient surfacing a 43.44 pool-best below the 45 tier. Now cleared.
+    focus, flagged = _replay_clears_focus(
+        tmp_path, "v122_exact20_viol_b_1784804435.json"
+    )
+    assert focus not in flagged
+
+
+def test_v122c_body_repair_gate_accepts_the_boundary_snap(tmp_path):
+    # run_1784805636 capture 9722: input 44.94 snapped to the best sampled lane
+    # 45.67 (above tier) with a sub-degree deviation; active flag stayed false.
+    focus, flagged = _replay_clears_focus(
+        tmp_path, "v122_exact20_viol_c_1784805636.json"
+    )
+    assert focus not in flagged
+
+
+# Counter-tests: the corrected gates still catch what they were built for.
+
+def _late_capture(seq, ft, *, wave=18, fresh=True, projectiles=None):
+    return {
+        "event": "combat_capture",
+        "ts_ms": 1000 + seq,
+        "payload": {
+            "capture_seq": seq,
+            "observation_ts_ms": 1000 + seq,
+            "wave": wave,
+            "player": {"x": 1024.0, "y": 768.0, "speed": 400.0, "hp": 50, "max_hp": 100},
+            "teacher": {
+                "action": {"x": 1.0, "y": 0.0},
+                "action_fresh": fresh,
+                "contributions": {"finale_translation": ft},
+            },
+            "entities": {"enemies": [], "bosses": [], "projectiles": projectiles or []},
+            "arena": {"width": 2048.0, "height": 1536.0},
+        },
+    }
+
+
+def _audit_events(tmp_path, name, events):
+    from scripts.wp2_teacher_safety_audit import audit_run
+
+    events = events + [{"event": "run_end", "ts_ms": 9000, "payload": {}}]
+    run_dir = tmp_path / name
+    run_dir.mkdir()
+    (run_dir / "events.jsonl").write_text(
+        "\n".join(_json.dumps(e) for e in events) + "\n", encoding="utf-8"
+    )
+    (run_dir / "summary.json").write_text(_json.dumps({
+        "telemetry_complete": True, "errors": 0, "hangs": 0,
+        "illegal_actions": 0, "result": "victory", "last_wave": 20,
+    }), encoding="utf-8")
+    return audit_run(run_dir)
+
+
+def test_v122a_counter_undiagnosed_negative_pool_still_fires(tmp_path):
+    # relief_best < 0 WITHOUT the v121-fallback signature (selected-projectile
+    # clearance is a real 100.0, not the -1 sentinel) must still fire.
+    ft = {
+        "wall_body_relief_active": True,
+        "wall_recovery_active": True,
+        "body_safety_active": False,
+        "body_emergency_active": False,
+        "loot_dash_active": False,
+        # -1 sentinel skips the fresh-loop body block; the late-loop relief gate
+        # reads the recorded relief_best directly. A real (non -1) projectile
+        # clearance defeats the v121-fallback recogniser, so the disqualifier fires.
+        "body_selected_clearance": -1.0,
+        "wall_relief_best_body_clearance": -5.0,
+        "body_projectile_floor": 200.0,
+        "body_selected_projectile_clearance": 100.0,
+    }
+    audit = _audit_events(
+        tmp_path, "counter_a", [_late_capture(701, ft, projectiles=[{"x": 5000.0, "y": 5000.0, "vx": 0.0, "vy": 0.0, "radius": 8.0}])]
+    )
+    assert 701 in {v["capture_seq"] for v in audit["wall_body_relief_selection_violations"]}
+
+
+def test_v122b_counter_dash_above_tier_still_binds_and_below_tier_waives():
+    # best >= 45 dash keeps the BODY_TIER floor (still catches selected < 45);
+    # best < 45 dash waives the near-best floor entirely.
+    above = {"body_best_clearance": 60.0, "loot_dash_active": True}
+    below = {"body_best_clearance": 43.0, "loot_dash_active": True}
+    assert _required_body_floor(above, True, 17) == 45.0
+    assert 30.0 < 45.0  # a below-tier selected on the above-tier dash still fires
+    assert _required_body_floor(below, True, 17) == float("-inf")
+
+
+def test_v122c_counter_below_tier_selected_fires_regardless_of_active(tmp_path):
+    # selected < 45 with best >= 45 must fire the repair gate whether or not the
+    # body_safety_active flag is set.
+    active_ft = {
+        "body_input_clearance": 30.0,
+        "body_best_clearance": 60.0,
+        "body_selected_clearance": 30.0,
+        "body_safety_active": True,
+        "body_selected_projectile_clearance": 500.0,
+        "body_projectile_floor": 100.0,
+    }
+    inactive_ft = {**active_ft, "body_safety_active": False}
+    audit = _audit_events(tmp_path, "counter_c", [
+        _late_capture(801, active_ft, wave=11),
+        _late_capture(802, inactive_ft, wave=11),
+    ])
+    flagged = {v["capture_seq"] for v in audit["body_repair_violations"]}
+    assert flagged == {801, 802}

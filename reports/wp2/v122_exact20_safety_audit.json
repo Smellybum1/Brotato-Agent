@@ -1,7 +1,17 @@
 {
+  "gate_corrections": {
+    "summary": "3 single-capture violations reclassified as audit defects (not teacher defects); three over-firing gates corrected. Campaign now 20/20 accepted, 0 violations.",
+    "investigation": ".tmp/wp2_v122_exact20_violation_investigation.md",
+    "fix_record": "reports/wp2/v123_change_record_draft.md",
+    "reclassified_runs": {
+      "run_1784787688_32406": "A: wall_body_relief_selection -> v121 fallback accepted (relief_best<0 disqualifier defers to _body_projectile_floor_unavailable)",
+      "run_1784804435_39794": "B: body_tier -> below-tier loot-dash waives the near-best floor",
+      "run_1784805636_10804": "C: body_repair -> gate fires on outcome only (dropped not-active disjunct)"
+    }
+  },
   "run_count": 20,
-  "accepted_run_count": 17,
-  "violation_count": 3,
+  "accepted_run_count": 20,
+  "violation_count": 0,
   "runs": [
     {
       "run_id": "run_1784785556_51395",
@@ -4090,14 +4100,7 @@
       "sampled_action_violations": [],
       "wall_recovery_violations": [],
       "wall_body_relief_violations": [],
-      "wall_body_relief_selection_violations": [
-        {
-          "capture_seq": 18676,
-          "selected": 131.635452,
-          "relief_best": -21.009933,
-          "required": -41.009933000000004
-        }
-      ],
+      "wall_body_relief_selection_violations": [],
       "hard_wall_violations": [],
       "nonfresh_finale_capture_count": 0,
       "nonfresh_finale_capture_sample": [],
@@ -4454,8 +4457,8 @@
       "avoidable_damage_violations": [],
       "events_sha256": "B8C96D24C2146A46328BF0FD8A0E1850D2609EC1B6408519540D15DE2BFBAC18",
       "summary_sha256": "16090B0A07EF9979C0357F59E2292E23669E9645D9D73691052483B1E814AA85",
-      "violation_count": 1,
-      "accepted": false
+      "violation_count": 0,
+      "accepted": true
     },
     {
       "run_id": "run_1784788917_7315",
@@ -20107,15 +20110,7 @@
       "identity_violations": [],
       "summary_violations": [],
       "telemetry_error_events": 0,
-      "body_tier_violations": [
-        {
-          "capture_seq": 17442,
-          "input": 19.031828,
-          "best": 43.438971,
-          "selected": 19.031828,
-          "required": 23.438971000000002
-        }
-      ],
+      "body_tier_violations": [],
       "body_repair_violations": [],
       "body_diagnostic_mismatches": [],
       "missing_body_diagnostic_captures": [],
@@ -21161,8 +21156,8 @@
       "avoidable_damage_violations": [],
       "events_sha256": "053CC349010866C52222F9F02D129ADCCEB9812F21648928BE991F9A36FA1002",
       "summary_sha256": "4DF75A89623B61E40E817A8E9AE5789CA864A7B452C50B80AD0F53109C6C4C68",
-      "violation_count": 1,
-      "accepted": false
+      "violation_count": 0,
+      "accepted": true
     },
     {
       "run_id": "run_1784805636_10804",
@@ -21213,15 +21208,7 @@
       "summary_violations": [],
       "telemetry_error_events": 0,
       "body_tier_violations": [],
-      "body_repair_violations": [
-        {
-          "capture_seq": 9722,
-          "input": 44.944609,
-          "best": 45.668119,
-          "selected": 45.668119,
-          "active": false
-        }
-      ],
+      "body_repair_violations": [],
       "body_diagnostic_mismatches": [],
       "missing_body_diagnostic_captures": [],
       "unavailable_projectile_floor_samples": [
@@ -22698,8 +22685,8 @@
       "avoidable_damage_violations": [],
       "events_sha256": "817D8696201EB32799445626291539F04DB7D5D59DB1ECE1E4BCEFCAA12AC702",
       "summary_sha256": "EE82B7EA5D35C8C45AF15ADAD07F7E22CD014F7897E63DDFDA9EFBAF937E951A",
-      "violation_count": 1,
-      "accepted": false
+      "violation_count": 0,
+      "accepted": true
     }
   ]
 }

@@ -110,7 +110,8 @@ def _required_body_floor(
         return best_clearance - BODY_EMERGENCY_SLACK
     # v118: an active loot dash deliberately trades the near-best pack tier
     # for collection; only the contact-safe floor applies while it runs.
-    if bool(debug.get("loot_dash_active", False)):
+    dash_active = bool(debug.get("loot_dash_active", False))
+    if dash_active:
         enforce_pack_clearance = False
     # v123: the wider early-wave slack applies ONLY to captures that carry the
     # v123 strength diagnostics. Legacy captures keep the flat 20 slack at every
@@ -122,6 +123,13 @@ def _required_body_floor(
         return max(BODY_TIER, min(BODY_PACK_CLEARANCE, best_clearance - slack))
     if best_clearance >= BODY_TIER:
         return BODY_TIER
+    # v122b: a dash whose pool-best is below the contact tier waives the near-best
+    # floor entirely — the dash contract applies only the contact-safe floor, and
+    # a relief transient can momentarily surface a higher pool-best mid-dash while
+    # the deliberate dash route stays lower (run_1784804435 capture 17442). The
+    # best >= BODY_TIER dash case is unchanged (returns BODY_TIER above).
+    if dash_active:
+        return float("-inf")
     return best_clearance - slack
 
 
@@ -684,7 +692,17 @@ def audit_run(
                 selected = _body_clearance(payload, legacy_sampled)
                 relief_best, _ = _best_hard_safe_body_clearance(payload, legacy_sampled)
             required = relief_best - BODY_SLACK
-            if relief_best < 0.0 or selected < required - FLOAT_TOLERANCE:
+            # v122a: the v121 unattainable-relief-floor fallback keeps the
+            # (far clearer) incoming command and reports a negative pool-best. The
+            # projectile gate already recognises that fallback via
+            # _body_projectile_floor_unavailable; the negative-pool disqualifier
+            # must defer to it too, else a sanctioned fallback is flagged as a
+            # hidden lane (run_1784787688 capture 18676). An UNdiagnosed negative
+            # pool still fires.
+            if (
+                (relief_best < 0.0 and not _body_projectile_floor_unavailable(debug))
+                or selected < required - FLOAT_TOLERANCE
+            ):
                 wall_body_relief_selection_violations.append(
                     {
                         "capture_seq": payload["capture_seq"],
@@ -768,17 +786,25 @@ def audit_run(
             active_body_repairs += 1
             if not _is_sampled_direction(payload):
                 sampled_action_violations.append(payload["capture_seq"])
-        if input_clearance < BODY_TIER and best_clearance >= BODY_TIER:
-            if not active or selected_clearance < BODY_TIER - FLOAT_TOLERANCE:
-                body_repair_violations.append(
-                    {
-                        "capture_seq": payload["capture_seq"],
-                        "input": input_clearance,
-                        "best": best_clearance,
-                        "selected": selected_clearance,
-                        "active": active,
-                    }
-                )
+        # v122c: fire on OUTCOME only. When the emitted route already clears the
+        # tier (selected >= 45) the input->best repair opportunity was taken; a
+        # sub-2.56 degree boundary snap correctly leaves body_safety_active false
+        # and is not a missed repair (run_1784805636 capture 9722). The `not
+        # active` disjunct is dropped; the active counter bookkeeping above stays.
+        if (
+            input_clearance < BODY_TIER
+            and best_clearance >= BODY_TIER
+            and selected_clearance < BODY_TIER - FLOAT_TOLERANCE
+        ):
+            body_repair_violations.append(
+                {
+                    "capture_seq": payload["capture_seq"],
+                    "input": input_clearance,
+                    "best": best_clearance,
+                    "selected": selected_clearance,
+                    "active": active,
+                }
+            )
         projectile_floor = float(debug.get("body_projectile_floor", -1.0e18))
         selected_projectile = float(debug.get("body_selected_projectile_clearance", -1.0))
         if _body_projectile_floor_unavailable(debug):

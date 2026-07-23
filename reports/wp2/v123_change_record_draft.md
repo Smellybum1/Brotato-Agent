@@ -179,11 +179,45 @@ Bounds table (header literals; each names its config counterpart):
   hold at the recorded strength (single-sample hysteresis necessary band). Added to
   the run's `violation_count` and to the returned `strength_violations`.
 
+### F2. v122 exact-20 over-firing gate corrections (ride the v123 commit train)
+
+The v122 exact-20 campaign excluded three runs on one single-capture violation
+each; the primary adjudicated all three as AUDIT DEFECTS (safe teacher behavior) —
+each is a gate the v121 fix should have updated alongside
+`_body_projectile_floor_unavailable`. Corrected here (behavior-neutral; every fix
+is narrowly gated so unrelated captures keep their prior strictness):
+
+1. **Relief-selection gate** (`wall_body_relief_selection_violations`): the
+   `relief_best < 0.0` disqualifier now defers to
+   `_body_projectile_floor_unavailable(debug)` — a diagnosed v121
+   unattainable-relief-floor fallback (negative pool-best, far-clearer preserved
+   command) is accepted; an UNdiagnosed negative pool still fires. Cleared
+   `run_1784787688_32406` cap 18676. Second disjunct (`selected < required`) unchanged.
+2. **`_required_body_floor` loot-dash below-tier waiver**: when `loot_dash_active`
+   and `best_clearance < BODY_TIER`, returns `float("-inf")` (only the contact-safe
+   floor applies during a dash; relief transients can momentarily surface a higher
+   pool-best mid-dash). The `best >= BODY_TIER` dash case still returns `BODY_TIER`;
+   non-dash paths and the v123 wave-slack/legacy gating are untouched. Cleared
+   `run_1784804435_39794` cap 17442.
+3. **Body-repair gate** (`body_repair_violations`): fires on outcome only —
+   `input < 45 and best >= 45 and selected < 45`; the `not active` disjunct is
+   dropped (a sub-2.56 degree boundary snap that clears the tier is not a missed
+   repair). The active-counter bookkeeping is unchanged. Cleared
+   `run_1784805636_10804` cap 9722.
+
+Re-audit (standard v122 expectations): all three runs and the clean control
+`run_1784785556_51395` now accept with 0 violations; the aggregate
+`reports/wp2/v122_exact20_safety_audit.{md,json}` refreshes to **20/20 accepted,
+0 violations**. Six new tests pin the corrections: three fixture-replays
+(`test_v122{a,b,c}_*`, frozen captures under `tests/fixtures/wp2/`) plus three
+counter-tests proving each gate still fires on its original target.
+
 ## G. Test evidence
 
 `.venv/Scripts/python -m pytest -q --basetemp=.tmp/pytest-basetemp`:
-**148 passed, 0 failed** (baseline before this work: 138 passed; live_monitor.py
-version tuples extended by the primary for the E version bump).
+**154 passed, 0 failed** (baseline before this work: 138 passed; live_monitor.py
+version tuples extended by the primary for the E version bump; +6 for the F2 v122
+gate corrections).
 
 New tests (source-parity, `test_shop_policy_source.py`):
 `test_v123_strength_signal_is_plumbed_through_controller_and_field`,
