@@ -1,0 +1,3054 @@
+{
+  "corner_distance_threshold": 280.0,
+  "corner_definition": "capture within 280 units of two adjacent walls (>=2 of 4 wall distances <= 280; opposite-wall co-occurrence is geometrically impossible at 280 in a 2048x1536 arena)",
+  "single_wall_definition": "capture within 280 units of at least one wall (min wall distance <= 280)",
+  "collection_item_classification": "data-driven from purchase_offer effects/tags: game `pickup` tag, `pickup_range` effect, or `instant_gold_attracting` effect. `stat_range` (weapon attack range) is excluded.",
+  "collection_items_observed": {
+    "item_baby_elephant": {
+      "tags": [
+        "pickup",
+        "stat_luck"
+      ],
+      "effect_keys": [
+        "stat_luck"
+      ],
+      "reasons": [
+        "tag:pickup"
+      ]
+    },
+    "item_lootworm": {
+      "tags": [
+        "economy",
+        "pet",
+        "pickup"
+      ],
+      "effect_keys": [],
+      "reasons": [
+        "tag:pickup"
+      ]
+    },
+    "item_little_frog": {
+      "tags": [
+        "pickup",
+        "stat_harvesting"
+      ],
+      "effect_keys": [
+        "pickup_range",
+        "stat_dodge",
+        "stat_harvesting"
+      ],
+      "reasons": [
+        "effect:pickup_range",
+        "tag:pickup"
+      ]
+    },
+    "item_cute_monkey": {
+      "tags": [
+        "pickup"
+      ],
+      "effect_keys": [
+        "heal_when_pickup_gold",
+        "stat_ranged_damage"
+      ],
+      "reasons": [
+        "tag:pickup"
+      ]
+    },
+    "item_baby_gecko": {
+      "tags": [
+        "pickup",
+        "stat_range"
+      ],
+      "effect_keys": [
+        "instant_gold_attracting",
+        "stat_range"
+      ],
+      "reasons": [
+        "effect:instant_gold_attracting",
+        "tag:pickup"
+      ]
+    },
+    "item_metal_detector": {
+      "tags": [
+        "economy",
+        "pickup",
+        "stat_engineering",
+        "stat_luck"
+      ],
+      "effect_keys": [
+        "chance_double_gold",
+        "stat_engineering",
+        "stat_luck",
+        "stat_percent_damage"
+      ],
+      "reasons": [
+        "tag:pickup"
+      ]
+    },
+    "item_alien_tongue": {
+      "tags": [
+        "knockback",
+        "pickup"
+      ],
+      "effect_keys": [
+        "knockback",
+        "pickup_range"
+      ],
+      "reasons": [
+        "effect:pickup_range",
+        "tag:pickup"
+      ]
+    },
+    "item_evil_hat": {
+      "tags": [
+        "economy",
+        "pickup"
+      ],
+      "effect_keys": [
+        "gold_drops",
+        "stat_dodge",
+        "stat_speed"
+      ],
+      "reasons": [
+        "tag:pickup"
+      ]
+    }
+  },
+  "run_count": 20,
+  "runs": [
+    {
+      "run_id": "run_1784785556_51395",
+      "result": "victory",
+      "last_wave": 20,
+      "captures": 21061,
+      "waves_reached": 20,
+      "damage_events": 13,
+      "damage_amount_total": 105.0,
+      "collection_assist_purchases": [
+        {
+          "item_id": "item_lootworm",
+          "wave": 10,
+          "reasons": [
+            "tag:pickup"
+          ]
+        }
+      ],
+      "collection_assist_purchase_count": 1,
+      "per_wave_occupancy": [
+        {
+          "wave": 1,
+          "captures": 440,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.0364
+        },
+        {
+          "wave": 2,
+          "captures": 545,
+          "corner_occupancy": 0.0018,
+          "single_wall_occupancy": 0.0881
+        },
+        {
+          "wave": 3,
+          "captures": 641,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.1654
+        },
+        {
+          "wave": 4,
+          "captures": 740,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.1041
+        },
+        {
+          "wave": 5,
+          "captures": 840,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.0893
+        },
+        {
+          "wave": 6,
+          "captures": 946,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.0994
+        },
+        {
+          "wave": 7,
+          "captures": 1046,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.1434
+        },
+        {
+          "wave": 8,
+          "captures": 1166,
+          "corner_occupancy": 0.0009,
+          "single_wall_occupancy": 0.2333
+        },
+        {
+          "wave": 9,
+          "captures": 1256,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.0398
+        },
+        {
+          "wave": 10,
+          "captures": 1241,
+          "corner_occupancy": 0.0234,
+          "single_wall_occupancy": 0.3691
+        },
+        {
+          "wave": 11,
+          "captures": 1251,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.1015
+        },
+        {
+          "wave": 12,
+          "captures": 1251,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.1095
+        },
+        {
+          "wave": 13,
+          "captures": 1240,
+          "corner_occupancy": 0.0065,
+          "single_wall_occupancy": 0.2782
+        },
+        {
+          "wave": 14,
+          "captures": 1240,
+          "corner_occupancy": 0.004,
+          "single_wall_occupancy": 0.2944
+        },
+        {
+          "wave": 15,
+          "captures": 1246,
+          "corner_occupancy": 0.0193,
+          "single_wall_occupancy": 0.4462
+        },
+        {
+          "wave": 16,
+          "captures": 1251,
+          "corner_occupancy": 0.0064,
+          "single_wall_occupancy": 0.1958
+        },
+        {
+          "wave": 17,
+          "captures": 1251,
+          "corner_occupancy": 0.0216,
+          "single_wall_occupancy": 0.5907
+        },
+        {
+          "wave": 18,
+          "captures": 1240,
+          "corner_occupancy": 0.0379,
+          "single_wall_occupancy": 0.6097
+        },
+        {
+          "wave": 19,
+          "captures": 1251,
+          "corner_occupancy": 0.0384,
+          "single_wall_occupancy": 0.729
+        },
+        {
+          "wave": 20,
+          "captures": 979,
+          "corner_occupancy": 0.0123,
+          "single_wall_occupancy": 0.4208
+        }
+      ],
+      "overall_corner_occupancy": 0.01,
+      "overall_single_wall_occupancy": 0.282
+    },
+    {
+      "run_id": "run_1784786723_17546",
+      "result": "defeat",
+      "last_wave": 17,
+      "captures": 17341,
+      "waves_reached": 17,
+      "damage_events": 19,
+      "damage_amount_total": 222.0,
+      "collection_assist_purchases": [
+        {
+          "item_id": "item_baby_gecko",
+          "wave": 5,
+          "reasons": [
+            "effect:instant_gold_attracting",
+            "tag:pickup"
+          ]
+        },
+        {
+          "item_id": "item_metal_detector",
+          "wave": 8,
+          "reasons": [
+            "tag:pickup"
+          ]
+        }
+      ],
+      "collection_assist_purchase_count": 2,
+      "per_wave_occupancy": [
+        {
+          "wave": 1,
+          "captures": 440,
+          "corner_occupancy": 0.0182,
+          "single_wall_occupancy": 0.1523
+        },
+        {
+          "wave": 2,
+          "captures": 545,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.0404
+        },
+        {
+          "wave": 3,
+          "captures": 641,
+          "corner_occupancy": 0.0016,
+          "single_wall_occupancy": 0.1092
+        },
+        {
+          "wave": 4,
+          "captures": 740,
+          "corner_occupancy": 0.023,
+          "single_wall_occupancy": 0.2635
+        },
+        {
+          "wave": 5,
+          "captures": 846,
+          "corner_occupancy": 0.0071,
+          "single_wall_occupancy": 0.1087
+        },
+        {
+          "wave": 6,
+          "captures": 940,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.0596
+        },
+        {
+          "wave": 7,
+          "captures": 1040,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.1202
+        },
+        {
+          "wave": 8,
+          "captures": 1140,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.1175
+        },
+        {
+          "wave": 9,
+          "captures": 1245,
+          "corner_occupancy": 0.0016,
+          "single_wall_occupancy": 0.1518
+        },
+        {
+          "wave": 10,
+          "captures": 1241,
+          "corner_occupancy": 0.2248,
+          "single_wall_occupancy": 0.6938
+        },
+        {
+          "wave": 11,
+          "captures": 1246,
+          "corner_occupancy": 0.0594,
+          "single_wall_occupancy": 0.4117
+        },
+        {
+          "wave": 12,
+          "captures": 1251,
+          "corner_occupancy": 0.0168,
+          "single_wall_occupancy": 0.223
+        },
+        {
+          "wave": 13,
+          "captures": 1240,
+          "corner_occupancy": 0.0331,
+          "single_wall_occupancy": 0.3435
+        },
+        {
+          "wave": 14,
+          "captures": 1240,
+          "corner_occupancy": 0.004,
+          "single_wall_occupancy": 0.2871
+        },
+        {
+          "wave": 15,
+          "captures": 1240,
+          "corner_occupancy": 0.0081,
+          "single_wall_occupancy": 0.3621
+        },
+        {
+          "wave": 16,
+          "captures": 1246,
+          "corner_occupancy": 0.118,
+          "single_wall_occupancy": 0.3395
+        },
+        {
+          "wave": 17,
+          "captures": 1060,
+          "corner_occupancy": 0.033,
+          "single_wall_occupancy": 0.3528
+        }
+      ],
+      "overall_corner_occupancy": 0.0373,
+      "overall_single_wall_occupancy": 0.2671
+    },
+    {
+      "run_id": "run_1784787688_32406",
+      "result": "victory",
+      "last_wave": 20,
+      "captures": 21795,
+      "waves_reached": 20,
+      "damage_events": 15,
+      "damage_amount_total": 166.0,
+      "collection_assist_purchases": [
+        {
+          "item_id": "item_lootworm",
+          "wave": 7,
+          "reasons": [
+            "tag:pickup"
+          ]
+        },
+        {
+          "item_id": "item_metal_detector",
+          "wave": 8,
+          "reasons": [
+            "tag:pickup"
+          ]
+        },
+        {
+          "item_id": "item_baby_gecko",
+          "wave": 10,
+          "reasons": [
+            "effect:instant_gold_attracting",
+            "tag:pickup"
+          ]
+        },
+        {
+          "item_id": "item_metal_detector",
+          "wave": 11,
+          "reasons": [
+            "tag:pickup"
+          ]
+        },
+        {
+          "item_id": "item_baby_gecko",
+          "wave": 12,
+          "reasons": [
+            "effect:instant_gold_attracting",
+            "tag:pickup"
+          ]
+        },
+        {
+          "item_id": "item_baby_gecko",
+          "wave": 18,
+          "reasons": [
+            "effect:instant_gold_attracting",
+            "tag:pickup"
+          ]
+        }
+      ],
+      "collection_assist_purchase_count": 6,
+      "per_wave_occupancy": [
+        {
+          "wave": 1,
+          "captures": 440,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.1159
+        },
+        {
+          "wave": 2,
+          "captures": 545,
+          "corner_occupancy": 0.0037,
+          "single_wall_occupancy": 0.0826
+        },
+        {
+          "wave": 3,
+          "captures": 641,
+          "corner_occupancy": 0.0062,
+          "single_wall_occupancy": 0.0827
+        },
+        {
+          "wave": 4,
+          "captures": 740,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.1216
+        },
+        {
+          "wave": 5,
+          "captures": 840,
+          "corner_occupancy": 0.0083,
+          "single_wall_occupancy": 0.0679
+        },
+        {
+          "wave": 6,
+          "captures": 946,
+          "corner_occupancy": 0.0053,
+          "single_wall_occupancy": 0.1205
+        },
+        {
+          "wave": 7,
+          "captures": 1040,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.0788
+        },
+        {
+          "wave": 8,
+          "captures": 1146,
+          "corner_occupancy": 0.0009,
+          "single_wall_occupancy": 0.1946
+        },
+        {
+          "wave": 9,
+          "captures": 1256,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.0709
+        },
+        {
+          "wave": 10,
+          "captures": 1246,
+          "corner_occupancy": 0.1204,
+          "single_wall_occupancy": 0.4286
+        },
+        {
+          "wave": 11,
+          "captures": 1266,
+          "corner_occupancy": 0.0024,
+          "single_wall_occupancy": 0.3112
+        },
+        {
+          "wave": 12,
+          "captures": 1251,
+          "corner_occupancy": 0.0008,
+          "single_wall_occupancy": 0.1359
+        },
+        {
+          "wave": 13,
+          "captures": 1251,
+          "corner_occupancy": 0.0024,
+          "single_wall_occupancy": 0.231
+        },
+        {
+          "wave": 14,
+          "captures": 1246,
+          "corner_occupancy": 0.0024,
+          "single_wall_occupancy": 0.2472
+        },
+        {
+          "wave": 15,
+          "captures": 1245,
+          "corner_occupancy": 0.0112,
+          "single_wall_occupancy": 0.2851
+        },
+        {
+          "wave": 16,
+          "captures": 1241,
+          "corner_occupancy": 0.0073,
+          "single_wall_occupancy": 0.0935
+        },
+        {
+          "wave": 17,
+          "captures": 1255,
+          "corner_occupancy": 0.012,
+          "single_wall_occupancy": 0.439
+        },
+        {
+          "wave": 18,
+          "captures": 1246,
+          "corner_occupancy": 0.012,
+          "single_wall_occupancy": 0.3844
+        },
+        {
+          "wave": 19,
+          "captures": 1261,
+          "corner_occupancy": 0.0198,
+          "single_wall_occupancy": 0.5504
+        },
+        {
+          "wave": 20,
+          "captures": 1693,
+          "corner_occupancy": 0.0047,
+          "single_wall_occupancy": 0.3438
+        }
+      ],
+      "overall_corner_occupancy": 0.0122,
+      "overall_single_wall_occupancy": 0.2421
+    },
+    {
+      "run_id": "run_1784788917_7315",
+      "result": "defeat",
+      "last_wave": 20,
+      "captures": 21013,
+      "waves_reached": 20,
+      "damage_events": 22,
+      "damage_amount_total": 237.0,
+      "collection_assist_purchases": [
+        {
+          "item_id": "item_lootworm",
+          "wave": 11,
+          "reasons": [
+            "tag:pickup"
+          ]
+        },
+        {
+          "item_id": "item_baby_gecko",
+          "wave": 11,
+          "reasons": [
+            "effect:instant_gold_attracting",
+            "tag:pickup"
+          ]
+        },
+        {
+          "item_id": "item_alien_tongue",
+          "wave": 11,
+          "reasons": [
+            "effect:pickup_range",
+            "tag:pickup"
+          ]
+        }
+      ],
+      "collection_assist_purchase_count": 3,
+      "per_wave_occupancy": [
+        {
+          "wave": 1,
+          "captures": 440,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.0795
+        },
+        {
+          "wave": 2,
+          "captures": 545,
+          "corner_occupancy": 0.0037,
+          "single_wall_occupancy": 0.1872
+        },
+        {
+          "wave": 3,
+          "captures": 640,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.0922
+        },
+        {
+          "wave": 4,
+          "captures": 741,
+          "corner_occupancy": 0.004,
+          "single_wall_occupancy": 0.1606
+        },
+        {
+          "wave": 5,
+          "captures": 840,
+          "corner_occupancy": 0.0119,
+          "single_wall_occupancy": 0.2107
+        },
+        {
+          "wave": 6,
+          "captures": 946,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.0909
+        },
+        {
+          "wave": 7,
+          "captures": 1040,
+          "corner_occupancy": 0.0048,
+          "single_wall_occupancy": 0.1846
+        },
+        {
+          "wave": 8,
+          "captures": 1146,
+          "corner_occupancy": 0.0035,
+          "single_wall_occupancy": 0.2696
+        },
+        {
+          "wave": 9,
+          "captures": 1251,
+          "corner_occupancy": 0.0032,
+          "single_wall_occupancy": 0.1055
+        },
+        {
+          "wave": 10,
+          "captures": 1240,
+          "corner_occupancy": 0.2694,
+          "single_wall_occupancy": 0.7637
+        },
+        {
+          "wave": 11,
+          "captures": 1245,
+          "corner_occupancy": 0.0153,
+          "single_wall_occupancy": 0.4169
+        },
+        {
+          "wave": 12,
+          "captures": 1241,
+          "corner_occupancy": 0.0524,
+          "single_wall_occupancy": 0.3094
+        },
+        {
+          "wave": 13,
+          "captures": 1251,
+          "corner_occupancy": 0.0376,
+          "single_wall_occupancy": 0.5012
+        },
+        {
+          "wave": 14,
+          "captures": 1251,
+          "corner_occupancy": 0.0032,
+          "single_wall_occupancy": 0.3301
+        },
+        {
+          "wave": 15,
+          "captures": 1240,
+          "corner_occupancy": 0.0032,
+          "single_wall_occupancy": 0.3274
+        },
+        {
+          "wave": 16,
+          "captures": 1240,
+          "corner_occupancy": 0.0339,
+          "single_wall_occupancy": 0.2992
+        },
+        {
+          "wave": 17,
+          "captures": 1241,
+          "corner_occupancy": 0.0226,
+          "single_wall_occupancy": 0.4658
+        },
+        {
+          "wave": 18,
+          "captures": 1246,
+          "corner_occupancy": 0.0169,
+          "single_wall_occupancy": 0.6067
+        },
+        {
+          "wave": 19,
+          "captures": 1245,
+          "corner_occupancy": 0.0153,
+          "single_wall_occupancy": 0.4675
+        },
+        {
+          "wave": 20,
+          "captures": 984,
+          "corner_occupancy": 0.0041,
+          "single_wall_occupancy": 0.253
+        }
+      ],
+      "overall_corner_occupancy": 0.0293,
+      "overall_single_wall_occupancy": 0.3352
+    },
+    {
+      "run_id": "run_1784790063_90333",
+      "result": "defeat",
+      "last_wave": 20,
+      "captures": 20835,
+      "waves_reached": 20,
+      "damage_events": 4,
+      "damage_amount_total": 55.0,
+      "collection_assist_purchases": [
+        {
+          "item_id": "item_metal_detector",
+          "wave": 11,
+          "reasons": [
+            "tag:pickup"
+          ]
+        },
+        {
+          "item_id": "item_baby_gecko",
+          "wave": 16,
+          "reasons": [
+            "effect:instant_gold_attracting",
+            "tag:pickup"
+          ]
+        },
+        {
+          "item_id": "item_lootworm",
+          "wave": 18,
+          "reasons": [
+            "tag:pickup"
+          ]
+        }
+      ],
+      "collection_assist_purchase_count": 3,
+      "per_wave_occupancy": [
+        {
+          "wave": 1,
+          "captures": 440,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.0841
+        },
+        {
+          "wave": 2,
+          "captures": 546,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.0714
+        },
+        {
+          "wave": 3,
+          "captures": 640,
+          "corner_occupancy": 0.0016,
+          "single_wall_occupancy": 0.1313
+        },
+        {
+          "wave": 4,
+          "captures": 746,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.2493
+        },
+        {
+          "wave": 5,
+          "captures": 851,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.134
+        },
+        {
+          "wave": 6,
+          "captures": 945,
+          "corner_occupancy": 0.0074,
+          "single_wall_occupancy": 0.1249
+        },
+        {
+          "wave": 7,
+          "captures": 1041,
+          "corner_occupancy": 0.0077,
+          "single_wall_occupancy": 0.1124
+        },
+        {
+          "wave": 8,
+          "captures": 1151,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.1625
+        },
+        {
+          "wave": 9,
+          "captures": 1251,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.024
+        },
+        {
+          "wave": 10,
+          "captures": 1240,
+          "corner_occupancy": 0.0298,
+          "single_wall_occupancy": 0.2621
+        },
+        {
+          "wave": 11,
+          "captures": 1240,
+          "corner_occupancy": 0.0024,
+          "single_wall_occupancy": 0.1331
+        },
+        {
+          "wave": 12,
+          "captures": 1246,
+          "corner_occupancy": 0.0024,
+          "single_wall_occupancy": 0.1637
+        },
+        {
+          "wave": 13,
+          "captures": 1240,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.1581
+        },
+        {
+          "wave": 14,
+          "captures": 1241,
+          "corner_occupancy": 0.0016,
+          "single_wall_occupancy": 0.2071
+        },
+        {
+          "wave": 15,
+          "captures": 1240,
+          "corner_occupancy": 0.0032,
+          "single_wall_occupancy": 0.371
+        },
+        {
+          "wave": 16,
+          "captures": 1251,
+          "corner_occupancy": 0.0064,
+          "single_wall_occupancy": 0.1167
+        },
+        {
+          "wave": 17,
+          "captures": 1247,
+          "corner_occupancy": 0.0353,
+          "single_wall_occupancy": 0.2903
+        },
+        {
+          "wave": 18,
+          "captures": 1246,
+          "corner_occupancy": 0.0385,
+          "single_wall_occupancy": 0.5546
+        },
+        {
+          "wave": 19,
+          "captures": 1245,
+          "corner_occupancy": 0.0297,
+          "single_wall_occupancy": 0.4667
+        },
+        {
+          "wave": 20,
+          "captures": 788,
+          "corner_occupancy": 0.0038,
+          "single_wall_occupancy": 0.3046
+        }
+      ],
+      "overall_corner_occupancy": 0.0098,
+      "overall_single_wall_occupancy": 0.2179
+    },
+    {
+      "run_id": "run_1784791214_74323",
+      "result": "defeat",
+      "last_wave": 17,
+      "captures": 17478,
+      "waves_reached": 17,
+      "damage_events": 3,
+      "damage_amount_total": 62.0,
+      "collection_assist_purchases": [
+        {
+          "item_id": "item_baby_gecko",
+          "wave": 8,
+          "reasons": [
+            "effect:instant_gold_attracting",
+            "tag:pickup"
+          ]
+        },
+        {
+          "item_id": "item_baby_gecko",
+          "wave": 14,
+          "reasons": [
+            "effect:instant_gold_attracting",
+            "tag:pickup"
+          ]
+        }
+      ],
+      "collection_assist_purchase_count": 2,
+      "per_wave_occupancy": [
+        {
+          "wave": 1,
+          "captures": 440,
+          "corner_occupancy": 0.0045,
+          "single_wall_occupancy": 0.0318
+        },
+        {
+          "wave": 2,
+          "captures": 546,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.119
+        },
+        {
+          "wave": 3,
+          "captures": 646,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.0805
+        },
+        {
+          "wave": 4,
+          "captures": 751,
+          "corner_occupancy": 0.024,
+          "single_wall_occupancy": 0.2477
+        },
+        {
+          "wave": 5,
+          "captures": 851,
+          "corner_occupancy": 0.0165,
+          "single_wall_occupancy": 0.1304
+        },
+        {
+          "wave": 6,
+          "captures": 945,
+          "corner_occupancy": 0.0074,
+          "single_wall_occupancy": 0.1302
+        },
+        {
+          "wave": 7,
+          "captures": 1046,
+          "corner_occupancy": 0.0019,
+          "single_wall_occupancy": 0.1826
+        },
+        {
+          "wave": 8,
+          "captures": 1141,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.1043
+        },
+        {
+          "wave": 9,
+          "captures": 1251,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.0432
+        },
+        {
+          "wave": 10,
+          "captures": 1246,
+          "corner_occupancy": 0.0024,
+          "single_wall_occupancy": 0.0947
+        },
+        {
+          "wave": 11,
+          "captures": 1240,
+          "corner_occupancy": 0.0016,
+          "single_wall_occupancy": 0.1153
+        },
+        {
+          "wave": 12,
+          "captures": 1240,
+          "corner_occupancy": 0.0065,
+          "single_wall_occupancy": 0.1774
+        },
+        {
+          "wave": 13,
+          "captures": 1240,
+          "corner_occupancy": 0.0024,
+          "single_wall_occupancy": 0.3048
+        },
+        {
+          "wave": 14,
+          "captures": 1246,
+          "corner_occupancy": 0.0289,
+          "single_wall_occupancy": 0.3579
+        },
+        {
+          "wave": 15,
+          "captures": 1241,
+          "corner_occupancy": 0.0024,
+          "single_wall_occupancy": 0.4327
+        },
+        {
+          "wave": 16,
+          "captures": 1245,
+          "corner_occupancy": 0.0016,
+          "single_wall_occupancy": 0.2193
+        },
+        {
+          "wave": 17,
+          "captures": 1163,
+          "corner_occupancy": 0.0224,
+          "single_wall_occupancy": 0.4463
+        }
+      ],
+      "overall_corner_occupancy": 0.0072,
+      "overall_single_wall_occupancy": 0.2031
+    },
+    {
+      "run_id": "run_1784792179_82981",
+      "result": "defeat",
+      "last_wave": 10,
+      "captures": 8638,
+      "waves_reached": 10,
+      "damage_events": 9,
+      "damage_amount_total": 50.0,
+      "collection_assist_purchases": [
+        {
+          "item_id": "item_alien_tongue",
+          "wave": 9,
+          "reasons": [
+            "effect:pickup_range",
+            "tag:pickup"
+          ]
+        }
+      ],
+      "collection_assist_purchase_count": 1,
+      "per_wave_occupancy": [
+        {
+          "wave": 1,
+          "captures": 440,
+          "corner_occupancy": 0.0045,
+          "single_wall_occupancy": 0.0955
+        },
+        {
+          "wave": 2,
+          "captures": 540,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.1037
+        },
+        {
+          "wave": 3,
+          "captures": 646,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.2167
+        },
+        {
+          "wave": 4,
+          "captures": 740,
+          "corner_occupancy": 0.0081,
+          "single_wall_occupancy": 0.0932
+        },
+        {
+          "wave": 5,
+          "captures": 851,
+          "corner_occupancy": 0.0306,
+          "single_wall_occupancy": 0.2444
+        },
+        {
+          "wave": 6,
+          "captures": 940,
+          "corner_occupancy": 0.0043,
+          "single_wall_occupancy": 0.1362
+        },
+        {
+          "wave": 7,
+          "captures": 1046,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.1644
+        },
+        {
+          "wave": 8,
+          "captures": 1150,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.0635
+        },
+        {
+          "wave": 9,
+          "captures": 1246,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.1172
+        },
+        {
+          "wave": 10,
+          "captures": 1039,
+          "corner_occupancy": 0.3138,
+          "single_wall_occupancy": 0.64
+        }
+      ],
+      "overall_corner_occupancy": 0.0421,
+      "overall_single_wall_occupancy": 0.1967
+    },
+    {
+      "run_id": "run_1784792652_7723",
+      "result": "victory",
+      "last_wave": 20,
+      "captures": 21852,
+      "waves_reached": 20,
+      "damage_events": 5,
+      "damage_amount_total": 112.0,
+      "collection_assist_purchases": [
+        {
+          "item_id": "item_alien_tongue",
+          "wave": 7,
+          "reasons": [
+            "effect:pickup_range",
+            "tag:pickup"
+          ]
+        },
+        {
+          "item_id": "item_alien_tongue",
+          "wave": 18,
+          "reasons": [
+            "effect:pickup_range",
+            "tag:pickup"
+          ]
+        }
+      ],
+      "collection_assist_purchase_count": 2,
+      "per_wave_occupancy": [
+        {
+          "wave": 1,
+          "captures": 440,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.0523
+        },
+        {
+          "wave": 2,
+          "captures": 551,
+          "corner_occupancy": 0.0054,
+          "single_wall_occupancy": 0.0581
+        },
+        {
+          "wave": 3,
+          "captures": 640,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.1562
+        },
+        {
+          "wave": 4,
+          "captures": 746,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.059
+        },
+        {
+          "wave": 5,
+          "captures": 846,
+          "corner_occupancy": 0.0035,
+          "single_wall_occupancy": 0.1123
+        },
+        {
+          "wave": 6,
+          "captures": 951,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.0768
+        },
+        {
+          "wave": 7,
+          "captures": 1045,
+          "corner_occupancy": 0.0191,
+          "single_wall_occupancy": 0.2526
+        },
+        {
+          "wave": 8,
+          "captures": 1141,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.1174
+        },
+        {
+          "wave": 9,
+          "captures": 1256,
+          "corner_occupancy": 0.0008,
+          "single_wall_occupancy": 0.0685
+        },
+        {
+          "wave": 10,
+          "captures": 1246,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.2159
+        },
+        {
+          "wave": 11,
+          "captures": 1251,
+          "corner_occupancy": 0.0008,
+          "single_wall_occupancy": 0.0815
+        },
+        {
+          "wave": 12,
+          "captures": 1246,
+          "corner_occupancy": 0.0048,
+          "single_wall_occupancy": 0.1469
+        },
+        {
+          "wave": 13,
+          "captures": 1240,
+          "corner_occupancy": 0.0411,
+          "single_wall_occupancy": 0.1694
+        },
+        {
+          "wave": 14,
+          "captures": 1240,
+          "corner_occupancy": 0.0073,
+          "single_wall_occupancy": 0.2839
+        },
+        {
+          "wave": 15,
+          "captures": 1241,
+          "corner_occupancy": 0.0008,
+          "single_wall_occupancy": 0.1837
+        },
+        {
+          "wave": 16,
+          "captures": 1251,
+          "corner_occupancy": 0.0104,
+          "single_wall_occupancy": 0.3237
+        },
+        {
+          "wave": 17,
+          "captures": 1240,
+          "corner_occupancy": 0.025,
+          "single_wall_occupancy": 0.4556
+        },
+        {
+          "wave": 18,
+          "captures": 1241,
+          "corner_occupancy": 0.0314,
+          "single_wall_occupancy": 0.6567
+        },
+        {
+          "wave": 19,
+          "captures": 1240,
+          "corner_occupancy": 0.0315,
+          "single_wall_occupancy": 0.7742
+        },
+        {
+          "wave": 20,
+          "captures": 1800,
+          "corner_occupancy": 0.0039,
+          "single_wall_occupancy": 0.4233
+        }
+      ],
+      "overall_corner_occupancy": 0.0103,
+      "overall_single_wall_occupancy": 0.2609
+    },
+    {
+      "run_id": "run_1784793833_32034",
+      "result": "defeat",
+      "last_wave": 17,
+      "captures": 17416,
+      "waves_reached": 17,
+      "damage_events": 15,
+      "damage_amount_total": 116.0,
+      "collection_assist_purchases": [
+        {
+          "item_id": "item_baby_gecko",
+          "wave": 5,
+          "reasons": [
+            "effect:instant_gold_attracting",
+            "tag:pickup"
+          ]
+        },
+        {
+          "item_id": "item_lootworm",
+          "wave": 16,
+          "reasons": [
+            "tag:pickup"
+          ]
+        }
+      ],
+      "collection_assist_purchase_count": 2,
+      "per_wave_occupancy": [
+        {
+          "wave": 1,
+          "captures": 440,
+          "corner_occupancy": 0.0068,
+          "single_wall_occupancy": 0.0591
+        },
+        {
+          "wave": 2,
+          "captures": 546,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.0568
+        },
+        {
+          "wave": 3,
+          "captures": 640,
+          "corner_occupancy": 0.0047,
+          "single_wall_occupancy": 0.1
+        },
+        {
+          "wave": 4,
+          "captures": 740,
+          "corner_occupancy": 0.0176,
+          "single_wall_occupancy": 0.2797
+        },
+        {
+          "wave": 5,
+          "captures": 841,
+          "corner_occupancy": 0.0166,
+          "single_wall_occupancy": 0.0904
+        },
+        {
+          "wave": 6,
+          "captures": 945,
+          "corner_occupancy": 0.018,
+          "single_wall_occupancy": 0.1524
+        },
+        {
+          "wave": 7,
+          "captures": 1041,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.1777
+        },
+        {
+          "wave": 8,
+          "captures": 1140,
+          "corner_occupancy": 0.0026,
+          "single_wall_occupancy": 0.2333
+        },
+        {
+          "wave": 9,
+          "captures": 1251,
+          "corner_occupancy": 0.0048,
+          "single_wall_occupancy": 0.1487
+        },
+        {
+          "wave": 10,
+          "captures": 1240,
+          "corner_occupancy": 0.2056,
+          "single_wall_occupancy": 0.5839
+        },
+        {
+          "wave": 11,
+          "captures": 1246,
+          "corner_occupancy": 0.0008,
+          "single_wall_occupancy": 0.4069
+        },
+        {
+          "wave": 12,
+          "captures": 1245,
+          "corner_occupancy": 0.1004,
+          "single_wall_occupancy": 0.4643
+        },
+        {
+          "wave": 13,
+          "captures": 1241,
+          "corner_occupancy": 0.0314,
+          "single_wall_occupancy": 0.3078
+        },
+        {
+          "wave": 14,
+          "captures": 1240,
+          "corner_occupancy": 0.0274,
+          "single_wall_occupancy": 0.2968
+        },
+        {
+          "wave": 15,
+          "captures": 1240,
+          "corner_occupancy": 0.0177,
+          "single_wall_occupancy": 0.3653
+        },
+        {
+          "wave": 16,
+          "captures": 1246,
+          "corner_occupancy": 0.0706,
+          "single_wall_occupancy": 0.2817
+        },
+        {
+          "wave": 17,
+          "captures": 1134,
+          "corner_occupancy": 0.045,
+          "single_wall_occupancy": 0.3986
+        }
+      ],
+      "overall_corner_occupancy": 0.0387,
+      "overall_single_wall_occupancy": 0.2871
+    },
+    {
+      "run_id": "run_1784794784_69267",
+      "result": "victory",
+      "last_wave": 20,
+      "captures": 20860,
+      "waves_reached": 20,
+      "damage_events": 2,
+      "damage_amount_total": 22.0,
+      "collection_assist_purchases": [
+        {
+          "item_id": "item_alien_tongue",
+          "wave": 5,
+          "reasons": [
+            "effect:pickup_range",
+            "tag:pickup"
+          ]
+        },
+        {
+          "item_id": "item_baby_elephant",
+          "wave": 11,
+          "reasons": [
+            "tag:pickup"
+          ]
+        },
+        {
+          "item_id": "item_baby_gecko",
+          "wave": 12,
+          "reasons": [
+            "effect:instant_gold_attracting",
+            "tag:pickup"
+          ]
+        }
+      ],
+      "collection_assist_purchase_count": 3,
+      "per_wave_occupancy": [
+        {
+          "wave": 1,
+          "captures": 440,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.0545
+        },
+        {
+          "wave": 2,
+          "captures": 545,
+          "corner_occupancy": 0.0055,
+          "single_wall_occupancy": 0.1193
+        },
+        {
+          "wave": 3,
+          "captures": 641,
+          "corner_occupancy": 0.0016,
+          "single_wall_occupancy": 0.0546
+        },
+        {
+          "wave": 4,
+          "captures": 746,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.2332
+        },
+        {
+          "wave": 5,
+          "captures": 845,
+          "corner_occupancy": 0.0036,
+          "single_wall_occupancy": 0.1716
+        },
+        {
+          "wave": 6,
+          "captures": 940,
+          "corner_occupancy": 0.0064,
+          "single_wall_occupancy": 0.0702
+        },
+        {
+          "wave": 7,
+          "captures": 1046,
+          "corner_occupancy": 0.0057,
+          "single_wall_occupancy": 0.2667
+        },
+        {
+          "wave": 8,
+          "captures": 1151,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.1937
+        },
+        {
+          "wave": 9,
+          "captures": 1246,
+          "corner_occupancy": 0.0048,
+          "single_wall_occupancy": 0.1404
+        },
+        {
+          "wave": 10,
+          "captures": 1240,
+          "corner_occupancy": 0.0621,
+          "single_wall_occupancy": 0.3202
+        },
+        {
+          "wave": 11,
+          "captures": 1251,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.0919
+        },
+        {
+          "wave": 12,
+          "captures": 1245,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.143
+        },
+        {
+          "wave": 13,
+          "captures": 1252,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.1462
+        },
+        {
+          "wave": 14,
+          "captures": 1240,
+          "corner_occupancy": 0.0056,
+          "single_wall_occupancy": 0.2331
+        },
+        {
+          "wave": 15,
+          "captures": 1246,
+          "corner_occupancy": 0.0265,
+          "single_wall_occupancy": 0.3668
+        },
+        {
+          "wave": 16,
+          "captures": 1246,
+          "corner_occupancy": 0.004,
+          "single_wall_occupancy": 0.2079
+        },
+        {
+          "wave": 17,
+          "captures": 1240,
+          "corner_occupancy": 0.0331,
+          "single_wall_occupancy": 0.0831
+        },
+        {
+          "wave": 18,
+          "captures": 1240,
+          "corner_occupancy": 0.0048,
+          "single_wall_occupancy": 0.1903
+        },
+        {
+          "wave": 19,
+          "captures": 1246,
+          "corner_occupancy": 0.0024,
+          "single_wall_occupancy": 0.1822
+        },
+        {
+          "wave": 20,
+          "captures": 814,
+          "corner_occupancy": 0.0012,
+          "single_wall_occupancy": 0.0676
+        }
+      ],
+      "overall_corner_occupancy": 0.0095,
+      "overall_single_wall_occupancy": 0.1767
+    },
+    {
+      "run_id": "run_1784795927_93597",
+      "result": "victory",
+      "last_wave": 20,
+      "captures": 21059,
+      "waves_reached": 20,
+      "damage_events": 15,
+      "damage_amount_total": 191.0,
+      "collection_assist_purchases": [
+        {
+          "item_id": "item_baby_gecko",
+          "wave": 1,
+          "reasons": [
+            "effect:instant_gold_attracting",
+            "tag:pickup"
+          ]
+        },
+        {
+          "item_id": "item_baby_elephant",
+          "wave": 8,
+          "reasons": [
+            "tag:pickup"
+          ]
+        },
+        {
+          "item_id": "item_baby_gecko",
+          "wave": 9,
+          "reasons": [
+            "effect:instant_gold_attracting",
+            "tag:pickup"
+          ]
+        },
+        {
+          "item_id": "item_lootworm",
+          "wave": 14,
+          "reasons": [
+            "tag:pickup"
+          ]
+        }
+      ],
+      "collection_assist_purchase_count": 4,
+      "per_wave_occupancy": [
+        {
+          "wave": 1,
+          "captures": 440,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.1318
+        },
+        {
+          "wave": 2,
+          "captures": 545,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.1009
+        },
+        {
+          "wave": 3,
+          "captures": 646,
+          "corner_occupancy": 0.0031,
+          "single_wall_occupancy": 0.2755
+        },
+        {
+          "wave": 4,
+          "captures": 740,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.127
+        },
+        {
+          "wave": 5,
+          "captures": 851,
+          "corner_occupancy": 0.0059,
+          "single_wall_occupancy": 0.2362
+        },
+        {
+          "wave": 6,
+          "captures": 947,
+          "corner_occupancy": 0.0053,
+          "single_wall_occupancy": 0.1478
+        },
+        {
+          "wave": 7,
+          "captures": 1040,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.1635
+        },
+        {
+          "wave": 8,
+          "captures": 1151,
+          "corner_occupancy": 0.0026,
+          "single_wall_occupancy": 0.1668
+        },
+        {
+          "wave": 9,
+          "captures": 1245,
+          "corner_occupancy": 0.0016,
+          "single_wall_occupancy": 0.1068
+        },
+        {
+          "wave": 10,
+          "captures": 1241,
+          "corner_occupancy": 0.1749,
+          "single_wall_occupancy": 0.5504
+        },
+        {
+          "wave": 11,
+          "captures": 1240,
+          "corner_occupancy": 0.0419,
+          "single_wall_occupancy": 0.3968
+        },
+        {
+          "wave": 12,
+          "captures": 1240,
+          "corner_occupancy": 0.1669,
+          "single_wall_occupancy": 0.4976
+        },
+        {
+          "wave": 13,
+          "captures": 1241,
+          "corner_occupancy": 0.0266,
+          "single_wall_occupancy": 0.4666
+        },
+        {
+          "wave": 14,
+          "captures": 1251,
+          "corner_occupancy": 0.0288,
+          "single_wall_occupancy": 0.5747
+        },
+        {
+          "wave": 15,
+          "captures": 1240,
+          "corner_occupancy": 0.0121,
+          "single_wall_occupancy": 0.5395
+        },
+        {
+          "wave": 16,
+          "captures": 1251,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.1463
+        },
+        {
+          "wave": 17,
+          "captures": 1240,
+          "corner_occupancy": 0.0169,
+          "single_wall_occupancy": 0.3718
+        },
+        {
+          "wave": 18,
+          "captures": 1246,
+          "corner_occupancy": 0.0297,
+          "single_wall_occupancy": 0.675
+        },
+        {
+          "wave": 19,
+          "captures": 1246,
+          "corner_occupancy": 0.0273,
+          "single_wall_occupancy": 0.5088
+        },
+        {
+          "wave": 20,
+          "captures": 1018,
+          "corner_occupancy": 0.0118,
+          "single_wall_occupancy": 0.4047
+        }
+      ],
+      "overall_corner_occupancy": 0.0323,
+      "overall_single_wall_occupancy": 0.3567
+    },
+    {
+      "run_id": "run_1784797082_83949",
+      "result": "victory",
+      "last_wave": 20,
+      "captures": 21616,
+      "waves_reached": 20,
+      "damage_events": 11,
+      "damage_amount_total": 75.0,
+      "collection_assist_purchases": [
+        {
+          "item_id": "item_lootworm",
+          "wave": 6,
+          "reasons": [
+            "tag:pickup"
+          ]
+        },
+        {
+          "item_id": "item_alien_tongue",
+          "wave": 13,
+          "reasons": [
+            "effect:pickup_range",
+            "tag:pickup"
+          ]
+        }
+      ],
+      "collection_assist_purchase_count": 2,
+      "per_wave_occupancy": [
+        {
+          "wave": 1,
+          "captures": 440,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.1318
+        },
+        {
+          "wave": 2,
+          "captures": 545,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.0771
+        },
+        {
+          "wave": 3,
+          "captures": 646,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.1115
+        },
+        {
+          "wave": 4,
+          "captures": 741,
+          "corner_occupancy": 0.004,
+          "single_wall_occupancy": 0.1296
+        },
+        {
+          "wave": 5,
+          "captures": 851,
+          "corner_occupancy": 0.0071,
+          "single_wall_occupancy": 0.1504
+        },
+        {
+          "wave": 6,
+          "captures": 940,
+          "corner_occupancy": 0.0085,
+          "single_wall_occupancy": 0.1043
+        },
+        {
+          "wave": 7,
+          "captures": 1051,
+          "corner_occupancy": 0.0133,
+          "single_wall_occupancy": 0.0866
+        },
+        {
+          "wave": 8,
+          "captures": 1140,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.1167
+        },
+        {
+          "wave": 9,
+          "captures": 1241,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.0443
+        },
+        {
+          "wave": 10,
+          "captures": 1245,
+          "corner_occupancy": 0.0072,
+          "single_wall_occupancy": 0.2104
+        },
+        {
+          "wave": 11,
+          "captures": 1251,
+          "corner_occupancy": 0.0016,
+          "single_wall_occupancy": 0.0775
+        },
+        {
+          "wave": 12,
+          "captures": 1246,
+          "corner_occupancy": 0.0008,
+          "single_wall_occupancy": 0.1894
+        },
+        {
+          "wave": 13,
+          "captures": 1246,
+          "corner_occupancy": 0.0024,
+          "single_wall_occupancy": 0.1276
+        },
+        {
+          "wave": 14,
+          "captures": 1240,
+          "corner_occupancy": 0.0097,
+          "single_wall_occupancy": 0.3347
+        },
+        {
+          "wave": 15,
+          "captures": 1246,
+          "corner_occupancy": 0.0024,
+          "single_wall_occupancy": 0.2095
+        },
+        {
+          "wave": 16,
+          "captures": 1246,
+          "corner_occupancy": 0.0016,
+          "single_wall_occupancy": 0.0923
+        },
+        {
+          "wave": 17,
+          "captures": 1240,
+          "corner_occupancy": 0.0113,
+          "single_wall_occupancy": 0.4935
+        },
+        {
+          "wave": 18,
+          "captures": 1240,
+          "corner_occupancy": 0.0161,
+          "single_wall_occupancy": 0.5153
+        },
+        {
+          "wave": 19,
+          "captures": 1241,
+          "corner_occupancy": 0.0363,
+          "single_wall_occupancy": 0.6753
+        },
+        {
+          "wave": 20,
+          "captures": 1580,
+          "corner_occupancy": 0.0082,
+          "single_wall_occupancy": 0.2456
+        }
+      ],
+      "overall_corner_occupancy": 0.0072,
+      "overall_single_wall_occupancy": 0.2218
+    },
+    {
+      "run_id": "run_1784798249_41022",
+      "result": "victory",
+      "last_wave": 20,
+      "captures": 21111,
+      "waves_reached": 20,
+      "damage_events": 6,
+      "damage_amount_total": 56.0,
+      "collection_assist_purchases": [
+        {
+          "item_id": "item_metal_detector",
+          "wave": 4,
+          "reasons": [
+            "tag:pickup"
+          ]
+        },
+        {
+          "item_id": "item_alien_tongue",
+          "wave": 6,
+          "reasons": [
+            "effect:pickup_range",
+            "tag:pickup"
+          ]
+        },
+        {
+          "item_id": "item_alien_tongue",
+          "wave": 19,
+          "reasons": [
+            "effect:pickup_range",
+            "tag:pickup"
+          ]
+        }
+      ],
+      "collection_assist_purchase_count": 3,
+      "per_wave_occupancy": [
+        {
+          "wave": 1,
+          "captures": 440,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.025
+        },
+        {
+          "wave": 2,
+          "captures": 546,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.1209
+        },
+        {
+          "wave": 3,
+          "captures": 640,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.2
+        },
+        {
+          "wave": 4,
+          "captures": 740,
+          "corner_occupancy": 0.0027,
+          "single_wall_occupancy": 0.0554
+        },
+        {
+          "wave": 5,
+          "captures": 846,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.0875
+        },
+        {
+          "wave": 6,
+          "captures": 946,
+          "corner_occupancy": 0.0021,
+          "single_wall_occupancy": 0.0624
+        },
+        {
+          "wave": 7,
+          "captures": 1051,
+          "corner_occupancy": 0.0038,
+          "single_wall_occupancy": 0.1665
+        },
+        {
+          "wave": 8,
+          "captures": 1146,
+          "corner_occupancy": 0.0026,
+          "single_wall_occupancy": 0.2042
+        },
+        {
+          "wave": 9,
+          "captures": 1256,
+          "corner_occupancy": 0.0064,
+          "single_wall_occupancy": 0.1441
+        },
+        {
+          "wave": 10,
+          "captures": 1246,
+          "corner_occupancy": 0.0345,
+          "single_wall_occupancy": 0.3981
+        },
+        {
+          "wave": 11,
+          "captures": 1240,
+          "corner_occupancy": 0.0097,
+          "single_wall_occupancy": 0.3153
+        },
+        {
+          "wave": 12,
+          "captures": 1246,
+          "corner_occupancy": 0.008,
+          "single_wall_occupancy": 0.1637
+        },
+        {
+          "wave": 13,
+          "captures": 1257,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.1456
+        },
+        {
+          "wave": 14,
+          "captures": 1245,
+          "corner_occupancy": 0.0056,
+          "single_wall_occupancy": 0.2201
+        },
+        {
+          "wave": 15,
+          "captures": 1252,
+          "corner_occupancy": 0.0056,
+          "single_wall_occupancy": 0.2069
+        },
+        {
+          "wave": 16,
+          "captures": 1245,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.0779
+        },
+        {
+          "wave": 17,
+          "captures": 1240,
+          "corner_occupancy": 0.0024,
+          "single_wall_occupancy": 0.1476
+        },
+        {
+          "wave": 18,
+          "captures": 1246,
+          "corner_occupancy": 0.0152,
+          "single_wall_occupancy": 0.5377
+        },
+        {
+          "wave": 19,
+          "captures": 1240,
+          "corner_occupancy": 0.0258,
+          "single_wall_occupancy": 0.5024
+        },
+        {
+          "wave": 20,
+          "captures": 1043,
+          "corner_occupancy": 0.001,
+          "single_wall_occupancy": 0.2109
+        }
+      ],
+      "overall_corner_occupancy": 0.0072,
+      "overall_single_wall_occupancy": 0.2164
+    },
+    {
+      "run_id": "run_1784799404_80018",
+      "result": "defeat",
+      "last_wave": 20,
+      "captures": 20926,
+      "waves_reached": 20,
+      "damage_events": 7,
+      "damage_amount_total": 135.0,
+      "collection_assist_purchases": [
+        {
+          "item_id": "item_baby_gecko",
+          "wave": 4,
+          "reasons": [
+            "effect:instant_gold_attracting",
+            "tag:pickup"
+          ]
+        },
+        {
+          "item_id": "item_baby_gecko",
+          "wave": 5,
+          "reasons": [
+            "effect:instant_gold_attracting",
+            "tag:pickup"
+          ]
+        },
+        {
+          "item_id": "item_baby_gecko",
+          "wave": 10,
+          "reasons": [
+            "effect:instant_gold_attracting",
+            "tag:pickup"
+          ]
+        },
+        {
+          "item_id": "item_alien_tongue",
+          "wave": 10,
+          "reasons": [
+            "effect:pickup_range",
+            "tag:pickup"
+          ]
+        },
+        {
+          "item_id": "item_lootworm",
+          "wave": 14,
+          "reasons": [
+            "tag:pickup"
+          ]
+        }
+      ],
+      "collection_assist_purchase_count": 5,
+      "per_wave_occupancy": [
+        {
+          "wave": 1,
+          "captures": 440,
+          "corner_occupancy": 0.0045,
+          "single_wall_occupancy": 0.0386
+        },
+        {
+          "wave": 2,
+          "captures": 545,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.1156
+        },
+        {
+          "wave": 3,
+          "captures": 646,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.0929
+        },
+        {
+          "wave": 4,
+          "captures": 746,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.1327
+        },
+        {
+          "wave": 5,
+          "captures": 846,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.0591
+        },
+        {
+          "wave": 6,
+          "captures": 940,
+          "corner_occupancy": 0.0032,
+          "single_wall_occupancy": 0.1426
+        },
+        {
+          "wave": 7,
+          "captures": 1040,
+          "corner_occupancy": 0.0125,
+          "single_wall_occupancy": 0.1375
+        },
+        {
+          "wave": 8,
+          "captures": 1141,
+          "corner_occupancy": 0.007,
+          "single_wall_occupancy": 0.177
+        },
+        {
+          "wave": 9,
+          "captures": 1250,
+          "corner_occupancy": 0.0016,
+          "single_wall_occupancy": 0.1008
+        },
+        {
+          "wave": 10,
+          "captures": 1246,
+          "corner_occupancy": 0.0337,
+          "single_wall_occupancy": 0.3772
+        },
+        {
+          "wave": 11,
+          "captures": 1251,
+          "corner_occupancy": 0.0248,
+          "single_wall_occupancy": 0.2542
+        },
+        {
+          "wave": 12,
+          "captures": 1240,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.2145
+        },
+        {
+          "wave": 13,
+          "captures": 1241,
+          "corner_occupancy": 0.0008,
+          "single_wall_occupancy": 0.2619
+        },
+        {
+          "wave": 14,
+          "captures": 1245,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.2972
+        },
+        {
+          "wave": 15,
+          "captures": 1257,
+          "corner_occupancy": 0.0048,
+          "single_wall_occupancy": 0.3484
+        },
+        {
+          "wave": 16,
+          "captures": 1251,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.0775
+        },
+        {
+          "wave": 17,
+          "captures": 1240,
+          "corner_occupancy": 0.021,
+          "single_wall_occupancy": 0.3242
+        },
+        {
+          "wave": 18,
+          "captures": 1240,
+          "corner_occupancy": 0.0218,
+          "single_wall_occupancy": 0.6605
+        },
+        {
+          "wave": 19,
+          "captures": 1246,
+          "corner_occupancy": 0.0281,
+          "single_wall_occupancy": 0.6308
+        },
+        {
+          "wave": 20,
+          "captures": 875,
+          "corner_occupancy": 0.0011,
+          "single_wall_occupancy": 0.4286
+        }
+      ],
+      "overall_corner_occupancy": 0.0094,
+      "overall_single_wall_occupancy": 0.2657
+    },
+    {
+      "run_id": "run_1784800561_47448",
+      "result": "victory",
+      "last_wave": 20,
+      "captures": 21313,
+      "waves_reached": 20,
+      "damage_events": 2,
+      "damage_amount_total": 27.0,
+      "collection_assist_purchases": [
+        {
+          "item_id": "item_alien_tongue",
+          "wave": 13,
+          "reasons": [
+            "effect:pickup_range",
+            "tag:pickup"
+          ]
+        }
+      ],
+      "collection_assist_purchase_count": 1,
+      "per_wave_occupancy": [
+        {
+          "wave": 1,
+          "captures": 440,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.1136
+        },
+        {
+          "wave": 2,
+          "captures": 546,
+          "corner_occupancy": 0.0037,
+          "single_wall_occupancy": 0.1209
+        },
+        {
+          "wave": 3,
+          "captures": 640,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.2156
+        },
+        {
+          "wave": 4,
+          "captures": 740,
+          "corner_occupancy": 0.0081,
+          "single_wall_occupancy": 0.1392
+        },
+        {
+          "wave": 5,
+          "captures": 841,
+          "corner_occupancy": 0.0059,
+          "single_wall_occupancy": 0.1356
+        },
+        {
+          "wave": 6,
+          "captures": 945,
+          "corner_occupancy": 0.0053,
+          "single_wall_occupancy": 0.1852
+        },
+        {
+          "wave": 7,
+          "captures": 1046,
+          "corner_occupancy": 0.0067,
+          "single_wall_occupancy": 0.175
+        },
+        {
+          "wave": 8,
+          "captures": 1140,
+          "corner_occupancy": 0.0009,
+          "single_wall_occupancy": 0.0886
+        },
+        {
+          "wave": 9,
+          "captures": 1251,
+          "corner_occupancy": 0.008,
+          "single_wall_occupancy": 0.2198
+        },
+        {
+          "wave": 10,
+          "captures": 1246,
+          "corner_occupancy": 0.0144,
+          "single_wall_occupancy": 0.1974
+        },
+        {
+          "wave": 11,
+          "captures": 1241,
+          "corner_occupancy": 0.0032,
+          "single_wall_occupancy": 0.1273
+        },
+        {
+          "wave": 12,
+          "captures": 1251,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.1695
+        },
+        {
+          "wave": 13,
+          "captures": 1240,
+          "corner_occupancy": 0.0032,
+          "single_wall_occupancy": 0.2056
+        },
+        {
+          "wave": 14,
+          "captures": 1246,
+          "corner_occupancy": 0.0088,
+          "single_wall_occupancy": 0.2881
+        },
+        {
+          "wave": 15,
+          "captures": 1246,
+          "corner_occupancy": 0.0209,
+          "single_wall_occupancy": 0.5353
+        },
+        {
+          "wave": 16,
+          "captures": 1246,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.049
+        },
+        {
+          "wave": 17,
+          "captures": 1240,
+          "corner_occupancy": 0.0484,
+          "single_wall_occupancy": 0.6468
+        },
+        {
+          "wave": 18,
+          "captures": 1240,
+          "corner_occupancy": 0.0806,
+          "single_wall_occupancy": 0.6694
+        },
+        {
+          "wave": 19,
+          "captures": 1246,
+          "corner_occupancy": 0.0361,
+          "single_wall_occupancy": 0.7191
+        },
+        {
+          "wave": 20,
+          "captures": 1282,
+          "corner_occupancy": 0.0047,
+          "single_wall_occupancy": 0.2465
+        }
+      ],
+      "overall_corner_occupancy": 0.0145,
+      "overall_single_wall_occupancy": 0.2818
+    },
+    {
+      "run_id": "run_1784801716_88465",
+      "result": "defeat",
+      "last_wave": 10,
+      "captures": 8550,
+      "waves_reached": 10,
+      "damage_events": 8,
+      "damage_amount_total": 52.0,
+      "collection_assist_purchases": [],
+      "collection_assist_purchase_count": 0,
+      "per_wave_occupancy": [
+        {
+          "wave": 1,
+          "captures": 440,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.0114
+        },
+        {
+          "wave": 2,
+          "captures": 546,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.0861
+        },
+        {
+          "wave": 3,
+          "captures": 640,
+          "corner_occupancy": 0.0063,
+          "single_wall_occupancy": 0.1437
+        },
+        {
+          "wave": 4,
+          "captures": 740,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.0635
+        },
+        {
+          "wave": 5,
+          "captures": 856,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.0946
+        },
+        {
+          "wave": 6,
+          "captures": 941,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.1084
+        },
+        {
+          "wave": 7,
+          "captures": 1040,
+          "corner_occupancy": 0.0096,
+          "single_wall_occupancy": 0.3173
+        },
+        {
+          "wave": 8,
+          "captures": 1140,
+          "corner_occupancy": 0.0465,
+          "single_wall_occupancy": 0.3184
+        },
+        {
+          "wave": 9,
+          "captures": 1252,
+          "corner_occupancy": 0.0503,
+          "single_wall_occupancy": 0.2684
+        },
+        {
+          "wave": 10,
+          "captures": 955,
+          "corner_occupancy": 0.222,
+          "single_wall_occupancy": 0.7194
+        }
+      ],
+      "overall_corner_occupancy": 0.04,
+      "overall_single_wall_occupancy": 0.2444
+    },
+    {
+      "run_id": "run_1784802191_76892",
+      "result": "defeat",
+      "last_wave": 20,
+      "captures": 20568,
+      "waves_reached": 20,
+      "damage_events": 12,
+      "damage_amount_total": 183.0,
+      "collection_assist_purchases": [
+        {
+          "item_id": "item_baby_elephant",
+          "wave": 11,
+          "reasons": [
+            "tag:pickup"
+          ]
+        },
+        {
+          "item_id": "item_alien_tongue",
+          "wave": 14,
+          "reasons": [
+            "effect:pickup_range",
+            "tag:pickup"
+          ]
+        }
+      ],
+      "collection_assist_purchase_count": 2,
+      "per_wave_occupancy": [
+        {
+          "wave": 1,
+          "captures": 440,
+          "corner_occupancy": 0.0068,
+          "single_wall_occupancy": 0.2159
+        },
+        {
+          "wave": 2,
+          "captures": 546,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.0476
+        },
+        {
+          "wave": 3,
+          "captures": 640,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.1484
+        },
+        {
+          "wave": 4,
+          "captures": 746,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.0684
+        },
+        {
+          "wave": 5,
+          "captures": 840,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.1107
+        },
+        {
+          "wave": 6,
+          "captures": 945,
+          "corner_occupancy": 0.0042,
+          "single_wall_occupancy": 0.1196
+        },
+        {
+          "wave": 7,
+          "captures": 1041,
+          "corner_occupancy": 0.0096,
+          "single_wall_occupancy": 0.2277
+        },
+        {
+          "wave": 8,
+          "captures": 1140,
+          "corner_occupancy": 0.0026,
+          "single_wall_occupancy": 0.1833
+        },
+        {
+          "wave": 9,
+          "captures": 1251,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.0128
+        },
+        {
+          "wave": 10,
+          "captures": 1245,
+          "corner_occupancy": 0.2916,
+          "single_wall_occupancy": 0.5799
+        },
+        {
+          "wave": 11,
+          "captures": 1251,
+          "corner_occupancy": 0.0032,
+          "single_wall_occupancy": 0.1687
+        },
+        {
+          "wave": 12,
+          "captures": 1246,
+          "corner_occupancy": 0.0056,
+          "single_wall_occupancy": 0.1798
+        },
+        {
+          "wave": 13,
+          "captures": 1246,
+          "corner_occupancy": 0.0265,
+          "single_wall_occupancy": 0.3411
+        },
+        {
+          "wave": 14,
+          "captures": 1240,
+          "corner_occupancy": 0.0185,
+          "single_wall_occupancy": 0.296
+        },
+        {
+          "wave": 15,
+          "captures": 1246,
+          "corner_occupancy": 0.0161,
+          "single_wall_occupancy": 0.4679
+        },
+        {
+          "wave": 16,
+          "captures": 1240,
+          "corner_occupancy": 0.0129,
+          "single_wall_occupancy": 0.1952
+        },
+        {
+          "wave": 17,
+          "captures": 1241,
+          "corner_occupancy": 0.0459,
+          "single_wall_occupancy": 0.78
+        },
+        {
+          "wave": 18,
+          "captures": 1240,
+          "corner_occupancy": 0.0226,
+          "single_wall_occupancy": 0.6145
+        },
+        {
+          "wave": 19,
+          "captures": 1246,
+          "corner_occupancy": 0.0112,
+          "single_wall_occupancy": 0.4599
+        },
+        {
+          "wave": 20,
+          "captures": 538,
+          "corner_occupancy": 0.0056,
+          "single_wall_occupancy": 0.4814
+        }
+      ],
+      "overall_corner_occupancy": 0.0286,
+      "overall_single_wall_occupancy": 0.3049
+    },
+    {
+      "run_id": "run_1784803299_7195",
+      "result": "victory",
+      "last_wave": 20,
+      "captures": 21060,
+      "waves_reached": 20,
+      "damage_events": 4,
+      "damage_amount_total": 40.0,
+      "collection_assist_purchases": [
+        {
+          "item_id": "item_metal_detector",
+          "wave": 9,
+          "reasons": [
+            "tag:pickup"
+          ]
+        },
+        {
+          "item_id": "item_baby_gecko",
+          "wave": 17,
+          "reasons": [
+            "effect:instant_gold_attracting",
+            "tag:pickup"
+          ]
+        },
+        {
+          "item_id": "item_baby_gecko",
+          "wave": 18,
+          "reasons": [
+            "effect:instant_gold_attracting",
+            "tag:pickup"
+          ]
+        }
+      ],
+      "collection_assist_purchase_count": 3,
+      "per_wave_occupancy": [
+        {
+          "wave": 1,
+          "captures": 440,
+          "corner_occupancy": 0.0068,
+          "single_wall_occupancy": 0.0591
+        },
+        {
+          "wave": 2,
+          "captures": 545,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.1229
+        },
+        {
+          "wave": 3,
+          "captures": 641,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.0671
+        },
+        {
+          "wave": 4,
+          "captures": 740,
+          "corner_occupancy": 0.0041,
+          "single_wall_occupancy": 0.1014
+        },
+        {
+          "wave": 5,
+          "captures": 851,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.1116
+        },
+        {
+          "wave": 6,
+          "captures": 941,
+          "corner_occupancy": 0.0446,
+          "single_wall_occupancy": 0.1424
+        },
+        {
+          "wave": 7,
+          "captures": 1040,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.0942
+        },
+        {
+          "wave": 8,
+          "captures": 1151,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.0452
+        },
+        {
+          "wave": 9,
+          "captures": 1246,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.0313
+        },
+        {
+          "wave": 10,
+          "captures": 1251,
+          "corner_occupancy": 0.0176,
+          "single_wall_occupancy": 0.3533
+        },
+        {
+          "wave": 11,
+          "captures": 1245,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.1261
+        },
+        {
+          "wave": 12,
+          "captures": 1240,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.1048
+        },
+        {
+          "wave": 13,
+          "captures": 1240,
+          "corner_occupancy": 0.0032,
+          "single_wall_occupancy": 0.0685
+        },
+        {
+          "wave": 14,
+          "captures": 1246,
+          "corner_occupancy": 0.0064,
+          "single_wall_occupancy": 0.4294
+        },
+        {
+          "wave": 15,
+          "captures": 1245,
+          "corner_occupancy": 0.0016,
+          "single_wall_occupancy": 0.3124
+        },
+        {
+          "wave": 16,
+          "captures": 1241,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.1241
+        },
+        {
+          "wave": 17,
+          "captures": 1240,
+          "corner_occupancy": 0.0242,
+          "single_wall_occupancy": 0.4879
+        },
+        {
+          "wave": 18,
+          "captures": 1240,
+          "corner_occupancy": 0.0419,
+          "single_wall_occupancy": 0.6597
+        },
+        {
+          "wave": 19,
+          "captures": 1240,
+          "corner_occupancy": 0.0306,
+          "single_wall_occupancy": 0.7524
+        },
+        {
+          "wave": 20,
+          "captures": 1037,
+          "corner_occupancy": 0.0029,
+          "single_wall_occupancy": 0.2787
+        }
+      ],
+      "overall_corner_occupancy": 0.0098,
+      "overall_single_wall_occupancy": 0.2453
+    },
+    {
+      "run_id": "run_1784804435_39794",
+      "result": "victory",
+      "last_wave": 20,
+      "captures": 21730,
+      "waves_reached": 20,
+      "damage_events": 8,
+      "damage_amount_total": 95.0,
+      "collection_assist_purchases": [
+        {
+          "item_id": "item_alien_tongue",
+          "wave": 1,
+          "reasons": [
+            "effect:pickup_range",
+            "tag:pickup"
+          ]
+        },
+        {
+          "item_id": "item_baby_gecko",
+          "wave": 6,
+          "reasons": [
+            "effect:instant_gold_attracting",
+            "tag:pickup"
+          ]
+        },
+        {
+          "item_id": "item_lootworm",
+          "wave": 7,
+          "reasons": [
+            "tag:pickup"
+          ]
+        },
+        {
+          "item_id": "item_baby_gecko",
+          "wave": 11,
+          "reasons": [
+            "effect:instant_gold_attracting",
+            "tag:pickup"
+          ]
+        },
+        {
+          "item_id": "item_baby_gecko",
+          "wave": 17,
+          "reasons": [
+            "effect:instant_gold_attracting",
+            "tag:pickup"
+          ]
+        },
+        {
+          "item_id": "item_baby_gecko",
+          "wave": 17,
+          "reasons": [
+            "effect:instant_gold_attracting",
+            "tag:pickup"
+          ]
+        }
+      ],
+      "collection_assist_purchase_count": 6,
+      "per_wave_occupancy": [
+        {
+          "wave": 1,
+          "captures": 440,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.0909
+        },
+        {
+          "wave": 2,
+          "captures": 546,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.1044
+        },
+        {
+          "wave": 3,
+          "captures": 640,
+          "corner_occupancy": 0.0234,
+          "single_wall_occupancy": 0.3312
+        },
+        {
+          "wave": 4,
+          "captures": 745,
+          "corner_occupancy": 0.0188,
+          "single_wall_occupancy": 0.1503
+        },
+        {
+          "wave": 5,
+          "captures": 841,
+          "corner_occupancy": 0.0059,
+          "single_wall_occupancy": 0.1082
+        },
+        {
+          "wave": 6,
+          "captures": 940,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.0649
+        },
+        {
+          "wave": 7,
+          "captures": 1045,
+          "corner_occupancy": 0.0124,
+          "single_wall_occupancy": 0.2268
+        },
+        {
+          "wave": 8,
+          "captures": 1140,
+          "corner_occupancy": 0.0035,
+          "single_wall_occupancy": 0.1351
+        },
+        {
+          "wave": 9,
+          "captures": 1252,
+          "corner_occupancy": 0.02,
+          "single_wall_occupancy": 0.1581
+        },
+        {
+          "wave": 10,
+          "captures": 1245,
+          "corner_occupancy": 0.0466,
+          "single_wall_occupancy": 0.3711
+        },
+        {
+          "wave": 11,
+          "captures": 1246,
+          "corner_occupancy": 0.0008,
+          "single_wall_occupancy": 0.1549
+        },
+        {
+          "wave": 12,
+          "captures": 1246,
+          "corner_occupancy": 0.0072,
+          "single_wall_occupancy": 0.1966
+        },
+        {
+          "wave": 13,
+          "captures": 1251,
+          "corner_occupancy": 0.0016,
+          "single_wall_occupancy": 0.2606
+        },
+        {
+          "wave": 14,
+          "captures": 1251,
+          "corner_occupancy": 0.0008,
+          "single_wall_occupancy": 0.1743
+        },
+        {
+          "wave": 15,
+          "captures": 1246,
+          "corner_occupancy": 0.012,
+          "single_wall_occupancy": 0.439
+        },
+        {
+          "wave": 16,
+          "captures": 1246,
+          "corner_occupancy": 0.0024,
+          "single_wall_occupancy": 0.1356
+        },
+        {
+          "wave": 17,
+          "captures": 1241,
+          "corner_occupancy": 0.0073,
+          "single_wall_occupancy": 0.3465
+        },
+        {
+          "wave": 18,
+          "captures": 1245,
+          "corner_occupancy": 0.0129,
+          "single_wall_occupancy": 0.4482
+        },
+        {
+          "wave": 19,
+          "captures": 1246,
+          "corner_occupancy": 0.0169,
+          "single_wall_occupancy": 0.4591
+        },
+        {
+          "wave": 20,
+          "captures": 1678,
+          "corner_occupancy": 0.0006,
+          "single_wall_occupancy": 0.1919
+        }
+      ],
+      "overall_corner_occupancy": 0.0098,
+      "overall_single_wall_occupancy": 0.2395
+    },
+    {
+      "run_id": "run_1784805636_10804",
+      "result": "victory",
+      "last_wave": 20,
+      "captures": 21845,
+      "waves_reached": 20,
+      "damage_events": 7,
+      "damage_amount_total": 113.0,
+      "collection_assist_purchases": [],
+      "collection_assist_purchase_count": 0,
+      "per_wave_occupancy": [
+        {
+          "wave": 1,
+          "captures": 440,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.1227
+        },
+        {
+          "wave": 2,
+          "captures": 545,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.0275
+        },
+        {
+          "wave": 3,
+          "captures": 646,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.0929
+        },
+        {
+          "wave": 4,
+          "captures": 741,
+          "corner_occupancy": 0.0081,
+          "single_wall_occupancy": 0.1201
+        },
+        {
+          "wave": 5,
+          "captures": 845,
+          "corner_occupancy": 0.0024,
+          "single_wall_occupancy": 0.0828
+        },
+        {
+          "wave": 6,
+          "captures": 940,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.1106
+        },
+        {
+          "wave": 7,
+          "captures": 1051,
+          "corner_occupancy": 0.0038,
+          "single_wall_occupancy": 0.1931
+        },
+        {
+          "wave": 8,
+          "captures": 1151,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.099
+        },
+        {
+          "wave": 9,
+          "captures": 1251,
+          "corner_occupancy": 0.0024,
+          "single_wall_occupancy": 0.1599
+        },
+        {
+          "wave": 10,
+          "captures": 1240,
+          "corner_occupancy": 0.3581,
+          "single_wall_occupancy": 0.6702
+        },
+        {
+          "wave": 11,
+          "captures": 1241,
+          "corner_occupancy": 0.0411,
+          "single_wall_occupancy": 0.444
+        },
+        {
+          "wave": 12,
+          "captures": 1251,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.2174
+        },
+        {
+          "wave": 13,
+          "captures": 1240,
+          "corner_occupancy": 0.0137,
+          "single_wall_occupancy": 0.3444
+        },
+        {
+          "wave": 14,
+          "captures": 1251,
+          "corner_occupancy": 0.004,
+          "single_wall_occupancy": 0.3293
+        },
+        {
+          "wave": 15,
+          "captures": 1241,
+          "corner_occupancy": 0.0105,
+          "single_wall_occupancy": 0.3175
+        },
+        {
+          "wave": 16,
+          "captures": 1245,
+          "corner_occupancy": 0.0,
+          "single_wall_occupancy": 0.159
+        },
+        {
+          "wave": 17,
+          "captures": 1240,
+          "corner_occupancy": 0.0581,
+          "single_wall_occupancy": 0.5887
+        },
+        {
+          "wave": 18,
+          "captures": 1246,
+          "corner_occupancy": 0.0369,
+          "single_wall_occupancy": 0.5425
+        },
+        {
+          "wave": 19,
+          "captures": 1240,
+          "corner_occupancy": 0.0323,
+          "single_wall_occupancy": 0.6621
+        },
+        {
+          "wave": 20,
+          "captures": 1800,
+          "corner_occupancy": 0.0011,
+          "single_wall_occupancy": 0.2878
+        }
+      ],
+      "overall_corner_occupancy": 0.0323,
+      "overall_single_wall_occupancy": 0.3085
+    }
+  ]
+}

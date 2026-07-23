@@ -1,0 +1,152 @@
+{
+  "schema_version": 1,
+  "status": "complete",
+  "target_runs": 20,
+  "completed_runs": 20,
+  "capture_schema_hash": "95B6444796A21FD44E94113B75BA2097BC381D5F72ED784F9B9A4A99DD46D951",
+  "policy_version": "teacher_v1-0.1.122-gun-wp1",
+  "mod_version": "0.2.30-wp2-capture",
+  "results": [
+    {
+      "run_id": "run_1784785556_51395",
+      "result": "victory",
+      "last_wave": 20,
+      "duration_ms": 1166007,
+      "damage_taken": 105
+    },
+    {
+      "run_id": "run_1784786723_17546",
+      "result": "defeat",
+      "last_wave": 17,
+      "duration_ms": 963395,
+      "damage_taken": 222
+    },
+    {
+      "run_id": "run_1784787688_32406",
+      "result": "victory",
+      "last_wave": 20,
+      "duration_ms": 1227650,
+      "damage_taken": 166
+    },
+    {
+      "run_id": "run_1784788917_7315",
+      "result": "defeat",
+      "last_wave": 20,
+      "duration_ms": 1144458,
+      "damage_taken": 237
+    },
+    {
+      "run_id": "run_1784790063_90333",
+      "result": "defeat",
+      "last_wave": 20,
+      "duration_ms": 1150073,
+      "damage_taken": 55
+    },
+    {
+      "run_id": "run_1784791214_74323",
+      "result": "defeat",
+      "last_wave": 17,
+      "duration_ms": 963702,
+      "damage_taken": 62
+    },
+    {
+      "run_id": "run_1784792179_82981",
+      "result": "defeat",
+      "last_wave": 10,
+      "duration_ms": 471976,
+      "damage_taken": 50
+    },
+    {
+      "run_id": "run_1784792652_7723",
+      "result": "victory",
+      "last_wave": 20,
+      "duration_ms": 1178985,
+      "damage_taken": 112
+    },
+    {
+      "run_id": "run_1784793833_32034",
+      "result": "defeat",
+      "last_wave": 17,
+      "duration_ms": 949818,
+      "damage_taken": 116
+    },
+    {
+      "run_id": "run_1784794784_69267",
+      "result": "victory",
+      "last_wave": 20,
+      "duration_ms": 1142038,
+      "damage_taken": 22
+    },
+    {
+      "run_id": "run_1784795927_93597",
+      "result": "victory",
+      "last_wave": 20,
+      "duration_ms": 1153492,
+      "damage_taken": 191
+    },
+    {
+      "run_id": "run_1784797082_83949",
+      "result": "victory",
+      "last_wave": 20,
+      "duration_ms": 1165919,
+      "damage_taken": 75
+    },
+    {
+      "run_id": "run_1784798249_41022",
+      "result": "victory",
+      "last_wave": 20,
+      "duration_ms": 1153448,
+      "damage_taken": 56
+    },
+    {
+      "run_id": "run_1784799404_80018",
+      "result": "defeat",
+      "last_wave": 20,
+      "duration_ms": 1155692,
+      "damage_taken": 135
+    },
+    {
+      "run_id": "run_1784800561_47448",
+      "result": "victory",
+      "last_wave": 20,
+      "duration_ms": 1153676,
+      "damage_taken": 27
+    },
+    {
+      "run_id": "run_1784801716_88465",
+      "result": "defeat",
+      "last_wave": 10,
+      "duration_ms": 474467,
+      "damage_taken": 52
+    },
+    {
+      "run_id": "run_1784802191_76892",
+      "result": "defeat",
+      "last_wave": 20,
+      "duration_ms": 1106041,
+      "damage_taken": 183
+    },
+    {
+      "run_id": "run_1784803299_7195",
+      "result": "victory",
+      "last_wave": 20,
+      "duration_ms": 1135402,
+      "damage_taken": 40
+    },
+    {
+      "run_id": "run_1784804435_39794",
+      "result": "victory",
+      "last_wave": 20,
+      "duration_ms": 1198836,
+      "damage_taken": 95
+    },
+    {
+      "run_id": "run_1784805636_10804",
+      "result": "victory",
+      "last_wave": 20,
+      "duration_ms": 1181769,
+      "damage_taken": 113
+    }
+  ],
+  "completed_at": "2026-07-23T11:40:18.292553+00:00"
+}
