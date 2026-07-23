@@ -123,17 +123,17 @@ def test_v64_blood_donation_is_vetoed_for_gate_reliability():
     assert '"item_blood_donation": {"never": true}' in requirement_block
 
 
-def test_wp2_capture_build_versions_the_v119_loot_stall_policy():
+def test_wp2_capture_build_versions_the_v120_calibrated_collection_policy():
     manifest = MANIFEST.read_text(encoding="utf-8")
     controller = CONTROLLER.read_text(encoding="utf-8")
     telemetry = TELEMETRY.read_text(encoding="utf-8")
 
-    assert '"version_number": "0.2.27"' in manifest
-    assert "v119 deterministic teacher" in manifest
-    assert controller.count("teacher_v1-0.1.119-gun-wp1") == 1
-    assert controller.count("0.2.27-wp2-capture") == 1
-    assert telemetry.count("teacher_v1-0.1.119-gun-wp1") == 1
-    assert telemetry.count("0.2.27-wp2-capture") == 1
+    assert '"version_number": "0.2.28"' in manifest
+    assert "v120 deterministic teacher" in manifest
+    assert controller.count("teacher_v1-0.1.120-gun-wp1") == 1
+    assert controller.count("0.2.28-wp2-capture") == 1
+    assert telemetry.count("teacher_v1-0.1.120-gun-wp1") == 1
+    assert telemetry.count("0.2.28-wp2-capture") == 1
 
 
 def test_v84_item_audit_and_conditional_effect_corrections():
@@ -1136,9 +1136,9 @@ def test_v119_stall_trigger_and_loot_biased_strafe():
     config = CONFIG.read_text(encoding="utf-8")
     potential = POTENTIAL_FIELD.read_text(encoding="utf-8")
 
-    assert "const LOOT_DASH_STALL_COUNT := 30" in config
-    assert "const ENGAGE_STRAFE_LOOT_WEIGHT := 6.0" in config
-    assert "const ENGAGE_STRAFE_LOOT_CAP := 1.0" in config
+    assert "const LOOT_DASH_STALL_COUNT := 12" in config
+    assert "const ENGAGE_STRAFE_LOOT_WEIGHT := 4.0" in config
+    assert "const ENGAGE_STRAFE_LOOT_CAP := 0.35" in config
 
     dash = potential.split("func _apply_loot_dash", 1)[1].split(
         "func _reset_finale_commit", 1
@@ -1172,7 +1172,7 @@ def test_v118_loot_dash_is_bounded_hp_gated_and_window_tested():
     potential = POTENTIAL_FIELD.read_text(encoding="utf-8")
 
     for declaration in (
-        "const LOOT_DASH_MIN_PILE := 10",
+        "const LOOT_DASH_MIN_PILE := 5",
         "const LOOT_DASH_MIN_HP_RATIO := 0.5",
         "const LOOT_DASH_WINDOW_CLEARANCE := 45.0",
         "const LOOT_DASH_MAX_TICKS := 72",

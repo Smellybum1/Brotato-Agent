@@ -328,12 +328,19 @@ const ESCAPE_PANIC_CLEARANCE := 55.0
 # only the body-clearance preference tier drops to the 45-unit contact floor.
 const LOOT_DASH_SCAN_RADIUS := 420.0
 const LOOT_DASH_CLUSTER_RADIUS := 130.0
-const LOOT_DASH_MIN_PILE := 10
+const LOOT_DASH_MIN_PILE := 5
 const LOOT_DASH_MIN_HP_RATIO := 0.5
 const LOOT_DASH_WINDOW_CLEARANCE := 45.0
 const LOOT_DASH_MAX_TICKS := 72        # 60 Hz decisions: ~1.2 s commit
 const LOOT_DASH_COOLDOWN_TICKS := 180  # ~3 s between dashes
 const LOOT_DASH_ARRIVE_RADIUS := 60.0
+# v120: calibrated against v119 smoke run_1784779931_16883 (waves 6-10):
+# materials within 420 units of the player peak at p90 11 / max 23 and the
+# best 130-unit cluster at p90 7 - the original 30-stall and 10-pile gates
+# never fired. The strafe bonus cap must sit below one close flank enemy
+# (~0.32) and the 0.55 continuity band so it only breaks genuine near-ties;
+# 1.0 could out-vote real enemy pressure and is implicated in the wave-10
+# defeat of the v119 smoke.
 # v119: wave-10 live evidence (run_1784778591_87017) showed 19-50 materials on
 # the ground with unblocked piles 176 units away while density stayed below
 # PACK_DENSITY_SOFT, so the v118 dash never armed and the ordinary field kept
@@ -341,9 +348,9 @@ const LOOT_DASH_ARRIVE_RADIUS := 60.0
 # has stalled: arm the dash on it regardless of density, and bias the strafe
 # orbit toward the currency-bearing flank (bounded so enemy pressure and wall
 # openness still dominate).
-const LOOT_DASH_STALL_COUNT := 30
-const ENGAGE_STRAFE_LOOT_WEIGHT := 6.0
-const ENGAGE_STRAFE_LOOT_CAP := 1.0
+const LOOT_DASH_STALL_COUNT := 12
+const ENGAGE_STRAFE_LOOT_WEIGHT := 4.0
+const ENGAGE_STRAFE_LOOT_CAP := 0.35
 const ESCAPE_WALL_MARGIN := 90.0
 const ESCAPE_WALL_PENALTY := 250.0
 const ESCAPE_ALIGN_BONUS := 14.0

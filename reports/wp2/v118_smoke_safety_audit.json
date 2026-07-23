@@ -1,0 +1,1306 @@
+{
+  "run_count": 1,
+  "accepted_run_count": 1,
+  "violation_count": 0,
+  "runs": [
+    {
+      "run_id": "run_1784778591_87017",
+      "policy_version": "teacher_v1-0.1.118-gun-wp1",
+      "mod_version": "0.2.26-wp2-capture",
+      "result": "victory",
+      "last_wave": 20,
+      "telemetry_complete": true,
+      "summary_errors": 0,
+      "summary_hangs": 0,
+      "summary_illegal_actions": 0,
+      "terminal_valid": true,
+      "event_count": 22933,
+      "capture_count": 20474,
+      "waves_represented": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "late_capture_count": 4150,
+      "fresh_capture_count": 20474,
+      "fresh_late_capture_count": 4150,
+      "body_diagnostic_capture_count": 18119,
+      "active_body_repairs": 7798,
+      "active_body_emergencies": 1,
+      "active_projectile_safety": 892,
+      "active_wall_recovery": 2579,
+      "active_wall_body_relief": 1188,
+      "malformed_lines": [],
+      "identity_violations": [],
+      "summary_violations": [],
+      "telemetry_error_events": 0,
+      "body_tier_violations": [],
+      "body_repair_violations": [],
+      "body_diagnostic_mismatches": [],
+      "missing_body_diagnostic_captures": [],
+      "unavailable_projectile_floor_samples": [
+        {
+          "capture_seq": 16600,
+          "floor": 462.971558,
+          "preserved_body_clearance": 550.784851
+        },
+        {
+          "capture_seq": 16601,
+          "floor": 458.322266,
+          "preserved_body_clearance": 525.572021
+        },
+        {
+          "capture_seq": 16602,
+          "floor": 453.563171,
+          "preserved_body_clearance": 502.651855
+        },
+        {
+          "capture_seq": 16603,
+          "floor": 448.70697,
+          "preserved_body_clearance": 481.884979
+        },
+        {
+          "capture_seq": 16604,
+          "floor": 443.747162,
+          "preserved_body_clearance": 463.529999
+        },
+        {
+          "capture_seq": 16608,
+          "floor": 429.699036,
+          "preserved_body_clearance": 687.801392
+        },
+        {
+          "capture_seq": 16609,
+          "floor": 431.31601,
+          "preserved_body_clearance": 695.614319
+        },
+        {
+          "capture_seq": 16610,
+          "floor": 434.585846,
+          "preserved_body_clearance": 702.815979
+        },
+        {
+          "capture_seq": 16611,
+          "floor": 437.993744,
+          "preserved_body_clearance": 710.025818
+        },
+        {
+          "capture_seq": 16612,
+          "floor": 441.478119,
+          "preserved_body_clearance": 717.253052
+        },
+        {
+          "capture_seq": 16708,
+          "floor": 720.966736,
+          "preserved_body_clearance": 245.84815
+        },
+        {
+          "capture_seq": 17229,
+          "floor": 615.967407,
+          "preserved_body_clearance": 278.809301
+        },
+        {
+          "capture_seq": 17230,
+          "floor": 597.34436,
+          "preserved_body_clearance": 264.267065
+        },
+        {
+          "capture_seq": 17239,
+          "floor": 648.704468,
+          "preserved_body_clearance": 140.23851
+        },
+        {
+          "capture_seq": 17242,
+          "floor": 625.445496,
+          "preserved_body_clearance": 105.628035
+        },
+        {
+          "capture_seq": 17244,
+          "floor": 616.097656,
+          "preserved_body_clearance": 236.268652
+        },
+        {
+          "capture_seq": 17245,
+          "floor": 593.484253,
+          "preserved_body_clearance": 71.627785
+        },
+        {
+          "capture_seq": 17266,
+          "floor": 625.989746,
+          "preserved_body_clearance": 580.492193
+        },
+        {
+          "capture_seq": 17267,
+          "floor": 559.771179,
+          "preserved_body_clearance": 443.68067
+        },
+        {
+          "capture_seq": 17268,
+          "floor": 559.57489,
+          "preserved_body_clearance": 457.338171
+        },
+        {
+          "capture_seq": 17269,
+          "floor": 630.063599,
+          "preserved_body_clearance": 588.875982
+        },
+        {
+          "capture_seq": 17270,
+          "floor": 559.925354,
+          "preserved_body_clearance": 358.369909
+        },
+        {
+          "capture_seq": 17274,
+          "floor": 467.498047,
+          "preserved_body_clearance": 171.093512
+        },
+        {
+          "capture_seq": 17276,
+          "floor": 684.97876,
+          "preserved_body_clearance": 385.285254
+        },
+        {
+          "capture_seq": 17277,
+          "floor": 681.195496,
+          "preserved_body_clearance": 356.56214
+        },
+        {
+          "capture_seq": 17280,
+          "floor": 476.636963,
+          "preserved_body_clearance": 502.610907
+        },
+        {
+          "capture_seq": 17281,
+          "floor": 467.52179,
+          "preserved_body_clearance": 151.846624
+        },
+        {
+          "capture_seq": 17282,
+          "floor": 429.765686,
+          "preserved_body_clearance": 136.437506
+        },
+        {
+          "capture_seq": 17284,
+          "floor": 414.325928,
+          "preserved_body_clearance": 123.454672
+        },
+        {
+          "capture_seq": 17285,
+          "floor": 385.099731,
+          "preserved_body_clearance": 105.994917
+        },
+        {
+          "capture_seq": 17286,
+          "floor": 309.732117,
+          "preserved_body_clearance": 450.1005
+        },
+        {
+          "capture_seq": 17287,
+          "floor": 344.767792,
+          "preserved_body_clearance": 90.394705
+        },
+        {
+          "capture_seq": 17291,
+          "floor": 318.884918,
+          "preserved_body_clearance": 110.265341
+        },
+        {
+          "capture_seq": 17292,
+          "floor": 287.207153,
+          "preserved_body_clearance": 106.204588
+        },
+        {
+          "capture_seq": 17293,
+          "floor": 255.947998,
+          "preserved_body_clearance": 101.96472
+        },
+        {
+          "capture_seq": 17294,
+          "floor": 219.830231,
+          "preserved_body_clearance": 93.085493
+        },
+        {
+          "capture_seq": 17340,
+          "floor": 530.482117,
+          "preserved_body_clearance": 253.687933
+        },
+        {
+          "capture_seq": 17346,
+          "floor": 543.678223,
+          "preserved_body_clearance": 336.955902
+        },
+        {
+          "capture_seq": 17347,
+          "floor": 480.060059,
+          "preserved_body_clearance": 68.980459
+        },
+        {
+          "capture_seq": 17348,
+          "floor": 597.920471,
+          "preserved_body_clearance": 393.875427
+        },
+        {
+          "capture_seq": 17350,
+          "floor": 560.414673,
+          "preserved_body_clearance": 154.217697
+        },
+        {
+          "capture_seq": 17351,
+          "floor": 542.211121,
+          "preserved_body_clearance": 115.558722
+        },
+        {
+          "capture_seq": 17352,
+          "floor": 530.459534,
+          "preserved_body_clearance": 103.633627
+        },
+        {
+          "capture_seq": 17353,
+          "floor": 525.55603,
+          "preserved_body_clearance": 51.62294
+        },
+        {
+          "capture_seq": 17354,
+          "floor": 462.240112,
+          "preserved_body_clearance": 250.949072
+        },
+        {
+          "capture_seq": 17355,
+          "floor": 520.33551,
+          "preserved_body_clearance": 191.890615
+        },
+        {
+          "capture_seq": 17356,
+          "floor": 526.620972,
+          "preserved_body_clearance": 191.062017
+        },
+        {
+          "capture_seq": 17357,
+          "floor": 528.100098,
+          "preserved_body_clearance": 99.192312
+        },
+        {
+          "capture_seq": 17358,
+          "floor": 528.100037,
+          "preserved_body_clearance": 95.012007
+        },
+        {
+          "capture_seq": 17363,
+          "floor": 464.924866,
+          "preserved_body_clearance": 151.839315
+        },
+        {
+          "capture_seq": 17374,
+          "floor": 418.535736,
+          "preserved_body_clearance": 24.348246
+        },
+        {
+          "capture_seq": 17379,
+          "floor": 387.805878,
+          "preserved_body_clearance": 75.568365
+        },
+        {
+          "capture_seq": 17380,
+          "floor": 422.591644,
+          "preserved_body_clearance": 0.36004
+        },
+        {
+          "capture_seq": 17390,
+          "floor": 396.373932,
+          "preserved_body_clearance": 102.299673
+        },
+        {
+          "capture_seq": 17393,
+          "floor": 341.378052,
+          "preserved_body_clearance": 124.078329
+        },
+        {
+          "capture_seq": 17395,
+          "floor": 366.169617,
+          "preserved_body_clearance": 210.289871
+        },
+        {
+          "capture_seq": 17397,
+          "floor": 348.820496,
+          "preserved_body_clearance": 56.52874
+        },
+        {
+          "capture_seq": 17398,
+          "floor": 321.107239,
+          "preserved_body_clearance": 218.53891
+        },
+        {
+          "capture_seq": 17399,
+          "floor": 342.889587,
+          "preserved_body_clearance": 224.069464
+        },
+        {
+          "capture_seq": 17465,
+          "floor": 351.224396,
+          "preserved_body_clearance": 124.866873
+        },
+        {
+          "capture_seq": 17469,
+          "floor": 331.498871,
+          "preserved_body_clearance": 117.090139
+        },
+        {
+          "capture_seq": 17470,
+          "floor": 303.425354,
+          "preserved_body_clearance": 34.418022
+        },
+        {
+          "capture_seq": 17516,
+          "floor": 666.055847,
+          "preserved_body_clearance": 238.706152
+        },
+        {
+          "capture_seq": 17517,
+          "floor": 657.076233,
+          "preserved_body_clearance": 365.539343
+        },
+        {
+          "capture_seq": 17518,
+          "floor": 645.823975,
+          "preserved_body_clearance": 102.230858
+        },
+        {
+          "capture_seq": 17519,
+          "floor": 627.545837,
+          "preserved_body_clearance": 328.615942
+        },
+        {
+          "capture_seq": 17520,
+          "floor": 611.97937,
+          "preserved_body_clearance": 297.342834
+        },
+        {
+          "capture_seq": 17521,
+          "floor": 578.190979,
+          "preserved_body_clearance": 195.757782
+        },
+        {
+          "capture_seq": 17522,
+          "floor": 641.992432,
+          "preserved_body_clearance": 501.027777
+        },
+        {
+          "capture_seq": 17523,
+          "floor": 538.116821,
+          "preserved_body_clearance": 443.747107
+        },
+        {
+          "capture_seq": 17524,
+          "floor": 527.786255,
+          "preserved_body_clearance": 166.803732
+        },
+        {
+          "capture_seq": 18118,
+          "floor": 438.212341,
+          "preserved_body_clearance": 321.195618
+        },
+        {
+          "capture_seq": 18120,
+          "floor": 425.018463,
+          "preserved_body_clearance": 423.86734
+        },
+        {
+          "capture_seq": 18123,
+          "floor": 368.845703,
+          "preserved_body_clearance": 460.013306
+        },
+        {
+          "capture_seq": 18124,
+          "floor": 367.440613,
+          "preserved_body_clearance": 443.432648
+        },
+        {
+          "capture_seq": 18125,
+          "floor": 366.946655,
+          "preserved_body_clearance": 455.791168
+        },
+        {
+          "capture_seq": 18126,
+          "floor": 366.946625,
+          "preserved_body_clearance": 444.953247
+        },
+        {
+          "capture_seq": 18277,
+          "floor": 358.785706,
+          "preserved_body_clearance": 206.33783
+        },
+        {
+          "capture_seq": 18278,
+          "floor": 265.638458,
+          "preserved_body_clearance": 48.727047
+        },
+        {
+          "capture_seq": 18279,
+          "floor": 251.46991,
+          "preserved_body_clearance": 51.792938
+        },
+        {
+          "capture_seq": 18280,
+          "floor": 251.469635,
+          "preserved_body_clearance": 374.045837
+        },
+        {
+          "capture_seq": 18281,
+          "floor": 249.228333,
+          "preserved_body_clearance": 375.350433
+        },
+        {
+          "capture_seq": 18282,
+          "floor": 222.275574,
+          "preserved_body_clearance": 314.145874
+        },
+        {
+          "capture_seq": 18283,
+          "floor": 222.27533,
+          "preserved_body_clearance": 309.94577
+        },
+        {
+          "capture_seq": 18284,
+          "floor": 218.184357,
+          "preserved_body_clearance": 309.090179
+        },
+        {
+          "capture_seq": 18285,
+          "floor": 214.093414,
+          "preserved_body_clearance": 308.311249
+        },
+        {
+          "capture_seq": 18329,
+          "floor": 725.337036,
+          "preserved_body_clearance": 176.946991
+        },
+        {
+          "capture_seq": 18331,
+          "floor": 675.176819,
+          "preserved_body_clearance": 201.026764
+        },
+        {
+          "capture_seq": 18332,
+          "floor": 662.665161,
+          "preserved_body_clearance": 109.430618
+        },
+        {
+          "capture_seq": 18333,
+          "floor": 634.538086,
+          "preserved_body_clearance": 320.077957
+        },
+        {
+          "capture_seq": 18334,
+          "floor": 639.710205,
+          "preserved_body_clearance": 284.247391
+        },
+        {
+          "capture_seq": 18335,
+          "floor": 616.807861,
+          "preserved_body_clearance": 316.241592
+        },
+        {
+          "capture_seq": 18336,
+          "floor": 633.212219,
+          "preserved_body_clearance": -11.31106
+        },
+        {
+          "capture_seq": 18337,
+          "floor": 619.793945,
+          "preserved_body_clearance": 125.814941
+        },
+        {
+          "capture_seq": 18338,
+          "floor": 499.831116,
+          "preserved_body_clearance": 459.880341
+        },
+        {
+          "capture_seq": 18341,
+          "floor": 529.572876,
+          "preserved_body_clearance": 513.664734
+        },
+        {
+          "capture_seq": 18342,
+          "floor": 485.073303,
+          "preserved_body_clearance": 471.379364
+        },
+        {
+          "capture_seq": 18348,
+          "floor": 562.491699,
+          "preserved_body_clearance": 636.533508
+        },
+        {
+          "capture_seq": 18354,
+          "floor": 341.222839,
+          "preserved_body_clearance": 163.481842
+        },
+        {
+          "capture_seq": 18355,
+          "floor": 322.313049,
+          "preserved_body_clearance": 123.34256
+        },
+        {
+          "capture_seq": 18356,
+          "floor": 319.271484,
+          "preserved_body_clearance": 586.932739
+        },
+        {
+          "capture_seq": 18357,
+          "floor": 344.255615,
+          "preserved_body_clearance": 603.946777
+        },
+        {
+          "capture_seq": 18358,
+          "floor": 368.048889,
+          "preserved_body_clearance": 613.947021
+        },
+        {
+          "capture_seq": 18359,
+          "floor": 357.820313,
+          "preserved_body_clearance": 612.593079
+        },
+        {
+          "capture_seq": 18360,
+          "floor": 347.651855,
+          "preserved_body_clearance": 320.335556
+        },
+        {
+          "capture_seq": 18361,
+          "floor": 310.281006,
+          "preserved_body_clearance": 134.90097
+        },
+        {
+          "capture_seq": 18362,
+          "floor": 293.246582,
+          "preserved_body_clearance": 157.264343
+        },
+        {
+          "capture_seq": 18363,
+          "floor": 276.115295,
+          "preserved_body_clearance": 138.412354
+        },
+        {
+          "capture_seq": 18364,
+          "floor": 243.973541,
+          "preserved_body_clearance": 130.233734
+        },
+        {
+          "capture_seq": 18365,
+          "floor": 237.30838,
+          "preserved_body_clearance": 345.480408
+        },
+        {
+          "capture_seq": 18366,
+          "floor": 232.7276,
+          "preserved_body_clearance": 345.785095
+        },
+        {
+          "capture_seq": 18367,
+          "floor": 232.727509,
+          "preserved_body_clearance": 353.222717
+        },
+        {
+          "capture_seq": 18368,
+          "floor": 232.727386,
+          "preserved_body_clearance": 378.719177
+        },
+        {
+          "capture_seq": 18391,
+          "floor": 186.978867,
+          "preserved_body_clearance": 482.057404
+        },
+        {
+          "capture_seq": 18393,
+          "floor": 188.712021,
+          "preserved_body_clearance": 334.998123
+        },
+        {
+          "capture_seq": 18394,
+          "floor": 187.36145,
+          "preserved_body_clearance": 181.149826
+        },
+        {
+          "capture_seq": 18420,
+          "floor": 180.361328,
+          "preserved_body_clearance": 46.346825
+        },
+        {
+          "capture_seq": 18422,
+          "floor": 193.763641,
+          "preserved_body_clearance": 126.358231
+        },
+        {
+          "capture_seq": 18482,
+          "floor": 857.270569,
+          "preserved_body_clearance": 557.998169
+        },
+        {
+          "capture_seq": 18486,
+          "floor": 782.928772,
+          "preserved_body_clearance": 445.621857
+        },
+        {
+          "capture_seq": 18488,
+          "floor": 408.531921,
+          "preserved_body_clearance": 177.782913
+        },
+        {
+          "capture_seq": 18489,
+          "floor": 428.382843,
+          "preserved_body_clearance": 483.713287
+        },
+        {
+          "capture_seq": 18490,
+          "floor": 427.243164,
+          "preserved_body_clearance": 386.014862
+        },
+        {
+          "capture_seq": 18491,
+          "floor": 426.180511,
+          "preserved_body_clearance": 386.143738
+        },
+        {
+          "capture_seq": 18492,
+          "floor": 425.094818,
+          "preserved_body_clearance": 353.166962
+        },
+        {
+          "capture_seq": 18493,
+          "floor": 423.8927,
+          "preserved_body_clearance": 404.216278
+        },
+        {
+          "capture_seq": 18494,
+          "floor": 422.863586,
+          "preserved_body_clearance": 413.179199
+        },
+        {
+          "capture_seq": 18499,
+          "floor": 363.331268,
+          "preserved_body_clearance": 86.722275
+        },
+        {
+          "capture_seq": 18500,
+          "floor": 363.331238,
+          "preserved_body_clearance": 83.656265
+        },
+        {
+          "capture_seq": 18530,
+          "floor": 414.681213,
+          "preserved_body_clearance": 451.767044
+        },
+        {
+          "capture_seq": 18531,
+          "floor": 423.212769,
+          "preserved_body_clearance": 452.243027
+        },
+        {
+          "capture_seq": 18532,
+          "floor": 430.352203,
+          "preserved_body_clearance": 453.826645
+        },
+        {
+          "capture_seq": 18533,
+          "floor": 446.556976,
+          "preserved_body_clearance": 449.548233
+        },
+        {
+          "capture_seq": 18534,
+          "floor": 459.360107,
+          "preserved_body_clearance": 714.827209
+        },
+        {
+          "capture_seq": 18535,
+          "floor": 346.681183,
+          "preserved_body_clearance": 599.778748
+        },
+        {
+          "capture_seq": 18536,
+          "floor": 346.270233,
+          "preserved_body_clearance": 591.548401
+        },
+        {
+          "capture_seq": 18537,
+          "floor": 346.270142,
+          "preserved_body_clearance": 584.226624
+        },
+        {
+          "capture_seq": 18538,
+          "floor": 346.270081,
+          "preserved_body_clearance": 577.806763
+        },
+        {
+          "capture_seq": 18539,
+          "floor": 346.27005,
+          "preserved_body_clearance": 572.277954
+        },
+        {
+          "capture_seq": 18540,
+          "floor": 313.556,
+          "preserved_body_clearance": 491.103699
+        },
+        {
+          "capture_seq": 18541,
+          "floor": 313.556,
+          "preserved_body_clearance": 482.412933
+        },
+        {
+          "capture_seq": 18583,
+          "floor": 515.585815,
+          "preserved_body_clearance": 448.998718
+        },
+        {
+          "capture_seq": 18584,
+          "floor": 510.786377,
+          "preserved_body_clearance": 449.499939
+        },
+        {
+          "capture_seq": 18643,
+          "floor": 397.143127,
+          "preserved_body_clearance": 581.044495
+        },
+        {
+          "capture_seq": 18644,
+          "floor": 393.761963,
+          "preserved_body_clearance": 577.385559
+        },
+        {
+          "capture_seq": 18645,
+          "floor": 392.243469,
+          "preserved_body_clearance": 574.209534
+        },
+        {
+          "capture_seq": 18646,
+          "floor": 389.220856,
+          "preserved_body_clearance": 581.614685
+        },
+        {
+          "capture_seq": 18652,
+          "floor": 197.977661,
+          "preserved_body_clearance": 286.735138
+        },
+        {
+          "capture_seq": 18673,
+          "floor": 409.834839,
+          "preserved_body_clearance": 443.013275
+        },
+        {
+          "capture_seq": 18674,
+          "floor": 418.585205,
+          "preserved_body_clearance": 446.906525
+        },
+        {
+          "capture_seq": 18675,
+          "floor": 405.859985,
+          "preserved_body_clearance": 449.464054
+        },
+        {
+          "capture_seq": 18676,
+          "floor": 411.565735,
+          "preserved_body_clearance": 456.842381
+        },
+        {
+          "capture_seq": 18677,
+          "floor": 390.344299,
+          "preserved_body_clearance": 153.406998
+        },
+        {
+          "capture_seq": 18678,
+          "floor": 372.69455,
+          "preserved_body_clearance": 216.137329
+        },
+        {
+          "capture_seq": 18679,
+          "floor": 350.337952,
+          "preserved_body_clearance": 456.002701
+        },
+        {
+          "capture_seq": 18680,
+          "floor": 319.765198,
+          "preserved_body_clearance": 557.96199
+        },
+        {
+          "capture_seq": 18681,
+          "floor": 329.898865,
+          "preserved_body_clearance": 569.468155
+        },
+        {
+          "capture_seq": 18682,
+          "floor": 255.58374,
+          "preserved_body_clearance": 301.018234
+        },
+        {
+          "capture_seq": 18683,
+          "floor": 254.211365,
+          "preserved_body_clearance": 269.72757
+        },
+        {
+          "capture_seq": 18684,
+          "floor": 196.794128,
+          "preserved_body_clearance": 177.048813
+        },
+        {
+          "capture_seq": 18688,
+          "floor": 254.96637,
+          "preserved_body_clearance": 165.886002
+        },
+        {
+          "capture_seq": 18719,
+          "floor": 368.740875,
+          "preserved_body_clearance": 407.302231
+        },
+        {
+          "capture_seq": 18723,
+          "floor": 319.123535,
+          "preserved_body_clearance": 46.073013
+        },
+        {
+          "capture_seq": 18724,
+          "floor": 332.405548,
+          "preserved_body_clearance": 301.331894
+        },
+        {
+          "capture_seq": 18725,
+          "floor": 282.276001,
+          "preserved_body_clearance": 424.742523
+        },
+        {
+          "capture_seq": 18727,
+          "floor": 232.980469,
+          "preserved_body_clearance": 408.274933
+        },
+        {
+          "capture_seq": 18729,
+          "floor": 185.943054,
+          "preserved_body_clearance": 163.97945
+        },
+        {
+          "capture_seq": 18730,
+          "floor": 205.270477,
+          "preserved_body_clearance": 499.746525
+        },
+        {
+          "capture_seq": 18733,
+          "floor": 113.883606,
+          "preserved_body_clearance": 351.100037
+        },
+        {
+          "capture_seq": 20308,
+          "floor": 303.324432,
+          "preserved_body_clearance": 345.359039
+        },
+        {
+          "capture_seq": 20309,
+          "floor": 306.956696,
+          "preserved_body_clearance": 368.830658
+        },
+        {
+          "capture_seq": 20310,
+          "floor": 310.915894,
+          "preserved_body_clearance": 392.853699
+        },
+        {
+          "capture_seq": 20311,
+          "floor": 315.174347,
+          "preserved_body_clearance": 417.338715
+        },
+        {
+          "capture_seq": 20312,
+          "floor": 319.742279,
+          "preserved_body_clearance": 442.213593
+        },
+        {
+          "capture_seq": 20313,
+          "floor": 324.603912,
+          "preserved_body_clearance": 451.917358
+        },
+        {
+          "capture_seq": 20314,
+          "floor": 329.748077,
+          "preserved_body_clearance": 461.608612
+        },
+        {
+          "capture_seq": 20315,
+          "floor": 335.164856,
+          "preserved_body_clearance": 471.30603
+        },
+        {
+          "capture_seq": 20316,
+          "floor": 340.844757,
+          "preserved_body_clearance": 476.013489
+        },
+        {
+          "capture_seq": 20317,
+          "floor": 346.737366,
+          "preserved_body_clearance": 476.485474
+        },
+        {
+          "capture_seq": 20318,
+          "floor": 352.853516,
+          "preserved_body_clearance": 500.450317
+        },
+        {
+          "capture_seq": 20319,
+          "floor": 359.143707,
+          "preserved_body_clearance": 509.861877
+        },
+        {
+          "capture_seq": 20320,
+          "floor": 362.384766,
+          "preserved_body_clearance": 519.436279
+        },
+        {
+          "capture_seq": 20321,
+          "floor": 349.733093,
+          "preserved_body_clearance": 339.536713
+        },
+        {
+          "capture_seq": 20322,
+          "floor": 355.943909,
+          "preserved_body_clearance": 505.513123
+        },
+        {
+          "capture_seq": 20406,
+          "floor": 269.798218,
+          "preserved_body_clearance": 147.994644
+        },
+        {
+          "capture_seq": 20408,
+          "floor": 335.964447,
+          "preserved_body_clearance": 477.684967
+        },
+        {
+          "capture_seq": 20409,
+          "floor": 287.446442,
+          "preserved_body_clearance": 274.908508
+        },
+        {
+          "capture_seq": 20411,
+          "floor": 230.955841,
+          "preserved_body_clearance": 519.338806
+        },
+        {
+          "capture_seq": 20413,
+          "floor": 227.944519,
+          "preserved_body_clearance": 452.48172
+        },
+        {
+          "capture_seq": 20414,
+          "floor": 227.944519,
+          "preserved_body_clearance": 443.311249
+        },
+        {
+          "capture_seq": 20415,
+          "floor": 234.952057,
+          "preserved_body_clearance": 415.115204
+        },
+        {
+          "capture_seq": 20416,
+          "floor": 233.181641,
+          "preserved_body_clearance": 378.32962
+        },
+        {
+          "capture_seq": 20417,
+          "floor": 232.135742,
+          "preserved_body_clearance": 342.244171
+        },
+        {
+          "capture_seq": 20418,
+          "floor": 231.544128,
+          "preserved_body_clearance": 306.739838
+        },
+        {
+          "capture_seq": 20419,
+          "floor": 230.486938,
+          "preserved_body_clearance": 269.733246
+        }
+      ],
+      "projectile_floor_violations": [],
+      "sampled_action_violations": [],
+      "wall_recovery_violations": [],
+      "wall_body_relief_violations": [],
+      "wall_body_relief_selection_violations": [],
+      "hard_wall_violations": [],
+      "nonfresh_finale_capture_count": 0,
+      "nonfresh_finale_capture_sample": [],
+      "loot_dash_capture_count": 0,
+      "loot_dash_violations": [],
+      "damage_events": [
+        {
+          "event_seq": 3618,
+          "ts_ms": 187991,
+          "amount": 1,
+          "hp": 29,
+          "capture_seq": 3217,
+          "wave": 5,
+          "projectile_safety_active": false,
+          "projectile_escape_clearance": -1,
+          "projectile_final_clearance": -1,
+          "body_best_clearance": -1,
+          "body_selected_clearance": -1,
+          "body_emergency_active": false,
+          "loot_dash_active": false,
+          "route_replay": {
+            "emitted_body_clearance": 1000000.0,
+            "emitted_projectile_clearance": 1000000.0,
+            "best_body_clearance": 1000000.0,
+            "best_projectile_clearance": 1000000.0
+          }
+        },
+        {
+          "event_seq": 12733,
+          "ts_ms": 634017,
+          "amount": 6,
+          "hp": 41,
+          "capture_seq": 11352,
+          "wave": 12,
+          "projectile_safety_active": false,
+          "projectile_escape_clearance": -1,
+          "projectile_final_clearance": -1,
+          "body_best_clearance": -1,
+          "body_selected_clearance": -1,
+          "body_emergency_active": false,
+          "loot_dash_active": false,
+          "route_replay": {
+            "emitted_body_clearance": 1000000.0,
+            "emitted_projectile_clearance": 1000000.0,
+            "best_body_clearance": 1000000.0,
+            "best_projectile_clearance": 1000000.0
+          }
+        },
+        {
+          "event_seq": 14118,
+          "ts_ms": 701742,
+          "amount": 3,
+          "hp": 43,
+          "capture_seq": 12593,
+          "wave": 14,
+          "projectile_safety_active": false,
+          "projectile_escape_clearance": -1,
+          "projectile_final_clearance": -1,
+          "body_best_clearance": -1,
+          "body_selected_clearance": -1,
+          "body_emergency_active": false,
+          "loot_dash_active": false,
+          "route_replay": {
+            "emitted_body_clearance": 1000000.0,
+            "emitted_projectile_clearance": 1000000.0,
+            "best_body_clearance": 1000000.0,
+            "best_projectile_clearance": 1000000.0
+          }
+        },
+        {
+          "event_seq": 15506,
+          "ts_ms": 771088,
+          "amount": 5,
+          "hp": 41,
+          "capture_seq": 13833,
+          "wave": 15,
+          "projectile_safety_active": false,
+          "projectile_escape_clearance": -1,
+          "projectile_final_clearance": -1,
+          "body_best_clearance": -1,
+          "body_selected_clearance": -1,
+          "body_emergency_active": false,
+          "loot_dash_active": false,
+          "route_replay": {
+            "emitted_body_clearance": 1000000.0,
+            "emitted_projectile_clearance": 1000000.0,
+            "best_body_clearance": 1000000.0,
+            "best_projectile_clearance": 1000000.0
+          }
+        },
+        {
+          "event_seq": 16922,
+          "ts_ms": 843443,
+          "amount": 4,
+          "hp": 47,
+          "capture_seq": 15084,
+          "wave": 15,
+          "projectile_safety_active": false,
+          "projectile_escape_clearance": -1,
+          "projectile_final_clearance": -1,
+          "body_best_clearance": -1,
+          "body_selected_clearance": -1,
+          "body_emergency_active": false,
+          "loot_dash_active": false,
+          "route_replay": {
+            "emitted_body_clearance": 1000000.0,
+            "emitted_projectile_clearance": 1000000.0,
+            "best_body_clearance": 1000000.0,
+            "best_projectile_clearance": 1000000.0
+          }
+        },
+        {
+          "event_seq": 18298,
+          "ts_ms": 908136,
+          "amount": 8,
+          "hp": 44,
+          "capture_seq": 16324,
+          "wave": 16,
+          "projectile_safety_active": false,
+          "projectile_escape_clearance": -1,
+          "projectile_final_clearance": -1,
+          "body_best_clearance": -1,
+          "body_selected_clearance": -1,
+          "body_emergency_active": false,
+          "loot_dash_active": false,
+          "route_replay": {
+            "emitted_body_clearance": 1000000.0,
+            "emitted_projectile_clearance": 1000000.0,
+            "best_body_clearance": 1000000.0,
+            "best_projectile_clearance": 1000000.0
+          }
+        },
+        {
+          "event_seq": 19462,
+          "ts_ms": 960822,
+          "amount": 21,
+          "hp": 27,
+          "capture_seq": 17381,
+          "wave": 17,
+          "projectile_safety_active": true,
+          "projectile_escape_clearance": 401.494354,
+          "projectile_final_clearance": 401.494354,
+          "body_best_clearance": 14.731657,
+          "body_selected_clearance": 3.064514,
+          "body_emergency_active": false,
+          "loot_dash_active": false,
+          "route_replay": {
+            "emitted_body_clearance": 3.06451491263787,
+            "emitted_projectile_clearance": 401.4945248096313,
+            "best_body_clearance": 22.589238978709076,
+            "best_projectile_clearance": 516.5869984496202
+          }
+        },
+        {
+          "event_seq": 19686,
+          "ts_ms": 976613,
+          "amount": 4,
+          "hp": 45,
+          "capture_seq": 17565,
+          "wave": 18,
+          "projectile_safety_active": false,
+          "projectile_escape_clearance": -1,
+          "projectile_final_clearance": -1,
+          "body_best_clearance": -1,
+          "body_selected_clearance": -1,
+          "body_emergency_active": false,
+          "loot_dash_active": false,
+          "route_replay": {
+            "emitted_body_clearance": 1000000.0,
+            "emitted_projectile_clearance": 1000000.0,
+            "best_body_clearance": 1000000.0,
+            "best_projectile_clearance": 1000000.0
+          }
+        },
+        {
+          "event_seq": 21092,
+          "ts_ms": 1043358,
+          "amount": 13,
+          "hp": 43,
+          "capture_seq": 18821,
+          "wave": 18,
+          "projectile_safety_active": false,
+          "projectile_escape_clearance": -1,
+          "projectile_final_clearance": -1,
+          "body_best_clearance": -1,
+          "body_selected_clearance": -1,
+          "body_emergency_active": false,
+          "loot_dash_active": false,
+          "route_replay": {
+            "emitted_body_clearance": 1000000.0,
+            "emitted_projectile_clearance": 1000000.0,
+            "best_body_clearance": 1000000.0,
+            "best_projectile_clearance": 1000000.0
+          }
+        },
+        {
+          "event_seq": 22477,
+          "ts_ms": 1110616,
+          "amount": 4,
+          "hp": 46,
+          "capture_seq": 20062,
+          "wave": 20,
+          "projectile_safety_active": false,
+          "projectile_escape_clearance": -1,
+          "projectile_final_clearance": -1,
+          "body_best_clearance": -1,
+          "body_selected_clearance": -1,
+          "body_emergency_active": false,
+          "loot_dash_active": false,
+          "route_replay": {
+            "emitted_body_clearance": 1000000.0,
+            "emitted_projectile_clearance": 1000000.0,
+            "best_body_clearance": 1000000.0,
+            "best_projectile_clearance": 1000000.0
+          }
+        },
+        {
+          "event_seq": 22844,
+          "ts_ms": 1127165,
+          "amount": 20,
+          "hp": 26,
+          "capture_seq": 20395,
+          "wave": 20,
+          "projectile_safety_active": true,
+          "projectile_escape_clearance": 205.057266,
+          "projectile_final_clearance": 205.057266,
+          "body_best_clearance": 415.625549,
+          "body_selected_clearance": 493.157349,
+          "body_emergency_active": false,
+          "loot_dash_active": false,
+          "route_replay": {
+            "emitted_body_clearance": 493.15734671099244,
+            "emitted_projectile_clearance": 205.05727840775998,
+            "best_body_clearance": 671.3258834350686,
+            "best_projectile_clearance": 206.25920093213537
+          }
+        },
+        {
+          "event_seq": 22900,
+          "ts_ms": 1129665,
+          "amount": 20,
+          "hp": 7,
+          "capture_seq": 20445,
+          "wave": 20,
+          "projectile_safety_active": true,
+          "projectile_escape_clearance": 259.088043,
+          "projectile_final_clearance": 263.252502,
+          "body_best_clearance": 250.658386,
+          "body_selected_clearance": 246.696838,
+          "body_emergency_active": false,
+          "loot_dash_active": false,
+          "route_replay": {
+            "emitted_body_clearance": 246.6968762584413,
+            "emitted_projectile_clearance": 263.2524914343383,
+            "best_body_clearance": 307.0762392430143,
+            "best_projectile_clearance": 312.1110137213799
+          }
+        }
+      ],
+      "avoidable_damage_violations": [],
+      "events_sha256": "DD4244157CF3FEA39A31B6EED747CC548DB6CF7B33CBFD4F4158786AD5842D5E",
+      "summary_sha256": "B8C438DC3F6F80EE1A3D3A0485E86B89CB9065D80207860A0B790D15DCD0D794",
+      "violation_count": 0,
+      "accepted": true
+    }
+  ]
+}
