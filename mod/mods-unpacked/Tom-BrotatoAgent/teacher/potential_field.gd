@@ -1028,6 +1028,27 @@ func _finale_body_safety(pos: Vector2, desired: Vector2, player_speed: float,
 			projectile_floor = relaxed_projectile_floor
 			body_emergency_active = true
 			_finale_body_emergency_active = true
+	# v122: within the admitted tier, lane choice weighed continuity (+-85)
+	# against raw projectile clearance, so a lane crossing a bullet at 4.6
+	# units could beat an equal-body lane at 46.4 (v121 smoke capture 14938,
+	# 12 damage). When even the best admissible lane sits below the safe
+	# tier, bullets are at crossing range: require candidates to stay within
+	# the bounded 20-unit gain of that best lane before soft terms arbitrate.
+	# Body emergencies keep their deliberately broadened floor.
+	if not projectile_context.empty() and not body_emergency_active:
+		var best_admissible_projectile := -1.0e18
+		for row in rows:
+			if float(row[2]) >= projectile_floor:
+				best_admissible_projectile = max(
+					best_admissible_projectile, float(row[2]))
+		var tier_safe_clear := (
+			BotConfig.ESCAPE_SAFE_CLEARANCE * float(projectile_context["caution"]))
+		if (best_admissible_projectile > -1.0e17
+				and best_admissible_projectile < tier_safe_clear):
+			projectile_floor = max(
+				projectile_floor,
+				best_admissible_projectile
+					- BotConfig.BOSS_FINALE_PROJECTILE_BLEND_MIN_GAIN)
 	_finale_body_projectile_floor = projectile_floor
 	var highest_body_clearance := -1.0e18
 	for row in rows:

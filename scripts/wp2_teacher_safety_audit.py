@@ -448,6 +448,11 @@ def _avoidable_damage_violations(rows: list[dict[str, Any]]) -> list[dict[str, A
         )
         if (
             escape >= 0.0
+            # v122: -1 is the no-bullets-in-reach sentinel of the final pass,
+            # not a clearance; comparing it against a recorded escape fired a
+            # spurious concession on v121 smoke capture 17514 (replayed
+            # emitted clearance 681 vs best 685 — no concession occurred).
+            and final >= 0.0
             and final < escape - 60.0 - FLOAT_TOLERANCE
             and not body_emergency_is_best_available
         ):

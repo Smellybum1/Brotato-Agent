@@ -70,6 +70,32 @@ def test_v116_projectile_route_clearance_sees_straddled_bullets():
     assert _projectile_route_clearance(payload) < 5.0
 
 
+def test_v122_concession_gate_ignores_the_no_bullets_sentinel():
+    # Frozen v121 smoke capture 17514: escape 685.35 was recorded by an
+    # inactive projectile pass while the final pass had no bullets in reach
+    # (final = -1 sentinel). The replay proved no concession (emitted 681 vs
+    # best 685.4); the gate must not treat the sentinel as a clearance.
+    sentinel = {
+        "projectile_escape_clearance": 685.351013,
+        "projectile_final_clearance": -1.0,
+        "body_best_clearance": -3.77284,
+        "body_selected_clearance": -3.77284,
+    }
+    assert _avoidable_damage_violations([sentinel]) == []
+
+    # Selected below best-5 so the best-available-escape exemption does not
+    # apply, while staying above the 45-unit near-best tier.
+    real_concession = {
+        "projectile_escape_clearance": 685.351013,
+        "projectile_final_clearance": 100.0,
+        "body_best_clearance": 60.0,
+        "body_selected_clearance": 52.0,
+    }
+    assert _avoidable_damage_violations([real_concession])[0]["reasons"] == [
+        "projectile concession exceeds 60 units"
+    ]
+
+
 def test_v121_relief_floor_fallback_is_diagnosed_not_flagged():
     # Frozen v120 smoke capture 18555: relief floor 45 exceeded every sampled
     # lane (best 13.3) while the incoming command held 46.5; the runtime keeps

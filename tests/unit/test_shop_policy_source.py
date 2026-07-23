@@ -123,17 +123,17 @@ def test_v64_blood_donation_is_vetoed_for_gate_reliability():
     assert '"item_blood_donation": {"never": true}' in requirement_block
 
 
-def test_wp2_capture_build_versions_the_v121_diagnosed_relief_fallback_policy():
+def test_wp2_capture_build_versions_the_v122_crossing_tier_policy():
     manifest = MANIFEST.read_text(encoding="utf-8")
     controller = CONTROLLER.read_text(encoding="utf-8")
     telemetry = TELEMETRY.read_text(encoding="utf-8")
 
-    assert '"version_number": "0.2.29"' in manifest
-    assert "v121 deterministic teacher" in manifest
-    assert controller.count("teacher_v1-0.1.121-gun-wp1") == 1
-    assert controller.count("0.2.29-wp2-capture") == 1
-    assert telemetry.count("teacher_v1-0.1.121-gun-wp1") == 1
-    assert telemetry.count("0.2.29-wp2-capture") == 1
+    assert '"version_number": "0.2.30"' in manifest
+    assert "v122 deterministic teacher" in manifest
+    assert controller.count("teacher_v1-0.1.122-gun-wp1") == 1
+    assert controller.count("0.2.30-wp2-capture") == 1
+    assert telemetry.count("teacher_v1-0.1.122-gun-wp1") == 1
+    assert telemetry.count("0.2.30-wp2-capture") == 1
 
 
 def test_v84_item_audit_and_conditional_effect_corrections():
@@ -1165,6 +1165,30 @@ def test_v119_stall_trigger_and_loot_biased_strafe():
     # stalled with the v118 dash never arming.
     assert 19 >= 0 and 49 >= 30
     assert 176 <= 420.0
+
+
+def test_v122_crossing_range_tier_bounds_soft_term_arbitration():
+    potential = POTENTIAL_FIELD.read_text(encoding="utf-8")
+    safety = potential.split("func _finale_body_safety", 1)[1].split(
+        "func _finale_committed_escape", 1
+    )[0]
+    block = safety.split("var best_admissible_projectile := -1.0e18", 1)[1].split(
+        "_finale_body_projectile_floor = projectile_floor", 1
+    )[0]
+
+    assert "not body_emergency_active" in safety.split(
+        "var best_admissible_projectile", 1
+    )[0].rsplit("if not projectile_context.empty()", 1)[1]
+    assert "BotConfig.ESCAPE_SAFE_CLEARANCE" in block
+    assert (
+        "best_admissible_projectile\n\t\t\t\t\t- BotConfig.BOSS_FINALE_PROJECTILE_BLEND_MIN_GAIN"
+        in block
+    )
+
+    # Frozen v121 smoke capture 14938: equal 145.8 body clearance on both
+    # lanes; continuity chose 4.62 projectile clearance over 46.39 and a
+    # 12-damage bullet followed. Under the tier, 4.62 < 46.39 - 20.
+    assert 4.619292 < 46.3873539904868 - 20.0
 
 
 def test_v121_unattainable_relief_floor_keeps_baseline_with_diagnostics():
