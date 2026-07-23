@@ -1,0 +1,5574 @@
+{
+ "tool": "wp2_item_ledger",
+ "schema_version": 1,
+ "campaigns": [
+  "v122_exact20"
+ ],
+ "run_count": 20,
+ "victory": 11,
+ "defeat": 9,
+ "insufficient_min_runs": 3,
+ "class_kpis": {
+  "collection": [
+   "materials_saturation_frac",
+   "materials_mean"
+  ],
+  "defensive": [
+   "damage_amount"
+  ],
+  "economy": [
+   "gold_entering"
+  ]
+ },
+ "kpi_specs": {
+  "materials_saturation_frac": {
+   "direction": 1,
+   "label": "ground-material cap-saturation fraction"
+  },
+  "materials_mean": {
+   "direction": 1,
+   "label": "mean ground material count"
+  },
+  "damage_amount": {
+   "direction": -1,
+   "label": "player damage taken per wave"
+  },
+  "gold_entering": {
+   "direction": 1,
+   "label": "gold entering shop"
+  }
+ },
+ "confound_notes": {
+  "collection": "Ground-material saturation is AMBIGUOUS as a value signal: it is the fraction of captures where uncollected drops sit near the 50 cap, so a working pickup item -- clearing the ground faster -- pushes saturation DOWN, while a higher kill/drop rate pushes it UP. A negative holder delta is therefore consistent with the item collecting well, not with a deficiency. Also confounded by selection (bought in runs that already collect well / survive longer) and by occupancy. Sign is reported descriptively, not as a beats/below-baseline verdict.",
+  "defensive": "Damage taken per wave is dominated by wave difficulty and positioning; the wave-matched baseline controls difficulty but not build/skill selection into buying defense.",
+  "economy": "Gold entering later shops reflects total run economy (kills, wave reached, spend discipline), not just the item; matched on wave only.",
+  "offense": "Calibration control: %DPS gain is the exact combat-model math at purchase (waves 9-15 window, loadout-validated), not an outcome contrast."
+ },
+ "calibration_meta": {
+  "bought_offense_offers": 156,
+  "computable": 85,
+  "window": "waves 9-15 shops"
+ },
+ "items": {
+  "item_acid": {
+   "item_id": "item_acid",
+   "classes": [
+    "defensive"
+   ],
+   "primary_class": "defensive",
+   "tags": [
+    "stat_max_hp"
+   ],
+   "effect_keys": [
+    "knockback",
+    "stat_dodge",
+    "stat_max_hp"
+   ],
+   "tier": "A",
+   "tier_source": "wiki",
+   "n_buys": 5,
+   "n_runs": 5,
+   "insufficient": false,
+   "contrasts": {
+    "damage_amount": {
+     "kpi": "damage_amount",
+     "label": "player damage taken per wave",
+     "value_direction": "good_low",
+     "direction": "lower_better",
+     "sum_delta": -120.34179382279225,
+     "sum_effect": 120.34179382279225,
+     "n_obs": 27,
+     "n_obs_positive": 18,
+     "n_holdings": 5,
+     "n_holdings_positive": 3,
+     "per_holding": [
+      {
+       "run": "run_1784794784_69267",
+       "acquired_wave": 18,
+       "n_postwaves": 2,
+       "mean_delta": -26.6,
+       "mean_effect": 26.6,
+       "obs_positive": 2
+      },
+      {
+       "run": "run_1784799404_80018",
+       "acquired_wave": 15,
+       "n_postwaves": 5,
+       "mean_delta": 5.044761904761905,
+       "mean_effect": -5.044761904761905,
+       "obs_positive": 2
+      },
+      {
+       "run": "run_1784803299_7195",
+       "acquired_wave": 16,
+       "n_postwaves": 4,
+       "mean_delta": -17.360714285714284,
+       "mean_effect": 17.360714285714284,
+       "obs_positive": 3
+      },
+      {
+       "run": "run_1784804435_39794",
+       "acquired_wave": 17,
+       "n_postwaves": 3,
+       "mean_delta": 0.8999999999999998,
+       "mean_effect": -0.8999999999999998,
+       "obs_positive": 1
+      },
+      {
+       "run": "run_1784805636_10804",
+       "acquired_wave": 7,
+       "n_postwaves": 13,
+       "mean_delta": -1.9709804772111272,
+       "mean_effect": 1.9709804772111272,
+       "obs_positive": 10
+      }
+     ],
+     "mean_delta": -4.457103474918232,
+     "mean_effect": 4.457103474918232,
+     "obs_sign_consistency": 0.6666666666666666,
+     "holding_sign_consistency": 0.6
+    }
+   },
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_adrenaline": {
+   "item_id": "item_adrenaline",
+   "classes": [
+    "defensive"
+   ],
+   "primary_class": "defensive",
+   "tags": [
+    "stat_dodge"
+   ],
+   "effect_keys": [
+    "stat_dodge"
+   ],
+   "tier": "A",
+   "tier_source": "wiki",
+   "n_buys": 3,
+   "n_runs": 3,
+   "insufficient": false,
+   "contrasts": {
+    "damage_amount": {
+     "kpi": "damage_amount",
+     "label": "player damage taken per wave",
+     "value_direction": "good_low",
+     "direction": "lower_better",
+     "sum_delta": 32.71719457013575,
+     "sum_effect": -32.71719457013575,
+     "n_obs": 12,
+     "n_obs_positive": 9,
+     "n_holdings": 3,
+     "n_holdings_positive": 1,
+     "per_holding": [
+      {
+       "run": "run_1784786723_17546",
+       "acquired_wave": 16,
+       "n_postwaves": 1,
+       "mean_delta": 62.6875,
+       "mean_effect": -62.6875,
+       "obs_positive": 0
+      },
+      {
+       "run": "run_1784792652_7723",
+       "acquired_wave": 18,
+       "n_postwaves": 2,
+       "mean_delta": 21.53846153846154,
+       "mean_effect": -21.53846153846154,
+       "obs_positive": 1
+      },
+      {
+       "run": "run_1784803299_7195",
+       "acquired_wave": 11,
+       "n_postwaves": 9,
+       "mean_delta": -8.116358722976369,
+       "mean_effect": 8.116358722976369,
+       "obs_positive": 8
+      }
+     ],
+     "mean_delta": 2.726432880844646,
+     "mean_effect": -2.726432880844646,
+     "obs_sign_consistency": 0.75,
+     "holding_sign_consistency": 0.3333333333333333
+    }
+   },
+   "calibration": null,
+   "tier_tension": "ledger: no defensive benefit (consistent) but tier A -- rating must rest on other axes"
+  },
+  "item_alien_eyes": {
+   "item_id": "item_alien_eyes",
+   "classes": [
+    "other"
+   ],
+   "primary_class": "other",
+   "tags": [
+    "stat_max_hp"
+   ],
+   "effect_keys": [
+    "alien_eyes"
+   ],
+   "tier": "C",
+   "tier_source": "rogueranker",
+   "n_buys": 6,
+   "n_runs": 4,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_alien_magic": {
+   "item_id": "item_alien_magic",
+   "classes": [
+    "defensive"
+   ],
+   "primary_class": "defensive",
+   "tags": [
+    "stat_max_hp",
+    "stat_hp_regeneration"
+   ],
+   "effect_keys": [
+    "stat_hp_regeneration",
+    "stat_luck",
+    "stat_max_hp"
+   ],
+   "tier": "A",
+   "tier_source": "wiki",
+   "n_buys": 1,
+   "n_runs": 1,
+   "insufficient": true,
+   "contrasts": {
+    "damage_amount": {
+     "kpi": "damage_amount",
+     "label": "player damage taken per wave",
+     "value_direction": "good_low",
+     "direction": "lower_better",
+     "sum_delta": -46.357142857142854,
+     "sum_effect": 46.357142857142854,
+     "n_obs": 4,
+     "n_obs_positive": 4,
+     "n_holdings": 1,
+     "n_holdings_positive": 1,
+     "per_holding": [
+      {
+       "run": "run_1784790063_90333",
+       "acquired_wave": 16,
+       "n_postwaves": 4,
+       "mean_delta": -11.589285714285714,
+       "mean_effect": 11.589285714285714,
+       "obs_positive": 4
+      }
+     ],
+     "mean_delta": -11.589285714285714,
+     "mean_effect": 11.589285714285714,
+     "obs_sign_consistency": 1.0,
+     "holding_sign_consistency": 1.0
+    }
+   },
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_alien_tongue": {
+   "item_id": "item_alien_tongue",
+   "classes": [
+    "collection"
+   ],
+   "primary_class": "collection",
+   "tags": [
+    "pickup",
+    "knockback"
+   ],
+   "effect_keys": [
+    "knockback",
+    "pickup_range"
+   ],
+   "tier": "C",
+   "tier_source": "wiki",
+   "n_buys": 12,
+   "n_runs": 10,
+   "insufficient": false,
+   "contrasts": {
+    "materials_saturation_frac": {
+     "kpi": "materials_saturation_frac",
+     "label": "ground-material cap-saturation fraction",
+     "value_direction": "ambiguous",
+     "direction": "higher_better",
+     "sum_delta": -2.649484789158211,
+     "sum_effect": -2.649484789158211,
+     "n_obs": 101,
+     "n_obs_positive": 27,
+     "n_holdings": 10,
+     "n_holdings_positive": 5,
+     "per_holding": [
+      {
+       "run": "run_1784788917_7315",
+       "acquired_wave": 11,
+       "n_postwaves": 9,
+       "mean_delta": -0.134168553547395,
+       "mean_effect": -0.134168553547395,
+       "obs_positive": 0
+      },
+      {
+       "run": "run_1784792179_82981",
+       "acquired_wave": 9,
+       "n_postwaves": 1,
+       "mean_delta": -0.23831889605317946,
+       "mean_effect": -0.23831889605317946,
+       "obs_positive": 0
+      },
+      {
+       "run": "run_1784792652_7723",
+       "acquired_wave": 7,
+       "n_postwaves": 13,
+       "mean_delta": 0.02547399135971425,
+       "mean_effect": 0.02547399135971425,
+       "obs_positive": 4
+      },
+      {
+       "run": "run_1784794784_69267",
+       "acquired_wave": 5,
+       "n_postwaves": 15,
+       "mean_delta": 0.03696597474995162,
+       "mean_effect": 0.03696597474995162,
+       "obs_positive": 8
+      },
+      {
+       "run": "run_1784797082_83949",
+       "acquired_wave": 13,
+       "n_postwaves": 7,
+       "mean_delta": -0.10362473861302765,
+       "mean_effect": -0.10362473861302765,
+       "obs_positive": 1
+      },
+      {
+       "run": "run_1784798249_41022",
+       "acquired_wave": 6,
+       "n_postwaves": 14,
+       "mean_delta": 0.038281297915142114,
+       "mean_effect": 0.038281297915142114,
+       "obs_positive": 5
+      },
+      {
+       "run": "run_1784799404_80018",
+       "acquired_wave": 10,
+       "n_postwaves": 10,
+       "mean_delta": -0.15526063866028228,
+       "mean_effect": -0.15526063866028228,
+       "obs_positive": 0
+      },
+      {
+       "run": "run_1784800561_47448",
+       "acquired_wave": 13,
+       "n_postwaves": 7,
+       "mean_delta": 0.15984925104923287,
+       "mean_effect": 0.15984925104923287,
+       "obs_positive": 5
+      },
+      {
+       "run": "run_1784802191_76892",
+       "acquired_wave": 14,
+       "n_postwaves": 6,
+       "mean_delta": 0.06655150176549854,
+       "mean_effect": 0.06655150176549854,
+       "obs_positive": 4
+      },
+      {
+       "run": "run_1784804435_39794",
+       "acquired_wave": 1,
+       "n_postwaves": 19,
+       "mean_delta": -0.09818488431366484,
+       "mean_effect": -0.09818488431366484,
+       "obs_positive": 0
+      }
+     ],
+     "mean_delta": -0.02623252266493278,
+     "mean_effect": -0.02623252266493278,
+     "obs_sign_consistency": 0.26732673267326734,
+     "holding_sign_consistency": 0.5
+    },
+    "materials_mean": {
+     "kpi": "materials_mean",
+     "label": "mean ground material count",
+     "value_direction": "ambiguous",
+     "direction": "higher_better",
+     "sum_delta": -301.624936884271,
+     "sum_effect": -301.624936884271,
+     "n_obs": 101,
+     "n_obs_positive": 37,
+     "n_holdings": 10,
+     "n_holdings_positive": 5,
+     "per_holding": [
+      {
+       "run": "run_1784788917_7315",
+       "acquired_wave": 11,
+       "n_postwaves": 9,
+       "mean_delta": -8.386349928100522,
+       "mean_effect": -8.386349928100522,
+       "obs_positive": 0
+      },
+      {
+       "run": "run_1784792179_82981",
+       "acquired_wave": 9,
+       "n_postwaves": 1,
+       "mean_delta": -7.993302402799994,
+       "mean_effect": -7.993302402799994,
+       "obs_positive": 0
+      },
+      {
+       "run": "run_1784792652_7723",
+       "acquired_wave": 7,
+       "n_postwaves": 13,
+       "mean_delta": 1.3826582410273223,
+       "mean_effect": 1.3826582410273223,
+       "obs_positive": 6
+      },
+      {
+       "run": "run_1784794784_69267",
+       "acquired_wave": 5,
+       "n_postwaves": 15,
+       "mean_delta": 1.8261242459774276,
+       "mean_effect": 1.8261242459774276,
+       "obs_positive": 10
+      },
+      {
+       "run": "run_1784797082_83949",
+       "acquired_wave": 13,
+       "n_postwaves": 7,
+       "mean_delta": -5.003893476610142,
+       "mean_effect": -5.003893476610142,
+       "obs_positive": 1
+      },
+      {
+       "run": "run_1784798249_41022",
+       "acquired_wave": 6,
+       "n_postwaves": 14,
+       "mean_delta": 1.732774661929983,
+       "mean_effect": 1.732774661929983,
+       "obs_positive": 8
+      },
+      {
+       "run": "run_1784799404_80018",
+       "acquired_wave": 10,
+       "n_postwaves": 10,
+       "mean_delta": -14.435177313023136,
+       "mean_effect": -14.435177313023136,
+       "obs_positive": 0
+      },
+      {
+       "run": "run_1784800561_47448",
+       "acquired_wave": 13,
+       "n_postwaves": 7,
+       "mean_delta": 7.658362111989695,
+       "mean_effect": 7.658362111989695,
+       "obs_positive": 6
+      },
+      {
+       "run": "run_1784802191_76892",
+       "acquired_wave": 14,
+       "n_postwaves": 6,
+       "mean_delta": 2.2721016217117342,
+       "mean_effect": 2.2721016217117342,
+       "obs_positive": 5
+      },
+      {
+       "run": "run_1784804435_39794",
+       "acquired_wave": 1,
+       "n_postwaves": 19,
+       "mean_delta": -9.244308856120979,
+       "mean_effect": -9.244308856120979,
+       "obs_positive": 1
+      }
+     ],
+     "mean_delta": -2.9863855137056534,
+     "mean_effect": -2.9863855137056534,
+     "obs_sign_consistency": 0.36633663366336633,
+     "holding_sign_consistency": 0.5
+    }
+   },
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_alien_worm": {
+   "item_id": "item_alien_worm",
+   "classes": [
+    "defensive"
+   ],
+   "primary_class": "defensive",
+   "tags": [
+    "stat_max_hp",
+    "stat_hp_regeneration"
+   ],
+   "effect_keys": [
+    "consumable_heal",
+    "stat_hp_regeneration",
+    "stat_max_hp"
+   ],
+   "tier": "A",
+   "tier_source": "wiki",
+   "n_buys": 8,
+   "n_runs": 6,
+   "insufficient": false,
+   "contrasts": {
+    "damage_amount": {
+     "kpi": "damage_amount",
+     "label": "player damage taken per wave",
+     "value_direction": "good_low",
+     "direction": "lower_better",
+     "sum_delta": 198.323242035742,
+     "sum_effect": -198.323242035742,
+     "n_obs": 63,
+     "n_obs_positive": 35,
+     "n_holdings": 6,
+     "n_holdings_positive": 3,
+     "per_holding": [
+      {
+       "run": "run_1784785556_51395",
+       "acquired_wave": 4,
+       "n_postwaves": 16,
+       "mean_delta": -0.7979458041958041,
+       "mean_effect": 0.7979458041958041,
+       "obs_positive": 8
+      },
+      {
+       "run": "run_1784786723_17546",
+       "acquired_wave": 3,
+       "n_postwaves": 14,
+       "mean_delta": 12.68986568986569,
+       "mean_effect": -12.68986568986569,
+       "obs_positive": 6
+      },
+      {
+       "run": "run_1784787688_32406",
+       "acquired_wave": 16,
+       "n_postwaves": 4,
+       "mean_delta": 11.769755244755245,
+       "mean_effect": -11.769755244755245,
+       "obs_positive": 2
+      },
+      {
+       "run": "run_1784788917_7315",
+       "acquired_wave": 7,
+       "n_postwaves": 13,
+       "mean_delta": 9.186182087143626,
+       "mean_effect": -9.186182087143626,
+       "obs_positive": 5
+      },
+      {
+       "run": "run_1784800561_47448",
+       "acquired_wave": 5,
+       "n_postwaves": 15,
+       "mean_delta": -6.0511421911421905,
+       "mean_effect": 6.0511421911421905,
+       "obs_positive": 13
+      },
+      {
+       "run": "run_1784803299_7195",
+       "acquired_wave": 19,
+       "n_postwaves": 1,
+       "mean_delta": -42.3,
+       "mean_effect": 42.3,
+       "obs_positive": 1
+      }
+     ],
+     "mean_delta": 3.1479879688213015,
+     "mean_effect": -3.1479879688213015,
+     "obs_sign_consistency": 0.5555555555555556,
+     "holding_sign_consistency": 0.5
+    }
+   },
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_alloy": {
+   "item_id": "item_alloy",
+   "classes": [
+    "offense",
+    "defensive"
+   ],
+   "primary_class": "offense",
+   "tags": [
+    "stat_melee_damage",
+    "stat_ranged_damage",
+    "stat_engineering",
+    "stat_crit_chance",
+    "stat_elemental_damage"
+   ],
+   "effect_keys": [
+    "stat_crit_chance",
+    "stat_dodge",
+    "stat_elemental_damage",
+    "stat_engineering",
+    "stat_melee_damage",
+    "stat_ranged_damage"
+   ],
+   "tier": "B",
+   "tier_source": "rogueranker",
+   "n_buys": 5,
+   "n_runs": 5,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": {
+    "values": [
+     20.171575819666995
+    ],
+    "per_buy": [
+     {
+      "run": "run_1784798249_41022",
+      "wave": 12,
+      "dps_gain": 20.171575819666995,
+      "direct_gain": 3.0,
+      "method": "model",
+      "result": "victory"
+     }
+    ],
+    "n": 1,
+    "sum": 20.171575819666995,
+    "mean": 20.171575819666995,
+    "median": 20.171575819666995
+   },
+   "tier_tension": null
+  },
+  "item_baby_elephant": {
+   "item_id": "item_baby_elephant",
+   "classes": [
+    "collection"
+   ],
+   "primary_class": "collection",
+   "tags": [
+    "stat_luck",
+    "pickup"
+   ],
+   "effect_keys": [
+    "stat_luck"
+   ],
+   "tier": "B",
+   "tier_source": "wiki",
+   "n_buys": 3,
+   "n_runs": 3,
+   "insufficient": false,
+   "contrasts": {
+    "materials_saturation_frac": {
+     "kpi": "materials_saturation_frac",
+     "label": "ground-material cap-saturation fraction",
+     "value_direction": "ambiguous",
+     "direction": "higher_better",
+     "sum_delta": 0.04928371714411699,
+     "sum_effect": 0.04928371714411699,
+     "n_obs": 30,
+     "n_obs_positive": 14,
+     "n_holdings": 3,
+     "n_holdings_positive": 2,
+     "per_holding": [
+      {
+       "run": "run_1784794784_69267",
+       "acquired_wave": 11,
+       "n_postwaves": 9,
+       "mean_delta": 0.07599606787044222,
+       "mean_effect": 0.07599606787044222,
+       "obs_positive": 6
+      },
+      {
+       "run": "run_1784795927_93597",
+       "acquired_wave": 8,
+       "n_postwaves": 12,
+       "mean_delta": -0.11696118738612692,
+       "mean_effect": -0.11696118738612692,
+       "obs_positive": 0
+      },
+      {
+       "run": "run_1784802191_76892",
+       "acquired_wave": 11,
+       "n_postwaves": 9,
+       "mean_delta": 0.08542815054929555,
+       "mean_effect": 0.08542815054929555,
+       "obs_positive": 8
+      }
+     ],
+     "mean_delta": 0.0016427905714705663,
+     "mean_effect": 0.0016427905714705663,
+     "obs_sign_consistency": 0.4666666666666667,
+     "holding_sign_consistency": 0.6666666666666666
+    },
+    "materials_mean": {
+     "kpi": "materials_mean",
+     "label": "mean ground material count",
+     "value_direction": "ambiguous",
+     "direction": "higher_better",
+     "sum_delta": 37.41938478990335,
+     "sum_effect": 37.41938478990335,
+     "n_obs": 30,
+     "n_obs_positive": 19,
+     "n_holdings": 3,
+     "n_holdings_positive": 2,
+     "per_holding": [
+      {
+       "run": "run_1784794784_69267",
+       "acquired_wave": 11,
+       "n_postwaves": 9,
+       "mean_delta": 5.178880217612975,
+       "mean_effect": 5.178880217612975,
+       "obs_positive": 8
+      },
+      {
+       "run": "run_1784795927_93597",
+       "acquired_wave": 8,
+       "n_postwaves": 12,
+       "mean_delta": -4.782420632788264,
+       "mean_effect": -4.782420632788264,
+       "obs_positive": 3
+      },
+      {
+       "run": "run_1784802191_76892",
+       "acquired_wave": 11,
+       "n_postwaves": 9,
+       "mean_delta": 5.3553900472050815,
+       "mean_effect": 5.3553900472050815,
+       "obs_positive": 8
+      }
+     ],
+     "mean_delta": 1.2473128263301116,
+     "mean_effect": 1.2473128263301116,
+     "obs_sign_consistency": 0.6333333333333333,
+     "holding_sign_consistency": 0.6666666666666666
+    }
+   },
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_baby_gecko": {
+   "item_id": "item_baby_gecko",
+   "classes": [
+    "collection"
+   ],
+   "primary_class": "collection",
+   "tags": [
+    "pickup",
+    "stat_range"
+   ],
+   "effect_keys": [
+    "instant_gold_attracting",
+    "stat_range"
+   ],
+   "tier": "B",
+   "tier_source": "wiki",
+   "n_buys": 21,
+   "n_runs": 11,
+   "insufficient": false,
+   "contrasts": {
+    "materials_saturation_frac": {
+     "kpi": "materials_saturation_frac",
+     "label": "ground-material cap-saturation fraction",
+     "value_direction": "ambiguous",
+     "direction": "higher_better",
+     "sum_delta": -12.681061716078222,
+     "sum_effect": -12.681061716078222,
+     "n_obs": 116,
+     "n_obs_positive": 16,
+     "n_holdings": 11,
+     "n_holdings_positive": 2,
+     "per_holding": [
+      {
+       "run": "run_1784786723_17546",
+       "acquired_wave": 5,
+       "n_postwaves": 12,
+       "mean_delta": 0.008234133322095286,
+       "mean_effect": 0.008234133322095286,
+       "obs_positive": 5
+      },
+      {
+       "run": "run_1784787688_32406",
+       "acquired_wave": 10,
+       "n_postwaves": 10,
+       "mean_delta": -0.21219959188543247,
+       "mean_effect": -0.21219959188543247,
+       "obs_positive": 0
+      },
+      {
+       "run": "run_1784788917_7315",
+       "acquired_wave": 11,
+       "n_postwaves": 9,
+       "mean_delta": -0.20415197453419273,
+       "mean_effect": -0.20415197453419273,
+       "obs_positive": 0
+      },
+      {
+       "run": "run_1784790063_90333",
+       "acquired_wave": 16,
+       "n_postwaves": 4,
+       "mean_delta": -0.1678501580597544,
+       "mean_effect": -0.1678501580597544,
+       "obs_positive": 1
+      },
+      {
+       "run": "run_1784791214_74323",
+       "acquired_wave": 8,
+       "n_postwaves": 9,
+       "mean_delta": -0.1417116109328873,
+       "mean_effect": -0.1417116109328873,
+       "obs_positive": 0
+      },
+      {
+       "run": "run_1784793833_32034",
+       "acquired_wave": 5,
+       "n_postwaves": 12,
+       "mean_delta": 0.019888925025023065,
+       "mean_effect": 0.019888925025023065,
+       "obs_positive": 5
+      },
+      {
+       "run": "run_1784794784_69267",
+       "acquired_wave": 12,
+       "n_postwaves": 8,
+       "mean_delta": -0.0027040248021318047,
+       "mean_effect": -0.0027040248021318047,
+       "obs_positive": 3
+      },
+      {
+       "run": "run_1784795927_93597",
+       "acquired_wave": 1,
+       "n_postwaves": 19,
+       "mean_delta": -0.11529057385643478,
+       "mean_effect": -0.11529057385643478,
+       "obs_positive": 0
+      },
+      {
+       "run": "run_1784799404_80018",
+       "acquired_wave": 4,
+       "n_postwaves": 16,
+       "mean_delta": -0.14878688706690324,
+       "mean_effect": -0.14878688706690324,
+       "obs_positive": 0
+      },
+      {
+       "run": "run_1784803299_7195",
+       "acquired_wave": 17,
+       "n_postwaves": 3,
+       "mean_delta": -0.011834935985283013,
+       "mean_effect": -0.011834935985283013,
+       "obs_positive": 2
+      },
+      {
+       "run": "run_1784804435_39794",
+       "acquired_wave": 6,
+       "n_postwaves": 14,
+       "mean_delta": -0.17743724951649753,
+       "mean_effect": -0.17743724951649753,
+       "obs_positive": 0
+      }
+     ],
+     "mean_delta": -0.10931949755239846,
+     "mean_effect": -0.10931949755239846,
+     "obs_sign_consistency": 0.13793103448275862,
+     "holding_sign_consistency": 0.18181818181818182
+    },
+    "materials_mean": {
+     "kpi": "materials_mean",
+     "label": "mean ground material count",
+     "value_direction": "ambiguous",
+     "direction": "higher_better",
+     "sum_delta": -856.3818615921986,
+     "sum_effect": -856.3818615921986,
+     "n_obs": 116,
+     "n_obs_positive": 25,
+     "n_holdings": 11,
+     "n_holdings_positive": 2,
+     "per_holding": [
+      {
+       "run": "run_1784786723_17546",
+       "acquired_wave": 5,
+       "n_postwaves": 12,
+       "mean_delta": -0.3538716110672591,
+       "mean_effect": -0.3538716110672591,
+       "obs_positive": 5
+      },
+      {
+       "run": "run_1784787688_32406",
+       "acquired_wave": 10,
+       "n_postwaves": 10,
+       "mean_delta": -11.15677347746136,
+       "mean_effect": -11.15677347746136,
+       "obs_positive": 0
+      },
+      {
+       "run": "run_1784788917_7315",
+       "acquired_wave": 11,
+       "n_postwaves": 9,
+       "mean_delta": -11.92356953490125,
+       "mean_effect": -11.92356953490125,
+       "obs_positive": 0
+      },
+      {
+       "run": "run_1784790063_90333",
+       "acquired_wave": 16,
+       "n_postwaves": 4,
+       "mean_delta": -7.135317825622098,
+       "mean_effect": -7.135317825622098,
+       "obs_positive": 1
+      },
+      {
+       "run": "run_1784791214_74323",
+       "acquired_wave": 8,
+       "n_postwaves": 9,
+       "mean_delta": -8.792832385877317,
+       "mean_effect": -8.792832385877317,
+       "obs_positive": 0
+      },
+      {
+       "run": "run_1784793833_32034",
+       "acquired_wave": 5,
+       "n_postwaves": 12,
+       "mean_delta": -1.102011751309366,
+       "mean_effect": -1.102011751309366,
+       "obs_positive": 7
+      },
+      {
+       "run": "run_1784794784_69267",
+       "acquired_wave": 12,
+       "n_postwaves": 8,
+       "mean_delta": 0.11734213767285562,
+       "mean_effect": 0.11734213767285562,
+       "obs_positive": 4
+      },
+      {
+       "run": "run_1784795927_93597",
+       "acquired_wave": 1,
+       "n_postwaves": 19,
+       "mean_delta": -5.4653254811277465,
+       "mean_effect": -5.4653254811277465,
+       "obs_positive": 6
+      },
+      {
+       "run": "run_1784799404_80018",
+       "acquired_wave": 4,
+       "n_postwaves": 16,
+       "mean_delta": -12.899481598621689,
+       "mean_effect": -12.899481598621689,
+       "obs_positive": 0
+      },
+      {
+       "run": "run_1784803299_7195",
+       "acquired_wave": 17,
+       "n_postwaves": 3,
+       "mean_delta": 0.9692871994259384,
+       "mean_effect": 0.9692871994259384,
+       "obs_positive": 2
+      },
+      {
+       "run": "run_1784804435_39794",
+       "acquired_wave": 6,
+       "n_postwaves": 14,
+       "mean_delta": -14.712024775704052,
+       "mean_effect": -14.712024775704052,
+       "obs_positive": 0
+      }
+     ],
+     "mean_delta": -7.38260225510516,
+     "mean_effect": -7.38260225510516,
+     "obs_sign_consistency": 0.21551724137931033,
+     "holding_sign_consistency": 0.18181818181818182
+    }
+   },
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_baby_with_a_beard": {
+   "item_id": "item_baby_with_a_beard",
+   "classes": [
+    "other"
+   ],
+   "primary_class": "other",
+   "tags": [
+    "stat_ranged_damage"
+   ],
+   "effect_keys": [
+    "projectiles_on_death",
+    "stat_range"
+   ],
+   "tier": "A",
+   "tier_source": "wiki",
+   "n_buys": 3,
+   "n_runs": 3,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_bag": {
+   "item_id": "item_bag",
+   "classes": [
+    "economy"
+   ],
+   "primary_class": "economy",
+   "tags": [
+    "stat_luck",
+    "exploration",
+    "economy"
+   ],
+   "effect_keys": [
+    "item_box_gold",
+    "stat_speed"
+   ],
+   "tier": "B",
+   "tier_source": "wiki",
+   "n_buys": 9,
+   "n_runs": 6,
+   "insufficient": false,
+   "contrasts": {
+    "gold_entering": {
+     "kpi": "gold_entering",
+     "label": "gold entering shop",
+     "value_direction": "good_high",
+     "direction": "higher_better",
+     "sum_delta": 2314.130460483788,
+     "sum_effect": 2314.130460483788,
+     "n_obs": 54,
+     "n_obs_positive": 36,
+     "n_holdings": 6,
+     "n_holdings_positive": 5,
+     "per_holding": [
+      {
+       "run": "run_1784785556_51395",
+       "acquired_wave": 4,
+       "n_postwaves": 15,
+       "mean_delta": 51.59038234727088,
+       "mean_effect": 51.59038234727088,
+       "obs_positive": 11
+      },
+      {
+       "run": "run_1784787688_32406",
+       "acquired_wave": 14,
+       "n_postwaves": 5,
+       "mean_delta": 163.18461538461537,
+       "mean_effect": 163.18461538461537,
+       "obs_positive": 5
+      },
+      {
+       "run": "run_1784791214_74323",
+       "acquired_wave": 6,
+       "n_postwaves": 10,
+       "mean_delta": 40.50755494505495,
+       "mean_effect": 40.50755494505495,
+       "obs_positive": 7
+      },
+      {
+       "run": "run_1784792179_82981",
+       "acquired_wave": 7,
+       "n_postwaves": 2,
+       "mean_delta": 78.875,
+       "mean_effect": 78.875,
+       "obs_positive": 2
+      },
+      {
+       "run": "run_1784795927_93597",
+       "acquired_wave": 6,
+       "n_postwaves": 13,
+       "mean_delta": 13.544273034657644,
+       "mean_effect": 13.544273034657644,
+       "obs_positive": 6
+      },
+      {
+       "run": "run_1784797082_83949",
+       "acquired_wave": 10,
+       "n_postwaves": 9,
+       "mean_delta": -1.616605616605625,
+       "mean_effect": -1.616605616605625,
+       "obs_positive": 5
+      }
+     ],
+     "mean_delta": 42.85426778673681,
+     "mean_effect": 42.85426778673681,
+     "obs_sign_consistency": 0.6666666666666666,
+     "holding_sign_consistency": 0.8333333333333334
+    }
+   },
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_bandana": {
+   "item_id": "item_bandana",
+   "classes": [
+    "offense"
+   ],
+   "primary_class": "offense",
+   "tags": [
+    "stat_ranged_damage"
+   ],
+   "effect_keys": [
+    "piercing",
+    "stat_percent_damage"
+   ],
+   "tier": "A",
+   "tier_source": "wiki",
+   "n_buys": 6,
+   "n_runs": 6,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": {
+    "values": [
+     -7.812500000000011
+    ],
+    "per_buy": [
+     {
+      "run": "run_1784791214_74323",
+      "wave": 13,
+      "dps_gain": -7.812500000000011,
+      "direct_gain": -9.0,
+      "method": "closed_form",
+      "result": "defeat"
+     }
+    ],
+    "n": 1,
+    "sum": -7.812500000000011,
+    "mean": -7.812500000000011,
+    "median": -7.812500000000011
+   },
+   "tier_tension": null
+  },
+  "item_banner": {
+   "item_id": "item_banner",
+   "classes": [
+    "offense"
+   ],
+   "primary_class": "offense",
+   "tags": [
+    "stat_range",
+    "stat_attack_speed"
+   ],
+   "effect_keys": [
+    "knockback",
+    "stat_attack_speed",
+    "stat_range"
+   ],
+   "tier": "A",
+   "tier_source": "wiki",
+   "n_buys": 10,
+   "n_runs": 9,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": {
+    "values": [
+     8.333333333333348,
+     8.130081300813007,
+     9.523809523809511,
+     7.6335877862595325
+    ],
+    "per_buy": [
+     {
+      "run": "run_1784786723_17546",
+      "wave": 11,
+      "dps_gain": 8.333333333333348,
+      "direct_gain": 10.0,
+      "method": "closed_form",
+      "result": "defeat"
+     },
+     {
+      "run": "run_1784791214_74323",
+      "wave": 12,
+      "dps_gain": 8.130081300813007,
+      "direct_gain": 10.0,
+      "method": "closed_form",
+      "result": "defeat"
+     },
+     {
+      "run": "run_1784793833_32034",
+      "wave": 15,
+      "dps_gain": 9.523809523809511,
+      "direct_gain": 10.0,
+      "method": "closed_form",
+      "result": "defeat"
+     },
+     {
+      "run": "run_1784798249_41022",
+      "wave": 15,
+      "dps_gain": 7.6335877862595325,
+      "direct_gain": 10.0,
+      "method": "closed_form",
+      "result": "victory"
+     }
+    ],
+    "n": 4,
+    "sum": 33.6208119442154,
+    "mean": 8.40520298605385,
+    "median": 8.231707317073177
+   },
+   "tier_tension": null
+  },
+  "item_bat": {
+   "item_id": "item_bat",
+   "classes": [
+    "economy"
+   ],
+   "primary_class": "economy",
+   "tags": [
+    "stat_lifesteal"
+   ],
+   "effect_keys": [
+    "stat_harvesting",
+    "stat_lifesteal"
+   ],
+   "tier": "B",
+   "tier_source": "wiki",
+   "n_buys": 8,
+   "n_runs": 7,
+   "insufficient": false,
+   "contrasts": {
+    "gold_entering": {
+     "kpi": "gold_entering",
+     "label": "gold entering shop",
+     "value_direction": "good_high",
+     "direction": "higher_better",
+     "sum_delta": -844.2547511312221,
+     "sum_effect": -844.2547511312221,
+     "n_obs": 78,
+     "n_obs_positive": 34,
+     "n_holdings": 7,
+     "n_holdings_positive": 3,
+     "per_holding": [
+      {
+       "run": "run_1784785556_51395",
+       "acquired_wave": 16,
+       "n_postwaves": 3,
+       "mean_delta": 95.75,
+       "mean_effect": 95.75,
+       "obs_positive": 3
+      },
+      {
+       "run": "run_1784795927_93597",
+       "acquired_wave": 17,
+       "n_postwaves": 2,
+       "mean_delta": 67.4375,
+       "mean_effect": 67.4375,
+       "obs_positive": 2
+      },
+      {
+       "run": "run_1784799404_80018",
+       "acquired_wave": 2,
+       "n_postwaves": 17,
+       "mean_delta": -5.502264661520722,
+       "mean_effect": -5.502264661520722,
+       "obs_positive": 7
+      },
+      {
+       "run": "run_1784802191_76892",
+       "acquired_wave": 7,
+       "n_postwaves": 12,
+       "mean_delta": -44.813461538461546,
+       "mean_effect": -44.813461538461546,
+       "obs_positive": 3
+      },
+      {
+       "run": "run_1784803299_7195",
+       "acquired_wave": 1,
+       "n_postwaves": 18,
+       "mean_delta": -27.196583291436237,
+       "mean_effect": -27.196583291436237,
+       "obs_positive": 7
+      },
+      {
+       "run": "run_1784804435_39794",
+       "acquired_wave": 8,
+       "n_postwaves": 11,
+       "mean_delta": 65.34289044289045,
+       "mean_effect": 65.34289044289045,
+       "obs_positive": 9
+      },
+      {
+       "run": "run_1784805636_10804",
+       "acquired_wave": 4,
+       "n_postwaves": 15,
+       "mean_delta": -57.62086726998493,
+       "mean_effect": -57.62086726998493,
+       "obs_positive": 3
+      }
+     ],
+     "mean_delta": -10.823778860656693,
+     "mean_effect": -10.823778860656693,
+     "obs_sign_consistency": 0.4358974358974359,
+     "holding_sign_consistency": 0.42857142857142855
+    }
+   },
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_beanie": {
+   "item_id": "item_beanie",
+   "classes": [
+    "other"
+   ],
+   "primary_class": "other",
+   "tags": [
+    "stat_speed"
+   ],
+   "effect_keys": [
+    "stat_range",
+    "stat_speed"
+   ],
+   "tier": "B",
+   "tier_source": "wiki",
+   "n_buys": 12,
+   "n_runs": 11,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_blindfold": {
+   "item_id": "item_blindfold",
+   "classes": [
+    "offense",
+    "defensive"
+   ],
+   "primary_class": "offense",
+   "tags": [
+    "stat_crit_chance",
+    "stat_dodge"
+   ],
+   "effect_keys": [
+    "stat_crit_chance",
+    "stat_dodge",
+    "stat_range"
+   ],
+   "tier": "A",
+   "tier_source": "wiki",
+   "n_buys": 14,
+   "n_runs": 11,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_broken_mouth": {
+   "item_id": "item_broken_mouth",
+   "classes": [
+    "defensive"
+   ],
+   "primary_class": "defensive",
+   "tags": [
+    "stat_max_hp"
+   ],
+   "effect_keys": [
+    "stat_hp_regeneration",
+    "stat_max_hp"
+   ],
+   "tier": "B",
+   "tier_source": "wiki",
+   "n_buys": 9,
+   "n_runs": 8,
+   "insufficient": false,
+   "contrasts": {
+    "damage_amount": {
+     "kpi": "damage_amount",
+     "label": "player damage taken per wave",
+     "value_direction": "good_low",
+     "direction": "lower_better",
+     "sum_delta": -81.42248825306106,
+     "sum_effect": 81.42248825306106,
+     "n_obs": 66,
+     "n_obs_positive": 48,
+     "n_holdings": 8,
+     "n_holdings_positive": 4,
+     "per_holding": [
+      {
+       "run": "run_1784785556_51395",
+       "acquired_wave": 18,
+       "n_postwaves": 2,
+       "mean_delta": 3.75,
+       "mean_effect": -3.75,
+       "obs_positive": 1
+      },
+      {
+       "run": "run_1784787688_32406",
+       "acquired_wave": 16,
+       "n_postwaves": 4,
+       "mean_delta": 10.70405982905983,
+       "mean_effect": -10.70405982905983,
+       "obs_positive": 2
+      },
+      {
+       "run": "run_1784790063_90333",
+       "acquired_wave": 9,
+       "n_postwaves": 11,
+       "mean_delta": -7.123432123432123,
+       "mean_effect": 7.123432123432123,
+       "obs_positive": 10
+      },
+      {
+       "run": "run_1784792652_7723",
+       "acquired_wave": 5,
+       "n_postwaves": 15,
+       "mean_delta": -1.416529962412315,
+       "mean_effect": 1.416529962412315,
+       "obs_positive": 13
+      },
+      {
+       "run": "run_1784798249_41022",
+       "acquired_wave": 7,
+       "n_postwaves": 13,
+       "mean_delta": -5.928575295996111,
+       "mean_effect": 5.928575295996111,
+       "obs_positive": 10
+      },
+      {
+       "run": "run_1784801716_88465",
+       "acquired_wave": 9,
+       "n_postwaves": 1,
+       "mean_delta": 38.666666666666664,
+       "mean_effect": -38.666666666666664,
+       "obs_positive": 0
+      },
+      {
+       "run": "run_1784804435_39794",
+       "acquired_wave": 19,
+       "n_postwaves": 1,
+       "mean_delta": 26.625,
+       "mean_effect": -26.625,
+       "obs_positive": 0
+      },
+      {
+       "run": "run_1784805636_10804",
+       "acquired_wave": 1,
+       "n_postwaves": 19,
+       "mean_delta": -1.071221715477867,
+       "mean_effect": 1.071221715477867,
+       "obs_positive": 12
+      }
+     ],
+     "mean_delta": -1.233674064440319,
+     "mean_effect": 1.233674064440319,
+     "obs_sign_consistency": 0.7272727272727273,
+     "holding_sign_consistency": 0.5
+    }
+   },
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_butterfly": {
+   "item_id": "item_butterfly",
+   "classes": [
+    "other"
+   ],
+   "primary_class": "other",
+   "tags": [
+    "stat_lifesteal"
+   ],
+   "effect_keys": [
+    "stat_elemental_damage",
+    "stat_lifesteal"
+   ],
+   "tier": "B",
+   "tier_source": "wiki",
+   "n_buys": 6,
+   "n_runs": 6,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_cake": {
+   "item_id": "item_cake",
+   "classes": [
+    "offense",
+    "defensive"
+   ],
+   "primary_class": "offense",
+   "tags": [
+    "stat_max_hp"
+   ],
+   "effect_keys": [
+    "stat_max_hp",
+    "stat_percent_damage"
+   ],
+   "tier": "B",
+   "tier_source": "wiki",
+   "n_buys": 12,
+   "n_runs": 6,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": {
+    "values": [
+     -0.8064516129032211,
+     -0.961538461538461
+    ],
+    "per_buy": [
+     {
+      "run": "run_1784787688_32406",
+      "wave": 9,
+      "dps_gain": -0.8064516129032211,
+      "direct_gain": -1.0,
+      "method": "model",
+      "result": "victory"
+     },
+     {
+      "run": "run_1784788917_7315",
+      "wave": 9,
+      "dps_gain": -0.961538461538461,
+      "direct_gain": -1.0,
+      "method": "model",
+      "result": "defeat"
+     }
+    ],
+    "n": 2,
+    "sum": -1.767990074441682,
+    "mean": -0.883995037220841,
+    "median": -0.883995037220841
+   },
+   "tier_tension": null
+  },
+  "item_candle": {
+   "item_id": "item_candle",
+   "classes": [
+    "offense",
+    "defensive"
+   ],
+   "primary_class": "offense",
+   "tags": [
+    "stat_elemental_damage",
+    "stat_hp_regeneration",
+    "less_enemies"
+   ],
+   "effect_keys": [
+    "fog_visibility",
+    "number_of_enemies",
+    "stat_elemental_damage",
+    "stat_hp_regeneration",
+    "stat_percent_damage"
+   ],
+   "tier": "B",
+   "tier_source": "rogueranker",
+   "n_buys": 2,
+   "n_runs": 2,
+   "insufficient": true,
+   "contrasts": {},
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_catling_gun": {
+   "item_id": "item_catling_gun",
+   "classes": [
+    "other"
+   ],
+   "primary_class": "other",
+   "tags": [
+    "pet",
+    "stat_ranged_damage"
+   ],
+   "effect_keys": [],
+   "tier": "S",
+   "tier_source": "wiki",
+   "n_buys": 8,
+   "n_runs": 7,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_claw_tree": {
+   "item_id": "item_claw_tree",
+   "classes": [
+    "offense",
+    "defensive"
+   ],
+   "primary_class": "offense",
+   "tags": [
+    "stat_melee_damage",
+    "stat_crit_chance"
+   ],
+   "effect_keys": [
+    "stat_crit_chance",
+    "stat_max_hp",
+    "stat_melee_damage"
+   ],
+   "tier": null,
+   "tier_source": null,
+   "n_buys": 6,
+   "n_runs": 5,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": {
+    "values": [
+     2.262406587641093
+    ],
+    "per_buy": [
+     {
+      "run": "run_1784787688_32406",
+      "wave": 9,
+      "dps_gain": 2.262406587641093,
+      "direct_gain": 0.0,
+      "method": "model",
+      "result": "victory"
+     }
+    ],
+    "n": 1,
+    "sum": 2.262406587641093,
+    "mean": 2.262406587641093,
+    "median": 2.262406587641093
+   },
+   "tier_tension": null
+  },
+  "item_clockwork_wasp": {
+   "item_id": "item_clockwork_wasp",
+   "classes": [
+    "other"
+   ],
+   "primary_class": "other",
+   "tags": [
+    "structure",
+    "stat_speed"
+   ],
+   "effect_keys": [
+    "stat_speed",
+    "structure_attack_speed"
+   ],
+   "tier": "C",
+   "tier_source": "wiki",
+   "n_buys": 9,
+   "n_runs": 8,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_clover": {
+   "item_id": "item_clover",
+   "classes": [
+    "defensive"
+   ],
+   "primary_class": "defensive",
+   "tags": [
+    "stat_luck",
+    "stat_dodge"
+   ],
+   "effect_keys": [
+    "stat_dodge",
+    "stat_lifesteal",
+    "stat_luck"
+   ],
+   "tier": "A",
+   "tier_source": "rogueranker",
+   "n_buys": 4,
+   "n_runs": 4,
+   "insufficient": false,
+   "contrasts": {
+    "damage_amount": {
+     "kpi": "damage_amount",
+     "label": "player damage taken per wave",
+     "value_direction": "good_low",
+     "direction": "lower_better",
+     "sum_delta": 25.255140022516194,
+     "sum_effect": -25.255140022516194,
+     "n_obs": 24,
+     "n_obs_positive": 14,
+     "n_holdings": 4,
+     "n_holdings_positive": 2,
+     "per_holding": [
+      {
+       "run": "run_1784787688_32406",
+       "acquired_wave": 16,
+       "n_postwaves": 4,
+       "mean_delta": 11.37727272727273,
+       "mean_effect": -11.37727272727273,
+       "obs_positive": 2
+      },
+      {
+       "run": "run_1784788917_7315",
+       "acquired_wave": 8,
+       "n_postwaves": 12,
+       "mean_delta": 9.263212426118772,
+       "mean_effect": -9.263212426118772,
+       "obs_positive": 4
+      },
+      {
+       "run": "run_1784794784_69267",
+       "acquired_wave": 14,
+       "n_postwaves": 6,
+       "mean_delta": -14.083901515151515,
+       "mean_effect": 14.083901515151515,
+       "obs_positive": 6
+      },
+      {
+       "run": "run_1784803299_7195",
+       "acquired_wave": 18,
+       "n_postwaves": 2,
+       "mean_delta": -23.454545454545453,
+       "mean_effect": 23.454545454545453,
+       "obs_positive": 2
+      }
+     ],
+     "mean_delta": 1.0522975009381748,
+     "mean_effect": -1.0522975009381748,
+     "obs_sign_consistency": 0.5833333333333334,
+     "holding_sign_consistency": 0.5
+    }
+   },
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_coffee": {
+   "item_id": "item_coffee",
+   "classes": [
+    "offense"
+   ],
+   "primary_class": "offense",
+   "tags": [
+    "stat_attack_speed"
+   ],
+   "effect_keys": [
+    "stat_attack_speed",
+    "stat_percent_damage"
+   ],
+   "tier": "B",
+   "tier_source": "wiki",
+   "n_buys": 20,
+   "n_runs": 13,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": {
+    "values": [
+     5.629365121041863,
+     5.17693315858454,
+     5.158396411550337,
+     5.280528052805278,
+     6.439092356687914,
+     7.9034173373796035,
+     5.851413543721229,
+     5.88235294117645
+    ],
+    "per_buy": [
+     {
+      "run": "run_1784787688_32406",
+      "wave": 15,
+      "dps_gain": 5.629365121041863,
+      "direct_gain": 8.0,
+      "method": "closed_form",
+      "result": "victory"
+     },
+     {
+      "run": "run_1784788917_7315",
+      "wave": 14,
+      "dps_gain": 5.17693315858454,
+      "direct_gain": 8.0,
+      "method": "closed_form",
+      "result": "defeat"
+     },
+     {
+      "run": "run_1784790063_90333",
+      "wave": 13,
+      "dps_gain": 5.158396411550337,
+      "direct_gain": 8.0,
+      "method": "closed_form",
+      "result": "defeat"
+     },
+     {
+      "run": "run_1784792652_7723",
+      "wave": 9,
+      "dps_gain": 5.280528052805278,
+      "direct_gain": 8.0,
+      "method": "closed_form",
+      "result": "victory"
+     },
+     {
+      "run": "run_1784794784_69267",
+      "wave": 14,
+      "dps_gain": 6.439092356687914,
+      "direct_gain": 8.0,
+      "method": "closed_form",
+      "result": "victory"
+     },
+     {
+      "run": "run_1784803299_7195",
+      "wave": 14,
+      "dps_gain": 7.9034173373796035,
+      "direct_gain": 8.0,
+      "method": "closed_form",
+      "result": "victory"
+     },
+     {
+      "run": "run_1784804435_39794",
+      "wave": 12,
+      "dps_gain": 5.851413543721229,
+      "direct_gain": 8.0,
+      "method": "closed_form",
+      "result": "victory"
+     },
+     {
+      "run": "run_1784805636_10804",
+      "wave": 9,
+      "dps_gain": 5.88235294117645,
+      "direct_gain": 8.0,
+      "method": "closed_form",
+      "result": "victory"
+     }
+    ],
+    "n": 8,
+    "sum": 47.321498922947214,
+    "mean": 5.915187365368402,
+    "median": 5.740389332381546
+   },
+   "tier_tension": null
+  },
+  "item_coil": {
+   "item_id": "item_coil",
+   "classes": [
+    "offense"
+   ],
+   "primary_class": "offense",
+   "tags": [
+    "stat_percent_damage",
+    "knockback"
+   ],
+   "effect_keys": [
+    "knockback",
+    "stat_percent_damage"
+   ],
+   "tier": "A",
+   "tier_source": "rogueranker",
+   "n_buys": 5,
+   "n_runs": 4,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": {
+    "values": [
+     0.9708737864077666,
+     0.8064516129032251,
+     0.6369426751592577
+    ],
+    "per_buy": [
+     {
+      "run": "run_1784788917_7315",
+      "wave": 9,
+      "dps_gain": 0.9708737864077666,
+      "direct_gain": 1.0,
+      "method": "closed_form",
+      "result": "defeat"
+     },
+     {
+      "run": "run_1784799404_80018",
+      "wave": 13,
+      "dps_gain": 0.8064516129032251,
+      "direct_gain": 1.0,
+      "method": "closed_form",
+      "result": "defeat"
+     },
+     {
+      "run": "run_1784800561_47448",
+      "wave": 15,
+      "dps_gain": 0.6369426751592577,
+      "direct_gain": 1.0,
+      "method": "closed_form",
+      "result": "victory"
+     }
+    ],
+    "n": 3,
+    "sum": 2.4142680744702494,
+    "mean": 0.8047560248234165,
+    "median": 0.8064516129032251
+   },
+   "tier_tension": null
+  },
+  "item_coupon": {
+   "item_id": "item_coupon",
+   "classes": [
+    "economy"
+   ],
+   "primary_class": "economy",
+   "tags": [
+    "economy"
+   ],
+   "effect_keys": [
+    "items_price"
+   ],
+   "tier": "C",
+   "tier_source": "rogueranker",
+   "n_buys": 7,
+   "n_runs": 5,
+   "insufficient": false,
+   "contrasts": {
+    "gold_entering": {
+     "kpi": "gold_entering",
+     "label": "gold entering shop",
+     "value_direction": "good_high",
+     "direction": "higher_better",
+     "sum_delta": 842.1433760683765,
+     "sum_effect": 842.1433760683765,
+     "n_obs": 49,
+     "n_obs_positive": 30,
+     "n_holdings": 4,
+     "n_holdings_positive": 3,
+     "per_holding": [
+      {
+       "run": "run_1784786723_17546",
+       "acquired_wave": 6,
+       "n_postwaves": 10,
+       "mean_delta": 1.8837500000000091,
+       "mean_effect": 1.8837500000000091,
+       "obs_positive": 6
+      },
+      {
+       "run": "run_1784787688_32406",
+       "acquired_wave": 1,
+       "n_postwaves": 18,
+       "mean_delta": 64.46856600189933,
+       "mean_effect": 64.46856600189933,
+       "obs_positive": 15
+      },
+      {
+       "run": "run_1784792179_82981",
+       "acquired_wave": 6,
+       "n_postwaves": 3,
+       "mean_delta": 54.8125,
+       "mean_effect": 54.8125,
+       "obs_positive": 3
+      },
+      {
+       "run": "run_1784800561_47448",
+       "acquired_wave": 1,
+       "n_postwaves": 18,
+       "mean_delta": -27.864767331433995,
+       "mean_effect": -27.864767331433995,
+       "obs_positive": 6
+      }
+     ],
+     "mean_delta": 17.18659951159952,
+     "mean_effect": 17.18659951159952,
+     "obs_sign_consistency": 0.6122448979591837,
+     "holding_sign_consistency": 0.75
+    }
+   },
+   "calibration": null,
+   "tier_tension": "ledger: helps economy (consistent) but tier C -- possibly underrated on this axis"
+  },
+  "item_crown": {
+   "item_id": "item_crown",
+   "classes": [
+    "other"
+   ],
+   "primary_class": "other",
+   "tags": [
+    "stat_harvesting"
+   ],
+   "effect_keys": [
+    "harvesting_growth"
+   ],
+   "tier": "B",
+   "tier_source": "rogueranker",
+   "n_buys": 2,
+   "n_runs": 2,
+   "insufficient": true,
+   "contrasts": {},
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_cyberball": {
+   "item_id": "item_cyberball",
+   "classes": [
+    "other"
+   ],
+   "primary_class": "other",
+   "tags": [
+    "stat_luck"
+   ],
+   "effect_keys": [
+    "stat_luck"
+   ],
+   "tier": "B",
+   "tier_source": "wiki",
+   "n_buys": 3,
+   "n_runs": 3,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_cyclops_worm": {
+   "item_id": "item_cyclops_worm",
+   "classes": [
+    "offense"
+   ],
+   "primary_class": "offense",
+   "tags": [
+    "stat_percent_damage"
+   ],
+   "effect_keys": [
+    "stat_percent_damage",
+    "stat_range"
+   ],
+   "tier": "B",
+   "tier_source": "wiki",
+   "n_buys": 16,
+   "n_runs": 9,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": {
+    "values": [
+     8.888888888888879,
+     10.256410256410264,
+     9.523809523809511,
+     9.302325581395344,
+     7.947019867549665,
+     9.756097560975618,
+     8.275862068965512,
+     12.631578947368439,
+     8.75912408759123,
+     11.42857142857141,
+     10.714285714285698
+    ],
+    "per_buy": [
+     {
+      "run": "run_1784786723_17546",
+      "wave": 12,
+      "dps_gain": 8.888888888888879,
+      "direct_gain": 12.0,
+      "method": "closed_form",
+      "result": "defeat"
+     },
+     {
+      "run": "run_1784793833_32034",
+      "wave": 9,
+      "dps_gain": 10.256410256410264,
+      "direct_gain": 12.0,
+      "method": "closed_form",
+      "result": "defeat"
+     },
+     {
+      "run": "run_1784793833_32034",
+      "wave": 10,
+      "dps_gain": 9.523809523809511,
+      "direct_gain": 12.0,
+      "method": "closed_form",
+      "result": "defeat"
+     },
+     {
+      "run": "run_1784794784_69267",
+      "wave": 9,
+      "dps_gain": 9.302325581395344,
+      "direct_gain": 12.0,
+      "method": "closed_form",
+      "result": "victory"
+     },
+     {
+      "run": "run_1784794784_69267",
+      "wave": 12,
+      "dps_gain": 7.947019867549665,
+      "direct_gain": 12.0,
+      "method": "closed_form",
+      "result": "victory"
+     },
+     {
+      "run": "run_1784795927_93597",
+      "wave": 12,
+      "dps_gain": 9.756097560975618,
+      "direct_gain": 12.0,
+      "method": "closed_form",
+      "result": "victory"
+     },
+     {
+      "run": "run_1784795927_93597",
+      "wave": 14,
+      "dps_gain": 8.275862068965512,
+      "direct_gain": 12.0,
+      "method": "closed_form",
+      "result": "victory"
+     },
+     {
+      "run": "run_1784800561_47448",
+      "wave": 9,
+      "dps_gain": 12.631578947368439,
+      "direct_gain": 12.0,
+      "method": "closed_form",
+      "result": "victory"
+     },
+     {
+      "run": "run_1784800561_47448",
+      "wave": 13,
+      "dps_gain": 8.75912408759123,
+      "direct_gain": 12.0,
+      "method": "closed_form",
+      "result": "victory"
+     },
+     {
+      "run": "run_1784804435_39794",
+      "wave": 9,
+      "dps_gain": 11.42857142857141,
+      "direct_gain": 12.0,
+      "method": "closed_form",
+      "result": "victory"
+     },
+     {
+      "run": "run_1784805636_10804",
+      "wave": 9,
+      "dps_gain": 10.714285714285698,
+      "direct_gain": 12.0,
+      "method": "closed_form",
+      "result": "victory"
+     }
+    ],
+    "n": 11,
+    "sum": 107.48397392581157,
+    "mean": 9.77127035689196,
+    "median": 9.523809523809511
+   },
+   "tier_tension": null
+  },
+  "item_dangerous_bunny": {
+   "item_id": "item_dangerous_bunny",
+   "classes": [
+    "economy"
+   ],
+   "primary_class": "economy",
+   "tags": [
+    "economy"
+   ],
+   "effect_keys": [
+    "free_rerolls"
+   ],
+   "tier": "C",
+   "tier_source": "rogueranker",
+   "n_buys": 12,
+   "n_runs": 9,
+   "insufficient": false,
+   "contrasts": {
+    "gold_entering": {
+     "kpi": "gold_entering",
+     "label": "gold entering shop",
+     "value_direction": "good_high",
+     "direction": "higher_better",
+     "sum_delta": 2794.216378238204,
+     "sum_effect": 2794.216378238204,
+     "n_obs": 59,
+     "n_obs_positive": 37,
+     "n_holdings": 9,
+     "n_holdings_positive": 7,
+     "per_holding": [
+      {
+       "run": "run_1784785556_51395",
+       "acquired_wave": 10,
+       "n_postwaves": 9,
+       "mean_delta": 64.35593542260209,
+       "mean_effect": 64.35593542260209,
+       "obs_positive": 6
+      },
+      {
+       "run": "run_1784786723_17546",
+       "acquired_wave": 15,
+       "n_postwaves": 1,
+       "mean_delta": 34.22222222222217,
+       "mean_effect": 34.22222222222217,
+       "obs_positive": 1
+      },
+      {
+       "run": "run_1784787688_32406",
+       "acquired_wave": 9,
+       "n_postwaves": 10,
+       "mean_delta": 130.28188034188034,
+       "mean_effect": 130.28188034188034,
+       "obs_positive": 10
+      },
+      {
+       "run": "run_1784790063_90333",
+       "acquired_wave": 12,
+       "n_postwaves": 7,
+       "mean_delta": 117.87063492063491,
+       "mean_effect": 117.87063492063491,
+       "obs_positive": 4
+      },
+      {
+       "run": "run_1784791214_74323",
+       "acquired_wave": 15,
+       "n_postwaves": 1,
+       "mean_delta": -220.77777777777783,
+       "mean_effect": -220.77777777777783,
+       "obs_positive": 0
+      },
+      {
+       "run": "run_1784793833_32034",
+       "acquired_wave": 7,
+       "n_postwaves": 9,
+       "mean_delta": -111.32472340563157,
+       "mean_effect": -111.32472340563157,
+       "obs_positive": 1
+      },
+      {
+       "run": "run_1784795927_93597",
+       "acquired_wave": 10,
+       "n_postwaves": 9,
+       "mean_delta": 22.911490978157637,
+       "mean_effect": 22.911490978157637,
+       "obs_positive": 4
+      },
+      {
+       "run": "run_1784799404_80018",
+       "acquired_wave": 16,
+       "n_postwaves": 3,
+       "mean_delta": 70.51851851851853,
+       "mean_effect": 70.51851851851853,
+       "obs_positive": 3
+      },
+      {
+       "run": "run_1784804435_39794",
+       "acquired_wave": 9,
+       "n_postwaves": 10,
+       "mean_delta": 85.78188034188034,
+       "mean_effect": 85.78188034188034,
+       "obs_positive": 8
+      }
+     ],
+     "mean_delta": 47.359599631156,
+     "mean_effect": 47.359599631156,
+     "obs_sign_consistency": 0.6271186440677966,
+     "holding_sign_consistency": 0.7777777777777778
+    }
+   },
+   "calibration": null,
+   "tier_tension": "ledger: helps economy (consistent) but tier C -- possibly underrated on this axis"
+  },
+  "item_defective_steroids": {
+   "item_id": "item_defective_steroids",
+   "classes": [
+    "offense",
+    "defensive"
+   ],
+   "primary_class": "offense",
+   "tags": [
+    "stat_max_hp",
+    "stat_melee_damage"
+   ],
+   "effect_keys": [
+    "stat_attack_speed",
+    "stat_max_hp",
+    "stat_melee_damage"
+   ],
+   "tier": null,
+   "tier_source": null,
+   "n_buys": 2,
+   "n_runs": 2,
+   "insufficient": true,
+   "contrasts": {},
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_doc_moth": {
+   "item_id": "item_doc_moth",
+   "classes": [
+    "other"
+   ],
+   "primary_class": "other",
+   "tags": [
+    "stat_hp_regeneration",
+    "stat_lifesteal",
+    "pet"
+   ],
+   "effect_keys": [],
+   "tier": "A",
+   "tier_source": "wiki",
+   "n_buys": 2,
+   "n_runs": 2,
+   "insufficient": true,
+   "contrasts": {},
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_dynamite": {
+   "item_id": "item_dynamite",
+   "classes": [
+    "other"
+   ],
+   "primary_class": "other",
+   "tags": [
+    "explosive"
+   ],
+   "effect_keys": [
+    "explosion_damage"
+   ],
+   "tier": null,
+   "tier_source": null,
+   "n_buys": 1,
+   "n_runs": 1,
+   "insufficient": true,
+   "contrasts": {},
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_extra_stomach": {
+   "item_id": "item_extra_stomach",
+   "classes": [
+    "defensive"
+   ],
+   "primary_class": "defensive",
+   "tags": [
+    "stat_max_hp",
+    "stat_luck"
+   ],
+   "effect_keys": [
+    "stat_max_hp"
+   ],
+   "tier": "B",
+   "tier_source": "rogueranker",
+   "n_buys": 1,
+   "n_runs": 1,
+   "insufficient": true,
+   "contrasts": {
+    "damage_amount": {
+     "kpi": "damage_amount",
+     "label": "player damage taken per wave",
+     "value_direction": "good_low",
+     "direction": "lower_better",
+     "sum_delta": 15.92857142857143,
+     "sum_effect": -15.92857142857143,
+     "n_obs": 1,
+     "n_obs_positive": 0,
+     "n_holdings": 1,
+     "n_holdings_positive": 0,
+     "per_holding": [
+      {
+       "run": "run_1784804435_39794",
+       "acquired_wave": 19,
+       "n_postwaves": 1,
+       "mean_delta": 15.92857142857143,
+       "mean_effect": -15.92857142857143,
+       "obs_positive": 0
+      }
+     ],
+     "mean_delta": 15.92857142857143,
+     "mean_effect": -15.92857142857143,
+     "obs_sign_consistency": 0.0,
+     "holding_sign_consistency": 0.0
+    }
+   },
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_eyes_surgery": {
+   "item_id": "item_eyes_surgery",
+   "classes": [
+    "other"
+   ],
+   "primary_class": "other",
+   "tags": [
+    "stat_elemental_damage"
+   ],
+   "effect_keys": [
+    "burning_cooldown_reduction",
+    "stat_elemental_damage",
+    "stat_range"
+   ],
+   "tier": null,
+   "tier_source": null,
+   "n_buys": 5,
+   "n_runs": 5,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_fertilizer": {
+   "item_id": "item_fertilizer",
+   "classes": [
+    "economy"
+   ],
+   "primary_class": "economy",
+   "tags": [
+    "stat_harvesting"
+   ],
+   "effect_keys": [
+    "stat_harvesting",
+    "stat_melee_damage"
+   ],
+   "tier": "B",
+   "tier_source": "wiki",
+   "n_buys": 6,
+   "n_runs": 6,
+   "insufficient": false,
+   "contrasts": {
+    "gold_entering": {
+     "kpi": "gold_entering",
+     "label": "gold entering shop",
+     "value_direction": "good_high",
+     "direction": "higher_better",
+     "sum_delta": 734.2757164404222,
+     "sum_effect": 734.2757164404222,
+     "n_obs": 63,
+     "n_obs_positive": 32,
+     "n_holdings": 6,
+     "n_holdings_positive": 4,
+     "per_holding": [
+      {
+       "run": "run_1784788917_7315",
+       "acquired_wave": 5,
+       "n_postwaves": 14,
+       "mean_delta": 46.611635423400124,
+       "mean_effect": 46.611635423400124,
+       "obs_positive": 7
+      },
+      {
+       "run": "run_1784790063_90333",
+       "acquired_wave": 10,
+       "n_postwaves": 9,
+       "mean_delta": 76.32991452991453,
+       "mean_effect": 76.32991452991453,
+       "obs_positive": 5
+      },
+      {
+       "run": "run_1784792179_82981",
+       "acquired_wave": 7,
+       "n_postwaves": 2,
+       "mean_delta": 71.16666666666669,
+       "mean_effect": 71.16666666666669,
+       "obs_positive": 2
+      },
+      {
+       "run": "run_1784797082_83949",
+       "acquired_wave": 6,
+       "n_postwaves": 13,
+       "mean_delta": -5.91597633136095,
+       "mean_effect": -5.91597633136095,
+       "obs_positive": 7
+      },
+      {
+       "run": "run_1784799404_80018",
+       "acquired_wave": 7,
+       "n_postwaves": 12,
+       "mean_delta": 6.102136752136748,
+       "mean_effect": 6.102136752136748,
+       "obs_positive": 7
+      },
+      {
+       "run": "run_1784805636_10804",
+       "acquired_wave": 6,
+       "n_postwaves": 13,
+       "mean_delta": -57.22366863905325,
+       "mean_effect": -57.22366863905325,
+       "obs_positive": 4
+      }
+     ],
+     "mean_delta": 11.655170102228924,
+     "mean_effect": 11.655170102228924,
+     "obs_sign_consistency": 0.5079365079365079,
+     "holding_sign_consistency": 0.6666666666666666
+    }
+   },
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_fresh_meat": {
+   "item_id": "item_fresh_meat",
+   "classes": [
+    "defensive"
+   ],
+   "primary_class": "defensive",
+   "tags": [
+    "stat_lifesteal"
+   ],
+   "effect_keys": [
+    "stat_hp_regeneration",
+    "stat_lifesteal"
+   ],
+   "tier": "B",
+   "tier_source": "wiki",
+   "n_buys": 9,
+   "n_runs": 8,
+   "insufficient": false,
+   "contrasts": {
+    "damage_amount": {
+     "kpi": "damage_amount",
+     "label": "player damage taken per wave",
+     "value_direction": "good_low",
+     "direction": "lower_better",
+     "sum_delta": 62.62728937728942,
+     "sum_effect": -62.62728937728942,
+     "n_obs": 100,
+     "n_obs_positive": 71,
+     "n_holdings": 8,
+     "n_holdings_positive": 4,
+     "per_holding": [
+      {
+       "run": "run_1784788917_7315",
+       "acquired_wave": 4,
+       "n_postwaves": 16,
+       "mean_delta": 7.090934065934066,
+       "mean_effect": -7.090934065934066,
+       "obs_positive": 6
+      },
+      {
+       "run": "run_1784791214_74323",
+       "acquired_wave": 6,
+       "n_postwaves": 11,
+       "mean_delta": 0.5504495504495495,
+       "mean_effect": -0.5504495504495495,
+       "obs_positive": 10
+      },
+      {
+       "run": "run_1784792652_7723",
+       "acquired_wave": 4,
+       "n_postwaves": 16,
+       "mean_delta": -0.7215659340659344,
+       "mean_effect": 0.7215659340659344,
+       "obs_positive": 13
+      },
+      {
+       "run": "run_1784793833_32034",
+       "acquired_wave": 9,
+       "n_postwaves": 8,
+       "mean_delta": 6.729166666666666,
+       "mean_effect": -6.729166666666666,
+       "obs_positive": 4
+      },
+      {
+       "run": "run_1784800561_47448",
+       "acquired_wave": 8,
+       "n_postwaves": 12,
+       "mean_delta": -8.675000000000002,
+       "mean_effect": 8.675000000000002,
+       "obs_positive": 12
+      },
+      {
+       "run": "run_1784801716_88465",
+       "acquired_wave": 3,
+       "n_postwaves": 7,
+       "mean_delta": 6.275706436420722,
+       "mean_effect": -6.275706436420722,
+       "obs_positive": 3
+      },
+      {
+       "run": "run_1784804435_39794",
+       "acquired_wave": 7,
+       "n_postwaves": 13,
+       "mean_delta": -2.179289940828402,
+       "mean_effect": 2.179289940828402,
+       "obs_positive": 11
+      },
+      {
+       "run": "run_1784805636_10804",
+       "acquired_wave": 3,
+       "n_postwaves": 17,
+       "mean_delta": -0.6276502908855853,
+       "mean_effect": 0.6276502908855853,
+       "obs_positive": 12
+      }
+     ],
+     "mean_delta": 0.6262728937728942,
+     "mean_effect": -0.6262728937728942,
+     "obs_sign_consistency": 0.71,
+     "holding_sign_consistency": 0.5
+    }
+   },
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_gambling_token": {
+   "item_id": "item_gambling_token",
+   "classes": [
+    "defensive"
+   ],
+   "primary_class": "defensive",
+   "tags": [
+    "stat_dodge"
+   ],
+   "effect_keys": [
+    "stat_armor",
+    "stat_dodge"
+   ],
+   "tier": "B",
+   "tier_source": "wiki",
+   "n_buys": 2,
+   "n_runs": 2,
+   "insufficient": true,
+   "contrasts": {
+    "damage_amount": {
+     "kpi": "damage_amount",
+     "label": "player damage taken per wave",
+     "value_direction": "good_low",
+     "direction": "lower_better",
+     "sum_delta": 6.52403846153846,
+     "sum_effect": -6.52403846153846,
+     "n_obs": 7,
+     "n_obs_positive": 5,
+     "n_holdings": 2,
+     "n_holdings_positive": 1,
+     "per_holding": [
+      {
+       "run": "run_1784785556_51395",
+       "acquired_wave": 17,
+       "n_postwaves": 3,
+       "mean_delta": -2.9230769230769234,
+       "mean_effect": 2.9230769230769234,
+       "obs_positive": 2
+      },
+      {
+       "run": "run_1784792652_7723",
+       "acquired_wave": 16,
+       "n_postwaves": 4,
+       "mean_delta": 3.8233173076923084,
+       "mean_effect": -3.8233173076923084,
+       "obs_positive": 3
+      }
+     ],
+     "mean_delta": 0.9320054945054943,
+     "mean_effect": -0.9320054945054943,
+     "obs_sign_consistency": 0.7142857142857143,
+     "holding_sign_consistency": 0.5
+    }
+   },
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_garden": {
+   "item_id": "item_garden",
+   "classes": [
+    "other"
+   ],
+   "primary_class": "other",
+   "tags": [
+    "consumable",
+    "structure"
+   ],
+   "effect_keys": [],
+   "tier": "B",
+   "tier_source": "wiki",
+   "n_buys": 1,
+   "n_runs": 1,
+   "insufficient": true,
+   "contrasts": {},
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_gentle_alien": {
+   "item_id": "item_gentle_alien",
+   "classes": [
+    "offense",
+    "defensive"
+   ],
+   "primary_class": "offense",
+   "tags": [
+    "stat_max_hp",
+    "stat_percent_damage",
+    "more_enemies"
+   ],
+   "effect_keys": [
+    "number_of_enemies",
+    "stat_max_hp",
+    "stat_percent_damage"
+   ],
+   "tier": null,
+   "tier_source": null,
+   "n_buys": 13,
+   "n_runs": 11,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": {
+    "values": [
+     5.81395348837209
+    ],
+    "per_buy": [
+     {
+      "run": "run_1784792179_82981",
+      "wave": 9,
+      "dps_gain": 5.81395348837209,
+      "direct_gain": 5.0,
+      "method": "model",
+      "result": "defeat"
+     }
+    ],
+    "n": 1,
+    "sum": 5.81395348837209,
+    "mean": 5.81395348837209,
+    "median": 5.81395348837209
+   },
+   "tier_tension": null
+  },
+  "item_glasses": {
+   "item_id": "item_glasses",
+   "classes": [
+    "other"
+   ],
+   "primary_class": "other",
+   "tags": [
+    "stat_range"
+   ],
+   "effect_keys": [
+    "stat_range"
+   ],
+   "tier": "B",
+   "tier_source": "wiki",
+   "n_buys": 14,
+   "n_runs": 9,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_gummy_berserker": {
+   "item_id": "item_gummy_berserker",
+   "classes": [
+    "offense",
+    "defensive"
+   ],
+   "primary_class": "offense",
+   "tags": [
+    "stat_attack_speed",
+    "stat_range"
+   ],
+   "effect_keys": [
+    "stat_armor",
+    "stat_attack_speed",
+    "stat_range"
+   ],
+   "tier": "B",
+   "tier_source": "wiki",
+   "n_buys": 3,
+   "n_runs": 3,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_heavy_bullets": {
+   "item_id": "item_heavy_bullets",
+   "classes": [
+    "offense"
+   ],
+   "primary_class": "offense",
+   "tags": [
+    "stat_ranged_damage",
+    "stat_percent_damage",
+    "stat_range"
+   ],
+   "effect_keys": [
+    "stat_attack_speed",
+    "stat_crit_chance",
+    "stat_percent_damage",
+    "stat_range",
+    "stat_ranged_damage"
+   ],
+   "tier": "A",
+   "tier_source": "rogueranker",
+   "n_buys": 4,
+   "n_runs": 4,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_hedgehog": {
+   "item_id": "item_hedgehog",
+   "classes": [
+    "offense",
+    "defensive"
+   ],
+   "primary_class": "offense",
+   "tags": [
+    "stat_melee_damage",
+    "stat_ranged_damage"
+   ],
+   "effect_keys": [
+    "stat_hp_regeneration",
+    "stat_melee_damage",
+    "stat_ranged_damage"
+   ],
+   "tier": null,
+   "tier_source": null,
+   "n_buys": 4,
+   "n_runs": 3,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": {
+    "values": [
+     10.163848328244544
+    ],
+    "per_buy": [
+     {
+      "run": "run_1784788917_7315",
+      "wave": 9,
+      "dps_gain": 10.163848328244544,
+      "direct_gain": 1.0,
+      "method": "model",
+      "result": "defeat"
+     }
+    ],
+    "n": 1,
+    "sum": 10.163848328244544,
+    "mean": 10.163848328244544,
+    "median": 10.163848328244544
+   },
+   "tier_tension": null
+  },
+  "item_helmet": {
+   "item_id": "item_helmet",
+   "classes": [
+    "defensive"
+   ],
+   "primary_class": "defensive",
+   "tags": [
+    "stat_armor"
+   ],
+   "effect_keys": [
+    "stat_armor",
+    "stat_speed"
+   ],
+   "tier": "B",
+   "tier_source": "wiki",
+   "n_buys": 8,
+   "n_runs": 8,
+   "insufficient": false,
+   "contrasts": {
+    "damage_amount": {
+     "kpi": "damage_amount",
+     "label": "player damage taken per wave",
+     "value_direction": "good_low",
+     "direction": "lower_better",
+     "sum_delta": 364.1041514041512,
+     "sum_effect": -364.1041514041512,
+     "n_obs": 73,
+     "n_obs_positive": 41,
+     "n_holdings": 8,
+     "n_holdings_positive": 1,
+     "per_holding": [
+      {
+       "run": "run_1784785556_51395",
+       "acquired_wave": 19,
+       "n_postwaves": 1,
+       "mean_delta": 7.777777777777779,
+       "mean_effect": -7.777777777777779,
+       "obs_positive": 0
+      },
+      {
+       "run": "run_1784786723_17546",
+       "acquired_wave": 5,
+       "n_postwaves": 12,
+       "mean_delta": 15.331185134310132,
+       "mean_effect": -15.331185134310132,
+       "obs_positive": 5
+      },
+      {
+       "run": "run_1784787688_32406",
+       "acquired_wave": 10,
+       "n_postwaves": 10,
+       "mean_delta": 6.555061050061051,
+       "mean_effect": -6.555061050061051,
+       "obs_positive": 4
+      },
+      {
+       "run": "run_1784795927_93597",
+       "acquired_wave": 13,
+       "n_postwaves": 7,
+       "mean_delta": 6.77881562881563,
+       "mean_effect": -6.77881562881563,
+       "obs_positive": 2
+      },
+      {
+       "run": "run_1784801716_88465",
+       "acquired_wave": 5,
+       "n_postwaves": 5,
+       "mean_delta": 9.155833333333334,
+       "mean_effect": -9.155833333333334,
+       "obs_positive": 2
+      },
+      {
+       "run": "run_1784802191_76892",
+       "acquired_wave": 4,
+       "n_postwaves": 16,
+       "mean_delta": 4.7706110729548215,
+       "mean_effect": -4.7706110729548215,
+       "obs_positive": 12
+      },
+      {
+       "run": "run_1784803299_7195",
+       "acquired_wave": 3,
+       "n_postwaves": 17,
+       "mean_delta": -3.9283137614019967,
+       "mean_effect": 3.9283137614019967,
+       "obs_positive": 13
+      },
+      {
+       "run": "run_1784804435_39794",
+       "acquired_wave": 15,
+       "n_postwaves": 5,
+       "mean_delta": 0.8044444444444452,
+       "mean_effect": -0.8044444444444452,
+       "obs_positive": 3
+      }
+     ],
+     "mean_delta": 4.987728101426729,
+     "mean_effect": -4.987728101426729,
+     "obs_sign_consistency": 0.5616438356164384,
+     "holding_sign_consistency": 0.125
+    }
+   },
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_honey": {
+   "item_id": "item_honey",
+   "classes": [
+    "offense",
+    "defensive"
+   ],
+   "primary_class": "offense",
+   "tags": [
+    "stat_ranged_damage",
+    "explosive"
+   ],
+   "effect_keys": [
+    "explosion_damage",
+    "explosion_size",
+    "stat_dodge",
+    "stat_ranged_damage",
+    "stat_speed"
+   ],
+   "tier": "B",
+   "tier_source": "wiki",
+   "n_buys": 4,
+   "n_runs": 3,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": {
+    "values": [
+     18.633440866090158
+    ],
+    "per_buy": [
+     {
+      "run": "run_1784802191_76892",
+      "wave": 12,
+      "dps_gain": 18.633440866090158,
+      "direct_gain": 18.0,
+      "method": "model",
+      "result": "defeat"
+     }
+    ],
+    "n": 1,
+    "sum": 18.633440866090158,
+    "mean": 18.633440866090158,
+    "median": 18.633440866090158
+   },
+   "tier_tension": null
+  },
+  "item_injection": {
+   "item_id": "item_injection",
+   "classes": [
+    "offense",
+    "defensive"
+   ],
+   "primary_class": "offense",
+   "tags": [
+    "stat_percent_damage"
+   ],
+   "effect_keys": [
+    "stat_max_hp",
+    "stat_percent_damage"
+   ],
+   "tier": "B",
+   "tier_source": "wiki",
+   "n_buys": 9,
+   "n_runs": 8,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": {
+    "values": [
+     5.982905982905977
+    ],
+    "per_buy": [
+     {
+      "run": "run_1784787688_32406",
+      "wave": 9,
+      "dps_gain": 5.982905982905977,
+      "direct_gain": 7.0,
+      "method": "model",
+      "result": "victory"
+     }
+    ],
+    "n": 1,
+    "sum": 5.982905982905977,
+    "mean": 5.982905982905977,
+    "median": 5.982905982905977
+   },
+   "tier_tension": null
+  },
+  "item_insanity": {
+   "item_id": "item_insanity",
+   "classes": [
+    "offense"
+   ],
+   "primary_class": "offense",
+   "tags": [
+    "stat_crit_chance"
+   ],
+   "effect_keys": [
+    "stat_crit_chance",
+    "stat_percent_damage"
+   ],
+   "tier": "B",
+   "tier_source": "wiki",
+   "n_buys": 12,
+   "n_runs": 9,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": {
+    "values": [
+     1.8171419148321022,
+     0.6713985331780346,
+     2.340994506153546,
+     1.7629712522625287,
+     0.9077974560121488
+    ],
+    "per_buy": [
+     {
+      "run": "run_1784787688_32406",
+      "wave": 15,
+      "dps_gain": 1.8171419148321022,
+      "direct_gain": -3.0,
+      "method": "model",
+      "result": "victory"
+     },
+     {
+      "run": "run_1784792652_7723",
+      "wave": 10,
+      "dps_gain": 0.6713985331780346,
+      "direct_gain": -3.0,
+      "method": "model",
+      "result": "victory"
+     },
+     {
+      "run": "run_1784793833_32034",
+      "wave": 9,
+      "dps_gain": 2.340994506153546,
+      "direct_gain": -3.0,
+      "method": "model",
+      "result": "defeat"
+     },
+     {
+      "run": "run_1784800561_47448",
+      "wave": 13,
+      "dps_gain": 1.7629712522625287,
+      "direct_gain": -3.0,
+      "method": "model",
+      "result": "victory"
+     },
+     {
+      "run": "run_1784802191_76892",
+      "wave": 11,
+      "dps_gain": 0.9077974560121488,
+      "direct_gain": -3.0,
+      "method": "model",
+      "result": "defeat"
+     }
+    ],
+    "n": 5,
+    "sum": 7.50030366243836,
+    "mean": 1.500060732487672,
+    "median": 1.7629712522625287
+   },
+   "tier_tension": null
+  },
+  "item_jellyshield": {
+   "item_id": "item_jellyshield",
+   "classes": [
+    "other"
+   ],
+   "primary_class": "other",
+   "tags": [
+    "pet"
+   ],
+   "effect_keys": [
+    "jellyshield_count"
+   ],
+   "tier": "S",
+   "tier_source": "wiki",
+   "n_buys": 7,
+   "n_runs": 6,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_jetpack": {
+   "item_id": "item_jetpack",
+   "classes": [
+    "defensive"
+   ],
+   "primary_class": "defensive",
+   "tags": [
+    "stat_speed",
+    "stat_dodge"
+   ],
+   "effect_keys": [
+    "stat_armor",
+    "stat_dodge",
+    "stat_max_hp",
+    "stat_speed"
+   ],
+   "tier": "B",
+   "tier_source": "rogueranker",
+   "n_buys": 1,
+   "n_runs": 1,
+   "insufficient": true,
+   "contrasts": {
+    "damage_amount": {
+     "kpi": "damage_amount",
+     "label": "player damage taken per wave",
+     "value_direction": "good_low",
+     "direction": "lower_better",
+     "sum_delta": -12.731092436974784,
+     "sum_effect": 12.731092436974784,
+     "n_obs": 5,
+     "n_obs_positive": 2,
+     "n_holdings": 1,
+     "n_holdings_positive": 1,
+     "per_holding": [
+      {
+       "run": "run_1784804435_39794",
+       "acquired_wave": 15,
+       "n_postwaves": 5,
+       "mean_delta": -2.546218487394957,
+       "mean_effect": 2.546218487394957,
+       "obs_positive": 2
+      }
+     ],
+     "mean_delta": -2.546218487394957,
+     "mean_effect": 2.546218487394957,
+     "obs_sign_consistency": 0.4,
+     "holding_sign_consistency": 1.0
+    }
+   },
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_leather_vest": {
+   "item_id": "item_leather_vest",
+   "classes": [
+    "defensive"
+   ],
+   "primary_class": "defensive",
+   "tags": [
+    "stat_armor",
+    "stat_dodge"
+   ],
+   "effect_keys": [
+    "stat_armor",
+    "stat_dodge",
+    "stat_max_hp"
+   ],
+   "tier": "C",
+   "tier_source": "rogueranker",
+   "n_buys": 9,
+   "n_runs": 7,
+   "insufficient": false,
+   "contrasts": {
+    "damage_amount": {
+     "kpi": "damage_amount",
+     "label": "player damage taken per wave",
+     "value_direction": "good_low",
+     "direction": "lower_better",
+     "sum_delta": 343.8076923076923,
+     "sum_effect": -343.8076923076923,
+     "n_obs": 60,
+     "n_obs_positive": 33,
+     "n_holdings": 7,
+     "n_holdings_positive": 2,
+     "per_holding": [
+      {
+       "run": "run_1784785556_51395",
+       "acquired_wave": 8,
+       "n_postwaves": 12,
+       "mean_delta": -0.1293625356125355,
+       "mean_effect": 0.1293625356125355,
+       "obs_positive": 6
+      },
+      {
+       "run": "run_1784788917_7315",
+       "acquired_wave": 9,
+       "n_postwaves": 11,
+       "mean_delta": 11.290695415695415,
+       "mean_effect": -11.290695415695415,
+       "obs_positive": 4
+      },
+      {
+       "run": "run_1784790063_90333",
+       "acquired_wave": 19,
+       "n_postwaves": 1,
+       "mean_delta": -0.5,
+       "mean_effect": 0.5,
+       "obs_positive": 1
+      },
+      {
+       "run": "run_1784795927_93597",
+       "acquired_wave": 9,
+       "n_postwaves": 11,
+       "mean_delta": 7.7452408702408695,
+       "mean_effect": -7.7452408702408695,
+       "obs_positive": 5
+      },
+      {
+       "run": "run_1784799404_80018",
+       "acquired_wave": 9,
+       "n_postwaves": 11,
+       "mean_delta": 2.65433177933178,
+       "mean_effect": -2.65433177933178,
+       "obs_positive": 8
+      },
+      {
+       "run": "run_1784802191_76892",
+       "acquired_wave": 10,
+       "n_postwaves": 10,
+       "mean_delta": 8.619764957264957,
+       "mean_effect": -8.619764957264957,
+       "obs_positive": 7
+      },
+      {
+       "run": "run_1784805636_10804",
+       "acquired_wave": 16,
+       "n_postwaves": 4,
+       "mean_delta": 5.267361111111112,
+       "mean_effect": -5.267361111111112,
+       "obs_positive": 2
+      }
+     ],
+     "mean_delta": 5.730128205128206,
+     "mean_effect": -5.730128205128206,
+     "obs_sign_consistency": 0.55,
+     "holding_sign_consistency": 0.2857142857142857
+    }
+   },
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_lemonade": {
+   "item_id": "item_lemonade",
+   "classes": [
+    "other"
+   ],
+   "primary_class": "other",
+   "tags": [
+    "consumable"
+   ],
+   "effect_keys": [
+    "consumable_heal"
+   ],
+   "tier": "C",
+   "tier_source": "wiki",
+   "n_buys": 1,
+   "n_runs": 1,
+   "insufficient": true,
+   "contrasts": {},
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_lens": {
+   "item_id": "item_lens",
+   "classes": [
+    "offense"
+   ],
+   "primary_class": "offense",
+   "tags": [
+    "stat_ranged_damage"
+   ],
+   "effect_keys": [
+    "stat_range",
+    "stat_ranged_damage"
+   ],
+   "tier": "B",
+   "tier_source": "wiki",
+   "n_buys": 10,
+   "n_runs": 8,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": {
+    "values": [
+     4.815262637466114,
+     7.957540728508347,
+     7.641441233468398
+    ],
+    "per_buy": [
+     {
+      "run": "run_1784792179_82981",
+      "wave": 9,
+      "dps_gain": 4.815262637466114,
+      "direct_gain": 1.0,
+      "method": "model",
+      "result": "defeat"
+     },
+     {
+      "run": "run_1784793833_32034",
+      "wave": 11,
+      "dps_gain": 7.957540728508347,
+      "direct_gain": 1.0,
+      "method": "model",
+      "result": "defeat"
+     },
+     {
+      "run": "run_1784802191_76892",
+      "wave": 9,
+      "dps_gain": 7.641441233468398,
+      "direct_gain": 1.0,
+      "method": "model",
+      "result": "defeat"
+     }
+    ],
+    "n": 3,
+    "sum": 20.41424459944286,
+    "mean": 6.804748199814287,
+    "median": 7.641441233468398
+   },
+   "tier_tension": null
+  },
+  "item_little_muscley_dude": {
+   "item_id": "item_little_muscley_dude",
+   "classes": [
+    "defensive"
+   ],
+   "primary_class": "defensive",
+   "tags": [
+    "stat_melee_damage",
+    "stat_max_hp"
+   ],
+   "effect_keys": [
+    "stat_max_hp",
+    "stat_melee_damage",
+    "stat_range"
+   ],
+   "tier": null,
+   "tier_source": null,
+   "n_buys": 1,
+   "n_runs": 1,
+   "insufficient": true,
+   "contrasts": {
+    "damage_amount": {
+     "kpi": "damage_amount",
+     "label": "player damage taken per wave",
+     "value_direction": "good_low",
+     "direction": "lower_better",
+     "sum_delta": 66.09442724458205,
+     "sum_effect": -66.09442724458205,
+     "n_obs": 13,
+     "n_obs_positive": 7,
+     "n_holdings": 1,
+     "n_holdings_positive": 0,
+     "per_holding": [
+      {
+       "run": "run_1784795927_93597",
+       "acquired_wave": 7,
+       "n_postwaves": 13,
+       "mean_delta": 5.0841867111216965,
+       "mean_effect": -5.0841867111216965,
+       "obs_positive": 7
+      }
+     ],
+     "mean_delta": 5.0841867111216965,
+     "mean_effect": -5.0841867111216965,
+     "obs_sign_consistency": 0.5384615384615384,
+     "holding_sign_consistency": 0.0
+    }
+   },
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_lootworm": {
+   "item_id": "item_lootworm",
+   "classes": [
+    "collection",
+    "economy"
+   ],
+   "primary_class": "collection",
+   "tags": [
+    "economy",
+    "pickup",
+    "pet"
+   ],
+   "effect_keys": [],
+   "tier": "B",
+   "tier_source": "wiki",
+   "n_buys": 9,
+   "n_runs": 9,
+   "insufficient": false,
+   "contrasts": {
+    "materials_saturation_frac": {
+     "kpi": "materials_saturation_frac",
+     "label": "ground-material cap-saturation fraction",
+     "value_direction": "ambiguous",
+     "direction": "higher_better",
+     "sum_delta": -14.202933354484294,
+     "sum_effect": -14.202933354484294,
+     "n_obs": 74,
+     "n_obs_positive": 1,
+     "n_holdings": 9,
+     "n_holdings_positive": 0,
+     "per_holding": [
+      {
+       "run": "run_1784785556_51395",
+       "acquired_wave": 10,
+       "n_postwaves": 10,
+       "mean_delta": -0.0789934337217602,
+       "mean_effect": -0.0789934337217602,
+       "obs_positive": 1
+      },
+      {
+       "run": "run_1784787688_32406",
+       "acquired_wave": 7,
+       "n_postwaves": 13,
+       "mean_delta": -0.18329788295077906,
+       "mean_effect": -0.18329788295077906,
+       "obs_positive": 0
+      },
+      {
+       "run": "run_1784788917_7315",
+       "acquired_wave": 11,
+       "n_postwaves": 9,
+       "mean_delta": -0.21891585589961252,
+       "mean_effect": -0.21891585589961252,
+       "obs_positive": 0
+      },
+      {
+       "run": "run_1784790063_90333",
+       "acquired_wave": 18,
+       "n_postwaves": 2,
+       "mean_delta": -0.36078748922857046,
+       "mean_effect": -0.36078748922857046,
+       "obs_positive": 0
+      },
+      {
+       "run": "run_1784793833_32034",
+       "acquired_wave": 16,
+       "n_postwaves": 1,
+       "mean_delta": -0.19996343815075665,
+       "mean_effect": -0.19996343815075665,
+       "obs_positive": 0
+      },
+      {
+       "run": "run_1784795927_93597",
+       "acquired_wave": 14,
+       "n_postwaves": 6,
+       "mean_delta": -0.2871137209208581,
+       "mean_effect": -0.2871137209208581,
+       "obs_positive": 0
+      },
+      {
+       "run": "run_1784797082_83949",
+       "acquired_wave": 6,
+       "n_postwaves": 14,
+       "mean_delta": -0.137107365945086,
+       "mean_effect": -0.137107365945086,
+       "obs_positive": 0
+      },
+      {
+       "run": "run_1784799404_80018",
+       "acquired_wave": 14,
+       "n_postwaves": 6,
+       "mean_delta": -0.3172100291070539,
+       "mean_effect": -0.3172100291070539,
+       "obs_positive": 0
+      },
+      {
+       "run": "run_1784804435_39794",
+       "acquired_wave": 7,
+       "n_postwaves": 13,
+       "mean_delta": -0.19945383044642165,
+       "mean_effect": -0.19945383044642165,
+       "obs_positive": 0
+      }
+     ],
+     "mean_delta": -0.19193153181735534,
+     "mean_effect": -0.19193153181735534,
+     "obs_sign_consistency": 0.013513513513513514,
+     "holding_sign_consistency": 0.0
+    },
+    "materials_mean": {
+     "kpi": "materials_mean",
+     "label": "mean ground material count",
+     "value_direction": "ambiguous",
+     "direction": "higher_better",
+     "sum_delta": -818.3099462571157,
+     "sum_effect": -818.3099462571157,
+     "n_obs": 74,
+     "n_obs_positive": 3,
+     "n_holdings": 9,
+     "n_holdings_positive": 0,
+     "per_holding": [
+      {
+       "run": "run_1784785556_51395",
+       "acquired_wave": 10,
+       "n_postwaves": 10,
+       "mean_delta": -1.576780661382291,
+       "mean_effect": -1.576780661382291,
+       "obs_positive": 3
+      },
+      {
+       "run": "run_1784787688_32406",
+       "acquired_wave": 7,
+       "n_postwaves": 13,
+       "mean_delta": -9.53664764617063,
+       "mean_effect": -9.53664764617063,
+       "obs_positive": 0
+      },
+      {
+       "run": "run_1784788917_7315",
+       "acquired_wave": 11,
+       "n_postwaves": 9,
+       "mean_delta": -12.109390426692464,
+       "mean_effect": -12.109390426692464,
+       "obs_positive": 0
+      },
+      {
+       "run": "run_1784790063_90333",
+       "acquired_wave": 18,
+       "n_postwaves": 2,
+       "mean_delta": -14.14940415759176,
+       "mean_effect": -14.14940415759176,
+       "obs_positive": 0
+      },
+      {
+       "run": "run_1784793833_32034",
+       "acquired_wave": 16,
+       "n_postwaves": 1,
+       "mean_delta": -14.663901775483737,
+       "mean_effect": -14.663901775483737,
+       "obs_positive": 0
+      },
+      {
+       "run": "run_1784795927_93597",
+       "acquired_wave": 14,
+       "n_postwaves": 6,
+       "mean_delta": -14.824832430903008,
+       "mean_effect": -14.824832430903008,
+       "obs_positive": 0
+      },
+      {
+       "run": "run_1784797082_83949",
+       "acquired_wave": 6,
+       "n_postwaves": 14,
+       "mean_delta": -7.725062524799933,
+       "mean_effect": -7.725062524799933,
+       "obs_positive": 0
+      },
+      {
+       "run": "run_1784799404_80018",
+       "acquired_wave": 14,
+       "n_postwaves": 6,
+       "mean_delta": -21.295604410223735,
+       "mean_effect": -21.295604410223735,
+       "obs_positive": 0
+      },
+      {
+       "run": "run_1784804435_39794",
+       "acquired_wave": 7,
+       "n_postwaves": 13,
+       "mean_delta": -15.518846147555033,
+       "mean_effect": -15.518846147555033,
+       "obs_positive": 0
+      }
+     ],
+     "mean_delta": -11.05824251698805,
+     "mean_effect": -11.05824251698805,
+     "obs_sign_consistency": 0.04054054054054054,
+     "holding_sign_consistency": 0.0
+    }
+   },
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_lost_duck": {
+   "item_id": "item_lost_duck",
+   "classes": [
+    "other"
+   ],
+   "primary_class": "other",
+   "tags": [
+    "stat_luck"
+   ],
+   "effect_keys": [
+    "stat_elemental_damage",
+    "stat_luck"
+   ],
+   "tier": "B",
+   "tier_source": "wiki",
+   "n_buys": 7,
+   "n_runs": 6,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_medal": {
+   "item_id": "item_medal",
+   "classes": [
+    "offense",
+    "defensive"
+   ],
+   "primary_class": "offense",
+   "tags": [
+    "stat_max_hp",
+    "stat_percent_damage",
+    "stat_armor",
+    "stat_speed"
+   ],
+   "effect_keys": [
+    "stat_armor",
+    "stat_crit_chance",
+    "stat_max_hp",
+    "stat_percent_damage",
+    "stat_speed"
+   ],
+   "tier": "A",
+   "tier_source": "wiki",
+   "n_buys": 6,
+   "n_runs": 5,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": {
+    "values": [
+     -0.3916294365132642
+    ],
+    "per_buy": [
+     {
+      "run": "run_1784787688_32406",
+      "wave": 14,
+      "dps_gain": -0.3916294365132642,
+      "direct_gain": 3.0,
+      "method": "model",
+      "result": "victory"
+     }
+    ],
+    "n": 1,
+    "sum": -0.3916294365132642,
+    "mean": -0.3916294365132642,
+    "median": -0.3916294365132642
+   },
+   "tier_tension": null
+  },
+  "item_metal_detector": {
+   "item_id": "item_metal_detector",
+   "classes": [
+    "collection",
+    "offense",
+    "economy"
+   ],
+   "primary_class": "collection",
+   "tags": [
+    "stat_luck",
+    "stat_engineering",
+    "pickup",
+    "economy"
+   ],
+   "effect_keys": [
+    "chance_double_gold",
+    "stat_engineering",
+    "stat_luck",
+    "stat_percent_damage"
+   ],
+   "tier": "C",
+   "tier_source": "rogueranker",
+   "n_buys": 6,
+   "n_runs": 5,
+   "insufficient": false,
+   "contrasts": {
+    "materials_saturation_frac": {
+     "kpi": "materials_saturation_frac",
+     "label": "ground-material cap-saturation fraction",
+     "value_direction": "ambiguous",
+     "direction": "higher_better",
+     "sum_delta": 1.6926256603449923,
+     "sum_effect": 1.6926256603449923,
+     "n_obs": 57,
+     "n_obs_positive": 29,
+     "n_holdings": 5,
+     "n_holdings_positive": 4,
+     "per_holding": [
+      {
+       "run": "run_1784786723_17546",
+       "acquired_wave": 8,
+       "n_postwaves": 9,
+       "mean_delta": 0.06216789883232088,
+       "mean_effect": 0.06216789883232088,
+       "obs_positive": 6
+      },
+      {
+       "run": "run_1784787688_32406",
+       "acquired_wave": 8,
+       "n_postwaves": 12,
+       "mean_delta": -0.11638347387798405,
+       "mean_effect": -0.11638347387798405,
+       "obs_positive": 0
+      },
+      {
+       "run": "run_1784790063_90333",
+       "acquired_wave": 11,
+       "n_postwaves": 9,
+       "mean_delta": 0.051936274699539785,
+       "mean_effect": 0.051936274699539785,
+       "obs_positive": 7
+      },
+      {
+       "run": "run_1784798249_41022",
+       "acquired_wave": 4,
+       "n_postwaves": 16,
+       "mean_delta": 0.048597746288041824,
+       "mean_effect": 0.048597746288041824,
+       "obs_positive": 8
+      },
+      {
+       "run": "run_1784803299_7195",
+       "acquired_wave": 9,
+       "n_postwaves": 11,
+       "mean_delta": 0.11679325858958048,
+       "mean_effect": 0.11679325858958048,
+       "obs_positive": 8
+      }
+     ],
+     "mean_delta": 0.029695187023596355,
+     "mean_effect": 0.029695187023596355,
+     "obs_sign_consistency": 0.5087719298245614,
+     "holding_sign_consistency": 0.8
+    },
+    "materials_mean": {
+     "kpi": "materials_mean",
+     "label": "mean ground material count",
+     "value_direction": "ambiguous",
+     "direction": "higher_better",
+     "sum_delta": 142.3480567217141,
+     "sum_effect": 142.3480567217141,
+     "n_obs": 57,
+     "n_obs_positive": 36,
+     "n_holdings": 5,
+     "n_holdings_positive": 4,
+     "per_holding": [
+      {
+       "run": "run_1784786723_17546",
+       "acquired_wave": 8,
+       "n_postwaves": 9,
+       "mean_delta": 3.7063574045721643,
+       "mean_effect": 3.7063574045721643,
+       "obs_positive": 8
+      },
+      {
+       "run": "run_1784787688_32406",
+       "acquired_wave": 8,
+       "n_postwaves": 12,
+       "mean_delta": -5.026252531559833,
+       "mean_effect": -5.026252531559833,
+       "obs_positive": 1
+      },
+      {
+       "run": "run_1784790063_90333",
+       "acquired_wave": 11,
+       "n_postwaves": 9,
+       "mean_delta": 5.05044291153077,
+       "mean_effect": 5.05044291153077,
+       "obs_positive": 6
+      },
+      {
+       "run": "run_1784798249_41022",
+       "acquired_wave": 4,
+       "n_postwaves": 16,
+       "mean_delta": 3.010182809524858,
+       "mean_effect": 3.010182809524858,
+       "obs_positive": 10
+      },
+      {
+       "run": "run_1784803299_7195",
+       "acquired_wave": 9,
+       "n_postwaves": 11,
+       "mean_delta": 6.880814482100724,
+       "mean_effect": 6.880814482100724,
+       "obs_positive": 11
+      }
+     ],
+     "mean_delta": 2.4973343284511245,
+     "mean_effect": 2.4973343284511245,
+     "obs_sign_consistency": 0.631578947368421,
+     "holding_sign_consistency": 0.8
+    }
+   },
+   "calibration": {
+    "values": [
+     -4.0650406504065035,
+     -4.310344827586188,
+     -3.9682539682539764
+    ],
+    "per_buy": [
+     {
+      "run": "run_1784787688_32406",
+      "wave": 11,
+      "dps_gain": -4.0650406504065035,
+      "direct_gain": -5.0,
+      "method": "closed_form",
+      "result": "victory"
+     },
+     {
+      "run": "run_1784790063_90333",
+      "wave": 11,
+      "dps_gain": -4.310344827586188,
+      "direct_gain": -5.0,
+      "method": "closed_form",
+      "result": "defeat"
+     },
+     {
+      "run": "run_1784803299_7195",
+      "wave": 9,
+      "dps_gain": -3.9682539682539764,
+      "direct_gain": -5.0,
+      "method": "closed_form",
+      "result": "victory"
+     }
+    ],
+    "n": 3,
+    "sum": -12.343639446246668,
+    "mean": -4.114546482082223,
+    "median": -4.0650406504065035
+   },
+   "tier_tension": null
+  },
+  "item_metal_plate": {
+   "item_id": "item_metal_plate",
+   "classes": [
+    "offense",
+    "defensive"
+   ],
+   "primary_class": "offense",
+   "tags": [
+    "stat_armor"
+   ],
+   "effect_keys": [
+    "stat_armor",
+    "stat_percent_damage"
+   ],
+   "tier": "B",
+   "tier_source": "wiki",
+   "n_buys": 3,
+   "n_runs": 3,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_missile": {
+   "item_id": "item_missile",
+   "classes": [
+    "offense"
+   ],
+   "primary_class": "offense",
+   "tags": [
+    "stat_percent_damage"
+   ],
+   "effect_keys": [
+    "stat_attack_speed",
+    "stat_percent_damage"
+   ],
+   "tier": "B",
+   "tier_source": "wiki",
+   "n_buys": 11,
+   "n_runs": 9,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": {
+    "values": [
+     4.67692307692309,
+     3.6714975845410835,
+     2.590203587986273,
+     5.549057829759563,
+     4.835311079072868,
+     4.189146302761038
+    ],
+    "per_buy": [
+     {
+      "run": "run_1784786723_17546",
+      "wave": 12,
+      "dps_gain": 4.67692307692309,
+      "direct_gain": 6.0,
+      "method": "closed_form",
+      "result": "defeat"
+     },
+     {
+      "run": "run_1784795927_93597",
+      "wave": 13,
+      "dps_gain": 3.6714975845410835,
+      "direct_gain": 6.0,
+      "method": "closed_form",
+      "result": "victory"
+     },
+     {
+      "run": "run_1784797082_83949",
+      "wave": 13,
+      "dps_gain": 2.590203587986273,
+      "direct_gain": 6.0,
+      "method": "closed_form",
+      "result": "victory"
+     },
+     {
+      "run": "run_1784798249_41022",
+      "wave": 14,
+      "dps_gain": 5.549057829759563,
+      "direct_gain": 6.0,
+      "method": "closed_form",
+      "result": "victory"
+     },
+     {
+      "run": "run_1784799404_80018",
+      "wave": 14,
+      "dps_gain": 4.835311079072868,
+      "direct_gain": 6.0,
+      "method": "closed_form",
+      "result": "defeat"
+     },
+     {
+      "run": "run_1784799404_80018",
+      "wave": 15,
+      "dps_gain": 4.189146302761038,
+      "direct_gain": 6.0,
+      "method": "closed_form",
+      "result": "defeat"
+     }
+    ],
+    "n": 6,
+    "sum": 25.512139461043915,
+    "mean": 4.2520232435073195,
+    "median": 4.433034689842064
+   },
+   "tier_tension": null
+  },
+  "item_mushroom": {
+   "item_id": "item_mushroom",
+   "classes": [
+    "defensive"
+   ],
+   "primary_class": "defensive",
+   "tags": [
+    "stat_hp_regeneration"
+   ],
+   "effect_keys": [
+    "stat_hp_regeneration",
+    "stat_luck"
+   ],
+   "tier": "B",
+   "tier_source": "wiki",
+   "n_buys": 5,
+   "n_runs": 4,
+   "insufficient": false,
+   "contrasts": {
+    "damage_amount": {
+     "kpi": "damage_amount",
+     "label": "player damage taken per wave",
+     "value_direction": "good_low",
+     "direction": "lower_better",
+     "sum_delta": -86.10848444641016,
+     "sum_effect": 86.10848444641016,
+     "n_obs": 48,
+     "n_obs_positive": 33,
+     "n_holdings": 4,
+     "n_holdings_positive": 2,
+     "per_holding": [
+      {
+       "run": "run_1784793833_32034",
+       "acquired_wave": 13,
+       "n_postwaves": 4,
+       "mean_delta": 12.071428571428571,
+       "mean_effect": -12.071428571428571,
+       "obs_positive": 2
+      },
+      {
+       "run": "run_1784794784_69267",
+       "acquired_wave": 1,
+       "n_postwaves": 19,
+       "mean_delta": -5.940089775522398,
+       "mean_effect": 5.940089775522398,
+       "obs_positive": 15
+      },
+      {
+       "run": "run_1784795927_93597",
+       "acquired_wave": 8,
+       "n_postwaves": 12,
+       "mean_delta": 4.754773576097105,
+       "mean_effect": -4.754773576097105,
+       "obs_positive": 6
+      },
+      {
+       "run": "run_1784798249_41022",
+       "acquired_wave": 7,
+       "n_postwaves": 13,
+       "mean_delta": -6.045367377720319,
+       "mean_effect": 6.045367377720319,
+       "obs_positive": 10
+      }
+     ],
+     "mean_delta": -1.7939267593002117,
+     "mean_effect": 1.7939267593002117,
+     "obs_sign_consistency": 0.6875,
+     "holding_sign_consistency": 0.5
+    }
+   },
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_mutation": {
+   "item_id": "item_mutation",
+   "classes": [
+    "offense"
+   ],
+   "primary_class": "offense",
+   "tags": [
+    "stat_ranged_damage",
+    "stat_elemental_damage"
+   ],
+   "effect_keys": [
+    "knockback",
+    "stat_elemental_damage",
+    "stat_ranged_damage"
+   ],
+   "tier": "B",
+   "tier_source": "wiki",
+   "n_buys": 14,
+   "n_runs": 12,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": {
+    "values": [
+     4.551958674881623,
+     4.874844688098697,
+     4.194575857969661,
+     5.1073342704721645
+    ],
+    "per_buy": [
+     {
+      "run": "run_1784798249_41022",
+      "wave": 12,
+      "dps_gain": 4.551958674881623,
+      "direct_gain": 1.0,
+      "method": "model",
+      "result": "victory"
+     },
+     {
+      "run": "run_1784800561_47448",
+      "wave": 10,
+      "dps_gain": 4.874844688098697,
+      "direct_gain": 1.0,
+      "method": "model",
+      "result": "victory"
+     },
+     {
+      "run": "run_1784800561_47448",
+      "wave": 12,
+      "dps_gain": 4.194575857969661,
+      "direct_gain": 1.0,
+      "method": "model",
+      "result": "victory"
+     },
+     {
+      "run": "run_1784802191_76892",
+      "wave": 15,
+      "dps_gain": 5.1073342704721645,
+      "direct_gain": 1.0,
+      "method": "model",
+      "result": "defeat"
+     }
+    ],
+    "n": 4,
+    "sum": 18.728713491422145,
+    "mean": 4.682178372855536,
+    "median": 4.71340168149016
+   },
+   "tier_tension": null
+  },
+  "item_night_goggles": {
+   "item_id": "item_night_goggles",
+   "classes": [
+    "offense",
+    "defensive"
+   ],
+   "primary_class": "offense",
+   "tags": [
+    "stat_crit_chance",
+    "stat_range"
+   ],
+   "effect_keys": [
+    "stat_armor",
+    "stat_crit_chance",
+    "stat_max_hp",
+    "stat_range"
+   ],
+   "tier": "A",
+   "tier_source": "rogueranker",
+   "n_buys": 4,
+   "n_runs": 3,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_padding": {
+   "item_id": "item_padding",
+   "classes": [
+    "defensive"
+   ],
+   "primary_class": "defensive",
+   "tags": [
+    "stat_max_hp"
+   ],
+   "effect_keys": [
+    "stat_max_hp"
+   ],
+   "tier": "B",
+   "tier_source": "wiki",
+   "n_buys": 5,
+   "n_runs": 5,
+   "insufficient": false,
+   "contrasts": {
+    "damage_amount": {
+     "kpi": "damage_amount",
+     "label": "player damage taken per wave",
+     "value_direction": "good_low",
+     "direction": "lower_better",
+     "sum_delta": 181.0269230769232,
+     "sum_effect": -181.0269230769232,
+     "n_obs": 32,
+     "n_obs_positive": 13,
+     "n_holdings": 5,
+     "n_holdings_positive": 2,
+     "per_holding": [
+      {
+       "run": "run_1784785556_51395",
+       "acquired_wave": 9,
+       "n_postwaves": 11,
+       "mean_delta": -1.4696095571095569,
+       "mean_effect": 1.4696095571095569,
+       "obs_positive": 6
+      },
+      {
+       "run": "run_1784786723_17546",
+       "acquired_wave": 9,
+       "n_postwaves": 8,
+       "mean_delta": 22.922395833333333,
+       "mean_effect": -22.922395833333333,
+       "obs_positive": 2
+      },
+      {
+       "run": "run_1784792179_82981",
+       "acquired_wave": 9,
+       "n_postwaves": 1,
+       "mean_delta": 45.3125,
+       "mean_effect": -45.3125,
+       "obs_positive": 0
+      },
+      {
+       "run": "run_1784795927_93597",
+       "acquired_wave": 19,
+       "n_postwaves": 1,
+       "mean_delta": 10.666666666666671,
+       "mean_effect": -10.666666666666671,
+       "obs_positive": 0
+      },
+      {
+       "run": "run_1784797082_83949",
+       "acquired_wave": 9,
+       "n_postwaves": 11,
+       "mean_delta": -3.8332459207459206,
+       "mean_effect": 3.8332459207459206,
+       "obs_positive": 5
+      }
+     ],
+     "mean_delta": 5.65709134615385,
+     "mean_effect": -5.65709134615385,
+     "obs_sign_consistency": 0.40625,
+     "holding_sign_consistency": 0.4
+    }
+   },
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_peaceful_bee": {
+   "item_id": "item_peaceful_bee",
+   "classes": [
+    "offense",
+    "defensive",
+    "economy"
+   ],
+   "primary_class": "offense",
+   "tags": [
+    "stat_dodge",
+    "stat_harvesting"
+   ],
+   "effect_keys": [
+    "stat_dodge",
+    "stat_harvesting",
+    "stat_melee_damage",
+    "stat_ranged_damage"
+   ],
+   "tier": null,
+   "tier_source": null,
+   "n_buys": 7,
+   "n_runs": 4,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": {
+    "values": [
+     -5.935494715627083
+    ],
+    "per_buy": [
+     {
+      "run": "run_1784791214_74323",
+      "wave": 9,
+      "dps_gain": -5.935494715627083,
+      "direct_gain": -1.0,
+      "method": "model",
+      "result": "defeat"
+     }
+    ],
+    "n": 1,
+    "sum": -5.935494715627083,
+    "mean": -5.935494715627083,
+    "median": -5.935494715627083
+   },
+   "tier_tension": null
+  },
+  "item_piggy_bank": {
+   "item_id": "item_piggy_bank",
+   "classes": [
+    "other"
+   ],
+   "primary_class": "other",
+   "tags": [],
+   "effect_keys": [
+    "gain_pct_gold_start_wave"
+   ],
+   "tier": "C",
+   "tier_source": "wiki",
+   "n_buys": 5,
+   "n_runs": 5,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_plant": {
+   "item_id": "item_plant",
+   "classes": [
+    "defensive"
+   ],
+   "primary_class": "defensive",
+   "tags": [
+    "stat_hp_regeneration"
+   ],
+   "effect_keys": [
+    "stat_hp_regeneration",
+    "stat_lifesteal"
+   ],
+   "tier": "B",
+   "tier_source": "wiki",
+   "n_buys": 7,
+   "n_runs": 5,
+   "insufficient": false,
+   "contrasts": {
+    "damage_amount": {
+     "kpi": "damage_amount",
+     "label": "player damage taken per wave",
+     "value_direction": "good_low",
+     "direction": "lower_better",
+     "sum_delta": -136.60317460317464,
+     "sum_effect": 136.60317460317464,
+     "n_obs": 66,
+     "n_obs_positive": 44,
+     "n_holdings": 5,
+     "n_holdings_positive": 3,
+     "per_holding": [
+      {
+       "run": "run_1784792179_82981",
+       "acquired_wave": 5,
+       "n_postwaves": 5,
+       "mean_delta": 8.533333333333333,
+       "mean_effect": -8.533333333333333,
+       "obs_positive": 2
+      },
+      {
+       "run": "run_1784792652_7723",
+       "acquired_wave": 1,
+       "n_postwaves": 19,
+       "mean_delta": -1.361737677527152,
+       "mean_effect": 1.361737677527152,
+       "obs_positive": 13
+      },
+      {
+       "run": "run_1784793833_32034",
+       "acquired_wave": 6,
+       "n_postwaves": 11,
+       "mean_delta": 5.476190476190476,
+       "mean_effect": -5.476190476190476,
+       "obs_positive": 4
+      },
+      {
+       "run": "run_1784794784_69267",
+       "acquired_wave": 7,
+       "n_postwaves": 13,
+       "mean_delta": -8.904761904761905,
+       "mean_effect": 8.904761904761905,
+       "obs_positive": 13
+      },
+      {
+       "run": "run_1784803299_7195",
+       "acquired_wave": 2,
+       "n_postwaves": 18,
+       "mean_delta": -5.4373897707231045,
+       "mean_effect": 5.4373897707231045,
+       "obs_positive": 12
+      }
+     ],
+     "mean_delta": -2.0697450697450703,
+     "mean_effect": 2.0697450697450703,
+     "obs_sign_consistency": 0.6666666666666666,
+     "holding_sign_consistency": 0.6
+    }
+   },
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_plastic_explosive": {
+   "item_id": "item_plastic_explosive",
+   "classes": [
+    "other"
+   ],
+   "primary_class": "other",
+   "tags": [
+    "explosive"
+   ],
+   "effect_keys": [
+    "explosion_size"
+   ],
+   "tier": null,
+   "tier_source": null,
+   "n_buys": 2,
+   "n_runs": 2,
+   "insufficient": true,
+   "contrasts": {},
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_poisonous_tonic": {
+   "item_id": "item_poisonous_tonic",
+   "classes": [
+    "offense",
+    "defensive"
+   ],
+   "primary_class": "offense",
+   "tags": [
+    "stat_attack_speed",
+    "stat_crit_chance",
+    "stat_range"
+   ],
+   "effect_keys": [
+    "stat_attack_speed",
+    "stat_crit_chance",
+    "stat_hp_regeneration",
+    "stat_range"
+   ],
+   "tier": "A",
+   "tier_source": "wiki",
+   "n_buys": 6,
+   "n_runs": 5,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": {
+    "values": [
+     12.556684686842447,
+     10.873709221954213
+    ],
+    "per_buy": [
+     {
+      "run": "run_1784786723_17546",
+      "wave": 10,
+      "dps_gain": 12.556684686842447,
+      "direct_gain": 10.0,
+      "method": "model",
+      "result": "defeat"
+     },
+     {
+      "run": "run_1784790063_90333",
+      "wave": 12,
+      "dps_gain": 10.873709221954213,
+      "direct_gain": 10.0,
+      "method": "model",
+      "result": "defeat"
+     }
+    ],
+    "n": 2,
+    "sum": 23.43039390879666,
+    "mean": 11.71519695439833,
+    "median": 11.71519695439833
+   },
+   "tier_tension": null
+  },
+  "item_power_generator": {
+   "item_id": "item_power_generator",
+   "classes": [
+    "offense"
+   ],
+   "primary_class": "offense",
+   "tags": [
+    "stat_speed",
+    "stat_percent_damage"
+   ],
+   "effect_keys": [
+    "stat_percent_damage"
+   ],
+   "tier": "B",
+   "tier_source": "rogueranker",
+   "n_buys": 3,
+   "n_runs": 3,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": {
+    "values": [
+     -3.4188034188034178
+    ],
+    "per_buy": [
+     {
+      "run": "run_1784792652_7723",
+      "wave": 15,
+      "dps_gain": -3.4188034188034178,
+      "direct_gain": -4.0,
+      "method": "closed_form",
+      "result": "victory"
+     }
+    ],
+    "n": 1,
+    "sum": -3.4188034188034178,
+    "mean": -3.4188034188034178,
+    "median": -3.4188034188034178
+   },
+   "tier_tension": null
+  },
+  "item_propeller_hat": {
+   "item_id": "item_propeller_hat",
+   "classes": [
+    "offense"
+   ],
+   "primary_class": "offense",
+   "tags": [
+    "stat_luck"
+   ],
+   "effect_keys": [
+    "stat_luck",
+    "stat_percent_damage"
+   ],
+   "tier": "C",
+   "tier_source": "wiki",
+   "n_buys": 4,
+   "n_runs": 4,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_pumpkin": {
+   "item_id": "item_pumpkin",
+   "classes": [
+    "offense"
+   ],
+   "primary_class": "offense",
+   "tags": [
+    "stat_ranged_damage"
+   ],
+   "effect_keys": [
+    "piercing_damage",
+    "stat_percent_damage"
+   ],
+   "tier": "B",
+   "tier_source": "wiki",
+   "n_buys": 18,
+   "n_runs": 15,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": {
+    "values": [
+     -1.538461538461544,
+     -1.6528925619834767,
+     -1.6000000000000014,
+     -1.5873015873015928,
+     -1.5037593984962405,
+     -1.6806722689075682,
+     -1.538461538461544
+    ],
+    "per_buy": [
+     {
+      "run": "run_1784787688_32406",
+      "wave": 13,
+      "dps_gain": -1.538461538461544,
+      "direct_gain": 13.0,
+      "method": "closed_form",
+      "result": "victory"
+     },
+     {
+      "run": "run_1784790063_90333",
+      "wave": 14,
+      "dps_gain": -1.6528925619834767,
+      "direct_gain": 13.0,
+      "method": "closed_form",
+      "result": "defeat"
+     },
+     {
+      "run": "run_1784795927_93597",
+      "wave": 12,
+      "dps_gain": -1.6000000000000014,
+      "direct_gain": 13.0,
+      "method": "closed_form",
+      "result": "victory"
+     },
+     {
+      "run": "run_1784799404_80018",
+      "wave": 11,
+      "dps_gain": -1.5873015873015928,
+      "direct_gain": 13.0,
+      "method": "closed_form",
+      "result": "defeat"
+     },
+     {
+      "run": "run_1784800561_47448",
+      "wave": 11,
+      "dps_gain": -1.5037593984962405,
+      "direct_gain": 13.0,
+      "method": "closed_form",
+      "result": "victory"
+     },
+     {
+      "run": "run_1784804435_39794",
+      "wave": 12,
+      "dps_gain": -1.6806722689075682,
+      "direct_gain": 13.0,
+      "method": "closed_form",
+      "result": "victory"
+     },
+     {
+      "run": "run_1784805636_10804",
+      "wave": 12,
+      "dps_gain": -1.538461538461544,
+      "direct_gain": 13.0,
+      "method": "closed_form",
+      "result": "victory"
+     }
+    ],
+    "n": 7,
+    "sum": -11.101548893611968,
+    "mean": -1.585935556230281,
+    "median": -1.5873015873015928
+   },
+   "tier_tension": null
+  },
+  "item_recycling_machine": {
+   "item_id": "item_recycling_machine",
+   "classes": [
+    "economy"
+   ],
+   "primary_class": "economy",
+   "tags": [
+    "economy"
+   ],
+   "effect_keys": [
+    "recycling_gains"
+   ],
+   "tier": "C",
+   "tier_source": "wiki",
+   "n_buys": 9,
+   "n_runs": 9,
+   "insufficient": false,
+   "contrasts": {
+    "gold_entering": {
+     "kpi": "gold_entering",
+     "label": "gold entering shop",
+     "value_direction": "good_high",
+     "direction": "higher_better",
+     "sum_delta": 4929.33005050505,
+     "sum_effect": 4929.33005050505,
+     "n_obs": 77,
+     "n_obs_positive": 54,
+     "n_holdings": 9,
+     "n_holdings_positive": 8,
+     "per_holding": [
+      {
+       "run": "run_1784786723_17546",
+       "acquired_wave": 9,
+       "n_postwaves": 7,
+       "mean_delta": 26.818109668109667,
+       "mean_effect": 26.818109668109667,
+       "obs_positive": 5
+      },
+      {
+       "run": "run_1784787688_32406",
+       "acquired_wave": 12,
+       "n_postwaves": 7,
+       "mean_delta": 162.71150793650796,
+       "mean_effect": 162.71150793650796,
+       "obs_positive": 7
+      },
+      {
+       "run": "run_1784788917_7315",
+       "acquired_wave": 6,
+       "n_postwaves": 13,
+       "mean_delta": 70.59628982128983,
+       "mean_effect": 70.59628982128983,
+       "obs_positive": 8
+      },
+      {
+       "run": "run_1784791214_74323",
+       "acquired_wave": 9,
+       "n_postwaves": 7,
+       "mean_delta": 77.10382395382396,
+       "mean_effect": 77.10382395382396,
+       "obs_positive": 6
+      },
+      {
+       "run": "run_1784794784_69267",
+       "acquired_wave": 9,
+       "n_postwaves": 10,
+       "mean_delta": 90.58517676767676,
+       "mean_effect": 90.58517676767676,
+       "obs_positive": 7
+      },
+      {
+       "run": "run_1784797082_83949",
+       "acquired_wave": 16,
+       "n_postwaves": 3,
+       "mean_delta": 17.375,
+       "mean_effect": 17.375,
+       "obs_positive": 2
+      },
+      {
+       "run": "run_1784799404_80018",
+       "acquired_wave": 11,
+       "n_postwaves": 8,
+       "mean_delta": 34.122569444444444,
+       "mean_effect": 34.122569444444444,
+       "obs_positive": 5
+      },
+      {
+       "run": "run_1784800561_47448",
+       "acquired_wave": 10,
+       "n_postwaves": 9,
+       "mean_delta": -27.618322109988778,
+       "mean_effect": -27.618322109988778,
+       "obs_positive": 3
+      },
+      {
+       "run": "run_1784804435_39794",
+       "acquired_wave": 6,
+       "n_postwaves": 13,
+       "mean_delta": 89.44244366744368,
+       "mean_effect": 89.44244366744368,
+       "obs_positive": 11
+      }
+     ],
+     "mean_delta": 64.01727338318247,
+     "mean_effect": 64.01727338318247,
+     "obs_sign_consistency": 0.7012987012987013,
+     "holding_sign_consistency": 0.8888888888888888
+    }
+   },
+   "calibration": null,
+   "tier_tension": "ledger: helps economy (consistent) but tier C -- possibly underrated on this axis"
+  },
+  "item_reinforced_steel": {
+   "item_id": "item_reinforced_steel",
+   "classes": [
+    "offense"
+   ],
+   "primary_class": "offense",
+   "tags": [
+    "stat_ranged_damage",
+    "stat_engineering"
+   ],
+   "effect_keys": [
+    "stat_engineering",
+    "stat_ranged_damage",
+    "stat_speed"
+   ],
+   "tier": "A",
+   "tier_source": "wiki",
+   "n_buys": 11,
+   "n_runs": 10,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": {
+    "values": [
+     10.394311218656952
+    ],
+    "per_buy": [
+     {
+      "run": "run_1784790063_90333",
+      "wave": 11,
+      "dps_gain": 10.394311218656952,
+      "direct_gain": 2.0,
+      "method": "model",
+      "result": "defeat"
+     }
+    ],
+    "n": 1,
+    "sum": 10.394311218656952,
+    "mean": 10.394311218656952,
+    "median": 10.394311218656952
+   },
+   "tier_tension": null
+  },
+  "item_riposte": {
+   "item_id": "item_riposte",
+   "classes": [
+    "other"
+   ],
+   "primary_class": "other",
+   "tags": [
+    "stat_dodge",
+    "stat_melee_damage"
+   ],
+   "effect_keys": [
+    "stat_melee_damage"
+   ],
+   "tier": null,
+   "tier_source": null,
+   "n_buys": 3,
+   "n_runs": 3,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_scared_sausage": {
+   "item_id": "item_scared_sausage",
+   "classes": [
+    "other"
+   ],
+   "primary_class": "other",
+   "tags": [
+    "stat_elemental_damage"
+   ],
+   "effect_keys": [
+    "burn_chance"
+   ],
+   "tier": "C",
+   "tier_source": "wiki",
+   "n_buys": 2,
+   "n_runs": 2,
+   "insufficient": true,
+   "contrasts": {},
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_scope": {
+   "item_id": "item_scope",
+   "classes": [
+    "offense"
+   ],
+   "primary_class": "offense",
+   "tags": [
+    "stat_ranged_damage",
+    "stat_range"
+   ],
+   "effect_keys": [
+    "stat_attack_speed",
+    "stat_range",
+    "stat_ranged_damage"
+   ],
+   "tier": "B",
+   "tier_source": "wiki",
+   "n_buys": 17,
+   "n_runs": 10,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": {
+    "values": [
+     6.123124302819102,
+     5.726896518073787
+    ],
+    "per_buy": [
+     {
+      "run": "run_1784787688_32406",
+      "wave": 13,
+      "dps_gain": 6.123124302819102,
+      "direct_gain": -5.0,
+      "method": "model",
+      "result": "victory"
+     },
+     {
+      "run": "run_1784788917_7315",
+      "wave": 14,
+      "dps_gain": 5.726896518073787,
+      "direct_gain": -5.0,
+      "method": "model",
+      "result": "defeat"
+     }
+    ],
+    "n": 2,
+    "sum": 11.85002082089289,
+    "mean": 5.925010410446445,
+    "median": 5.925010410446445
+   },
+   "tier_tension": null
+  },
+  "item_shady_potion": {
+   "item_id": "item_shady_potion",
+   "classes": [
+    "defensive"
+   ],
+   "primary_class": "defensive",
+   "tags": [
+    "stat_luck"
+   ],
+   "effect_keys": [
+    "stat_hp_regeneration",
+    "stat_luck"
+   ],
+   "tier": null,
+   "tier_source": null,
+   "n_buys": 2,
+   "n_runs": 2,
+   "insufficient": true,
+   "contrasts": {
+    "damage_amount": {
+     "kpi": "damage_amount",
+     "label": "player damage taken per wave",
+     "value_direction": "good_low",
+     "direction": "lower_better",
+     "sum_delta": -15.460470085470089,
+     "sum_effect": 15.460470085470089,
+     "n_obs": 27,
+     "n_obs_positive": 21,
+     "n_holdings": 2,
+     "n_holdings_positive": 1,
+     "per_holding": [
+      {
+       "run": "run_1784790063_90333",
+       "acquired_wave": 6,
+       "n_postwaves": 14,
+       "mean_delta": -5.486683455433456,
+       "mean_effect": 5.486683455433456,
+       "obs_positive": 14
+      },
+      {
+       "run": "run_1784795927_93597",
+       "acquired_wave": 7,
+       "n_postwaves": 13,
+       "mean_delta": 4.719469099276791,
+       "mean_effect": -4.719469099276791,
+       "obs_positive": 7
+      }
+     ],
+     "mean_delta": -0.5726100031655589,
+     "mean_effect": 0.5726100031655589,
+     "obs_sign_consistency": 0.7777777777777778,
+     "holding_sign_consistency": 0.5
+    }
+   },
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_sharp_bullet": {
+   "item_id": "item_sharp_bullet",
+   "classes": [
+    "offense"
+   ],
+   "primary_class": "offense",
+   "tags": [
+    "stat_ranged_damage"
+   ],
+   "effect_keys": [
+    "knockback",
+    "piercing",
+    "piercing_damage",
+    "stat_percent_damage"
+   ],
+   "tier": "A",
+   "tier_source": "wiki",
+   "n_buys": 10,
+   "n_runs": 10,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": {
+    "values": [
+     -3.401360544217691,
+     -4.23728813559322,
+     -4.672897196261683,
+     -4.424778761061932,
+     -4.273504273504258
+    ],
+    "per_buy": [
+     {
+      "run": "run_1784786723_17546",
+      "wave": 13,
+      "dps_gain": -3.401360544217691,
+      "direct_gain": -4.0,
+      "method": "closed_form",
+      "result": "defeat"
+     },
+     {
+      "run": "run_1784787688_32406",
+      "wave": 12,
+      "dps_gain": -4.23728813559322,
+      "direct_gain": -4.0,
+      "method": "closed_form",
+      "result": "victory"
+     },
+     {
+      "run": "run_1784788917_7315",
+      "wave": 14,
+      "dps_gain": -4.672897196261683,
+      "direct_gain": -4.0,
+      "method": "closed_form",
+      "result": "defeat"
+     },
+     {
+      "run": "run_1784802191_76892",
+      "wave": 12,
+      "dps_gain": -4.424778761061932,
+      "direct_gain": -4.0,
+      "method": "closed_form",
+      "result": "defeat"
+     },
+     {
+      "run": "run_1784805636_10804",
+      "wave": 9,
+      "dps_gain": -4.273504273504258,
+      "direct_gain": -4.0,
+      "method": "closed_form",
+      "result": "victory"
+     }
+    ],
+    "n": 5,
+    "sum": -21.009828910638785,
+    "mean": -4.201965782127757,
+    "median": -4.273504273504258
+   },
+   "tier_tension": null
+  },
+  "item_shmoop": {
+   "item_id": "item_shmoop",
+   "classes": [
+    "offense",
+    "defensive"
+   ],
+   "primary_class": "offense",
+   "tags": [
+    "stat_max_hp",
+    "stat_hp_regeneration"
+   ],
+   "effect_keys": [
+    "stat_hp_regeneration",
+    "stat_max_hp",
+    "stat_melee_damage",
+    "stat_ranged_damage"
+   ],
+   "tier": "B",
+   "tier_source": "wiki",
+   "n_buys": 1,
+   "n_runs": 1,
+   "insufficient": true,
+   "contrasts": {},
+   "calibration": {
+    "values": [
+     -4.559731998503254
+    ],
+    "per_buy": [
+     {
+      "run": "run_1784788917_7315",
+      "wave": 15,
+      "dps_gain": -4.559731998503254,
+      "direct_gain": -1.0,
+      "method": "model",
+      "result": "defeat"
+     }
+    ],
+    "n": 1,
+    "sum": -4.559731998503254,
+    "mean": -4.559731998503254,
+    "median": -4.559731998503254
+   },
+   "tier_tension": null
+  },
+  "item_silver_bullet": {
+   "item_id": "item_silver_bullet",
+   "classes": [
+    "other"
+   ],
+   "primary_class": "other",
+   "tags": [
+    "stat_percent_damage"
+   ],
+   "effect_keys": [
+    "damage_against_bosses"
+   ],
+   "tier": "A",
+   "tier_source": "wiki",
+   "n_buys": 4,
+   "n_runs": 4,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_small_magazine": {
+   "item_id": "item_small_magazine",
+   "classes": [
+    "offense"
+   ],
+   "primary_class": "offense",
+   "tags": [
+    "stat_ranged_damage",
+    "stat_attack_speed"
+   ],
+   "effect_keys": [
+    "stat_attack_speed",
+    "stat_percent_damage",
+    "stat_ranged_damage"
+   ],
+   "tier": "A",
+   "tier_source": "wiki",
+   "n_buys": 7,
+   "n_runs": 6,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": {
+    "values": [
+     13.294521811967426
+    ],
+    "per_buy": [
+     {
+      "run": "run_1784798249_41022",
+      "wave": 11,
+      "dps_gain": 13.294521811967426,
+      "direct_gain": 6.0,
+      "method": "model",
+      "result": "victory"
+     }
+    ],
+    "n": 1,
+    "sum": 13.294521811967426,
+    "mean": 13.294521811967426,
+    "median": 13.294521811967426
+   },
+   "tier_tension": null
+  },
+  "item_sunglasses": {
+   "item_id": "item_sunglasses",
+   "classes": [
+    "offense",
+    "defensive"
+   ],
+   "primary_class": "offense",
+   "tags": [
+    "stat_crit_chance"
+   ],
+   "effect_keys": [
+    "stat_armor",
+    "stat_crit_chance"
+   ],
+   "tier": "B",
+   "tier_source": "wiki",
+   "n_buys": 4,
+   "n_runs": 4,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": {
+    "values": [
+     6.73652267658418
+    ],
+    "per_buy": [
+     {
+      "run": "run_1784785556_51395",
+      "wave": 11,
+      "dps_gain": 6.73652267658418,
+      "direct_gain": 0.0,
+      "method": "model",
+      "result": "victory"
+     }
+    ],
+    "n": 1,
+    "sum": 6.73652267658418,
+    "mean": 6.73652267658418,
+    "median": 6.73652267658418
+   },
+   "tier_tension": null
+  },
+  "item_tardigrade": {
+   "item_id": "item_tardigrade",
+   "classes": [
+    "other"
+   ],
+   "primary_class": "other",
+   "tags": [],
+   "effect_keys": [
+    "hit_protection"
+   ],
+   "tier": "B",
+   "tier_source": "rogueranker",
+   "n_buys": 3,
+   "n_runs": 3,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_terrified_onion": {
+   "item_id": "item_terrified_onion",
+   "classes": [
+    "other"
+   ],
+   "primary_class": "other",
+   "tags": [
+    "stat_speed"
+   ],
+   "effect_keys": [
+    "stat_luck",
+    "stat_speed"
+   ],
+   "tier": "B",
+   "tier_source": "wiki",
+   "n_buys": 11,
+   "n_runs": 9,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_tractor": {
+   "item_id": "item_tractor",
+   "classes": [
+    "offense",
+    "economy"
+   ],
+   "primary_class": "offense",
+   "tags": [
+    "stat_harvesting"
+   ],
+   "effect_keys": [
+    "stat_harvesting",
+    "stat_percent_damage"
+   ],
+   "tier": null,
+   "tier_source": null,
+   "n_buys": 1,
+   "n_runs": 1,
+   "insufficient": true,
+   "contrasts": {},
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_tree": {
+   "item_id": "item_tree",
+   "classes": [
+    "other"
+   ],
+   "primary_class": "other",
+   "tags": [
+    "exploration"
+   ],
+   "effect_keys": [
+    "trees"
+   ],
+   "tier": "C",
+   "tier_source": "wiki",
+   "n_buys": 11,
+   "n_runs": 7,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_triangle_of_power": {
+   "item_id": "item_triangle_of_power",
+   "classes": [
+    "offense",
+    "defensive"
+   ],
+   "primary_class": "offense",
+   "tags": [
+    "stat_percent_damage"
+   ],
+   "effect_keys": [
+    "stat_armor",
+    "stat_percent_damage"
+   ],
+   "tier": "C",
+   "tier_source": "rogueranker",
+   "n_buys": 6,
+   "n_runs": 6,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_turret_laser": {
+   "item_id": "item_turret_laser",
+   "classes": [
+    "other"
+   ],
+   "primary_class": "other",
+   "tags": [
+    "stat_engineering",
+    "structure"
+   ],
+   "effect_keys": [],
+   "tier": null,
+   "tier_source": null,
+   "n_buys": 1,
+   "n_runs": 1,
+   "insufficient": true,
+   "contrasts": {},
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_ugly_tooth": {
+   "item_id": "item_ugly_tooth",
+   "classes": [
+    "other"
+   ],
+   "primary_class": "other",
+   "tags": [
+    "less_enemy_speed"
+   ],
+   "effect_keys": [
+    "remove_speed",
+    "stat_speed"
+   ],
+   "tier": "A",
+   "tier_source": "wiki",
+   "n_buys": 10,
+   "n_runs": 10,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_vigilante_ring": {
+   "item_id": "item_vigilante_ring",
+   "classes": [
+    "offense"
+   ],
+   "primary_class": "offense",
+   "tags": [
+    "stat_percent_damage"
+   ],
+   "effect_keys": [
+    "stat_percent_damage"
+   ],
+   "tier": "B",
+   "tier_source": "rogueranker",
+   "n_buys": 5,
+   "n_runs": 5,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": {
+    "values": [
+     2.970297029702973,
+     1.9480519480519431,
+     2.8037383177570208,
+     2.127659574468077,
+     2.4193548387096753
+    ],
+    "per_buy": [
+     {
+      "run": "run_1784792652_7723",
+      "wave": 9,
+      "dps_gain": 2.970297029702973,
+      "direct_gain": 3.0,
+      "method": "closed_form",
+      "result": "victory"
+     },
+     {
+      "run": "run_1784794784_69267",
+      "wave": 13,
+      "dps_gain": 1.9480519480519431,
+      "direct_gain": 3.0,
+      "method": "closed_form",
+      "result": "victory"
+     },
+     {
+      "run": "run_1784800561_47448",
+      "wave": 9,
+      "dps_gain": 2.8037383177570208,
+      "direct_gain": 3.0,
+      "method": "closed_form",
+      "result": "victory"
+     },
+     {
+      "run": "run_1784803299_7195",
+      "wave": 14,
+      "dps_gain": 2.127659574468077,
+      "direct_gain": 3.0,
+      "method": "closed_form",
+      "result": "victory"
+     },
+     {
+      "run": "run_1784805636_10804",
+      "wave": 10,
+      "dps_gain": 2.4193548387096753,
+      "direct_gain": 3.0,
+      "method": "closed_form",
+      "result": "victory"
+     }
+    ],
+    "n": 5,
+    "sum": 12.26910170868969,
+    "mean": 2.453820341737938,
+    "median": 2.4193548387096753
+   },
+   "tier_tension": null
+  },
+  "item_wandering_bot": {
+   "item_id": "item_wandering_bot",
+   "classes": [
+    "other"
+   ],
+   "primary_class": "other",
+   "tags": [
+    "less_enemy_speed",
+    "structure",
+    "pet"
+   ],
+   "effect_keys": [
+    "wandering_bot"
+   ],
+   "tier": "A",
+   "tier_source": "wiki",
+   "n_buys": 5,
+   "n_runs": 4,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_weird_food": {
+   "item_id": "item_weird_food",
+   "classes": [
+    "defensive"
+   ],
+   "primary_class": "defensive",
+   "tags": [
+    "consumable"
+   ],
+   "effect_keys": [
+    "consumable_heal",
+    "stat_dodge"
+   ],
+   "tier": "C",
+   "tier_source": "wiki",
+   "n_buys": 1,
+   "n_runs": 1,
+   "insufficient": true,
+   "contrasts": {
+    "damage_amount": {
+     "kpi": "damage_amount",
+     "label": "player damage taken per wave",
+     "value_direction": "good_low",
+     "direction": "lower_better",
+     "sum_delta": 41.642857142857146,
+     "sum_effect": -41.642857142857146,
+     "n_obs": 1,
+     "n_obs_positive": 0,
+     "n_holdings": 1,
+     "n_holdings_positive": 0,
+     "per_holding": [
+      {
+       "run": "run_1784788917_7315",
+       "acquired_wave": 19,
+       "n_postwaves": 1,
+       "mean_delta": 41.642857142857146,
+       "mean_effect": -41.642857142857146,
+       "obs_positive": 0
+      }
+     ],
+     "mean_delta": 41.642857142857146,
+     "mean_effect": -41.642857142857146,
+     "obs_sign_consistency": 0.0,
+     "holding_sign_consistency": 0.0
+    }
+   },
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_wheelbarrow": {
+   "item_id": "item_wheelbarrow",
+   "classes": [
+    "defensive",
+    "economy"
+   ],
+   "primary_class": "defensive",
+   "tags": [
+    "stat_harvesting"
+   ],
+   "effect_keys": [
+    "stat_armor",
+    "stat_harvesting"
+   ],
+   "tier": null,
+   "tier_source": null,
+   "n_buys": 3,
+   "n_runs": 3,
+   "insufficient": false,
+   "contrasts": {
+    "damage_amount": {
+     "kpi": "damage_amount",
+     "label": "player damage taken per wave",
+     "value_direction": "good_low",
+     "direction": "lower_better",
+     "sum_delta": 357.5168067226891,
+     "sum_effect": -357.5168067226891,
+     "n_obs": 24,
+     "n_obs_positive": 9,
+     "n_holdings": 3,
+     "n_holdings_positive": 0,
+     "per_holding": [
+      {
+       "run": "run_1784786723_17546",
+       "acquired_wave": 8,
+       "n_postwaves": 9,
+       "mean_delta": 20.51797385620915,
+       "mean_effect": -20.51797385620915,
+       "obs_positive": 3
+      },
+      {
+       "run": "run_1784788917_7315",
+       "acquired_wave": 8,
+       "n_postwaves": 12,
+       "mean_delta": 10.757528011204483,
+       "mean_effect": -10.757528011204483,
+       "obs_positive": 4
+      },
+      {
+       "run": "run_1784792179_82981",
+       "acquired_wave": 7,
+       "n_postwaves": 3,
+       "mean_delta": 14.588235294117647,
+       "mean_effect": -14.588235294117647,
+       "obs_positive": 2
+      }
+     ],
+     "mean_delta": 14.89653361344538,
+     "mean_effect": -14.89653361344538,
+     "obs_sign_consistency": 0.375,
+     "holding_sign_consistency": 0.0
+    }
+   },
+   "calibration": null,
+   "tier_tension": null
+  },
+  "item_white_flag": {
+   "item_id": "item_white_flag",
+   "classes": [
+    "economy"
+   ],
+   "primary_class": "economy",
+   "tags": [
+    "stat_harvesting",
+    "less_enemies"
+   ],
+   "effect_keys": [
+    "number_of_enemies",
+    "stat_harvesting"
+   ],
+   "tier": "S",
+   "tier_source": "wiki",
+   "n_buys": 4,
+   "n_runs": 4,
+   "insufficient": false,
+   "contrasts": {
+    "gold_entering": {
+     "kpi": "gold_entering",
+     "label": "gold entering shop",
+     "value_direction": "good_high",
+     "direction": "higher_better",
+     "sum_delta": -1819.2278043593833,
+     "sum_effect": -1819.2278043593833,
+     "n_obs": 31,
+     "n_obs_positive": 7,
+     "n_holdings": 3,
+     "n_holdings_positive": 0,
+     "per_holding": [
+      {
+       "run": "run_1784798249_41022",
+       "acquired_wave": 7,
+       "n_postwaves": 12,
+       "mean_delta": -73.37958975722132,
+       "mean_effect": -73.37958975722132,
+       "obs_positive": 2
+      },
+      {
+       "run": "run_1784799404_80018",
+       "acquired_wave": 10,
+       "n_postwaves": 9,
+       "mean_delta": -4.715151515151509,
+       "mean_effect": -4.715151515151509,
+       "obs_positive": 4
+      },
+      {
+       "run": "run_1784805636_10804",
+       "acquired_wave": 9,
+       "n_postwaves": 10,
+       "mean_delta": -89.62363636363635,
+       "mean_effect": -89.62363636363635,
+       "obs_positive": 1
+      }
+     ],
+     "mean_delta": -58.68476788256075,
+     "mean_effect": -58.68476788256075,
+     "obs_sign_consistency": 0.22580645161290322,
+     "holding_sign_consistency": 0.0
+    }
+   },
+   "calibration": null,
+   "tier_tension": "ledger: no economy benefit (consistent) but tier S -- rating must rest on other axes"
+  },
+  "item_will_o_the_wisp": {
+   "item_id": "item_will_o_the_wisp",
+   "classes": [
+    "offense"
+   ],
+   "primary_class": "offense",
+   "tags": [
+    "stat_elemental_damage"
+   ],
+   "effect_keys": [
+    "stat_attack_speed",
+    "stat_elemental_damage"
+   ],
+   "tier": null,
+   "tier_source": null,
+   "n_buys": 2,
+   "n_runs": 2,
+   "insufficient": true,
+   "contrasts": {},
+   "calibration": {
+    "values": [
+     -6.6037735849056505
+    ],
+    "per_buy": [
+     {
+      "run": "run_1784802191_76892",
+      "wave": 9,
+      "dps_gain": -6.6037735849056505,
+      "direct_gain": -7.0,
+      "method": "model",
+      "result": "defeat"
+     }
+    ],
+    "n": 1,
+    "sum": -6.6037735849056505,
+    "mean": -6.6037735849056505,
+    "median": -6.6037735849056505
+   },
+   "tier_tension": null
+  },
+  "item_wings": {
+   "item_id": "item_wings",
+   "classes": [
+    "other"
+   ],
+   "primary_class": "other",
+   "tags": [
+    "stat_speed",
+    "stat_range"
+   ],
+   "effect_keys": [
+    "stat_elemental_damage",
+    "stat_range",
+    "stat_speed"
+   ],
+   "tier": "A",
+   "tier_source": "wiki",
+   "n_buys": 6,
+   "n_runs": 4,
+   "insufficient": false,
+   "contrasts": {},
+   "calibration": null,
+   "tier_tension": null
+  }
+ }
+}
