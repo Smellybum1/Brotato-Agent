@@ -1,0 +1,119 @@
+# WP2 M2 — behavior-cloning dataset split (Stage D)
+#
+# Split by run_id at whole-run granularity: adjacent ticks of one run must
+# never cross the train/val boundary (temporal-leakage rule). Validation is
+# stratified by outcome — 2 victories + 2 defeats, the defeats covering both a
+# wave-20 finale death and a mid-game (wave-17) death so checkpoint selection
+# sees every band including finale and failure states.
+#
+# Per-run shard_sha256 is copied from datasets/combat_obs_v1/manifest.json;
+# the loader hard-errors if any shard on disk disagrees. Validation runs total
+# 81,790 valid&temporal samples (21.1%); training runs total 305,905.
+split_id: dataset_split_v1
+schema_id: combat_obs_v1
+observation_schema_hash: C653D836F3EBC821A51AFC70482D3772FC7B7B927D393A6B9BBADC2718BB9B2A
+split_by: run
+
+validation:
+  - run_id: run_1784787688_32406
+    shard_file: run_1784787688_32406.npz
+    shard_sha256: CB8D965D26C7DAB0FADE6BC75AB417DA749A76C9FD1D22960E3F559AC03D8E87
+    outcome: victory
+    last_wave: 20
+  - run_id: run_1784793833_32034
+    shard_file: run_1784793833_32034.npz
+    shard_sha256: 79F07FA0A97A59CDBC8B7F8EDBBF2581B12232159880013B6CF8EEF6A49AAC16
+    outcome: defeat
+    last_wave: 17
+  - run_id: run_1784799404_80018
+    shard_file: run_1784799404_80018.npz
+    shard_sha256: 60680F5C112CABD0AF8ED7E28DDFB1AD046D951A2E3CF3EAF2910A04591E4BF2
+    outcome: defeat
+    last_wave: 20
+  - run_id: run_1784804435_39794
+    shard_file: run_1784804435_39794.npz
+    shard_sha256: 656018B37B745D87EE1B8ED7BABEAF0A24093B76971076DA540F2B0C1939EADD
+    outcome: victory
+    last_wave: 20
+
+train:
+  - run_id: run_1784785556_51395
+    shard_file: run_1784785556_51395.npz
+    shard_sha256: CB1C99EB90FE5EAFC9185C2CAE65B7C85A04D28F80DC90A37B10FA99196514B8
+    outcome: victory
+    last_wave: 20
+  - run_id: run_1784786723_17546
+    shard_file: run_1784786723_17546.npz
+    shard_sha256: 14F164D6E95FA5140368B5AB22292B3BD7AFA53A127196934D94E98793EE8550
+    outcome: defeat
+    last_wave: 17
+  - run_id: run_1784788917_7315
+    shard_file: run_1784788917_7315.npz
+    shard_sha256: A53940859CA05E769AF7BA775FF23BA1D34CE752ED875E52D5DD4B0957EF1CCC
+    outcome: defeat
+    last_wave: 20
+  - run_id: run_1784790063_90333
+    shard_file: run_1784790063_90333.npz
+    shard_sha256: 78E8BD1ECF1A01120DC3F79C9C55F9C57C9E23C1AAA3E9823877CEBF1B739C21
+    outcome: defeat
+    last_wave: 20
+  - run_id: run_1784791214_74323
+    shard_file: run_1784791214_74323.npz
+    shard_sha256: 39D333E8BF87D4A1DF152E239F0458A3C8C59FD579387920B9760158633F1A8D
+    outcome: defeat
+    last_wave: 17
+  - run_id: run_1784792179_82981
+    shard_file: run_1784792179_82981.npz
+    shard_sha256: 501DA5ECED7EA145FDAA4C3D0528E92898F4B11F9EB34D994054BEAB9837F8AC
+    outcome: defeat
+    last_wave: 10
+  - run_id: run_1784792652_7723
+    shard_file: run_1784792652_7723.npz
+    shard_sha256: F5C9613379CC34FD3E3CC71654B8C9EEC2DC5A1457D8791C4D25A04F51AE1CDD
+    outcome: victory
+    last_wave: 20
+  - run_id: run_1784794784_69267
+    shard_file: run_1784794784_69267.npz
+    shard_sha256: 30416D586A22171A22099966BAC56D2EB72E8BF1E0E12BC0F1F797543715DF8C
+    outcome: victory
+    last_wave: 20
+  - run_id: run_1784795927_93597
+    shard_file: run_1784795927_93597.npz
+    shard_sha256: 38156018591DA1EA5B3D09515681DA817955CC545A5A8975FE8A50E9EFDDD0D8
+    outcome: victory
+    last_wave: 20
+  - run_id: run_1784797082_83949
+    shard_file: run_1784797082_83949.npz
+    shard_sha256: 7E4782C9E2E38F4D7FB1265B4F0E1555A649989032E9A58C48E8A3D0D33B759F
+    outcome: victory
+    last_wave: 20
+  - run_id: run_1784798249_41022
+    shard_file: run_1784798249_41022.npz
+    shard_sha256: 8C0D96A71E6382CC117818428869CAD88770870439F9B9D8C77FD0E712EF89C8
+    outcome: victory
+    last_wave: 20
+  - run_id: run_1784800561_47448
+    shard_file: run_1784800561_47448.npz
+    shard_sha256: 5B22DFBC43E01F7E43CA86921DEBB3FF4552D1FF81A46B852DC3DE92C76D82B1
+    outcome: victory
+    last_wave: 20
+  - run_id: run_1784801716_88465
+    shard_file: run_1784801716_88465.npz
+    shard_sha256: FC9D754C16DA83C88CCAC5D62AE994D62DFFC4EB83433B0936C84AB812CD1A47
+    outcome: defeat
+    last_wave: 10
+  - run_id: run_1784802191_76892
+    shard_file: run_1784802191_76892.npz
+    shard_sha256: E5DE81C3C37C62765DD939BCD2CA3DBEE7F25E9731B0352A0558F377EDCFAA1F
+    outcome: defeat
+    last_wave: 20
+  - run_id: run_1784803299_7195
+    shard_file: run_1784803299_7195.npz
+    shard_sha256: 4F3B0864DA6E3936C7D578B682ED04EFABD398921B2ECD9D5D49FA19471733A3
+    outcome: victory
+    last_wave: 20
+  - run_id: run_1784805636_10804
+    shard_file: run_1784805636_10804.npz
+    shard_sha256: EBCD92A8C1EFB72B12FAFA8969B228CC16C4E082476C52D420718597514951F9
+    outcome: victory
+    last_wave: 20

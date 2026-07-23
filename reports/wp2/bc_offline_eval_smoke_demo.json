@@ -1,0 +1,220 @@
+{
+  "checkpoint": "best",
+  "device": "auto",
+  "generated": "2026-07-24 02:16:36",
+  "inter_seed_agreement": [],
+  "n_runs": 1,
+  "out_tag": "smoke_demo",
+  "report": "bc_offline_eval",
+  "runs": [
+    {
+      "baselines": {
+        "copy_previous": {
+          "mean_abs_magnitude_error": 2.245183594595801e-07,
+          "mean_angular_error_deg": 21.20212173461914,
+          "mean_cosine": 0.8140265941619873,
+          "median_angular_error_deg": 4.318469524383545,
+          "n": 81790,
+          "n_direction": 81790,
+          "saturation_fraction": 0.07842645794153214
+        },
+        "mean_direction": {
+          "direction": [
+            -0.8915970921516418,
+            -0.4528294503688812
+          ],
+          "mean_abs_magnitude_error": 2.435351404983521e-07,
+          "mean_angular_error_deg": 87.98641967773438,
+          "mean_cosine": 0.022830791771411896,
+          "median_angular_error_deg": 86.92535400390625,
+          "n": 81790,
+          "n_direction": 81790,
+          "saturation_fraction": 0.0
+        }
+      },
+      "batch_size": 4096,
+      "by_risk_stratum": {
+        "0.00-0.25": {
+          "mean_abs_magnitude_error": 0.15952599048614502,
+          "mean_angular_error_deg": 23.155948638916016,
+          "mean_cosine": 0.8360657691955566,
+          "median_angular_error_deg": 12.61314868927002,
+          "n": 71206,
+          "n_direction": 71206,
+          "saturation_fraction": 0.0
+        },
+        "0.25-0.50": {
+          "mean_abs_magnitude_error": 0.1395016759634018,
+          "mean_angular_error_deg": 28.3963680267334,
+          "mean_cosine": 0.7669760584831238,
+          "median_angular_error_deg": 12.993653297424316,
+          "n": 8004,
+          "n_direction": 8004,
+          "saturation_fraction": 0.0
+        },
+        "0.50-0.75": {
+          "mean_abs_magnitude_error": 0.1643226444721222,
+          "mean_angular_error_deg": 53.41872787475586,
+          "mean_cosine": 0.46618980169296265,
+          "median_angular_error_deg": 26.139062881469727,
+          "n": 2384,
+          "n_direction": 2384,
+          "saturation_fraction": 0.0
+        },
+        "0.75-inf": {
+          "mean_abs_magnitude_error": 0.20695409178733826,
+          "mean_angular_error_deg": 65.9461898803711,
+          "mean_cosine": 0.3134710490703583,
+          "median_angular_error_deg": 50.56266403198242,
+          "n": 196,
+          "n_direction": 196,
+          "saturation_fraction": 0.0
+        }
+      },
+      "by_val_run": {
+        "run_1784787688_32406": {
+          "last_wave": 20,
+          "mean_abs_magnitude_error": 0.1652577668428421,
+          "mean_angular_error_deg": 24.19622230529785,
+          "mean_cosine": 0.8220831155776978,
+          "median_angular_error_deg": 12.459162712097168,
+          "n": 21775,
+          "n_direction": 21775,
+          "outcome": "victory",
+          "saturation_fraction": 0.0
+        },
+        "run_1784793833_32034": {
+          "last_wave": 17,
+          "mean_abs_magnitude_error": 0.13980388641357422,
+          "mean_angular_error_deg": 22.833812713623047,
+          "mean_cosine": 0.8397715091705322,
+          "median_angular_error_deg": 12.576422691345215,
+          "n": 17399,
+          "n_direction": 17399,
+          "outcome": "defeat",
+          "saturation_fraction": 0.0
+        },
+        "run_1784799404_80018": {
+          "last_wave": 20,
+          "mean_abs_magnitude_error": 0.15935032069683075,
+          "mean_angular_error_deg": 25.166135787963867,
+          "mean_cosine": 0.8148712515830994,
+          "median_angular_error_deg": 13.813103675842285,
+          "n": 20906,
+          "n_direction": 20906,
+          "outcome": "defeat",
+          "saturation_fraction": 0.0
+        },
+        "run_1784804435_39794": {
+          "last_wave": 20,
+          "mean_abs_magnitude_error": 0.16332446038722992,
+          "mean_angular_error_deg": 26.076515197753906,
+          "mean_cosine": 0.796723484992981,
+          "median_angular_error_deg": 12.611318588256836,
+          "n": 21710,
+          "n_direction": 21710,
+          "outcome": "victory",
+          "saturation_fraction": 0.0
+        }
+      },
+      "by_wave_band": {
+        "1-5": {
+          "mean_abs_magnitude_error": 0.14671342074871063,
+          "mean_angular_error_deg": 15.551124572753906,
+          "mean_cosine": 0.9321789145469666,
+          "median_angular_error_deg": 11.394232749938965,
+          "n": 12828,
+          "n_direction": 12828,
+          "saturation_fraction": 0.0
+        },
+        "11-15": {
+          "mean_abs_magnitude_error": 0.14473176002502441,
+          "mean_angular_error_deg": 20.942720413208008,
+          "mean_cosine": 0.8633589744567871,
+          "median_angular_error_deg": 12.052671432495117,
+          "n": 24925,
+          "n_direction": 24925,
+          "saturation_fraction": 0.0
+        },
+        "16-19": {
+          "mean_abs_magnitude_error": 0.2178555577993393,
+          "mean_angular_error_deg": 40.02094650268555,
+          "mean_cosine": 0.6251837611198425,
+          "median_angular_error_deg": 17.1561336517334,
+          "n": 17324,
+          "n_direction": 17324,
+          "saturation_fraction": 0.0
+        },
+        "20": {
+          "mean_abs_magnitude_error": 0.20851759612560272,
+          "mean_angular_error_deg": 46.179656982421875,
+          "mean_cosine": 0.5587402582168579,
+          "median_angular_error_deg": 22.16674041748047,
+          "n": 4243,
+          "n_direction": 4243,
+          "saturation_fraction": 0.0
+        },
+        "6-10": {
+          "mean_abs_magnitude_error": 0.12281878292560577,
+          "mean_angular_error_deg": 18.053064346313477,
+          "mean_cosine": 0.8974623680114746,
+          "median_angular_error_deg": 11.386191368103027,
+          "n": 22470,
+          "n_direction": 22470,
+          "saturation_fraction": 0.0
+        }
+      },
+      "checkpoint": "best",
+      "checkpoint_epoch": 1,
+      "checkpoint_path": "C:\\Codex\\Brotato Agent\\models\\bc_v1\\bc_v1_s1_20260724_020529\\best.pt",
+      "checkpoint_sha256": "36A15966A9548424AC832456C5694C8495CEC242F4EB586F5316B25AEAC3CADE",
+      "checkpoint_sha256_verified": true,
+      "device": "cuda",
+      "gates": {
+        "beats_copy_previous_mean": false,
+        "beats_copy_previous_median": false,
+        "beats_mean_direction_mean": true,
+        "beats_mean_direction_median": true,
+        "copy_previous_mean_deg": 21.20212173461914,
+        "copy_previous_median_deg": 4.318469524383545,
+        "mean_direction_mean_deg": 87.98641967773438,
+        "mean_direction_median_deg": 86.92535400390625,
+        "mean_gate": false,
+        "median_gate": false,
+        "model_mean_deg": 24.653413772583008,
+        "model_median_deg": 12.87069034576416,
+        "overall_pass": false
+      },
+      "global_dim": 40,
+      "mag_eps": 0.01,
+      "model_parameters": 651202,
+      "n_val_runs": 4,
+      "normalization_manifest_hash": "FD3C55F62F210A6588B67787323CCE1E64311C57AF6A2FBFB136C86B6D27D166",
+      "overall": {
+        "mean_abs_magnitude_error": 0.15781986713409424,
+        "mean_angular_error_deg": 24.653413772583008,
+        "mean_cosine": 0.8172711730003357,
+        "median_angular_error_deg": 12.87069034576416,
+        "n": 81790,
+        "n_direction": 81790,
+        "saturation_fraction": 0.0,
+        "val_direction_term": 0.18272879719734192,
+        "val_loss": 0.19425234198570251,
+        "val_magnitude_term": 0.023047111928462982
+      },
+      "prev_action_indices": [
+        15,
+        16
+      ],
+      "registry_path": "models\\registry\\bc_v1_s1_20260724_020529.json",
+      "run_name": "bc_v1_s1_20260724_020529",
+      "schema_hash": "C653D836F3EBC821A51AFC70482D3772FC7B7B927D393A6B9BBADC2718BB9B2A",
+      "seed": 1,
+      "smoke": true,
+      "split_id": "dataset_split_v1",
+      "train_size": 305905,
+      "val_size": 81790
+    }
+  ],
+  "seed_variance": null
+}

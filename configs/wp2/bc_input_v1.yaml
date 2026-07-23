@@ -1,0 +1,32 @@
+# WP2 M2 — behavior-cloning input mask (Stage D)
+#
+# Selects the student global-feature subset from the frozen combat_obs_v1
+# schema. The 48 encoder globals embed the label and teacher-privileged
+# internals; the BC student input excludes 8 of them by NAME (never by index)
+# so the mask survives any future re-ordering of the schema.
+#
+# NOTE: the Stage-F residual policy legitimately re-includes the teacher
+# features (same dataset, different input mask) and therefore uses a
+# DIFFERENT mask config — do not reuse this file for the residual stage.
+schema_id: combat_obs_v1
+observation_schema_hash: C653D836F3EBC821A51AFC70482D3772FC7B7B927D393A6B9BBADC2718BB9B2A
+
+# Excluded from the student input (8 features -> student global dim 40).
+#   teacher_action_x / _y ........... the label itself
+#   teacher_enemy_count / _projectile_count . teacher internals (near-duplicate counts)
+#   finale_commit_* ................. teacher displacement-commitment state,
+#                                     unavailable to an independent student
+excluded_global_features:
+  - teacher_action_x
+  - teacher_action_y
+  - teacher_enemy_count
+  - teacher_projectile_count
+  - finale_commit_distance
+  - finale_commit_ticks
+  - finale_commit_x
+  - finale_commit_y
+
+# Regression targets, pulled from the ORIGINAL 48-column globals before masking.
+label_features:
+  - teacher_action_x
+  - teacher_action_y

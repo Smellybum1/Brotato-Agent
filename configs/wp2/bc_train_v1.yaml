@@ -1,0 +1,49 @@
+# WP2 M2 — behavior-cloning training config (Stage D, v1)
+#
+# Consumed by trainer/imitation/bc_training.py via scripts/train_bc.py. All
+# paths are resolved relative to the repository root. The trainer re-derives
+# and verifies every hash in the referenced configs at load time (the loader
+# hard-errors on any disagreement with the dataset manifest), so this file only
+# points at them — it never restates a hash.
+#
+# Loss/model/split decisions are fixed by .tmp/wp2_m2_training_architecture.md
+# (esp. §4 loss, §6 normalization, §7 protocol, §8 eval).
+
+seed: 1
+batch_size: 4096
+max_epochs: 50
+early_stopping_patience: 5          # on validation total loss
+
+optimizer:
+  name: adamw
+  lr: 3.0e-4
+  weight_decay: 1.0e-4
+
+lr_schedule:
+  name: cosine                       # CosineAnnealingLR over max_epochs
+  min_lr: 1.0e-5
+
+loss:
+  lambda_mag: 0.5
+  huber_delta: 0.5
+  mag_eps: 0.01
+
+# Previous-action input dropout (architecture note §4): with 30.6% identical
+# consecutive labels, previous_action is a strong copy-through channel; drop it
+# on 10% of training samples to blunt deployment-time feedback compounding.
+previous_action_dropout_p: 0.1
+
+# auto -> cuda if torch.cuda.is_available() else cpu.
+device: auto
+
+# Move all split tensors to the GPU once (dataset ~4.9 GB f32, fits 24 GB
+# VRAM). If false, splits stay in pinned CPU memory and are copied per batch.
+data_on_device: true
+
+paths:
+  dataset_dir: datasets/combat_obs_v1
+  split_config: configs/wp2/dataset_split_v1.yaml
+  input_config: configs/wp2/bc_input_v1.yaml
+  schema: configs/wp2/observation_v1.yaml
+
+output_root: models/bc_v1

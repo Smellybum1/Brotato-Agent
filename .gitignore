@@ -50,6 +50,10 @@ reports/*.jsonl
 # manifest.json + reports/wp2 report are small and ARE tracked)
 datasets/**/*.npz
 
+# BC training run artifacts (large checkpoints; the small registry manifests
+# under models/registry/ stay tracked)
+models/bc_v1/
+
 # Deploy markers
 .deploy_stamp
 *.log
