@@ -307,6 +307,11 @@ const PROJ_THREAT_RADIUS := 130.0
 const ESCAPE_DIRECTIONS := 24
 const ESCAPE_HORIZON := 0.60
 const ESCAPE_TIME_SAMPLES := 6
+# v116: body clearance evaluates the continuous closest approach from one
+# decision interval onward. Sampling only at 120 ms steps let threats moving
+# faster than ~400 u/s relative cross the player's path entirely between
+# samples (v115 smoke captures 19557 and 20505).
+const ESCAPE_CLEARANCE_MIN_TIME := 0.05
 const ESCAPE_SAFE_CLEARANCE := 155.0
 const ESCAPE_PANIC_CLEARANCE := 55.0
 const ESCAPE_WALL_MARGIN := 90.0

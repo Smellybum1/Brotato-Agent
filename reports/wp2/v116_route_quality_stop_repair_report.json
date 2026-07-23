@@ -1,0 +1,61 @@
+{
+  "report": "wp2_v116_route_quality_stop_repair",
+  "date": "2026-07-23",
+  "operator_observation": {
+    "identified_run": "run_1784763667_57757",
+    "policy": "teacher_v1-0.1.112-gun-wp1",
+    "result": "defeat",
+    "death_chain_ts_ms": [1122104, 1135915, 1139469, 1146474],
+    "status": "frozen rejected smoke evidence; not in dataset"
+  },
+  "root_cause": "Discrete 120 ms clearance sampling (body skipped t=0) hid threats crossing the commanded path between samples; audit mirrored the same formula.",
+  "v115_smoke_reexamination": {
+    "run_id": "run_1784768114_34909",
+    "recorded_vs_continuous": [
+      {"capture_seq": 17447, "wave": 17, "kind": "body", "recorded": 26.2, "continuous": -1.3},
+      {"capture_seq": 19180, "wave": 19, "kind": "body", "recorded": 97.7, "continuous": 40.5},
+      {"capture_seq": 19293, "wave": 19, "kind": "body", "recorded": 118.1, "continuous": 13.5},
+      {"capture_seq": 19557, "wave": 19, "kind": "body", "recorded": 95.3, "continuous": -10.5},
+      {"capture_seq": 19817, "wave": 19, "kind": "body", "recorded": 101.5, "continuous": 42.0},
+      {"capture_seq": 20479, "wave": 20, "kind": "projectile", "recorded": 18.6, "continuous": 2.2},
+      {"capture_seq": 20505, "wave": 20, "kind": "projectile", "recorded": 28.1, "continuous": 1.7},
+      {"capture_seq": 20563, "wave": 20, "kind": "projectile", "recorded": 23.9, "continuous": 5.8},
+      {"capture_seq": 20790, "wave": 20, "kind": "projectile", "recorded": 17.6, "continuous": 7.5}
+    ],
+    "wave19_threat": {
+      "instance_id": 446798,
+      "type": "horned_bruiser",
+      "attack": "charging_attack_behavior",
+      "charge_speed_u_per_s": 940
+    },
+    "wave20_example": {
+      "capture_seq": 20505,
+      "bullet": {"x": 1554.74353, "y": 791.196716, "vx": 0.0, "vy": 0.0, "radius": 23.0},
+      "crossing_time_sec": 0.056
+    }
+  },
+  "repair": {
+    "policy_version": "teacher_v1-0.1.116-gun-wp1",
+    "mod_version": "0.2.24-wp2-capture",
+    "changes": [
+      "continuous closed-form closest-approach in _predictive_body_path_clearance (window starts at ESCAPE_CLEARANCE_MIN_TIME = 0.05)",
+      "continuous closed-form closest-approach in _dir_clearance over [0, horizon]",
+      "audit mirrors continuous formulas; adds continuous damage-route gates; adds --legacy-sampled-diagnostics for frozen evidence"
+    ]
+  },
+  "verification": {
+    "focused_tests_passed": 80,
+    "full_suite_passed": 126,
+    "v115_smoke_reaudit": {
+      "output_prefix": "v115_smoke_safety_reaudit_v116",
+      "violation_count": 3,
+      "flagged_captures": [20479, 20505, 20563],
+      "accepted": false
+    }
+  },
+  "decisions": {
+    "v115_qualification": "revoked",
+    "dataset_included_runs": [],
+    "next_step": "deploy v116, isolated one-run qualification smoke under a new state/contract, v116 audit without legacy flag, then exact-20 campaign"
+  }
+}

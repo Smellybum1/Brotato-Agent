@@ -364,24 +364,38 @@ func _predictive_body_path_clearance(pos: Vector2, direction: Vector2,
 		threats.append(enemy)
 	for boss in bosses:
 		threats.append(boss)
-	var clearance: float = 1000000.0
+	# v116: relative motion is linear over the hold, so the minimum clearance
+	# has a closed form. The v115 smoke proved that sampling only at 120 ms
+	# steps let a 940 u/s charge (capture 19557) cross the player's path
+	# entirely between samples while every tier read ~95 units of clearance.
+	# Every direction still shares the current overlap: the window starts one
+	# decision interval out so the tier distinguishes escape from deeper
+	# penetration, and clamping the closest approach into the window still
+	# surfaces any crossing earlier in the hold.
+	var horizon: float = 0.0
 	for time_value in times:
-		var future_sec: float = float(time_value)
-		# Every direction shares the current overlap. Start at the first future
-		# sample so the tier distinguishes escape from deeper penetration.
-		if future_sec <= 0.0:
-			continue
-		var player_pos: Vector2 = (
-			pos + safe_direction * (max(player_speed, 1.0) * future_sec))
-		for threat in threats:
-			var threat_pos: Vector2 = Vector2(
-				float(threat.get("x", 0.0)), float(threat.get("y", 0.0)))
-			var threat_vel: Vector2 = Vector2(
-				float(threat.get("vx", 0.0)), float(threat.get("vy", 0.0)))
-			var threat_radius: float = max(
-				float(threat.get("radius", 18.0)), 0.0)
-			clearance = min(clearance, player_pos.distance_to(
-				threat_pos + threat_vel * future_sec) - threat_radius)
+		horizon = max(horizon, float(time_value))
+	var t_lo: float = min(BotConfig.ESCAPE_CLEARANCE_MIN_TIME, horizon)
+	var player_vel: Vector2 = safe_direction * max(player_speed, 1.0)
+	var clearance: float = 1000000.0
+	for threat in threats:
+		var threat_pos: Vector2 = Vector2(
+			float(threat.get("x", 0.0)), float(threat.get("y", 0.0)))
+		var threat_vel: Vector2 = Vector2(
+			float(threat.get("vx", 0.0)), float(threat.get("vy", 0.0)))
+		var threat_radius: float = max(
+			float(threat.get("radius", 18.0)), 0.0)
+		var rel_pos: Vector2 = pos - threat_pos
+		var rel_vel: Vector2 = player_vel - threat_vel
+		var speed_sq: float = rel_vel.length_squared()
+		var closest_sec: float = t_lo
+		if speed_sq > 1.0e-9:
+			closest_sec = clamp(
+				-rel_pos.dot(rel_vel) / speed_sq, t_lo, horizon)
+		clearance = min(clearance,
+			(rel_pos + rel_vel * closest_sec).length() - threat_radius)
+		clearance = min(clearance,
+			(rel_pos + rel_vel * horizon).length() - threat_radius)
 	return clearance
 
 
@@ -1706,13 +1720,33 @@ func _threatening_bullets(pos, projectiles, reach, caution = 1.0) -> Array:
 
 
 func _dir_clearance(pos, d, player_speed, bullets_t, times, arena) -> float:
+	# v116: the v115 smoke's four wave-20 hits each chose a lane whose sampled
+	# minimum straddled a bullet: capture 20505 reported 28.1 units at the
+	# t=0 and t=0.12 samples while the player passed through a stationary
+	# radius-23 bullet at t=0.056. Relative motion is linear between samples,
+	# so evaluate the continuous closest approach instead. Bullet velocities
+	# are recovered exactly from the first two precomputed sample rows.
 	var min_d = INF
-	for ti in range(times.size()):
-		var p_t = pos + d * (player_speed * times[ti])
-		for bullet_pt in bullets_t[ti]:
-			var dist = (p_t - bullet_pt).length()
-			if dist < min_d:
-				min_d = dist
+	var horizon = float(times[times.size() - 1])
+	var step = 0.0
+	if times.size() > 1:
+		step = float(times[1]) - float(times[0])
+	var player_vel = d * player_speed
+	for j in range(bullets_t[0].size()):
+		var bullet_pos: Vector2 = bullets_t[0][j]
+		var bullet_vel := Vector2.ZERO
+		if step > 0.0:
+			bullet_vel = (bullets_t[1][j] - bullet_pos) / step
+		var rel_pos: Vector2 = pos - bullet_pos
+		var rel_vel: Vector2 = player_vel - bullet_vel
+		var speed_sq: float = rel_vel.length_squared()
+		var closest_sec := 0.0
+		if speed_sq > 1.0e-9:
+			closest_sec = clamp(
+				-rel_pos.dot(rel_vel) / speed_sq, 0.0, horizon)
+		var dist = (rel_pos + rel_vel * closest_sec).length()
+		if dist < min_d:
+			min_d = dist
 	var clearance = min_d
 	if d.length() > 0:
 		var horizon_t = times[times.size() - 1]

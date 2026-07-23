@@ -6,7 +6,7 @@ See also the director master roadmap. Work Package status:
 |-----------|--------|
 | M0 Environment audit | Complete (WP1) |
 | M1 Deterministic teacher + telemetry | **Complete** — v72 certified 18W/2L; v92 promoted; repository/safeguard closeout passed |
-| M2 Learned combat (WP2) | **In progress** — combat capture validated; v110 smoke accepted; clean exact-20 collection next |
+| M2 Learned combat (WP2) | **In progress** — combat capture validated; v111–v115 smokes each exposed and repaired route-quality defects; v115 qualification revoked by the v116 continuous-clearance review; v116 smoke required before the exact-20 collection |
 | M3 Economy planner | Reframe pending (see note 3 below) |
 | M4 Robust D0 agent | Not started |
 | M5–M7 Danger curriculum / expert / characters | Not started |
@@ -189,6 +189,27 @@ preserving the existing 45-unit contact-safe floor. Waves 17-19 remain
 unchanged. A fresh v110-only 20-run capture set is the primary dataset source;
 earlier captures remain immutable diagnostic evidence and are not silently
 mixed into it.
+
+v110 then lost its own smokes and the qualification chain continued: v111's
+smoke won but its successor v112 died on wave 20 through an operator-observed
+pack route (relief activating too late; `run_1784763667_57757`). v113 started
+wall-body relief at 140 clearance and applied the final body gate to every
+wave, but its smoke exposed that gate missing outside waves 17-20 and was
+stopped mid-run. v114 extended the gate campaign-wide; its winning smoke was
+rejected for two relief-reference faults, which v115 repaired by comparing
+hard-safe lanes against the more dangerous of the strict-pool best and the
+emitted baseline. The v115 smoke (`run_1784768114_34909`) won wave 20 with
+zero violations under the then-current audit. A 2026-07-23 stewardship review
+of that "clean" run proved both clearance primitives sampled time discretely
+(120 ms steps) and therefore could not see fast threats crossing the
+commanded path between samples: every wave-17/19 contact hit and all four
+wave-20 projectile hits in the smoke trace to this blindness, and the audit
+mirrored the same formula, which is why it passed. v116 replaces both
+primitives with the continuous closed-form closest approach, mirrors the
+audit, adds continuous damage-route gates, and revokes the v115
+qualification; see `reports/wp2/v116_route_quality_stop_repair_report.md`.
+The exact-20 dataset campaign starts only after a v116 isolated smoke passes
+the new gates.
 
 Evidence-driven modifications to `Grok_4.5_Brotato_Work_Package_2_Prompt.md`
 (operator/director approval required — the directive says "unchanged", so these

@@ -4,7 +4,9 @@ from scripts.wp2_teacher_safety_audit import (
     _body_projectile_floor_unavailable,
     _damage_rows,
     _hard_wall_faults,
+    _projectile_route_clearance,
     _required_body_floor,
+    _route_replay,
     _wall_body_relief_violation,
     _wall_recovery_progress_violation,
 )
@@ -25,6 +27,76 @@ def test_body_clearance_replays_the_final_emitted_action():
     )
 
     assert abs(_body_clearance(payload) - 30.0) < 0.0001
+    assert abs(_body_clearance(payload, legacy_sampled=True) - 30.0) < 0.0001
+
+
+def test_v116_continuous_body_clearance_sees_fast_crossings():
+    # Frozen v115 smoke capture 19557 (run_1784768114_34909). The horned
+    # bruiser charged at ~940 u/s across the commanded down-left path; the
+    # player was hit one capture later. Every recorded diagnostic read ~95
+    # units because the 120 ms sample grid straddled the crossing.
+    payload = _payload(
+        x=1715.578613,
+        y=320.020935,
+        action=(-0.707107, 0.707107),
+        speed=436.0,
+        enemies=[
+            {
+                "x": 1673.89209,
+                "y": 349.065704,
+                "vx": 879.658691,
+                "vy": -331.361664,
+                "radius": 16.278799,
+            }
+        ],
+    )
+
+    legacy = _body_clearance(payload, legacy_sampled=True)
+    continuous = _body_clearance(payload)
+
+    assert abs(legacy - 95.305712) < 0.01
+    assert continuous < 5.0
+
+
+def test_v116_projectile_route_clearance_sees_straddled_bullets():
+    # Frozen v115 smoke capture 20505. The emitted escape passed through a
+    # stationary radius-23 bullet at t~56 ms; the t=0 and t=0.12 samples both
+    # read ~28 units and the recorded escape clearance matched them.
+    payload = _payload(x=1549.171997, y=818.717346, action=(0.258819, -0.965926), speed=504.0)
+    payload["entities"]["projectiles"] = [
+        {"x": 1554.74353, "y": 791.196716, "vx": 0.0, "vy": 0.0, "radius": 23.0}
+    ]
+
+    assert _projectile_route_clearance(payload) < 5.0
+
+
+def test_v116_route_replay_flags_avoidable_projectile_crossing():
+    payload = _payload(x=1549.171997, y=818.717346, action=(0.258819, -0.965926), speed=504.0)
+    payload["entities"]["projectiles"] = [
+        {"x": 1554.74353, "y": 791.196716, "vx": 0.0, "vy": 0.0, "radius": 23.0}
+    ]
+
+    replay = _route_replay(payload)
+
+    assert replay is not None
+    assert replay["emitted_projectile_clearance"] < 5.0
+    # Every lane shares the current 28.08-unit distance at t=0, so the best
+    # alternative equals it; the gate fires on the 20-unit relative gain.
+    assert replay["best_projectile_clearance"] > 25.0
+
+    row = {
+        "projectile_escape_clearance": 28.078943,
+        "projectile_final_clearance": 28.078943,
+        "body_best_clearance": 131.970617,
+        "body_selected_clearance": 160.144821,
+        "route_replay": replay,
+    }
+    violations = _avoidable_damage_violations([row])
+
+    assert violations and (
+        "emitted route crossed a projectile path while a clearer sampled lane existed"
+        in violations[0]["reasons"]
+    )
 
 
 def test_hard_wall_audit_checks_the_held_command_projection():

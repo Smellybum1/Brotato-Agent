@@ -123,17 +123,17 @@ def test_v64_blood_donation_is_vetoed_for_gate_reliability():
     assert '"item_blood_donation": {"never": true}' in requirement_block
 
 
-def test_wp2_capture_build_versions_the_v115_wall_relief_reference_policy():
+def test_wp2_capture_build_versions_the_v116_continuous_clearance_policy():
     manifest = MANIFEST.read_text(encoding="utf-8")
     controller = CONTROLLER.read_text(encoding="utf-8")
     telemetry = TELEMETRY.read_text(encoding="utf-8")
 
-    assert '"version_number": "0.2.23"' in manifest
-    assert "v115 deterministic teacher" in manifest
-    assert controller.count("teacher_v1-0.1.115-gun-wp1") == 1
-    assert controller.count("0.2.23-wp2-capture") == 1
-    assert telemetry.count("teacher_v1-0.1.115-gun-wp1") == 1
-    assert telemetry.count("0.2.23-wp2-capture") == 1
+    assert '"version_number": "0.2.24"' in manifest
+    assert "v116 deterministic teacher" in manifest
+    assert controller.count("teacher_v1-0.1.116-gun-wp1") == 1
+    assert controller.count("0.2.24-wp2-capture") == 1
+    assert telemetry.count("teacher_v1-0.1.116-gun-wp1") == 1
+    assert telemetry.count("0.2.24-wp2-capture") == 1
 
 
 def test_v84_item_audit_and_conditional_effect_corrections():
@@ -786,11 +786,13 @@ def test_v106_body_clearance_tier_rejects_avoidable_contact_paths():
     helper = potential.split("func _predictive_body_path_clearance", 1)[1].split(
         "func _finale_lane_score", 1
     )[0]
-    assert "if future_sec <= 0.0:" in helper
     assert 'float(threat.get("vx", 0.0))' in helper
     assert 'float(threat.get("vy", 0.0))' in helper
     assert 'float(threat.get("radius", 18.0))' in helper
-    assert "threat_pos + threat_vel * future_sec" in helper
+    # v116 replaced the discrete future samples with the continuous closest
+    # approach; the tier still starts one decision interval into the hold.
+    assert "BotConfig.ESCAPE_CLEARANCE_MIN_TIME" in helper
+    assert "-rel_pos.dot(rel_vel) / speed_sq" in helper
 
     selector = potential.split("func _best_finale_interior_lane", 1)[1].split(
         "func _finale_projectile_safety", 1
@@ -1097,6 +1099,37 @@ def test_v115_wall_relief_compares_against_the_emitted_baseline():
         emitted_reference = min(case["strict_best"], case["baseline"])
         assert case["hard_safe"] < old_reference + 60.0
         assert case["hard_safe"] >= emitted_reference + 60.0
+
+
+def test_v116_clearances_use_the_continuous_closest_approach():
+    config = CONFIG.read_text(encoding="utf-8")
+    potential = POTENTIAL_FIELD.read_text(encoding="utf-8")
+
+    assert "const ESCAPE_CLEARANCE_MIN_TIME := 0.05" in config
+
+    body = potential.split("func _predictive_body_path_clearance", 1)[1].split(
+        "func _finale_lane_score", 1
+    )[0]
+    assert "for time_value in times:" not in body.split("var t_lo", 1)[-1]
+    assert "min(BotConfig.ESCAPE_CLEARANCE_MIN_TIME, horizon)" in body
+    assert "clamp(" in body and "-rel_pos.dot(rel_vel) / speed_sq" in body
+
+    projectile = potential.split("func _dir_clearance", 1)[1].split(
+        "func _enemy_path_penalty", 1
+    )[0]
+    assert "(bullets_t[1][j] - bullet_pos) / step" in projectile
+    assert "-rel_pos.dot(rel_vel) / speed_sq" in projectile
+    # The wall-margin penalty is unchanged and still applies after the
+    # continuous minimum.
+    assert "BotConfig.ESCAPE_WALL_PENALTY" in projectile
+
+    # Frozen v115 smoke evidence. Capture 19557: a 940 u/s horned-bruiser
+    # charge crossed the commanded path at t~38 ms; every 120 ms sample read
+    # ~95 units while the true closest approach was contact. Capture 20505:
+    # the emitted escape passed through a stationary radius-23 bullet at
+    # t~56 ms while the t=0 and t=0.12 samples both read ~28 units.
+    assert 95.305712 > 45.0 > -10.5
+    assert 28.078943 > 23.0 > 1.74
 
 
 def test_v114_final_body_gate_covers_every_combat_wave_and_uses_open_pack_tier():

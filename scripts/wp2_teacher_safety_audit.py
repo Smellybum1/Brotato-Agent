@@ -26,6 +26,16 @@ WALL_RECOVERY_RELEASE = 520.0
 ESCAPE_HORIZON_SEC = 0.60
 ESCAPE_TIME_SAMPLES = 6
 ESCAPE_DIRECTIONS = 24
+# v116: clearances are the continuous closest approach over the hold, starting
+# one decision interval out (mirrors ESCAPE_CLEARANCE_MIN_TIME in config.gd).
+ESCAPE_CLEARANCE_MIN_TIME = 0.05
+# v116 damage-route gates: a damage event whose emitted route passed within
+# ROUTE_PROJ_CONTACT units of a projectile centre (or ROUTE_BODY_CONTACT of an
+# enemy body) is avoidable when a sampled hard-wall-safe lane offered at least
+# ROUTE_MIN_GAIN more of the violated clearance without giving up the other.
+ROUTE_PROJ_CONTACT = 12.0
+ROUTE_BODY_CONTACT = 15.0
+ROUTE_MIN_GAIN = 20.0
 FLOAT_TOLERANCE = 0.002
 
 
@@ -80,7 +90,26 @@ def _body_projectile_floor_unavailable(debug: dict[str, Any]) -> bool:
     )
 
 
-def _body_clearance(payload: dict[str, Any]) -> float:
+def _continuous_min_distance(
+    rel_x: float,
+    rel_y: float,
+    rel_vx: float,
+    rel_vy: float,
+    t_lo: float,
+    t_hi: float,
+) -> float:
+    """Minimum of |rel + rel_v * t| over [t_lo, t_hi] (motion is linear)."""
+    speed_sq = rel_vx * rel_vx + rel_vy * rel_vy
+    closest = t_lo
+    if speed_sq > 1.0e-9:
+        closest = min(t_hi, max(t_lo, -(rel_x * rel_vx + rel_y * rel_vy) / speed_sq))
+    return min(
+        math.hypot(rel_x + rel_vx * closest, rel_y + rel_vy * closest),
+        math.hypot(rel_x + rel_vx * t_hi, rel_y + rel_vy * t_hi),
+    )
+
+
+def _body_clearance(payload: dict[str, Any], legacy_sampled: bool = False) -> float:
     direction = _normalise(payload["teacher"]["action"])
     if direction is None:
         return -1.0e18
@@ -92,20 +121,70 @@ def _body_clearance(payload: dict[str, Any]) -> float:
     if not threats:
         return 1_000_000.0
     result = 1_000_000.0
-    for index in range(1, ESCAPE_TIME_SAMPLES):
-        future_sec = index / (ESCAPE_TIME_SAMPLES - 1) * ESCAPE_HORIZON_SEC
-        player_x = x + direction[0] * speed * future_sec
-        player_y = y + direction[1] * speed * future_sec
-        for threat in threats:
-            threat_x = float(threat.get("x", 0.0)) + float(threat.get("vx", 0.0)) * future_sec
-            threat_y = float(threat.get("y", 0.0)) + float(threat.get("vy", 0.0)) * future_sec
-            radius = max(float(threat.get("radius", 18.0)), 0.0)
-            result = min(result, math.hypot(player_x - threat_x, player_y - threat_y) - radius)
+    if legacy_sampled:
+        # v107-v115 recorded diagnostics used the discrete sample grid. Frozen
+        # evidence replays keep parity with that formula; it must not audit new
+        # runs because 120 ms steps hide fast crossings (v115 captures 19557,
+        # 20505).
+        for index in range(1, ESCAPE_TIME_SAMPLES):
+            future_sec = index / (ESCAPE_TIME_SAMPLES - 1) * ESCAPE_HORIZON_SEC
+            player_x = x + direction[0] * speed * future_sec
+            player_y = y + direction[1] * speed * future_sec
+            for threat in threats:
+                threat_x = float(threat.get("x", 0.0)) + float(threat.get("vx", 0.0)) * future_sec
+                threat_y = float(threat.get("y", 0.0)) + float(threat.get("vy", 0.0)) * future_sec
+                radius = max(float(threat.get("radius", 18.0)), 0.0)
+                result = min(result, math.hypot(player_x - threat_x, player_y - threat_y) - radius)
+        return result
+    for threat in threats:
+        radius = max(float(threat.get("radius", 18.0)), 0.0)
+        distance = _continuous_min_distance(
+            x - float(threat.get("x", 0.0)),
+            y - float(threat.get("y", 0.0)),
+            direction[0] * speed - float(threat.get("vx", 0.0)),
+            direction[1] * speed - float(threat.get("vy", 0.0)),
+            ESCAPE_CLEARANCE_MIN_TIME,
+            ESCAPE_HORIZON_SEC,
+        )
+        result = min(result, distance - radius)
+    return result
+
+
+def _projectile_route_clearance(
+    payload: dict[str, Any], direction: tuple[float, float] | None = None
+) -> float:
+    """Continuous minimum centre distance to any projectile along the route."""
+    if direction is None:
+        direction = _normalise(payload["teacher"]["action"])
+    if direction is None:
+        return -1.0e18
+    projectiles = payload["entities"].get("projectiles", [])
+    if not projectiles:
+        return 1_000_000.0
+    player = payload["player"]
+    x = float(player["x"])
+    y = float(player["y"])
+    speed = max(float(player.get("speed", 0.0)), 1.0)
+    result = 1_000_000.0
+    for projectile in projectiles:
+        result = min(
+            result,
+            _continuous_min_distance(
+                x - float(projectile.get("x", 0.0)),
+                y - float(projectile.get("y", 0.0)),
+                direction[0] * speed - float(projectile.get("vx", 0.0)),
+                direction[1] * speed - float(projectile.get("vy", 0.0)),
+                0.0,
+                ESCAPE_HORIZON_SEC,
+            ),
+        )
     return result
 
 
 def _body_clearance_for_direction(
-    payload: dict[str, Any], direction: tuple[float, float]
+    payload: dict[str, Any],
+    direction: tuple[float, float],
+    legacy_sampled: bool = False,
 ) -> float:
     replay = {
         **payload,
@@ -114,37 +193,76 @@ def _body_clearance_for_direction(
             "action": {"x": direction[0], "y": direction[1]},
         },
     }
-    return _body_clearance(replay)
+    return _body_clearance(replay, legacy_sampled)
 
 
-def _best_hard_safe_body_clearance(
-    payload: dict[str, Any],
-) -> tuple[float, tuple[float, float] | None]:
-    """Replay the best sampled body lane that respects the projected hard wall."""
+def _hard_safe_directions(payload: dict[str, Any]) -> list[tuple[float, float]]:
     player = payload["player"]
     arena = payload["arena"]
     x = float(player["x"])
     y = float(player["y"])
     width = float(arena.get("width", 2048.0))
     height = float(arena.get("height", 1536.0))
-    best = -1.0e18
-    best_direction: tuple[float, float] | None = None
+    directions: list[tuple[float, float]] = []
     for index in range(ESCAPE_DIRECTIONS):
         angle = math.tau * index / ESCAPE_DIRECTIONS
         direction = (math.cos(angle), math.sin(angle))
         future_x = x + direction[0] * WALL_LOOKAHEAD
         future_y = y + direction[1] * WALL_LOOKAHEAD
         future_wall = min(future_x, width - future_x, future_y, height - future_y)
-        if future_wall < HARD_WALL_MARGIN:
-            continue
-        clearance = _body_clearance_for_direction(payload, direction)
+        if future_wall >= HARD_WALL_MARGIN:
+            directions.append(direction)
+    return directions
+
+
+def _best_hard_safe_body_clearance(
+    payload: dict[str, Any], legacy_sampled: bool = False
+) -> tuple[float, tuple[float, float] | None]:
+    """Replay the best sampled body lane that respects the projected hard wall."""
+    best = -1.0e18
+    best_direction: tuple[float, float] | None = None
+    for direction in _hard_safe_directions(payload):
+        clearance = _body_clearance_for_direction(payload, direction, legacy_sampled)
         if clearance > best:
             best = clearance
             best_direction = direction
     return best, best_direction
 
 
-def _wall_body_relief_violation(payload: dict[str, Any]) -> dict[str, Any] | None:
+def _route_replay(payload: dict[str, Any]) -> dict[str, Any] | None:
+    """Continuous replay of the emitted route and the best sampled alternative.
+
+    Always uses the continuous closest-approach clearances, even on frozen
+    legacy runs: this gate exists precisely because the sampled diagnostics
+    could not see fast crossings.
+    """
+    if "player" not in payload or "arena" not in payload or "entities" not in payload:
+        return None
+    if _normalise(payload.get("teacher", {}).get("action", {})) is None:
+        return None
+    emitted_body = _body_clearance(payload)
+    emitted_projectile = _projectile_route_clearance(payload)
+    best_body = -1.0e18
+    best_projectile = -1.0e18
+    for direction in _hard_safe_directions(payload):
+        body = _body_clearance_for_direction(payload, direction)
+        projectile = _projectile_route_clearance(payload, direction)
+        # A safer lane must not trade one clearance family for the other.
+        if projectile >= min(emitted_projectile, ROUTE_PROJ_CONTACT):
+            best_body = max(best_body, body)
+        if body >= min(emitted_body, BODY_TIER):
+            best_projectile = max(best_projectile, projectile)
+    return {
+        "emitted_body_clearance": emitted_body,
+        "emitted_projectile_clearance": emitted_projectile,
+        "best_body_clearance": best_body,
+        "best_projectile_clearance": best_projectile,
+    }
+
+
+def _wall_body_relief_violation(
+    payload: dict[str, Any], legacy_sampled: bool = False
+) -> dict[str, Any] | None:
     """Find a hard-safe body escape hidden by the strict wall-progress pool."""
     if int(payload.get("wave", 0)) < 20:
         return None
@@ -158,10 +276,10 @@ def _wall_body_relief_violation(payload: dict[str, Any]) -> dict[str, Any] | Non
     # Recompute the clearance of the action carried by this capture. Held
     # captures can legitimately retain diagnostics from the preceding policy
     # update while the player and threats continue to move.
-    selected = _body_clearance(payload)
+    selected = _body_clearance(payload, legacy_sampled)
     if selected >= WALL_BODY_RELIEF_TRIGGER:
         return None
-    best, best_direction = _best_hard_safe_body_clearance(payload)
+    best, best_direction = _best_hard_safe_body_clearance(payload, legacy_sampled)
     if best < selected + WALL_BODY_RELIEF_MIN_GAIN - FLOAT_TOLERANCE:
         return None
     return {
@@ -287,6 +405,9 @@ def _damage_rows(events: list[dict[str, Any]], first_capture_ts: int | None) -> 
                     "body_emergency_active": debug.get("body_emergency_active", False),
                 }
             )
+            replay = _route_replay(payload)
+            if replay is not None:
+                row["route_replay"] = replay
         rows.append(row)
     return rows
 
@@ -313,6 +434,28 @@ def _avoidable_damage_violations(rows: list[dict[str, Any]]) -> list[dict[str, A
             required_body = _required_body_floor(row, True)
             if body_selected < required_body - FLOAT_TOLERANCE:
                 reasons.append("selected body path missed the required near-best tier")
+        replay = row.get("route_replay")
+        if replay is not None:
+            # v116: continuous-route gates. The recorded diagnostics above came
+            # from the sampled grid and could not see fast crossings; these two
+            # checks replay the emitted command against raw entity motion.
+            if (
+                replay["emitted_projectile_clearance"] < ROUTE_PROJ_CONTACT
+                and replay["best_projectile_clearance"]
+                >= replay["emitted_projectile_clearance"] + ROUTE_MIN_GAIN - FLOAT_TOLERANCE
+            ):
+                reasons.append(
+                    "emitted route crossed a projectile path while a clearer sampled lane existed"
+                )
+            if (
+                replay["emitted_body_clearance"] < ROUTE_BODY_CONTACT
+                and replay["best_body_clearance"]
+                >= max(BODY_TIER, replay["emitted_body_clearance"] + ROUTE_MIN_GAIN)
+                - FLOAT_TOLERANCE
+            ):
+                reasons.append(
+                    "emitted route crossed an enemy body while a clearer sampled lane existed"
+                )
         if reasons:
             violations.append({**row, "reasons": reasons})
     return violations
@@ -323,6 +466,7 @@ def audit_run(
     expected_policy: str | None = None,
     expected_mod: str | None = None,
     expected_schema_hash: str | None = None,
+    legacy_sampled: bool = False,
 ) -> dict[str, Any]:
     events_path = run_dir / "events.jsonl"
     summary_path = run_dir / "summary.json"
@@ -361,7 +505,7 @@ def audit_run(
             hard_wall_violations.append(
                 {"capture_seq": payload["capture_seq"], "walls": faults}
             )
-        relief_fault = _wall_body_relief_violation(payload)
+        relief_fault = _wall_body_relief_violation(payload, legacy_sampled)
         if relief_fault is not None:
             wall_body_relief_violations.append(relief_fault)
         debug = payload["teacher"]["contributions"]["finale_translation"]
@@ -376,8 +520,8 @@ def audit_run(
                 selected = float(debug.get("body_selected_clearance", -1.0))
                 relief_best = float(debug.get("wall_relief_best_body_clearance", -1.0))
             else:
-                selected = _body_clearance(payload)
-                relief_best, _ = _best_hard_safe_body_clearance(payload)
+                selected = _body_clearance(payload, legacy_sampled)
+                relief_best, _ = _best_hard_safe_body_clearance(payload, legacy_sampled)
             required = relief_best - BODY_SLACK
             if relief_best < 0.0 or selected < required - FLOAT_TOLERANCE:
                 wall_body_relief_selection_violations.append(
@@ -446,7 +590,7 @@ def audit_run(
                     "selected": selected_projectile,
                 }
             )
-        recomputed = _body_clearance(payload)
+        recomputed = _body_clearance(payload, legacy_sampled)
         if abs(recomputed - selected_clearance) > FLOAT_TOLERANCE:
             body_diagnostic_mismatches.append(
                 {
@@ -588,9 +732,16 @@ def audit_runs(
     expected_policy: str | None,
     expected_mod: str | None,
     expected_schema_hash: str | None,
+    legacy_sampled: bool = False,
 ) -> dict[str, Any]:
     runs = [
-        audit_run(runs_dir / run_id, expected_policy, expected_mod, expected_schema_hash)
+        audit_run(
+            runs_dir / run_id,
+            expected_policy,
+            expected_mod,
+            expected_schema_hash,
+            legacy_sampled,
+        )
         for run_id in run_ids
     ]
     return {
@@ -613,6 +764,15 @@ def main() -> int:
     parser.add_argument("--expected-mod")
     parser.add_argument("--expected-schema-hash")
     parser.add_argument("--output-prefix", default="wp2_teacher_safety_audit")
+    parser.add_argument(
+        "--legacy-sampled-diagnostics",
+        action="store_true",
+        help=(
+            "Replay frozen v107-v115 evidence whose recorded diagnostics used "
+            "the discrete sample grid. Diagnostic-parity and tier checks use "
+            "the legacy formula; the continuous damage-route gates still run."
+        ),
+    )
     args = parser.parse_args()
     audit = audit_runs(
         args.runs_dir,
@@ -620,6 +780,7 @@ def main() -> int:
         args.expected_policy,
         args.expected_mod,
         args.expected_schema_hash,
+        args.legacy_sampled_diagnostics,
     )
     output_dir = ROOT / "reports" / "wp2"
     output_dir.mkdir(parents=True, exist_ok=True)
