@@ -1,0 +1,640 @@
+{
+  "meta": {
+    "run_count": 20,
+    "victory": 11,
+    "defeat": 9,
+    "weapon_stat_table_size": 128,
+    "window": "waves 9-15 shops",
+    "note": "well_rounded character (no offense gain_mods); stat_crit_damage not recorded, assumed 0 (validated by exact parity)."
+  },
+  "coverage": {
+    "offense_offer_instances": 874,
+    "computable_dps": 457,
+    "computable_frac": 0.523,
+    "closed_form": 233,
+    "model": 224,
+    "uncomputable_loadout": 417,
+    "deduped_offense_offers": 424
+  },
+  "dps_distribution_pct": {
+    "all": {
+      "n": 457,
+      "median": 0.806,
+      "p25": -4.237,
+      "p75": 6.123,
+      "p90": 12.212,
+      "min": -27.678,
+      "max": 73.809
+    },
+    "bought": {
+      "n": 85,
+      "median": 4.677,
+      "p25": -0.806,
+      "p75": 7.947,
+      "p90": 10.394,
+      "min": -7.813,
+      "max": 20.172
+    },
+    "skipped": {
+      "n": 372,
+      "median": -1.01,
+      "p25": -4.671,
+      "p75": 5.661,
+      "p90": 13.043,
+      "min": -27.678,
+      "max": 73.809
+    },
+    "victory": {
+      "n": 232,
+      "median": 1.342,
+      "p25": -3.846,
+      "p75": 5.882,
+      "p90": 9.6,
+      "min": -26.179,
+      "max": 32.0
+    },
+    "defeat": {
+      "n": 225,
+      "median": 0.329,
+      "p25": -4.505,
+      "p75": 7.641,
+      "p90": 14.446,
+      "min": -27.678,
+      "max": 73.809
+    },
+    "band_9_12": {
+      "n": 323,
+      "median": 0.781,
+      "p25": -4.237,
+      "p75": 7.958,
+      "p90": 13.295,
+      "min": -27.678,
+      "max": 73.809
+    },
+    "band_13_15": {
+      "n": 134,
+      "median": 1.074,
+      "p25": -4.237,
+      "p75": 4.918,
+      "p90": 6.439,
+      "min": -23.148,
+      "max": 19.231
+    },
+    "bought_victory": {
+      "n": 48,
+      "median": 3.933,
+      "p25": 0.637,
+      "p75": 6.737,
+      "p90": 9.756,
+      "min": -4.274,
+      "max": 20.172
+    },
+    "bought_defeat": {
+      "n": 37,
+      "median": 4.835,
+      "p25": -1.587,
+      "p75": 8.333,
+      "p90": 10.256,
+      "min": -7.813,
+      "max": 18.633
+    },
+    "skipped_victory": {
+      "n": 184,
+      "median": -0.806,
+      "p25": -4.386,
+      "p75": 4.875,
+      "p90": 9.6,
+      "min": -26.179,
+      "max": 32.0
+    },
+    "skipped_defeat": {
+      "n": 188,
+      "median": -1.01,
+      "p25": -4.671,
+      "p75": 5.934,
+      "p90": 15.322,
+      "min": -27.678,
+      "max": 73.809
+    }
+  },
+  "dps_by_offense_key": {
+    "stat_attack_speed": {
+      "bought": {
+        "n": 24,
+        "median": 5.789,
+        "p25": 5.158,
+        "p75": 7.903,
+        "p90": 10.874,
+        "min": -6.604,
+        "max": 13.295
+      },
+      "skipped": {
+        "n": 49,
+        "median": 3.161,
+        "p25": -5.036,
+        "p75": 7.306,
+        "p90": 12.352,
+        "min": -7.619,
+        "max": 35.088
+      }
+    },
+    "stat_crit_chance": {
+      "bought": {
+        "n": 11,
+        "median": 2.262,
+        "p25": 0.908,
+        "p75": 10.874,
+        "p90": 12.557,
+        "min": -0.392,
+        "max": 20.172
+      },
+      "skipped": {
+        "n": 52,
+        "median": 2.555,
+        "p25": -1.114,
+        "p75": 5.771,
+        "p90": 12.352,
+        "min": -12.885,
+        "max": 22.249
+      }
+    },
+    "stat_crit_damage": {
+      "bought": {
+        "n": 0
+      },
+      "skipped": {
+        "n": 0
+      }
+    },
+    "stat_percent_damage": {
+      "bought": {
+        "n": 61,
+        "median": 2.419,
+        "p25": -1.538,
+        "p75": 5.882,
+        "p90": 9.524,
+        "min": -7.813,
+        "max": 13.295
+      },
+      "skipped": {
+        "n": 215,
+        "median": -0.527,
+        "p25": -3.846,
+        "p75": 5.085,
+        "p90": 10.256,
+        "min": -23.148,
+        "max": 26.596
+      }
+    },
+    "stat_ranged_damage": {
+      "bought": {
+        "n": 16,
+        "median": 5.925,
+        "p25": 4.815,
+        "p75": 10.164,
+        "p90": 18.633,
+        "min": -5.935,
+        "max": 20.172
+      },
+      "skipped": {
+        "n": 85,
+        "median": -5.649,
+        "p25": -12.212,
+        "p75": 7.995,
+        "p90": 37.276,
+        "min": -27.678,
+        "max": 73.809
+      }
+    }
+  },
+  "flat_direct_offense_gain": {
+    "threshold_current": 6.0,
+    "per_instance": {
+      "n": 334,
+      "clear_6.0": {
+        "count": 75,
+        "frac": 0.225
+      },
+      "clear_4.0": {
+        "count": 89,
+        "frac": 0.266
+      },
+      "clear_3.0": {
+        "count": 100,
+        "frac": 0.299
+      },
+      "clear_2.0": {
+        "count": 110,
+        "frac": 0.329
+      }
+    },
+    "per_instance_affordable": {
+      "n": 275,
+      "clear_6.0": {
+        "count": 62,
+        "frac": 0.225
+      },
+      "clear_4.0": {
+        "count": 73,
+        "frac": 0.265
+      },
+      "clear_3.0": {
+        "count": 78,
+        "frac": 0.284
+      },
+      "clear_2.0": {
+        "count": 86,
+        "frac": 0.313
+      }
+    },
+    "deduped": {
+      "n": 133,
+      "clear_6.0": {
+        "count": 33,
+        "frac": 0.248
+      },
+      "clear_4.0": {
+        "count": 40,
+        "frac": 0.301
+      },
+      "clear_3.0": {
+        "count": 44,
+        "frac": 0.331
+      },
+      "clear_2.0": {
+        "count": 46,
+        "frac": 0.346
+      }
+    },
+    "per_instance_positive_gain": {
+      "n": 118,
+      "clear_6.0": {
+        "count": 75,
+        "frac": 0.636
+      },
+      "clear_4.0": {
+        "count": 89,
+        "frac": 0.754
+      },
+      "clear_3.0": {
+        "count": 100,
+        "frac": 0.847
+      },
+      "clear_2.0": {
+        "count": 110,
+        "frac": 0.932
+      }
+    },
+    "per_instance_positive_gain_affordable": {
+      "n": 94,
+      "clear_6.0": {
+        "count": 62,
+        "frac": 0.66
+      },
+      "clear_4.0": {
+        "count": 73,
+        "frac": 0.777
+      },
+      "clear_3.0": {
+        "count": 78,
+        "frac": 0.83
+      },
+      "clear_2.0": {
+        "count": 86,
+        "frac": 0.915
+      }
+    },
+    "skipped_victory_per_instance": {
+      "n": 384,
+      "clear_6.0": {
+        "count": 85,
+        "frac": 0.221
+      },
+      "clear_4.0": {
+        "count": 103,
+        "frac": 0.268
+      },
+      "clear_3.0": {
+        "count": 132,
+        "frac": 0.344
+      },
+      "clear_2.0": {
+        "count": 142,
+        "frac": 0.37
+      }
+    },
+    "bought_defeat_per_instance": {
+      "n": 58,
+      "clear_6.0": {
+        "count": 19,
+        "frac": 0.328
+      },
+      "clear_4.0": {
+        "count": 21,
+        "frac": 0.362
+      },
+      "clear_3.0": {
+        "count": 21,
+        "frac": 0.362
+      },
+      "clear_2.0": {
+        "count": 25,
+        "frac": 0.431
+      }
+    }
+  },
+  "sanity_anchors": [
+    {
+      "run": "run_1784785556_51395",
+      "wave": 11,
+      "item_id": "item_sunglasses",
+      "offense_keys": [
+        "stat_crit_chance"
+      ],
+      "direct_gain": 0.0,
+      "dps_gain": 6.73652267658418,
+      "dps_method": "model"
+    },
+    {
+      "run": "run_1784787688_32406",
+      "wave": 14,
+      "item_id": "item_medal",
+      "offense_keys": [
+        "stat_crit_chance",
+        "stat_percent_damage"
+      ],
+      "direct_gain": 3.0,
+      "dps_gain": -0.3916294365132642,
+      "dps_method": "model"
+    },
+    {
+      "run": "run_1784790063_90333",
+      "wave": 11,
+      "item_id": "item_reinforced_steel",
+      "offense_keys": [
+        "stat_ranged_damage"
+      ],
+      "direct_gain": 2.0,
+      "dps_gain": 10.394311218656952,
+      "dps_method": "model"
+    },
+    {
+      "run": "run_1784793833_32034",
+      "wave": 9,
+      "item_id": "item_insanity",
+      "offense_keys": [
+        "stat_crit_chance",
+        "stat_percent_damage"
+      ],
+      "direct_gain": -3.0,
+      "dps_gain": 2.340994506153546,
+      "dps_method": "model"
+    },
+    {
+      "run": "run_1784800561_47448",
+      "wave": 12,
+      "item_id": "item_mutation",
+      "offense_keys": [
+        "stat_ranged_damage"
+      ],
+      "direct_gain": 1.0,
+      "dps_gain": 4.194575857969661,
+      "dps_method": "model"
+    }
+  ],
+  "parity": {
+    "combine_anchor_states": 121,
+    "within_1pct": 121,
+    "frac_within_1pct": 1.0,
+    "max_rel_err": 0.0,
+    "median_rel_err": 0.0,
+    "shops_w9_15_total": 1122,
+    "shops_w9_15_loadout_trusted": 334,
+    "shops_w9_15_trusted_frac": 0.298
+  },
+  "sanity_anchors_detail": [
+    {
+      "run": "run_1784785556_51395",
+      "wave": 11,
+      "item_id": "item_sunglasses",
+      "loadout": [
+        "weapon_double_barrel_shotgun_2",
+        "weapon_double_barrel_shotgun_4",
+        "weapon_revolver_2",
+        "weapon_smg_3",
+        "weapon_smg_3",
+        "weapon_revolver_1"
+      ],
+      "stats_before": {
+        "stat_ranged_damage": 6,
+        "stat_percent_damage": 13,
+        "stat_attack_speed": 28,
+        "stat_crit_chance": 10
+      },
+      "item_effects": [
+        {
+          "key": "stat_crit_chance",
+          "value": 10,
+          "sign": 3
+        },
+        {
+          "key": "stat_armor",
+          "value": -1,
+          "sign": 3
+        }
+      ],
+      "combat_deltas": {
+        "stat_crit_chance": 10.0,
+        "stat_armor": -1.0
+      },
+      "dps0": 819.235,
+      "dps1": 874.4229,
+      "dps_gain_pct": 6.7365,
+      "direct_offense_gain": 0.0
+    },
+    {
+      "run": "run_1784787688_32406",
+      "wave": 14,
+      "item_id": "item_medal",
+      "loadout": [
+        "weapon_double_barrel_shotgun_2",
+        "weapon_double_barrel_shotgun_4",
+        "weapon_revolver_3",
+        "weapon_smg_2",
+        "weapon_smg_3",
+        "weapon_double_barrel_shotgun_2"
+      ],
+      "stats_before": {
+        "stat_ranged_damage": 10,
+        "stat_percent_damage": 28,
+        "stat_attack_speed": 39,
+        "stat_crit_chance": 8
+      },
+      "item_effects": [
+        {
+          "key": "stat_max_hp",
+          "value": 3,
+          "sign": 3
+        },
+        {
+          "key": "stat_percent_damage",
+          "value": 3,
+          "sign": 3
+        },
+        {
+          "key": "stat_armor",
+          "value": 1,
+          "sign": 3
+        },
+        {
+          "key": "stat_speed",
+          "value": 3,
+          "sign": 3
+        },
+        {
+          "key": "stat_crit_chance",
+          "value": -4,
+          "sign": 3
+        }
+      ],
+      "combat_deltas": {
+        "stat_max_hp": 3.0,
+        "stat_percent_damage": 3.0,
+        "stat_armor": 1.0,
+        "stat_speed": 3.0,
+        "stat_crit_chance": -4.0
+      },
+      "dps0": 1113.7416,
+      "dps1": 1109.3798,
+      "dps_gain_pct": -0.3916,
+      "direct_offense_gain": 3.0
+    },
+    {
+      "run": "run_1784790063_90333",
+      "wave": 11,
+      "item_id": "item_reinforced_steel",
+      "loadout": [
+        "weapon_pistol_2",
+        "weapon_revolver_3",
+        "weapon_shredder_4",
+        "weapon_smg_2",
+        "weapon_smg_3",
+        "weapon_pistol_2"
+      ],
+      "stats_before": {
+        "stat_ranged_damage": 8,
+        "stat_percent_damage": 11,
+        "stat_attack_speed": 35,
+        "stat_crit_chance": 8
+      },
+      "item_effects": [
+        {
+          "key": "stat_ranged_damage",
+          "value": 2,
+          "sign": 3
+        },
+        {
+          "key": "stat_engineering",
+          "value": 3,
+          "sign": 3
+        },
+        {
+          "key": "stat_speed",
+          "value": -3,
+          "sign": 3
+        }
+      ],
+      "combat_deltas": {
+        "stat_ranged_damage": 2.0,
+        "stat_speed": -3.0
+      },
+      "dps0": 950.299,
+      "dps1": 1049.076,
+      "dps_gain_pct": 10.3943,
+      "direct_offense_gain": 2.0
+    },
+    {
+      "run": "run_1784793833_32034",
+      "wave": 9,
+      "item_id": "item_insanity",
+      "loadout": [
+        "weapon_double_barrel_shotgun_3",
+        "weapon_pistol_2",
+        "weapon_revolver_2",
+        "weapon_shredder_2",
+        "weapon_smg_3",
+        "weapon_revolver_1"
+      ],
+      "stats_before": {
+        "stat_ranged_damage": 1,
+        "stat_percent_damage": 29,
+        "stat_attack_speed": 5,
+        "stat_crit_chance": 5
+      },
+      "item_effects": [
+        {
+          "key": "stat_crit_chance",
+          "value": 6,
+          "sign": 3
+        },
+        {
+          "key": "stat_percent_damage",
+          "value": -3,
+          "sign": 3
+        }
+      ],
+      "combat_deltas": {
+        "stat_crit_chance": 6.0,
+        "stat_percent_damage": -3.0
+      },
+      "dps0": 431.88,
+      "dps1": 441.9903,
+      "dps_gain_pct": 2.341,
+      "direct_offense_gain": -3.0
+    },
+    {
+      "run": "run_1784800561_47448",
+      "wave": 12,
+      "item_id": "item_mutation",
+      "loadout": [
+        "weapon_double_barrel_shotgun_4",
+        "weapon_laser_gun_3",
+        "weapon_revolver_2",
+        "weapon_smg_2",
+        "weapon_smg_3",
+        "weapon_laser_gun_2"
+      ],
+      "stats_before": {
+        "stat_ranged_damage": 14,
+        "stat_percent_damage": 34,
+        "stat_attack_speed": 33,
+        "stat_crit_chance": 5
+      },
+      "item_effects": [
+        {
+          "key": "stat_ranged_damage",
+          "value": 1,
+          "sign": 3
+        },
+        {
+          "key": "stat_elemental_damage",
+          "value": 1,
+          "sign": 3
+        },
+        {
+          "key": "knockback",
+          "value": -3,
+          "sign": 3
+        }
+      ],
+      "combat_deltas": {
+        "stat_ranged_damage": 1.0,
+        "stat_elemental_damage": 1.0
+      },
+      "dps0": 1474.2033,
+      "dps1": 1536.0398,
+      "dps_gain_pct": 4.1946,
+      "direct_offense_gain": 1.0
+    }
+  ]
+}
