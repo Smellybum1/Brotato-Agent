@@ -70,6 +70,66 @@ def test_v116_projectile_route_clearance_sees_straddled_bullets():
     assert _projectile_route_clearance(payload) < 5.0
 
 
+def test_v118_loot_dash_relaxes_only_the_pack_tier():
+    ordinary = {"body_best_clearance": 200.0}
+    dashing = {"body_best_clearance": 200.0, "loot_dash_active": True}
+
+    # Ordinary route must stay within 20 of best (capped at 160).
+    assert _required_body_floor(ordinary, True) == 160.0
+    # A dash needs only the 45-unit contact floor.
+    assert _required_body_floor(dashing, True) == 45.0
+    # Emergencies still dominate the dash relaxation.
+    emergency = {**dashing, "body_emergency_active": True}
+    assert _required_body_floor(emergency, True) == 195.0
+
+
+def test_v118_loot_dash_gates_bound_duration_and_hp(tmp_path):
+    from scripts.wp2_teacher_safety_audit import audit_run
+    import json
+
+    def capture(seq, dash, hp=60):
+        return {
+            "event": "combat_capture",
+            "ts_ms": 1000 + seq,
+            "payload": {
+                "capture_seq": seq,
+                "observation_ts_ms": 1000 + seq,
+                "wave": 12,
+                "player": {"x": 1024.0, "y": 768.0, "speed": 400.0, "hp": hp, "max_hp": 100},
+                "teacher": {
+                    "action": {"x": 1.0, "y": 0.0},
+                    "action_fresh": True,
+                    "contributions": {"finale_translation": {"loot_dash_active": dash}},
+                },
+                "entities": {"enemies": [], "bosses": [], "projectiles": []},
+                "arena": {"width": 2048.0, "height": 1536.0},
+            },
+        }
+
+    # 27 consecutive dash captures exceed the 26-capture bound once; one dash
+    # capture at 20 HP violates the HP floor.
+    events = [capture(i, True) for i in range(1, 28)]
+    events.append(capture(28, True, hp=20))
+    events.append(capture(29, False))
+    events.append({"event": "run_end", "ts_ms": 5000, "payload": {}})
+    run_dir = tmp_path / "run_dash"
+    run_dir.mkdir()
+    (run_dir / "events.jsonl").write_text(
+        "\n".join(json.dumps(e) for e in events) + "\n", encoding="utf-8"
+    )
+    (run_dir / "summary.json").write_text(json.dumps({
+        "telemetry_complete": True, "errors": 0, "hangs": 0,
+        "illegal_actions": 0, "result": "victory", "last_wave": 20,
+    }), encoding="utf-8")
+
+    audit = audit_run(run_dir)
+    reasons = [v["reason"] for v in audit["loot_dash_violations"]]
+    assert "dash episode exceeded the runtime commit bound" in reasons
+    assert "dash active below the HP floor" in reasons
+    assert audit["loot_dash_capture_count"] == 28
+    assert not audit["accepted"]
+
+
 def test_v117_nonfresh_finale_captures_reject_the_run(tmp_path):
     from scripts.wp2_teacher_safety_audit import audit_run
     import json

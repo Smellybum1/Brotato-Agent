@@ -157,6 +157,8 @@ func compute_movement(state, profile) -> Vector2:
 		# died to chained hits. On waves 17-19, stop re-engaging at low health
 		# and use the battle-tested panic/pure-repulsion path until recovery.
 		# Wave 20 instead uses its center-biased finale survival controller.
+		# v118: survival always outranks collection; drop any active dash.
+		_loot_dash_active = false
 		var survival_dir = _panic_dodge(pos, enemies, bosses, projectiles, arena)
 		if survival_dir == Vector2.ZERO:
 			survival_dir = _pure_repulsion_flee(
@@ -181,6 +183,8 @@ func compute_movement(state, profile) -> Vector2:
 	var finale = wave >= BotConfig.BOSS_FINALE_WAVE
 	var desire: Vector2
 	if finale:
+		# v118: no dashes on the boss wave; survival is the only objective.
+		_loot_dash_active = false
 		# v97: survival and central map control are the finale's base objective.
 		# Automatic fire does not require movement to preserve a boss-range ring.
 		desire = _pure_repulsion_flee(
@@ -195,6 +199,11 @@ func compute_movement(state, profile) -> Vector2:
 			desire = finale_survival
 	else:
 		desire = _build_desire(pos, enemies, bosses, loot, consumables, trees, weapons, arena, profile, player, wave)
+		# v118: when density suppression has zeroed ordinary loot attraction,
+		# allow a bounded opportunistic dash to a substantial nearby pile.
+		desire = _apply_loot_dash(
+			pos, desire, hp_ratio, enemies, bosses, projectiles, loot,
+			player_speed, profile, arena)
 
 	# Projectile-escape: sample candidate directions, pick safest, blend by urgency.
 	var escape_dir = Vector2.ZERO
@@ -254,9 +263,103 @@ func compute_movement(state, profile) -> Vector2:
 	# incoming route already meets the tier, preserving ordinary farming paths.
 	final_move = _finale_body_safety(
 		pos, final_move, player_speed, arena, enemies, bosses,
-		projectiles, profile, true)
+		projectiles, profile, not _loot_dash_active, _loot_dash_active)
 	_prev_move = final_move
 	return _prev_move
+
+
+var _loot_dash_active := false
+var _loot_dash_target := Vector2.ZERO
+var _loot_dash_ticks := 0
+var _loot_dash_cooldown := 0
+
+
+func _best_loot_cluster(pos: Vector2, loot) -> Array:
+	# Returns [centroid, count] of the densest material cluster within the
+	# dash scan radius, or [Vector2.ZERO, 0].
+	var best_count := 0
+	var best_centroid := Vector2.ZERO
+	for anchor in loot:
+		var anchor_pos := Vector2(
+			float(anchor.get("x", 0.0)), float(anchor.get("y", 0.0)))
+		if (anchor_pos - pos).length() > BotConfig.LOOT_DASH_SCAN_RADIUS:
+			continue
+		var count := 0
+		var centroid := Vector2.ZERO
+		for item in loot:
+			var item_pos := Vector2(
+				float(item.get("x", 0.0)), float(item.get("y", 0.0)))
+			if (item_pos - anchor_pos).length() <= BotConfig.LOOT_DASH_CLUSTER_RADIUS:
+				count += 1
+				centroid += item_pos
+		if count > best_count:
+			best_count = count
+			best_centroid = centroid / float(count)
+	return [best_centroid, best_count]
+
+
+func _apply_loot_dash(pos: Vector2, desire: Vector2, hp_ratio: float,
+		enemies, bosses, projectiles, loot, player_speed: float, profile,
+		arena) -> Vector2:
+	# v118: ordinary loot attraction hard-zeroes under local density
+	# (PACK_DENSITY_SOFT) and per-pile corridor vetoes, so a pressured agent
+	# starves while the ground saturates at the 50-material cap. This bounded
+	# dash is the sanctioned exception: substantial pile nearby, HP above
+	# half, and a corridor window verified with the continuous
+	# closest-approach clearance. The dash desire still passes the full
+	# projectile / wall / body safety tail; only the body preference tier is
+	# relaxed to the 45-unit contact floor while the dash is active.
+	if _loot_dash_cooldown > 0:
+		_loot_dash_cooldown -= 1
+	if _loot_dash_active:
+		_loot_dash_ticks -= 1
+		var reacquired := _best_loot_cluster(_loot_dash_target, loot)
+		var arrived: bool = (
+			int(reacquired[1]) == 0
+			or (pos - _loot_dash_target).length()
+				<= BotConfig.LOOT_DASH_ARRIVE_RADIUS)
+		if (_loot_dash_ticks <= 0 or arrived
+				or hp_ratio < BotConfig.LOOT_DASH_MIN_HP_RATIO * 0.8):
+			_loot_dash_active = false
+			_loot_dash_cooldown = BotConfig.LOOT_DASH_COOLDOWN_TICKS
+			return desire
+		if int(reacquired[1]) > 0:
+			_loot_dash_target = reacquired[0]
+		return _normalize(_loot_dash_target - pos)
+	if _loot_dash_cooldown > 0 or hp_ratio < BotConfig.LOOT_DASH_MIN_HP_RATIO:
+		return desire
+	# Only take over when ordinary attraction is density-suppressed; sparse
+	# situations are already handled by the normal desire field.
+	if _count_nearby_enemies(pos, enemies, bosses) < BotConfig.PACK_DENSITY_SOFT:
+		return desire
+	var cluster := _best_loot_cluster(pos, loot)
+	if int(cluster[1]) < BotConfig.LOOT_DASH_MIN_PILE:
+		return desire
+	var target: Vector2 = cluster[0]
+	var direction := _normalize(target - pos)
+	if direction == Vector2.ZERO:
+		return desire
+	var dash_sec: float = min(
+		BotConfig.ESCAPE_HORIZON,
+		(target - pos).length() / max(player_speed, 1.0) + 0.1)
+	var window := _predictive_body_path_clearance(
+		pos, direction, player_speed, [dash_sec], enemies, bosses)
+	if window < BotConfig.LOOT_DASH_WINDOW_CLEARANCE:
+		return desire
+	if not projectiles.empty():
+		var context := _projectile_clearance_context(
+			pos, projectiles, player_speed, profile, false)
+		if not context.empty():
+			var bullet_clear := _dir_clearance(
+				pos, direction, player_speed, context["bullets_t"],
+				context["times"], arena)
+			if bullet_clear < (BotConfig.ESCAPE_PANIC_CLEARANCE
+					* float(context["caution"])):
+				return desire
+	_loot_dash_active = true
+	_loot_dash_target = target
+	_loot_dash_ticks = BotConfig.LOOT_DASH_MAX_TICKS
+	return direction
 
 
 func _reset_finale_commit() -> void:
@@ -753,7 +856,7 @@ func _best_wall_safe_projectile_lane(pos: Vector2, baseline: Vector2,
 
 func _finale_body_safety(pos: Vector2, desired: Vector2, player_speed: float,
 		arena, enemies, bosses, projectiles, profile,
-		enforce_pack_clearance := false) -> Vector2:
+		enforce_pack_clearance := false, dash_active := false) -> Vector2:
 	# v107: projectile selection and wall projection each reasoned about body
 	# clearance, but the final wall clamp could rotate a safe diagonal back through
 	# a pack. Ordinary late movement also had no final body gate at all. Re-sample
@@ -962,10 +1065,14 @@ func _finale_body_safety(pos: Vector2, desired: Vector2, player_speed: float,
 			lowest_enemy_penalty = min(lowest_enemy_penalty, float(row[3]))
 	var baseline_enemy_penalty := _predictive_enemy_path_penalty(
 		pos, baseline, player_speed, times, enemies, bosses, 1.0)
+	# v118: an active loot dash deliberately accepts crowd pressure; the soft
+	# enemy-penalty preference must not replace a dash route that already
+	# satisfies the body and projectile floors.
 	if (_finale_body_input_clearance >= body_floor
 			and baseline_projectile_clearance >= projectile_floor
-			and baseline_enemy_penalty <= lowest_enemy_penalty
-				+ BotConfig.BOSS_FINALE_ENEMY_PENALTY_SLACK):
+			and (dash_active
+				or baseline_enemy_penalty <= lowest_enemy_penalty
+					+ BotConfig.BOSS_FINALE_ENEMY_PENALTY_SLACK)):
 		_finale_body_selected_clearance = _finale_body_input_clearance
 		_finale_body_selected_projectile_clearance = baseline_projectile_clearance
 		if not projectile_context.empty():
@@ -1074,6 +1181,7 @@ func finale_translation_debug() -> Dictionary:
 		"body_selected_clearance": _finale_body_selected_clearance,
 		"body_projectile_floor": _finale_body_projectile_floor,
 		"body_selected_projectile_clearance": _finale_body_selected_projectile_clearance,
+		"loot_dash_active": _loot_dash_active,
 	}
 
 

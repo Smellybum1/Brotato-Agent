@@ -20,6 +20,10 @@ BODY_EMERGENCY_SLACK = 5.0
 # v117: extended from 140 after the v116 smoke died with references at
 # 140.7-151.1 while hard-safe lanes offered 75-212 more units.
 WALL_BODY_RELIEF_TRIGGER = 200.0
+# v118 loot-dash bounds (mirror LOOT_DASH_MAX_TICKS 72 at 60 Hz -> ~24
+# captures at 20 Hz, +2 margin; runtime aborts below 0.4 hp_ratio).
+LOOT_DASH_MAX_CAPTURES = 26
+LOOT_DASH_MIN_HP_RATIO = 0.35
 WALL_BODY_RELIEF_MIN_GAIN = 60.0
 HARD_WALL_MARGIN = 96.0
 COMMAND_HORIZON_SEC = 0.30
@@ -60,6 +64,10 @@ def _required_body_floor(
     best_clearance = float(debug["body_best_clearance"])
     if bool(debug.get("body_emergency_active", False)):
         return best_clearance - BODY_EMERGENCY_SLACK
+    # v118: an active loot dash deliberately trades the near-best pack tier
+    # for collection; only the contact-safe floor applies while it runs.
+    if bool(debug.get("loot_dash_active", False)):
+        enforce_pack_clearance = False
     if enforce_pack_clearance and best_clearance >= BODY_TIER:
         return max(BODY_TIER, min(BODY_PACK_CLEARANCE, best_clearance - BODY_SLACK))
     if best_clearance >= BODY_TIER:
@@ -273,6 +281,8 @@ def _wall_body_relief_violation(
         return None
     if bool(debug.get("projectile_safety_active", False)):
         return None
+    if bool(debug.get("loot_dash_active", False)):
+        return None
     if payload["entities"].get("projectiles", []):
         return None
     # Recompute the clearance of the action carried by this capture. Held
@@ -405,6 +415,7 @@ def _damage_rows(events: list[dict[str, Any]], first_capture_ts: int | None) -> 
                     "body_best_clearance": debug.get("body_best_clearance"),
                     "body_selected_clearance": debug.get("body_selected_clearance"),
                     "body_emergency_active": debug.get("body_emergency_active", False),
+                    "loot_dash_active": debug.get("loot_dash_active", False),
                 }
             )
             replay = _route_replay(payload)
@@ -524,6 +535,11 @@ def audit_run(
             wall_body_relief_violations.append(relief_fault)
         debug = payload["teacher"]["contributions"]["finale_translation"]
         if bool(debug.get("wall_body_relief_active", False)):
+            if bool(debug.get("loot_dash_active", False)):
+                # v118: a dash deliberately accepts crowd pressure; the relief
+                # near-best tier does not apply while it runs. The dash gates
+                # below still bound its duration and HP floor.
+                continue
             active_wall_body_relief += 1
             projectiles = payload["entities"].get("projectiles", [])
             if projectiles and not payload["teacher"].get("action_fresh", False):
@@ -546,6 +562,37 @@ def audit_run(
                         "required": required,
                     }
                 )
+    # v118 loot-dash gates: episodes must stay within the runtime commit bound
+    # (72 decision ticks at 60 Hz ~ 24 captures at 20 Hz) and must not run at
+    # critically low HP (runtime aborts below 40% of max).
+    loot_dash_violations: list[dict[str, Any]] = []
+    loot_dash_capture_count = 0
+    dash_streak = 0
+    for payload in captures:
+        debug = payload["teacher"]["contributions"]["finale_translation"]
+        if bool(debug.get("loot_dash_active", False)):
+            loot_dash_capture_count += 1
+            dash_streak += 1
+            if dash_streak == LOOT_DASH_MAX_CAPTURES + 1:
+                loot_dash_violations.append(
+                    {
+                        "capture_seq": payload["capture_seq"],
+                        "reason": "dash episode exceeded the runtime commit bound",
+                    }
+                )
+            player = payload.get("player", {})
+            max_hp = max(float(player.get("max_hp", 0.0)), 1.0)
+            hp_ratio = float(player.get("hp", 0.0)) / max_hp
+            if hp_ratio < LOOT_DASH_MIN_HP_RATIO - FLOAT_TOLERANCE:
+                loot_dash_violations.append(
+                    {
+                        "capture_seq": payload["capture_seq"],
+                        "reason": "dash active below the HP floor",
+                        "hp_ratio": hp_ratio,
+                    }
+                )
+        else:
+            dash_streak = 0
     for payload in fresh:
         debug = payload["teacher"]["contributions"]["finale_translation"]
         active_projectile_safety += bool(debug.get("projectile_safety_active", False))
@@ -655,6 +702,7 @@ def audit_run(
         + len(wall_body_relief_selection_violations)
         + len(hard_wall_violations)
         + len(avoidable_damage_violations)
+        + len(loot_dash_violations)
         + (1 if nonfresh_finale_captures else 0)
         + telemetry_error_events
         + (0 if terminal_valid else 1)
@@ -699,6 +747,8 @@ def audit_run(
         "hard_wall_violations": hard_wall_violations,
         "nonfresh_finale_capture_count": len(nonfresh_finale_captures),
         "nonfresh_finale_capture_sample": nonfresh_finale_captures[:20],
+        "loot_dash_capture_count": loot_dash_capture_count,
+        "loot_dash_violations": loot_dash_violations,
         "damage_events": damage_events,
         "avoidable_damage_violations": avoidable_damage_violations,
         "events_sha256": _sha256(events_path),

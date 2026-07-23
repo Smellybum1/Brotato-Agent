@@ -123,17 +123,17 @@ def test_v64_blood_donation_is_vetoed_for_gate_reliability():
     assert '"item_blood_donation": {"never": true}' in requirement_block
 
 
-def test_wp2_capture_build_versions_the_v117_relief_and_alignment_policy():
+def test_wp2_capture_build_versions_the_v118_loot_dash_policy():
     manifest = MANIFEST.read_text(encoding="utf-8")
     controller = CONTROLLER.read_text(encoding="utf-8")
     telemetry = TELEMETRY.read_text(encoding="utf-8")
 
-    assert '"version_number": "0.2.25"' in manifest
-    assert "v117 deterministic teacher" in manifest
-    assert controller.count("teacher_v1-0.1.117-gun-wp1") == 1
-    assert controller.count("0.2.25-wp2-capture") == 1
-    assert telemetry.count("teacher_v1-0.1.117-gun-wp1") == 1
-    assert telemetry.count("0.2.25-wp2-capture") == 1
+    assert '"version_number": "0.2.26"' in manifest
+    assert "v118 deterministic teacher" in manifest
+    assert controller.count("teacher_v1-0.1.118-gun-wp1") == 1
+    assert controller.count("0.2.26-wp2-capture") == 1
+    assert telemetry.count("teacher_v1-0.1.118-gun-wp1") == 1
+    assert telemetry.count("0.2.26-wp2-capture") == 1
 
 
 def test_v84_item_audit_and_conditional_effect_corrections():
@@ -1132,6 +1132,51 @@ def test_v116_clearances_use_the_continuous_closest_approach():
     assert 28.078943 > 23.0 > 1.74
 
 
+def test_v118_loot_dash_is_bounded_hp_gated_and_window_tested():
+    config = CONFIG.read_text(encoding="utf-8")
+    potential = POTENTIAL_FIELD.read_text(encoding="utf-8")
+
+    for declaration in (
+        "const LOOT_DASH_MIN_PILE := 10",
+        "const LOOT_DASH_MIN_HP_RATIO := 0.5",
+        "const LOOT_DASH_WINDOW_CLEARANCE := 45.0",
+        "const LOOT_DASH_MAX_TICKS := 72",
+        "const LOOT_DASH_COOLDOWN_TICKS := 180",
+    ):
+        assert declaration in config
+
+    dash = potential.split("func _apply_loot_dash", 1)[1].split(
+        "func _reset_finale_commit", 1
+    )[0]
+    # Trigger requires density suppression, a substantial pile, HP above the
+    # floor, and a continuous-clearance corridor window.
+    assert "_count_nearby_enemies(pos, enemies, bosses) < BotConfig.PACK_DENSITY_SOFT" in dash
+    assert "int(cluster[1]) < BotConfig.LOOT_DASH_MIN_PILE" in dash
+    assert "hp_ratio < BotConfig.LOOT_DASH_MIN_HP_RATIO" in dash
+    assert "_predictive_body_path_clearance(" in dash
+    assert "window < BotConfig.LOOT_DASH_WINDOW_CLEARANCE" in dash
+    # Bullet-window test still honors the panic clearance with caution.
+    assert "BotConfig.ESCAPE_PANIC_CLEARANCE" in dash
+    # The commit is time-boxed with a cooldown afterwards.
+    assert "_loot_dash_ticks = BotConfig.LOOT_DASH_MAX_TICKS" in dash
+    assert "_loot_dash_cooldown = BotConfig.LOOT_DASH_COOLDOWN_TICKS" in dash
+
+    # Survival and finale paths always drop an active dash.
+    movement = potential.split("func compute_movement", 1)[1].split(
+        "func _best_loot_cluster", 1
+    )[0]
+    assert movement.count("_loot_dash_active = false") == 2
+    # The final body arbiter relaxes only the pack tier during a dash and
+    # keeps the dash route despite crowd penalty, floors permitting.
+    assert "not _loot_dash_active, _loot_dash_active)" in movement
+    safety = potential.split("func _finale_body_safety", 1)[1].split(
+        "func _finale_committed_escape", 1
+    )[0]
+    assert "dash_active := false" in safety
+    assert "(dash_active" in safety
+    assert '"loot_dash_active": _loot_dash_active' in potential
+
+
 def test_v117_finale_captures_align_with_recompute_ticks_and_relief_extends():
     config = CONFIG.read_text(encoding="utf-8")
     controller = CONTROLLER.read_text(encoding="utf-8")
@@ -1176,7 +1221,10 @@ def test_v114_final_body_gate_covers_every_combat_wave_and_uses_open_pack_tier()
     all_wave_body = final_tail.index("final_move = _finale_body_safety(", all_wave_comment)
     return_move = final_tail.index("return _prev_move")
     assert late_guard < all_wave_comment < all_wave_body < return_move
-    assert "projectiles, profile, true)" in final_tail[all_wave_body:return_move]
+    assert (
+        "projectiles, profile, not _loot_dash_active, _loot_dash_active)"
+        in final_tail[all_wave_body:return_move]
+    )
 
     # Frozen v113 smoke wave-12 capture 11040. The unguarded route ran into
     # the pack while a hard-wall-safe sampled lane was comfortably open.

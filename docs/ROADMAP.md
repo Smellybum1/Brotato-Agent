@@ -223,6 +223,19 @@ an audit gate rejecting any non-fresh finale capture; see
 `reports/wp2/v117_relief_alignment_stop_repair_report.md`. A v117 isolated
 smoke gates the exact-20 campaign.
 
+The v117 smoke passed every gate (first fully clean smoke under honest
+metrics; its wave-20 defeat is acceptable demonstration evidence) and the
+exact-20 campaign began. It was halted after run 2/20: run 1 won, but the
+operator observed run 2 starving — over-cautious movement leaving currency
+uncollected — and it died on wave 16 at 79% of the DPS target. Economy
+comparison across v110-v117 confirmed a danger-conditional starvation loop
+(density suppression zeroes loot attraction; safety lanes carry no loot
+term) predating v116. v118 adds the operator-directed bounded loot dash
+(window-tested, HP-gated, time-boxed, hard-wall/projectile floors never
+waived) with dash-aware audit gates; see
+`reports/wp2/v118_loot_dash_change_record.md`. All v117 runs are excluded;
+a v118 smoke gates the fresh exact-20 campaign.
+
 Evidence-driven modifications to `Grok_4.5_Brotato_Work_Package_2_Prompt.md`
 (operator/director approval required — the directive says "unchanged", so these
 are recorded here as the operator's amendments):

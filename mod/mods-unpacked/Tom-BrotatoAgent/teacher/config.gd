@@ -318,6 +318,22 @@ const ESCAPE_TIME_SAMPLES := 6
 const ESCAPE_CLEARANCE_MIN_TIME := 0.05
 const ESCAPE_SAFE_CLEARANCE := 155.0
 const ESCAPE_PANIC_CLEARANCE := 55.0
+# ── v118 opportunistic loot dash ───────────────────────────────────────────────
+# Operator-directed behavior (2026-07-23): under sustained enemy pressure the
+# density veto zeroed loot attraction outright, starving the economy (v117
+# campaign run 2 died wave 16 at 79% of the DPS target with 30% of captures at
+# the 50-material ground cap). When a substantial pile is close and a window
+# exists, commit to a short bounded dash, collect, then hand control back to
+# ordinary evasion. Hard-wall margins and projectile floors are never waived;
+# only the body-clearance preference tier drops to the 45-unit contact floor.
+const LOOT_DASH_SCAN_RADIUS := 420.0
+const LOOT_DASH_CLUSTER_RADIUS := 130.0
+const LOOT_DASH_MIN_PILE := 10
+const LOOT_DASH_MIN_HP_RATIO := 0.5
+const LOOT_DASH_WINDOW_CLEARANCE := 45.0
+const LOOT_DASH_MAX_TICKS := 72        # 60 Hz decisions: ~1.2 s commit
+const LOOT_DASH_COOLDOWN_TICKS := 180  # ~3 s between dashes
+const LOOT_DASH_ARRIVE_RADIUS := 60.0
 const ESCAPE_WALL_MARGIN := 90.0
 const ESCAPE_WALL_PENALTY := 250.0
 const ESCAPE_ALIGN_BONUS := 14.0
