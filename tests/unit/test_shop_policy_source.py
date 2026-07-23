@@ -128,14 +128,14 @@ def test_wp2_capture_build_versions_the_v122_crossing_tier_policy():
     controller = CONTROLLER.read_text(encoding="utf-8")
     telemetry = TELEMETRY.read_text(encoding="utf-8")
 
-    # v123 deployed 2026-07-23 as mod 0.2.31: policy and mod identities now
-    # both read the v123 build everywhere.
-    assert '"version_number": "0.2.31"' in manifest
-    assert "v123 deterministic teacher" in manifest
-    assert controller.count("teacher_v1-0.1.123-gun-wp1") == 1
-    assert controller.count("0.2.31-wp2-capture") == 1
-    assert telemetry.count("teacher_v1-0.1.123-gun-wp1") == 1
-    assert telemetry.count("0.2.31-wp2-capture") == 1
+    # v124 (buy-before-reroll) bumps policy and the deploy surface together:
+    # mod 0.2.32 across manifest, controller meta, and telemetry default.
+    assert '"version_number": "0.2.32"' in manifest
+    assert "v124 deterministic teacher" in manifest
+    assert controller.count("teacher_v1-0.1.124-gun-wp1") == 1
+    assert controller.count("0.2.32-wp2-capture") == 1
+    assert telemetry.count("teacher_v1-0.1.124-gun-wp1") == 1
+    assert telemetry.count("0.2.32-wp2-capture") == 1
 
 
 def test_v123_strength_signal_is_plumbed_through_controller_and_field():
@@ -1934,3 +1934,102 @@ def test_v82_dps_curve_recalibrated_on_41_win_population():
     ehp_block = config.split("const DEFENSE_EHP_TARGETS_BY_WAVE := [", 1)[1].split("]", 1)[0]
     ehp_values = [float(v) for v in re.findall(r"\d+\.\d", ehp_block)]
     assert ehp_values[-1] == 131.0
+
+
+def test_v124_offense_deficient_reroll_boost_yields_to_board_offense_buys():
+    # v124: while offense-deficient, an affordable board offense-stat item that
+    # already clears the impact gate must be bought before the reroll decision
+    # can preempt it. Mechanically: a new board-scan helper guards the +8
+    # offense-deficient reroll worth boost so it fires only when no such item
+    # remains on the board. Evidence: reports/wp2/v124_skip_diagnosis.md
+    # (35/36 true board-leavings were the boost rerolling past board offense).
+    strategy = STRATEGY.read_text(encoding="utf-8")
+
+    # New helper reuses the EXACT mandatory-offense definitions: _direct_offense_gain
+    # (crit excluded by construction) against OFFENSE_IMPACT_MIN_ITEM_GAIN, plus the
+    # existing per-item affordability flag. No gold_reserve change, no new constant.
+    assert "func _board_has_gate_clearing_offense(items: Array) -> bool:" in strategy
+    helper = strategy.split(
+        "func _board_has_gate_clearing_offense", 1
+    )[1].split("func _try_tier_replace_sell", 1)[0]
+    assert 'if it.get("category") == "weapon":' in helper
+    assert 'if not it.get("affordable", false) or not it.get("can_buy", true):' in helper
+    assert (
+        '_direct_offense_gain(it.get("effects", [])) >= BotConfig.OFFENSE_IMPACT_MIN_ITEM_GAIN'
+        in helper
+    )
+    # The mandatory-offense impact gate itself is unchanged (still 6.0).
+    assert "const OFFENSE_IMPACT_MIN_ITEM_GAIN := 6.0" in CONFIG.read_text(encoding="utf-8")
+
+    # Guard on the +8 boost: the v74 boost and v80 band pressure lines are
+    # preserved verbatim; the new conjunct only suppresses the boost while a
+    # qualifying board item is present.
+    decide = strategy.split("func decide_shop", 1)[1].split(
+        "func decide_levelup", 1
+    )[0]
+    assert (
+        "if (offense_target > 0.0 and _offense_proxy(build) < offense_target\n"
+        "\t\t\t\tand not _board_has_gate_clearing_offense(items)):"
+    ) in decide
+    assert "worth += 8.0" in decide  # v74 boost value unchanged
+    assert "worth += BotConfig.OFFENSE_BAND_REROLL_PRESSURE" in decide  # v80 unchanged
+    # The guard is evaluated before the reroll is actually fired.
+    guard = decide.index("_board_has_gate_clearing_offense(items)")
+    fire = decide.index('return {"type": "shop_reroll", "score": best_here}')
+    assert guard < fire
+
+
+def test_v124_reroll_boost_decision_table_mirror():
+    # Independent pure-Python mirror of the v124 rule's decision table, pinning
+    # the three cases the guard must produce.
+    IMPACT_GATE = 6.0  # BotConfig.OFFENSE_IMPACT_MIN_ITEM_GAIN
+    BOOST = 8.0
+
+    # Mirror of _direct_offense_gain restricted to stat items: the three primary
+    # offense stats sum; crit chance/damage are deliberately NOT offense-gain
+    # keys (crit exclusion), so a crit-only item never clears the gate.
+    OFFENSE_KEYS = {"stat_ranged_damage", "stat_percent_damage", "stat_attack_speed"}
+
+    def direct_offense_gain(effects):
+        return sum(e["value"] for e in effects if e["key"] in OFFENSE_KEYS)
+
+    def qualifies(item):
+        # Mirror of _board_has_gate_clearing_offense's per-item predicate.
+        if item.get("category") == "weapon":
+            return False
+        if not item.get("affordable", False) or not item.get("can_buy", True):
+            return False
+        return direct_offense_gain(item.get("effects", [])) >= IMPACT_GATE
+
+    def board_has_gate_clearing_offense(items):
+        return any(qualifies(it) for it in items)
+
+    def reroll_worth(base, deficient, items):
+        # Mirror of the guarded boost: only the +8 conjunct changes.
+        if deficient and not board_has_gate_clearing_offense(items):
+            return base + BOOST
+        return base
+
+    base = 5.0
+    aff_gate_item = {"affordable": True, "can_buy": True,
+                     "effects": [{"key": "stat_percent_damage", "value": 10.0}]}
+    unaff_gate_item = {"affordable": False, "can_buy": True,
+                       "effects": [{"key": "stat_percent_damage", "value": 10.0}]}
+    small_offense_item = {"affordable": True, "can_buy": True,
+                          "effects": [{"key": "stat_ranged_damage", "value": 1.0}]}
+    crit_item = {"affordable": True, "can_buy": True,
+                 "effects": [{"key": "stat_crit_chance", "value": 20.0}]}
+    weapon_item = {"category": "weapon", "affordable": True, "can_buy": True,
+                   "effects": [{"key": "stat_percent_damage", "value": 30.0}]}
+
+    # Case 1: deficient + affordable qualifying item on board -> NO boost (buy it).
+    assert reroll_worth(base, True, [aff_gate_item]) == base
+    # Case 2: deficient + none qualifying -> boost applies.
+    assert reroll_worth(base, True, []) == base + BOOST
+    assert reroll_worth(base, True, [unaff_gate_item]) == base + BOOST      # not affordable
+    assert reroll_worth(base, True, [small_offense_item]) == base + BOOST   # gain < gate
+    assert reroll_worth(base, True, [crit_item]) == base + BOOST            # crit excluded
+    assert reroll_worth(base, True, [weapon_item]) == base + BOOST          # weapons excluded
+    # Case 3: offense adequate -> unchanged (boost never applied regardless of board).
+    assert reroll_worth(base, False, [aff_gate_item]) == base
+    assert reroll_worth(base, False, []) == base

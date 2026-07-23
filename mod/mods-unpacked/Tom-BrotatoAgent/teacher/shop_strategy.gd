@@ -1043,6 +1043,22 @@ func _offense_first_item_action(items: Array, build: Dictionary, profile,
 		"item_id": str(best.get("id", "")), "offense_first": true}
 
 
+func _board_has_gate_clearing_offense(items: Array) -> bool:
+	# v124: while offense-deficient, an affordable non-weapon offense-stat item
+	# that already clears the impact gate must be bought rather than rerolled
+	# past. Reuses the exact mandatory-offense definitions — _direct_offense_gain
+	# (crit excluded by construction) against OFFENSE_IMPACT_MIN_ITEM_GAIN — plus
+	# the existing per-item affordability flag; gold_reserve semantics untouched.
+	for it in items:
+		if it.get("category") == "weapon":
+			continue
+		if not it.get("affordable", false) or not it.get("can_buy", true):
+			continue
+		if _direct_offense_gain(it.get("effects", [])) >= BotConfig.OFFENSE_IMPACT_MIN_ITEM_GAIN:
+			return true
+	return false
+
+
 func _try_tier_replace_sell(items: Array, weapons: Array, build: Dictionary, profile, gold: int, wave: int, slots_full: bool, can_sell: bool) -> Dictionary:
 	# Slots full / can't buy: sell a lower-tier gun so a higher-tier one can enter.
 	if not can_sell or weapons.empty():
@@ -1512,9 +1528,13 @@ func decide_shop(state: Dictionary, profile) -> Dictionary:
 		if wave >= BotConfig.MID_SHOP_PIVOT_WAVE and not free_reroll:
 			worth += 1.5
 		var offense_target := _offense_target(wave, build)
-		if offense_target > 0.0 and _offense_proxy(build) < offense_target:
+		if (offense_target > 0.0 and _offense_proxy(build) < offense_target
+				and not _board_has_gate_clearing_offense(items)):
 			# v74: spend the available search budget instead of settling for
 			# utility while the wave-10 or late offense floor is still unmet.
+			# v124: but not while an affordable gate-clearing offense item is
+			# still on the board — that mandatory-offense buy must not be
+			# preempted by the offense-deficient reroll boost.
 			worth += 8.0
 		if band_gate:
 			# v80: still below the winner-DPS band — keep searching for
