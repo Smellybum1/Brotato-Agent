@@ -1,0 +1,41 @@
+{
+  "run_id": "run_1784765399_1627",
+  "policy_version": "teacher_v1-0.1.113-gun-wp1",
+  "mod_version": "0.2.21-wp2-capture",
+  "disposition": "rejected_incomplete_smoke",
+  "dataset_eligible": false,
+  "stop_reason": "visibly worse dense-pack route with materially safer hard-wall-safe sampled lanes",
+  "observed_wave": 12,
+  "route_evidence": {
+    "capture_seq": 11040,
+    "player_x": 1632.1,
+    "player_y": 1154.7,
+    "emitted_action_x": -0.999,
+    "emitted_action_y": -0.045,
+    "emitted_body_clearance": 13.0,
+    "best_hard_wall_safe_action_x": 1.0,
+    "best_hard_wall_safe_action_y": 0.0,
+    "best_hard_wall_safe_body_clearance": 269.6,
+    "available_clearance_gain": 256.6,
+    "enemy_count": 26
+  },
+  "damage_evidence": {
+    "capture_seq": 11059,
+    "event_ts_ms": 613000,
+    "damage": 11,
+    "remaining_hp": 34
+  },
+  "root_cause": "The final predictive body-safety arbiter was gated to waves 17-20, so wave-12 movement emitted no body diagnostics and could preserve a potential-field route through a dense pack.",
+  "stopped_processes": {
+    "collector_pid": 44932,
+    "brotato_pid": 41800,
+    "auto_start": false
+  },
+  "events": {
+    "bytes": 93889370,
+    "last_event_seq": 13574,
+    "last_capture_seq": 12107,
+    "last_wave": 13,
+    "sha256": "1B2F9DF78BB40E9E224F74EAB803B991156B2390D481A60843CF4010E8D0DB9B"
+  }
+}

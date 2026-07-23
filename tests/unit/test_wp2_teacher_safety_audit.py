@@ -2,6 +2,7 @@ from scripts.wp2_teacher_safety_audit import (
     _avoidable_damage_violations,
     _body_clearance,
     _body_projectile_floor_unavailable,
+    _damage_rows,
     _hard_wall_faults,
     _required_body_floor,
     _wall_body_relief_violation,
@@ -152,6 +153,44 @@ def test_v110_ordinary_body_tier_rejects_observed_worse_pack_lane():
 
     assert _required_body_floor(observed, True) == 160.0
     assert _avoidable_damage_violations([observed])[0]["reasons"] == [
+        "selected body path missed the required near-best tier"
+    ]
+
+
+def test_v114_damage_review_includes_mid_campaign_pack_routes():
+    events = [
+        {
+            "event": "combat_capture",
+            "ts_ms": 612050,
+            "payload": {
+                "capture_seq": 11040,
+                "wave": 12,
+                "teacher": {
+                    "contributions": {
+                        "finale_translation": {
+                            "projectile_safety_active": False,
+                            "projectile_escape_clearance": -1.0,
+                            "projectile_final_clearance": -1.0,
+                            "body_best_clearance": 269.6,
+                            "body_selected_clearance": 13.0,
+                            "body_emergency_active": False,
+                        }
+                    }
+                },
+            },
+        },
+        {
+            "event": "player_damage",
+            "seq": 12387,
+            "ts_ms": 613000,
+            "payload": {"amount": 11, "hp": 34},
+        },
+    ]
+
+    rows = _damage_rows(events, 612050)
+
+    assert rows[0]["wave"] == 12
+    assert _avoidable_damage_violations(rows)[0]["reasons"] == [
         "selected body path missed the required near-best tier"
     ]
 

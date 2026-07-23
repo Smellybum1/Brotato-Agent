@@ -175,7 +175,7 @@ func compute_movement(state, profile) -> Vector2:
 			enemies, profile)
 		safe_survival = _finale_body_safety(
 			pos, safe_survival, player_speed, arena, enemies, bosses,
-			projectiles, profile)
+			projectiles, profile, true)
 		_prev_move = safe_survival
 		return _prev_move
 	var finale = wave >= BotConfig.BOSS_FINALE_WAVE
@@ -247,9 +247,14 @@ func compute_movement(state, profile) -> Vector2:
 		final_move = _finale_wall_safety(
 			pos, final_move, arena, bosses, projectiles, player_speed,
 			enemies, profile)
-		final_move = _finale_body_safety(
-			pos, final_move, player_speed, arena, enemies, bosses,
-			projectiles, profile, finale)
+	# v114: the v113 qualification smoke exposed the same avoidable pack-route
+	# failure on wave 12 because predictive body safety was still gated to waves
+	# 17-20. Apply the last body arbiter on every combat wave, and require an open
+	# pack tier whenever the sampled pool exposes one. This remains inert when the
+	# incoming route already meets the tier, preserving ordinary farming paths.
+	final_move = _finale_body_safety(
+		pos, final_move, player_speed, arena, enemies, bosses,
+		projectiles, profile, true)
 	_prev_move = final_move
 	return _prev_move
 

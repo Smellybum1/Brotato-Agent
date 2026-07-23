@@ -123,17 +123,17 @@ def test_v64_blood_donation_is_vetoed_for_gate_reliability():
     assert '"item_blood_donation": {"never": true}' in requirement_block
 
 
-def test_wp2_capture_build_versions_the_v113_early_tight_relief_policy():
+def test_wp2_capture_build_versions_the_v114_all_wave_pack_safety_policy():
     manifest = MANIFEST.read_text(encoding="utf-8")
     controller = CONTROLLER.read_text(encoding="utf-8")
     telemetry = TELEMETRY.read_text(encoding="utf-8")
 
-    assert '"version_number": "0.2.21"' in manifest
-    assert "v113 deterministic teacher" in manifest
-    assert controller.count("teacher_v1-0.1.113-gun-wp1") == 1
-    assert controller.count("0.2.21-wp2-capture") == 1
-    assert telemetry.count("teacher_v1-0.1.113-gun-wp1") == 1
-    assert telemetry.count("0.2.21-wp2-capture") == 1
+    assert '"version_number": "0.2.22"' in manifest
+    assert "v114 deterministic teacher" in manifest
+    assert controller.count("teacher_v1-0.1.114-gun-wp1") == 1
+    assert controller.count("0.2.22-wp2-capture") == 1
+    assert telemetry.count("teacher_v1-0.1.114-gun-wp1") == 1
+    assert telemetry.count("0.2.22-wp2-capture") == 1
 
 
 def test_v84_item_audit_and_conditional_effect_corrections():
@@ -1009,7 +1009,7 @@ def test_v110_final_body_gate_stays_near_best_inside_the_projectile_tier():
         1,
     )[1].split("else:", 1)[0]
 
-    assert "projectiles, profile, finale)" in potential
+    assert "projectiles, profile, true)" in potential
     assert "enforce_pack_clearance := false" in safety
     assert "body_floor = max(" in ordinary_floor
     assert "BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE" in ordinary_floor
@@ -1072,6 +1072,28 @@ def test_v113_final_body_arbiter_preserves_or_discovers_tight_wall_relief():
     )[0]
     assert "BOSS_FINALE_BODY_CRITICAL_CLEARANCE" in relief_floor
     assert "BOSS_FINALE_WALL_BODY_RELIEF_CLEARANCE_SLACK" in relief_floor
+
+
+def test_v114_final_body_gate_covers_every_combat_wave_and_uses_open_pack_tier():
+    potential = POTENTIAL_FIELD.read_text(encoding="utf-8")
+    movement = potential.split("func compute_movement", 1)[1].split(
+        "func _reset_finale_commit", 1
+    )[0]
+    final_tail = movement.split("var final_move =", 1)[1]
+
+    late_guard = final_tail.index("if wave >= BotConfig.LATE_SURVIVAL_WAVE:")
+    all_wave_comment = final_tail.index("# v114:")
+    all_wave_body = final_tail.index("final_move = _finale_body_safety(", all_wave_comment)
+    return_move = final_tail.index("return _prev_move")
+    assert late_guard < all_wave_comment < all_wave_body < return_move
+    assert "projectiles, profile, true)" in final_tail[all_wave_body:return_move]
+
+    # Frozen v113 smoke wave-12 capture 11040. The unguarded route ran into
+    # the pack while a hard-wall-safe sampled lane was comfortably open.
+    selected_body = 13.0
+    best_body = 269.6
+    required_body = max(45.0, min(160.0, best_body - 20.0))
+    assert selected_body < required_body
 
 
 def test_v101_nonconvex_projectile_blend_falls_back_to_sampled_escape():

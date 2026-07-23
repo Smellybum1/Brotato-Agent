@@ -254,13 +254,13 @@ def _is_sampled_direction(payload: dict[str, Any]) -> bool:
     return best_dot >= 0.99999
 
 
-def _late_damage_rows(events: list[dict[str, Any]], first_late_ts: int | None) -> list[dict[str, Any]]:
-    if first_late_ts is None:
+def _damage_rows(events: list[dict[str, Any]], first_capture_ts: int | None) -> list[dict[str, Any]]:
+    if first_capture_ts is None:
         return []
     captures = [event for event in events if event.get("event") == "combat_capture"]
     rows: list[dict[str, Any]] = []
     for event in events:
-        if event.get("event") != "player_damage" or int(event.get("ts_ms", -1)) < first_late_ts:
+        if event.get("event") != "player_damage" or int(event.get("ts_ms", -1)) < first_capture_ts:
             continue
         prior = next(
             (candidate for candidate in reversed(captures) if candidate.get("ts_ms", 0) <= event["ts_ms"]),
@@ -310,7 +310,7 @@ def _avoidable_damage_violations(rows: list[dict[str, Any]]) -> list[dict[str, A
         ):
             reasons.append("projectile concession exceeds 60 units")
         if body_best >= 0.0:
-            required_body = _required_body_floor(row, int(row.get("wave", 0)) >= 20)
+            required_body = _required_body_floor(row, True)
             if body_selected < required_body - FLOAT_TOLERANCE:
                 reasons.append("selected body path missed the required near-best tier")
         if reasons:
@@ -336,10 +336,12 @@ def audit_run(
     summary = json.loads(summary_path.read_text(encoding="utf-8"))
     captures = [event["payload"] for event in events if event.get("event") == "combat_capture"]
     late = [payload for payload in captures if int(payload.get("wave", 0)) >= LATE_WAVE]
-    fresh = [payload for payload in late if payload["teacher"].get("action_fresh", False)]
+    fresh = [payload for payload in captures if payload["teacher"].get("action_fresh", False)]
+    fresh_late = [payload for payload in late if payload["teacher"].get("action_fresh", False)]
     body_tier_violations: list[dict[str, Any]] = []
     body_repair_violations: list[dict[str, Any]] = []
     body_diagnostic_mismatches: list[dict[str, Any]] = []
+    missing_body_diagnostic_captures: list[int] = []
     projectile_floor_violations: list[dict[str, Any]] = []
     unavailable_projectile_floor_samples: list[dict[str, Any]] = []
     sampled_action_violations: list[int] = []
@@ -391,12 +393,14 @@ def audit_run(
         active_projectile_safety += bool(debug.get("projectile_safety_active", False))
         active_wall_recovery += bool(debug.get("wall_recovery_active", False))
         if float(debug.get("body_selected_clearance", -1.0)) == -1.0:
+            if payload["entities"].get("enemies") or payload["entities"].get("bosses"):
+                missing_body_diagnostic_captures.append(payload["capture_seq"])
             continue
         body_diagnostic_captures += 1
         input_clearance = float(debug["body_input_clearance"])
         best_clearance = float(debug["body_best_clearance"])
         selected_clearance = float(debug["body_selected_clearance"])
-        body_floor = _required_body_floor(debug, int(payload.get("wave", 0)) >= 20)
+        body_floor = _required_body_floor(debug, True)
         active_body_emergencies += bool(debug.get("body_emergency_active", False))
         if selected_clearance < body_floor - FLOAT_TOLERANCE:
             body_tier_violations.append(
@@ -473,9 +477,11 @@ def audit_run(
     for field in ("errors", "hangs", "illegal_actions"):
         if int(summary.get(field, 0)) != 0:
             summary_violations.append(f"summary {field} is nonzero")
-    first_late_ts = min((int(payload["observation_ts_ms"]) for payload in late), default=None)
-    late_damage_events = _late_damage_rows(events, first_late_ts)
-    avoidable_damage_violations = _avoidable_damage_violations(late_damage_events)
+    first_capture_ts = min(
+        (int(payload["observation_ts_ms"]) for payload in captures), default=None
+    )
+    damage_events = _damage_rows(events, first_capture_ts)
+    avoidable_damage_violations = _avoidable_damage_violations(damage_events)
     violations = (
         len(malformed_lines)
         + len(identity_violations)
@@ -483,6 +489,7 @@ def audit_run(
         + len(body_tier_violations)
         + len(body_repair_violations)
         + len(body_diagnostic_mismatches)
+        + len(missing_body_diagnostic_captures)
         + len(projectile_floor_violations)
         + len(sampled_action_violations)
         + len(wall_recovery_violations)
@@ -508,7 +515,8 @@ def audit_run(
         "capture_count": len(captures),
         "waves_represented": sorted({int(payload["wave"]) for payload in captures}),
         "late_capture_count": len(late),
-        "fresh_late_capture_count": len(fresh),
+        "fresh_capture_count": len(fresh),
+        "fresh_late_capture_count": len(fresh_late),
         "body_diagnostic_capture_count": body_diagnostic_captures,
         "active_body_repairs": active_body_repairs,
         "active_body_emergencies": active_body_emergencies,
@@ -522,6 +530,7 @@ def audit_run(
         "body_tier_violations": body_tier_violations,
         "body_repair_violations": body_repair_violations,
         "body_diagnostic_mismatches": body_diagnostic_mismatches,
+        "missing_body_diagnostic_captures": missing_body_diagnostic_captures,
         "unavailable_projectile_floor_samples": unavailable_projectile_floor_samples,
         "projectile_floor_violations": projectile_floor_violations,
         "sampled_action_violations": sampled_action_violations,
@@ -529,7 +538,7 @@ def audit_run(
         "wall_body_relief_violations": wall_body_relief_violations,
         "wall_body_relief_selection_violations": wall_body_relief_selection_violations,
         "hard_wall_violations": hard_wall_violations,
-        "late_damage_events": late_damage_events,
+        "damage_events": damage_events,
         "avoidable_damage_violations": avoidable_damage_violations,
         "events_sha256": _sha256(events_path),
         "summary_sha256": _sha256(summary_path),
@@ -549,14 +558,16 @@ def render_markdown(audit: dict[str, Any]) -> str:
                 f"## `{run['run_id']}` -- {status}",
                 "",
                 f"- Result: `{run['result']}` through wave {run['last_wave']}.",
-                f"- Captures: {run['capture_count']} total; {run['late_capture_count']} late; "
+                f"- Captures: {run['capture_count']} total; "
+                f"{run['fresh_capture_count']} fresh decisions; "
+                f"{run['late_capture_count']} late; "
                 f"{run['fresh_late_capture_count']} fresh late decisions.",
                 f"- Safety activations: {run['active_body_repairs']} body, "
                 f"{run['active_projectile_safety']} projectile, "
                 f"{run['active_wall_recovery']} wall, "
                 f"{run['active_wall_body_relief']} wall-body relief.",
                 f"- Violations: **{run['violation_count']}**.",
-                f"- Late damage events retained for review: {len(run['late_damage_events'])}.",
+                f"- Damage events retained for all-wave review: {len(run['damage_events'])}.",
                 f"- Avoidable damage-path violations: "
                 f"{len(run['avoidable_damage_violations'])}.",
                 f"- Hidden wall-relief body lanes: "
