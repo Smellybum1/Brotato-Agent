@@ -1,4 +1,13 @@
-# WP2 v123 change record (DRAFT) — unified risk budget
+# WP2 v123 change record — unified risk budget
+
+QUALIFIED 2026-07-23: deployed as mod 0.2.31 (ZIP
+B9C692C15770295D59741B954078FA494DDF5028F3D8DAA9EE8E53D990284B38); smoke
+run_1784810419_25652 victory wave 20, damage 102, ZERO violations in all
+safety categories and a fully clean capture audit (21,268 captures).
+Strength diagnostics live on 100% of captures (strong 46.5% / neutral
+36.3% / weak 17.3%, S in [0.554, 2.000]); strength gates active, 0
+violations. See reports/wp2/v123_deploy_record.md and
+v123_smoke_safety_audit.md / v123_smoke_capture_audit.md.
 
 Implements `.tmp/wp2_v123_architecture.md` (sections A-G, incl. the C2 final-shop
 greed window). Built during the v122 exact-20 campaign; DEPLOY ONLY after the
