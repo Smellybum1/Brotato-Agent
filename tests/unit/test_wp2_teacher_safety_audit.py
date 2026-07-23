@@ -5,6 +5,7 @@ from scripts.wp2_teacher_safety_audit import (
     _hard_wall_faults,
     _required_body_floor,
     _wall_body_relief_violation,
+    _wall_recovery_progress_violation,
 )
 
 
@@ -76,8 +77,26 @@ def test_wall_body_relief_audit_replays_held_action_not_stale_diagnostic():
         }
     }
 
-    assert _body_clearance(payload) >= 120.0
+    assert _body_clearance(payload) >= 140.0
     assert _wall_body_relief_violation(payload) is None
+
+
+def test_wall_progress_audit_accepts_active_bounded_body_relief():
+    payload = _payload(x=300.0, action=(-1.0, 0.0), speed=100.0)
+    payload.update({"capture_seq": 20547})
+    payload["teacher"]["contributions"] = {
+        "finale_translation": {
+            "body_safety_active": True,
+            "wall_recovery_active": True,
+            "wall_body_relief_active": True,
+        }
+    }
+
+    assert _wall_recovery_progress_violation(payload) is None
+    payload["teacher"]["contributions"]["finale_translation"][
+        "wall_body_relief_active"
+    ] = False
+    assert _wall_recovery_progress_violation(payload) is not None
 
 
 def test_damage_audit_allows_only_the_bounded_projectile_concession():

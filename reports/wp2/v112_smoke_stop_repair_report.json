@@ -1,0 +1,47 @@
+{
+  "run_id": "run_1784763667_57757",
+  "policy_version": "teacher_v1-0.1.112-gun-wp1",
+  "mod_version": "0.2.20-wp2-capture",
+  "result": "defeat",
+  "decision": "stop_and_repair",
+  "structural_capture_status": "accepted",
+  "safety_status": "rejected",
+  "observed_failure": "Wall recovery briefly selected a route through a pack while materially clearer hard-wall-safe lanes existed.",
+  "evidence": {
+    "original_audit_violation_count": 26,
+    "corrected_audit_violation_count": 9,
+    "hidden_relief_violations": 8,
+    "active_relief_selection_violations": 1,
+    "hard_wall_violations": 0,
+    "avoidable_damage_violations": 0,
+    "representative_captures": [
+      {
+        "capture_seq": 20175,
+        "selected_body_clearance": 113.40707919311157,
+        "best_hard_wall_safe_clearance": 206.01303023694712
+      },
+      {
+        "capture_seq": 20176,
+        "selected_body_clearance": 97.25078740309094,
+        "best_hard_wall_safe_clearance": 201.85245240732715
+      },
+      {
+        "capture_seq": 20198,
+        "selected_body_clearance": 292.39636111075913,
+        "best_hard_wall_safe_clearance": 316.9671040642811
+      }
+    ],
+    "events_sha256": "25AE607F37694D5573576BF15D8FA5EFDC1F1F90CFABC02394EF2204893BEA16",
+    "summary_sha256": "1101ED348106E15BF0A00E73557009D51861C36606DB3D6A950ACDD4DBAB4995"
+  },
+  "repair": {
+    "next_policy_version": "teacher_v1-0.1.113-gun-wp1",
+    "next_mod_version": "0.2.21-wp2-capture",
+    "wall_body_relief_trigger_before": 120.0,
+    "wall_body_relief_trigger_after": 140.0,
+    "wall_body_relief_slack_before": 20.0,
+    "wall_body_relief_slack_after": 10.0,
+    "audit_correction": "Active bounded wall-body relief is audited by hard-wall and near-best relief gates, not the mutually exclusive strict inward-progress gate."
+  },
+  "source_smoke_is_dataset_eligible": false
+}

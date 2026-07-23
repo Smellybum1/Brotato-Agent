@@ -123,17 +123,17 @@ def test_v64_blood_donation_is_vetoed_for_gate_reliability():
     assert '"item_blood_donation": {"never": true}' in requirement_block
 
 
-def test_wp2_capture_build_versions_the_v112_final_body_relief_policy():
+def test_wp2_capture_build_versions_the_v113_early_tight_relief_policy():
     manifest = MANIFEST.read_text(encoding="utf-8")
     controller = CONTROLLER.read_text(encoding="utf-8")
     telemetry = TELEMETRY.read_text(encoding="utf-8")
 
-    assert '"version_number": "0.2.20"' in manifest
-    assert "v112 deterministic teacher" in manifest
-    assert controller.count("teacher_v1-0.1.112-gun-wp1") == 1
-    assert controller.count("0.2.20-wp2-capture") == 1
-    assert telemetry.count("teacher_v1-0.1.112-gun-wp1") == 1
-    assert telemetry.count("0.2.20-wp2-capture") == 1
+    assert '"version_number": "0.2.21"' in manifest
+    assert "v113 deterministic teacher" in manifest
+    assert controller.count("teacher_v1-0.1.113-gun-wp1") == 1
+    assert controller.count("0.2.21-wp2-capture") == 1
+    assert telemetry.count("teacher_v1-0.1.113-gun-wp1") == 1
+    assert telemetry.count("0.2.21-wp2-capture") == 1
 
 
 def test_v84_item_audit_and_conditional_effect_corrections():
@@ -1024,17 +1024,21 @@ def test_v110_final_body_gate_stays_near_best_inside_the_projectile_tier():
     assert selected_body < required_body
 
 
-def test_v112_wall_recovery_can_take_a_materially_safer_bounded_relief_lane():
+def test_v113_wall_recovery_intervenes_early_and_stays_near_best():
     config = CONFIG.read_text(encoding="utf-8")
     potential = POTENTIAL_FIELD.read_text(encoding="utf-8")
     selector = potential.split("func _best_finale_interior_lane", 1)[1].split(
         "func _finale_projectile_safety", 1
     )[0]
 
-    assert "const BOSS_FINALE_WALL_BODY_RELIEF_TRIGGER := 120.0" in config
+    assert "const BOSS_FINALE_WALL_BODY_RELIEF_TRIGGER := 140.0" in config
     assert "const BOSS_FINALE_WALL_BODY_RELIEF_MIN_GAIN := 60.0" in config
+    assert "const BOSS_FINALE_WALL_BODY_RELIEF_CLEARANCE_SLACK := 10.0" in config
     assert "candidate_rows = hard_safe_rows" in selector
-    assert "highest_body_clearance - BotConfig.BOSS_FINALE_BODY_CLEARANCE_SLACK" in selector
+    assert (
+        "highest_body_clearance\n"
+        "\t\t\t\t- BotConfig.BOSS_FINALE_WALL_BODY_RELIEF_CLEARANCE_SLACK"
+    ) in selector
     assert '"wall_body_relief_active": _finale_wall_body_relief_active' in potential
     assert (
         '"wall_relief_best_body_clearance": '
@@ -1046,11 +1050,11 @@ def test_v112_wall_recovery_can_take_a_materially_safer_bounded_relief_lane():
     # more than 180 units clearer.
     selected_body = 85.795204
     relief_body = 267.219028
-    assert selected_body < 120.0
+    assert selected_body < 140.0
     assert relief_body >= selected_body + 60.0
 
 
-def test_v112_final_body_arbiter_preserves_or_discovers_wall_relief():
+def test_v113_final_body_arbiter_preserves_or_discovers_tight_wall_relief():
     potential = POTENTIAL_FIELD.read_text(encoding="utf-8")
     safety = potential.split("func _finale_body_safety", 1)[1].split(
         "func _finale_committed_escape", 1
@@ -1067,7 +1071,7 @@ def test_v112_final_body_arbiter_preserves_or_discovers_wall_relief():
         "elif (enforce_pack_clearance", 1
     )[0]
     assert "BOSS_FINALE_BODY_CRITICAL_CLEARANCE" in relief_floor
-    assert "BOSS_FINALE_BODY_CLEARANCE_SLACK" in relief_floor
+    assert "BOSS_FINALE_WALL_BODY_RELIEF_CLEARANCE_SLACK" in relief_floor
 
 
 def test_v101_nonconvex_projectile_blend_falls_back_to_sampled_escape():

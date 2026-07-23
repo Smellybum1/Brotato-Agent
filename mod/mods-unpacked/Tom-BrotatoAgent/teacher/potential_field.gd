@@ -508,7 +508,7 @@ func _best_finale_interior_lane(pos: Vector2, desired: Vector2, arena,
 		body_clearance_floor = max(
 			BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE,
 			highest_body_clearance
-				- BotConfig.BOSS_FINALE_BODY_CLEARANCE_SLACK)
+				- BotConfig.BOSS_FINALE_WALL_BODY_RELIEF_CLEARANCE_SLACK)
 	elif highest_body_clearance >= BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE:
 		body_clearance_floor = BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE
 	else:
@@ -913,7 +913,7 @@ func _finale_body_safety(pos: Vector2, desired: Vector2, player_speed: float,
 		body_floor = max(
 			BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE,
 			highest_body_clearance
-				- BotConfig.BOSS_FINALE_BODY_CLEARANCE_SLACK)
+				- BotConfig.BOSS_FINALE_WALL_BODY_RELIEF_CLEARANCE_SLACK)
 	elif (enforce_pack_clearance
 			and highest_body_clearance
 				>= BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE):

@@ -17,7 +17,7 @@ BODY_TIER = 45.0
 BODY_SLACK = 20.0
 BODY_PACK_CLEARANCE = 160.0
 BODY_EMERGENCY_SLACK = 5.0
-WALL_BODY_RELIEF_TRIGGER = 120.0
+WALL_BODY_RELIEF_TRIGGER = 140.0
 WALL_BODY_RELIEF_MIN_GAIN = 60.0
 HARD_WALL_MARGIN = 96.0
 COMMAND_HORIZON_SEC = 0.30
@@ -191,6 +191,30 @@ def _wall_distances(payload: dict[str, Any]) -> tuple[float, float]:
     end_y = y + direction[1] * WALL_LOOKAHEAD
     future = min(end_x, width - end_x, end_y, height - end_y)
     return current, future
+
+
+def _wall_recovery_progress_violation(
+    payload: dict[str, Any],
+) -> dict[str, Any] | None:
+    """Require inward progress unless the bounded body-relief exception is active."""
+    debug = payload["teacher"]["contributions"]["finale_translation"]
+    if not bool(debug.get("body_safety_active", False)):
+        return None
+    if not bool(debug.get("wall_recovery_active", False)):
+        return None
+    if bool(debug.get("wall_body_relief_active", False)):
+        return None
+    current_wall, future_wall = _wall_distances(payload)
+    if (
+        current_wall < WALL_RECOVERY_RELEASE
+        and future_wall <= current_wall + FLOAT_TOLERANCE
+    ):
+        return {
+            "capture_seq": payload["capture_seq"],
+            "current": current_wall,
+            "future": future_wall,
+        }
+    return None
 
 
 def _hard_wall_faults(payload: dict[str, Any]) -> list[str]:
@@ -427,19 +451,9 @@ def audit_run(
                     "recomputed": recomputed,
                 }
             )
-        if active and bool(debug.get("wall_recovery_active", False)):
-            current_wall, future_wall = _wall_distances(payload)
-            if (
-                current_wall < WALL_RECOVERY_RELEASE
-                and future_wall <= current_wall + FLOAT_TOLERANCE
-            ):
-                wall_recovery_violations.append(
-                    {
-                        "capture_seq": payload["capture_seq"],
-                        "current": current_wall,
-                        "future": future_wall,
-                    }
-                )
+        wall_progress_fault = _wall_recovery_progress_violation(payload)
+        if wall_progress_fault is not None:
+            wall_recovery_violations.append(wall_progress_fault)
     identity_violations: list[str] = []
     if expected_policy and summary.get("policy_version") != expected_policy:
         identity_violations.append("summary policy mismatch")
