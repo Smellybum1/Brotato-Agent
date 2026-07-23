@@ -123,17 +123,17 @@ def test_v64_blood_donation_is_vetoed_for_gate_reliability():
     assert '"item_blood_donation": {"never": true}' in requirement_block
 
 
-def test_wp2_capture_build_versions_the_v118_loot_dash_policy():
+def test_wp2_capture_build_versions_the_v119_loot_stall_policy():
     manifest = MANIFEST.read_text(encoding="utf-8")
     controller = CONTROLLER.read_text(encoding="utf-8")
     telemetry = TELEMETRY.read_text(encoding="utf-8")
 
-    assert '"version_number": "0.2.26"' in manifest
-    assert "v118 deterministic teacher" in manifest
-    assert controller.count("teacher_v1-0.1.118-gun-wp1") == 1
-    assert controller.count("0.2.26-wp2-capture") == 1
-    assert telemetry.count("teacher_v1-0.1.118-gun-wp1") == 1
-    assert telemetry.count("0.2.26-wp2-capture") == 1
+    assert '"version_number": "0.2.27"' in manifest
+    assert "v119 deterministic teacher" in manifest
+    assert controller.count("teacher_v1-0.1.119-gun-wp1") == 1
+    assert controller.count("0.2.27-wp2-capture") == 1
+    assert telemetry.count("teacher_v1-0.1.119-gun-wp1") == 1
+    assert telemetry.count("0.2.27-wp2-capture") == 1
 
 
 def test_v84_item_audit_and_conditional_effect_corrections():
@@ -1132,6 +1132,41 @@ def test_v116_clearances_use_the_continuous_closest_approach():
     assert 28.078943 > 23.0 > 1.74
 
 
+def test_v119_stall_trigger_and_loot_biased_strafe():
+    config = CONFIG.read_text(encoding="utf-8")
+    potential = POTENTIAL_FIELD.read_text(encoding="utf-8")
+
+    assert "const LOOT_DASH_STALL_COUNT := 30" in config
+    assert "const ENGAGE_STRAFE_LOOT_WEIGHT := 6.0" in config
+    assert "const ENGAGE_STRAFE_LOOT_CAP := 1.0" in config
+
+    dash = potential.split("func _apply_loot_dash", 1)[1].split(
+        "func _reset_finale_commit", 1
+    )[0]
+    # Heavy accumulation arms the dash at any density; otherwise the density
+    # gate still applies.
+    assert "scan_count >= BotConfig.LOOT_DASH_STALL_COUNT" in dash
+    assert "not stalled" in dash
+    assert "< BotConfig.PACK_DENSITY_SOFT" in dash
+
+    strafe = potential.split("func _score_strafe_side", 1)[1].split(
+        "func _early_hunt_force", 1
+    )[0]
+    # Bounded flank bonus for materials; enemy pressure and wall openness
+    # keep their existing weights.
+    assert "BotConfig.ENGAGE_STRAFE_LOOT_WEIGHT" in strafe
+    assert "loot_bonus = min(loot_bonus, BotConfig.ENGAGE_STRAFE_LOOT_CAP)" in strafe
+    assert "+ loot_bonus)" in strafe
+    assert "_engage_strafe_force(pos, enemies, bosses, arena, nearest_d, loot)" in potential
+
+    # Frozen v118 smoke wave-10 evidence (run_1784778591_87017): 1,241
+    # captures, density always below 8, materials p50 19 / p90 49-50 with an
+    # unblocked pile in 95% of captures at ~176 units — ordinary collection
+    # stalled with the v118 dash never arming.
+    assert 19 >= 0 and 49 >= 30
+    assert 176 <= 420.0
+
+
 def test_v118_loot_dash_is_bounded_hp_gated_and_window_tested():
     config = CONFIG.read_text(encoding="utf-8")
     potential = POTENTIAL_FIELD.read_text(encoding="utf-8")
@@ -1150,7 +1185,10 @@ def test_v118_loot_dash_is_bounded_hp_gated_and_window_tested():
     )[0]
     # Trigger requires density suppression, a substantial pile, HP above the
     # floor, and a continuous-clearance corridor window.
-    assert "_count_nearby_enemies(pos, enemies, bosses) < BotConfig.PACK_DENSITY_SOFT" in dash
+    # v119 reshaped the density gate around the stall trigger; the density
+    # condition itself remains.
+    assert "_count_nearby_enemies(pos, enemies, bosses)" in dash
+    assert "< BotConfig.PACK_DENSITY_SOFT" in dash
     assert "int(cluster[1]) < BotConfig.LOOT_DASH_MIN_PILE" in dash
     assert "hp_ratio < BotConfig.LOOT_DASH_MIN_HP_RATIO" in dash
     assert "_predictive_body_path_clearance(" in dash

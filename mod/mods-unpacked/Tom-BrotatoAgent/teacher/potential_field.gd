@@ -328,9 +328,21 @@ func _apply_loot_dash(pos: Vector2, desire: Vector2, hp_ratio: float,
 		return _normalize(_loot_dash_target - pos)
 	if _loot_dash_cooldown > 0 or hp_ratio < BotConfig.LOOT_DASH_MIN_HP_RATIO:
 		return desire
-	# Only take over when ordinary attraction is density-suppressed; sparse
-	# situations are already handled by the normal desire field.
-	if _count_nearby_enemies(pos, enemies, bosses) < BotConfig.PACK_DENSITY_SOFT:
+	# v118 armed only under density suppression, but wave-10 live evidence
+	# showed the ordinary field starving without it: engagement and strafe
+	# forces out-vote the per-item loot pull while material piles accumulate
+	# unblocked at kiting range. Heavy accumulation within scan range is
+	# treated as a stall signal and arms the dash at any density.
+	var scan_count := 0
+	for item in loot:
+		var item_pos := Vector2(
+			float(item.get("x", 0.0)), float(item.get("y", 0.0)))
+		if (item_pos - pos).length() <= BotConfig.LOOT_DASH_SCAN_RADIUS:
+			scan_count += 1
+	var stalled: bool = scan_count >= BotConfig.LOOT_DASH_STALL_COUNT
+	if (not stalled
+			and _count_nearby_enemies(pos, enemies, bosses)
+				< BotConfig.PACK_DENSITY_SOFT):
 		return desire
 	var cluster := _best_loot_cluster(pos, loot)
 	if int(cluster[1]) < BotConfig.LOOT_DASH_MIN_PILE:
@@ -1247,7 +1259,7 @@ func _build_desire(pos, enemies, bosses, loot, consumables, trees, weapons, aren
 		# Only shove off dense packs once already in DPS range.
 		force += _pack_density_repulsion(pos, enemies, bosses)
 	if at_weapon_range and not edge_kite:
-		force += _engage_strafe_force(pos, enemies, bosses, arena, nearest_d)
+		force += _engage_strafe_force(pos, enemies, bosses, arena, nearest_d, loot)
 		# Kill residual charge into the pack once inside weapon max range.
 		var nearest_target = _nearest_threat_pos(pos, enemies, bosses)
 		if nearest_target != null:
@@ -1424,7 +1436,7 @@ func _nearest_threat_pos(pos, enemies, bosses):
 	return nearest
 
 
-func _engage_strafe_force(pos, enemies, bosses, arena, nearest_d) -> Vector2:
+func _engage_strafe_force(pos, enemies, bosses, arena, nearest_d, loot = []) -> Vector2:
 	# Lateral orbit once inside shortest-weapon max range.
 	var target = _nearest_threat_pos(pos, enemies, bosses)
 	if target == null:
@@ -1434,8 +1446,8 @@ func _engage_strafe_force(pos, enemies, bosses, arena, nearest_d) -> Vector2:
 	var dir_in = to_enemy / td
 	var left = Vector2(-dir_in.y, dir_in.x)
 	var right = -left
-	var left_score = _score_strafe_side(pos, left, enemies, bosses, arena)
-	var right_score = _score_strafe_side(pos, right, enemies, bosses, arena)
+	var left_score = _score_strafe_side(pos, left, enemies, bosses, arena, loot)
+	var right_score = _score_strafe_side(pos, right, enemies, bosses, arena, loot)
 	var side = left
 	if right_score > left_score:
 		side = right
@@ -1449,8 +1461,10 @@ func _engage_strafe_force(pos, enemies, bosses, arena, nearest_d) -> Vector2:
 	return side * BotConfig.ENGAGE_STRAFE * band
 
 
-func _score_strafe_side(pos, side: Vector2, enemies, bosses, arena) -> float:
+func _score_strafe_side(pos, side: Vector2, enemies, bosses, arena, loot = []) -> float:
 	# Higher = better: open wall lane + fewer enemies on that flank.
+	# v119: plus a bounded bonus for materials on that flank, so the orbit
+	# sweeps over currency instead of the empty side at equal safety.
 	var w = float(arena.get("width", 2048.0))
 	var h = float(arena.get("height", 1536.0))
 	var look = BotConfig.ENGAGE_STRAFE_LOOKAHEAD
@@ -1482,8 +1496,21 @@ func _score_strafe_side(pos, side: Vector2, enemies, bosses, arena) -> float:
 		if lateral <= 0.0:
 			continue
 		enemy_pressure += (lateral / d) * (1.0 / d) * 80.0
+	var loot_bonus = 0.0
+	for item in loot:
+		var ip = Vector2(item.get("x", 0.0), item.get("y", 0.0))
+		var idiff = ip - pos
+		var idist = max(idiff.length(), 1.0)
+		if idist > radius:
+			continue
+		var ilateral = idiff.dot(side)
+		if ilateral <= 0.0:
+			continue
+		loot_bonus += (ilateral / idist) * (1.0 / idist) * BotConfig.ENGAGE_STRAFE_LOOT_WEIGHT
+	loot_bonus = min(loot_bonus, BotConfig.ENGAGE_STRAFE_LOOT_CAP)
 	return (wall_score * BotConfig.ENGAGE_STRAFE_WALL_WEIGHT
-		- enemy_pressure * BotConfig.ENGAGE_STRAFE_ENEMY_WEIGHT)
+		- enemy_pressure * BotConfig.ENGAGE_STRAFE_ENEMY_WEIGHT
+		+ loot_bonus)
 
 
 func _early_hunt_force(pos, enemies, bosses) -> Vector2:

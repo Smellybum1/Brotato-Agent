@@ -334,6 +334,16 @@ const LOOT_DASH_WINDOW_CLEARANCE := 45.0
 const LOOT_DASH_MAX_TICKS := 72        # 60 Hz decisions: ~1.2 s commit
 const LOOT_DASH_COOLDOWN_TICKS := 180  # ~3 s between dashes
 const LOOT_DASH_ARRIVE_RADIUS := 60.0
+# v119: wave-10 live evidence (run_1784778591_87017) showed 19-50 materials on
+# the ground with unblocked piles 176 units away while density stayed below
+# PACK_DENSITY_SOFT, so the v118 dash never armed and the ordinary field kept
+# orbiting away. Heavy accumulation is itself proof that ordinary collection
+# has stalled: arm the dash on it regardless of density, and bias the strafe
+# orbit toward the currency-bearing flank (bounded so enemy pressure and wall
+# openness still dominate).
+const LOOT_DASH_STALL_COUNT := 30
+const ENGAGE_STRAFE_LOOT_WEIGHT := 6.0
+const ENGAGE_STRAFE_LOOT_CAP := 1.0
 const ESCAPE_WALL_MARGIN := 90.0
 const ESCAPE_WALL_PENALTY := 250.0
 const ESCAPE_ALIGN_BONUS := 14.0
