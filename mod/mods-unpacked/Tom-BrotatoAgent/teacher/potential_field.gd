@@ -1053,6 +1053,15 @@ func _finale_body_safety(pos: Vector2, desired: Vector2, player_speed: float,
 			BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE,
 			highest_body_clearance
 				- BotConfig.BOSS_FINALE_WALL_BODY_RELIEF_CLEARANCE_SLACK)
+		# v121: the relief floor can exceed every sampled lane in a tight
+		# pack (v120 smoke capture 18555: best row 13.3 versus the 45-unit
+		# contact tier while the incoming command held 46.5). The selection
+		# loop then admits nothing and keeps the baseline, which previously
+		# left the selected diagnostic at its -1 sentinel and correctly
+		# failed the audit. Make the fallback explicit and diagnosed.
+		if highest_body_clearance < body_floor:
+			_finale_body_selected_clearance = _finale_body_input_clearance
+			return baseline
 	elif (enforce_pack_clearance
 			and highest_body_clearance
 				>= BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE):

@@ -123,17 +123,17 @@ def test_v64_blood_donation_is_vetoed_for_gate_reliability():
     assert '"item_blood_donation": {"never": true}' in requirement_block
 
 
-def test_wp2_capture_build_versions_the_v120_calibrated_collection_policy():
+def test_wp2_capture_build_versions_the_v121_diagnosed_relief_fallback_policy():
     manifest = MANIFEST.read_text(encoding="utf-8")
     controller = CONTROLLER.read_text(encoding="utf-8")
     telemetry = TELEMETRY.read_text(encoding="utf-8")
 
-    assert '"version_number": "0.2.28"' in manifest
-    assert "v120 deterministic teacher" in manifest
-    assert controller.count("teacher_v1-0.1.120-gun-wp1") == 1
-    assert controller.count("0.2.28-wp2-capture") == 1
-    assert telemetry.count("teacher_v1-0.1.120-gun-wp1") == 1
-    assert telemetry.count("0.2.28-wp2-capture") == 1
+    assert '"version_number": "0.2.29"' in manifest
+    assert "v121 deterministic teacher" in manifest
+    assert controller.count("teacher_v1-0.1.121-gun-wp1") == 1
+    assert controller.count("0.2.29-wp2-capture") == 1
+    assert telemetry.count("teacher_v1-0.1.121-gun-wp1") == 1
+    assert telemetry.count("0.2.29-wp2-capture") == 1
 
 
 def test_v84_item_audit_and_conditional_effect_corrections():
@@ -1165,6 +1165,24 @@ def test_v119_stall_trigger_and_loot_biased_strafe():
     # stalled with the v118 dash never arming.
     assert 19 >= 0 and 49 >= 30
     assert 176 <= 420.0
+
+
+def test_v121_unattainable_relief_floor_keeps_baseline_with_diagnostics():
+    potential = POTENTIAL_FIELD.read_text(encoding="utf-8")
+    safety = potential.split("func _finale_body_safety", 1)[1].split(
+        "func _finale_committed_escape", 1
+    )[0]
+    relief_arm = safety.split("elif _finale_wall_body_relief_active:", 1)[1]
+
+    assert "if highest_body_clearance < body_floor:" in relief_arm
+    assert (
+        "_finale_body_selected_clearance = _finale_body_input_clearance"
+        in relief_arm.split("elif", 1)[0]
+    )
+    assert "return baseline" in relief_arm.split("elif", 1)[0]
+
+    # Frozen v120 smoke capture 18555.
+    assert 13.299061 < 45.0 and 46.465576 > 13.299061
 
 
 def test_v118_loot_dash_is_bounded_hp_gated_and_window_tested():

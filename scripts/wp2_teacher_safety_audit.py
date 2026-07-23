@@ -94,9 +94,18 @@ def _body_projectile_floor_unavailable(debug: dict[str, Any]) -> bool:
     input_clearance = float(debug.get("body_input_clearance", -1.0))
     best_clearance = float(debug.get("body_best_clearance", -1.0))
     selected_clearance = float(debug.get("body_selected_clearance", -1.0))
-    return (
+    if (
         abs(input_clearance - best_clearance) <= FLOAT_TOLERANCE
         and abs(input_clearance - selected_clearance) <= FLOAT_TOLERANCE
+    ):
+        return True
+    # v121: active wall-body relief whose 45-unit floor exceeds every sampled
+    # lane keeps the (clearer) incoming command; selected mirrors the input
+    # while best reports the tighter sampled pool.
+    return (
+        bool(debug.get("wall_body_relief_active", False))
+        and abs(input_clearance - selected_clearance) <= FLOAT_TOLERANCE
+        and best_clearance < BODY_TIER - FLOAT_TOLERANCE
     )
 
 

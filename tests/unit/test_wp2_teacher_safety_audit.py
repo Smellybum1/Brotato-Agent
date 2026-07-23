@@ -70,6 +70,32 @@ def test_v116_projectile_route_clearance_sees_straddled_bullets():
     assert _projectile_route_clearance(payload) < 5.0
 
 
+def test_v121_relief_floor_fallback_is_diagnosed_not_flagged():
+    # Frozen v120 smoke capture 18555: relief floor 45 exceeded every sampled
+    # lane (best 13.3) while the incoming command held 46.5; the runtime keeps
+    # the baseline and must mirror it in the selected diagnostic.
+    fallback = {
+        "wall_body_relief_active": True,
+        "body_safety_active": False,
+        "body_emergency_active": False,
+        "body_input_clearance": 46.465576,
+        "body_best_clearance": 13.299061,
+        "body_selected_clearance": 46.465576,
+        "body_projectile_floor": 120.0,
+        "body_selected_projectile_clearance": -1.0,
+    }
+
+    assert _body_projectile_floor_unavailable(fallback)
+    # Without relief, mismatched input/best keeps the strict signature.
+    assert not _body_projectile_floor_unavailable(
+        {**fallback, "wall_body_relief_active": False}
+    )
+    # A best clearance above the contact tier is a real pool; no exemption.
+    assert not _body_projectile_floor_unavailable(
+        {**fallback, "body_best_clearance": 60.0}
+    )
+
+
 def test_v118_loot_dash_relaxes_only_the_pack_tier():
     ordinary = {"body_best_clearance": 200.0}
     dashing = {"body_best_clearance": 200.0, "loot_dash_active": True}
