@@ -214,10 +214,28 @@ now passes and the suite is fully green.
 
 ## Open calibration items
 
-- `EDGE_RAIL_DRIFT` (0.45) — provisional; recalibrate at campaign run 5/20. Target
-  < 40% wave-19 corner occupancy without a damage regression. Single-source in
-  config so recalibration is a one-literal edit.
-- Early/wave-19 greed literals (arm floor, window, stall, cooldown, strafe cap,
-  body slack) — pending run-5 data; single-source in the config getters.
-- Strength EMA smoothing (0.75/0.25) and tier thresholds — pending the campaign's
-  per-wave S distribution.
+RUN-5 CALIBRATION RESOLVED (2026-07-23, reports/wp2/v123_run5_calibration.md,
+5 runs / ~2100 combat_ticks + ~21k captures each):
+
+- Strength tiers 1.25/0.75: CONFIRMED unchanged. Pooled tick-time strong
+  25.5% / neutral 51.8% / weak 22.7%; thresholds at ~p79/p19 of wave-median
+  S; no within-run flapping (S driven by build quality + progression). The
+  weak-tier / early-greed overlap (weak fires w5-12) makes the stacking
+  clamps (arm floor >= 0.30, window >= 20.0) load-bearing — both pinned by
+  tests.
+- `EDGE_RAIL_DRIFT` 0.45: HELD for first deploy (new force term, one
+  calibrated step). Metric RE-AIMED: two-wall corner dwell is already ~3%
+  at wave 19; the real defect is single-wall edge-hug (47-73% of wave-19
+  captures within 280 of one wall) with ground loot saturating the ~50
+  field cap (29% pooled / 70% run-1 wave-19) while wave-19 shops are
+  gold-rich (722-1022). v123 success metrics: wave-19 single-wall-280
+  occupancy and loot-saturation fraction, NOT corner occupancy or gold.
+  Escalate to 0.6-0.7 (stay under EDGE_BIAS 0.85) in v124 if edge dwell
+  does not drop.
+- Early/wave-19 greed literals: HELD as implemented. The strafe-cap raise
+  (0.35 -> 0.6) is the meaningful wave-19 lever (paths toward spread loot);
+  stall 8 / cooldown 90 are low-yield (dash already fires 9-10 episodes /
+  12.5% of wave-19 captures — it is position-pinned, not gated). Rail drift
+  is expected to do the heavy lifting.
+- Re-check all of the above against the full 20-run set at campaign end
+  before deploy.
