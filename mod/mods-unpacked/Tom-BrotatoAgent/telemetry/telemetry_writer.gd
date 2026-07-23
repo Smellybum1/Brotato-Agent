@@ -2,7 +2,7 @@ extends Reference
 # Append-only JSONL telemetry writer. Failures never crash the controller.
 
 const SCHEMA_VERSION := "1.0.0"
-const POLICY_VERSION := "teacher_v1-0.1.122-gun-wp1"
+const POLICY_VERSION := "teacher_v1-0.1.123-gun-wp1"
 
 var run_id: String = ""
 var seq: int = 0

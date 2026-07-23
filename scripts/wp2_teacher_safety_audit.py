@@ -15,15 +15,42 @@ ROOT = Path(__file__).resolve().parents[1]
 LATE_WAVE = 17
 BODY_TIER = 45.0
 BODY_SLACK = 20.0
+# v123: near-best body slack is wave-indexed (config body_clearance_slack). Early
+# waves (<= EARLY_GREED_MAX_WAVE) use 35; the mid-late band and waves 19/20 use 20.
+BODY_SLACK_EARLY = 35.0                 # config body_clearance_slack(wave <= 12)
+EARLY_GREED_MAX_WAVE = 12               # config EARLY_GREED_MAX_WAVE
+FINAL_SHOP_WAVE = 19                    # config FINAL_SHOP_WAVE
 BODY_PACK_CLEARANCE = 160.0
 BODY_EMERGENCY_SLACK = 5.0
+# v123 strength tiers (config STRENGTH_*). Hysteresis: a recorded tier constrains
+# the recorded smoothed strength S to a necessary single-sample band.
+STRENGTH_MIN = 0.0
+STRENGTH_MAX = 2.0
+STRENGTH_ENTER_STRONG = 1.25            # config STRENGTH_ENTER_STRONG
+STRENGTH_EXIT_STRONG = 1.15            # config STRENGTH_EXIT_STRONG
+STRENGTH_ENTER_WEAK = 0.75            # config STRENGTH_ENTER_WEAK
+STRENGTH_EXIT_WEAK = 0.85            # config STRENGTH_EXIT_WEAK
+# v123 dash arm HP floor (config loot_dash_arm_hp_floor + strength delta, clamped).
+DASH_ARM_FLOOR_EARLY = 0.35            # config loot_dash_arm_hp_floor(wave <= 12)
+DASH_ARM_FLOOR_LATE = 0.5             # config loot_dash_arm_hp_floor(otherwise)
+DASH_ARM_FLOOR_MIN = 0.30            # config LOOT_DASH_ARM_FLOOR_MIN
+DASH_ARM_STRONG_DELTA = -0.05           # config STRENGTH_STRONG_DASH_HP_FLOOR_DELTA
+DASH_ARM_WEAK_DELTA = 0.05           # config STRENGTH_WEAK_DASH_HP_FLOOR_DELTA
+# The runtime aborts an active dash below abort = 0.8 x effective arm; the audit
+# floor keeps the historical 0.05 margin below the abort (today 0.40 -> 0.35).
+DASH_ABORT_ARM_FRACTION = 0.8
+DASH_AUDIT_FLOOR_MARGIN = 0.05
 # v117: extended from 140 after the v116 smoke died with references at
 # 140.7-151.1 while hard-safe lanes offered 75-212 more units.
 WALL_BODY_RELIEF_TRIGGER = 200.0
 # v118 loot-dash bounds (mirror LOOT_DASH_MAX_TICKS 72 at 60 Hz -> ~24
 # captures at 20 Hz, +2 margin; runtime aborts below 0.4 hp_ratio).
 LOOT_DASH_MAX_CAPTURES = 26
-LOOT_DASH_MIN_HP_RATIO = 0.35
+# Legacy (pre-v123) dash-active HP floor. v122 and earlier captures carry no
+# strength diagnostics and MUST be audited with the exact v122 flat floor so a
+# v122-campaign audit reproduces v122 strictness. v123 captures instead derive the
+# floor per capture from the wave and recorded strength tier (_dash_audit_hp_floor).
+LEGACY_LOOT_DASH_MIN_HP_RATIO = 0.35
 WALL_BODY_RELIEF_MIN_GAIN = 60.0
 HARD_WALL_MARGIN = 96.0
 COMMAND_HORIZON_SEC = 0.30
@@ -58,8 +85,25 @@ def _normalise(action: dict[str, Any]) -> tuple[float, float] | None:
     return x / magnitude, y / magnitude
 
 
+def _is_v123_capture(debug: dict[str, Any]) -> bool:
+    """True only when the capture actually carries the v123 strength diagnostics.
+
+    Legacy (v122 and earlier) captures have no build_strength, so every v123
+    audit loosening (wave-indexed body slack, wave/tier dash floor) is withheld
+    from them and they are audited with the exact prior strictness.
+    """
+    return debug.get("build_strength") is not None
+
+
+def _body_slack_for_wave(wave: Any) -> float:
+    """Near-best body slack: 35 for early waves (<= 12), 20 otherwise (incl. 19/20)."""
+    if wave is not None and int(wave) <= EARLY_GREED_MAX_WAVE:
+        return BODY_SLACK_EARLY
+    return BODY_SLACK
+
+
 def _required_body_floor(
-    debug: dict[str, Any], enforce_pack_clearance: bool = False
+    debug: dict[str, Any], enforce_pack_clearance: bool = False, wave: Any = None
 ) -> float:
     best_clearance = float(debug["body_best_clearance"])
     if bool(debug.get("body_emergency_active", False)):
@@ -68,11 +112,79 @@ def _required_body_floor(
     # for collection; only the contact-safe floor applies while it runs.
     if bool(debug.get("loot_dash_active", False)):
         enforce_pack_clearance = False
+    # v123: the wider early-wave slack applies ONLY to captures that carry the
+    # v123 strength diagnostics. Legacy captures keep the flat 20 slack at every
+    # wave so a v122-campaign audit reproduces v122 strictness exactly.
+    if wave is None:
+        wave = debug.get("wave")
+    slack = _body_slack_for_wave(wave) if _is_v123_capture(debug) else BODY_SLACK
     if enforce_pack_clearance and best_clearance >= BODY_TIER:
-        return max(BODY_TIER, min(BODY_PACK_CLEARANCE, best_clearance - BODY_SLACK))
+        return max(BODY_TIER, min(BODY_PACK_CLEARANCE, best_clearance - slack))
     if best_clearance >= BODY_TIER:
         return BODY_TIER
-    return best_clearance - BODY_SLACK
+    return best_clearance - slack
+
+
+def _effective_dash_arm_floor(wave: Any, tier: Any) -> float:
+    """Runtime effective dash arm HP floor: wave-indexed base + strength delta, clamped."""
+    base = (
+        DASH_ARM_FLOOR_EARLY
+        if wave is not None and int(wave) <= EARLY_GREED_MAX_WAVE
+        else DASH_ARM_FLOOR_LATE
+    )
+    if tier == "strong":
+        base += DASH_ARM_STRONG_DELTA
+    elif tier == "weak":
+        base += DASH_ARM_WEAK_DELTA
+    return max(base, DASH_ARM_FLOOR_MIN)
+
+
+def _dash_audit_hp_floor(wave: Any, tier: Any) -> float:
+    """Audit HP floor for an active dash: abort (0.8 x effective arm) minus 0.05."""
+    return _effective_dash_arm_floor(wave, tier) * DASH_ABORT_ARM_FRACTION - DASH_AUDIT_FLOOR_MARGIN
+
+
+def _strength_tier_consistent(tier: str, strength: float) -> bool:
+    """Necessary single-sample band that a recorded hysteretic tier must satisfy."""
+    if tier == "strong":
+        return strength > STRENGTH_EXIT_STRONG - FLOAT_TOLERANCE
+    if tier == "weak":
+        return strength < STRENGTH_EXIT_WEAK + FLOAT_TOLERANCE
+    if tier == "neutral":
+        return (
+            STRENGTH_ENTER_WEAK - FLOAT_TOLERANCE
+            < strength
+            < STRENGTH_ENTER_STRONG + FLOAT_TOLERANCE
+        )
+    return False
+
+
+def _strength_violation(payload: dict[str, Any]) -> dict[str, Any] | None:
+    """Flag out-of-range recorded strength or a tier inconsistent with it.
+
+    Inert on legacy captures that predate the v123 strength diagnostics.
+    """
+    debug = payload["teacher"]["contributions"]["finale_translation"]
+    if "build_strength" not in debug and "strength_tier" not in debug:
+        return None
+    reasons: list[str] = []
+    strength = float(debug.get("build_strength", 1.0))
+    if not (STRENGTH_MIN - FLOAT_TOLERANCE <= strength <= STRENGTH_MAX + FLOAT_TOLERANCE):
+        reasons.append("recorded build_strength outside [0, 2]")
+    tier = debug.get("strength_tier")
+    if tier not in ("strong", "neutral", "weak"):
+        reasons.append("unknown strength_tier")
+    elif not _strength_tier_consistent(tier, strength):
+        reasons.append("strength_tier inconsistent with recorded strength")
+    if reasons:
+        return {
+            "capture_seq": payload.get("capture_seq"),
+            "wave": payload.get("wave"),
+            "build_strength": strength,
+            "strength_tier": tier,
+            "reasons": reasons,
+        }
+    return None
 
 
 def _body_projectile_floor_unavailable(debug: dict[str, Any]) -> bool:
@@ -425,6 +537,11 @@ def _damage_rows(events: list[dict[str, Any]], first_capture_ts: int | None) -> 
                     "body_selected_clearance": debug.get("body_selected_clearance"),
                     "body_emergency_active": debug.get("body_emergency_active", False),
                     "loot_dash_active": debug.get("loot_dash_active", False),
+                    # Carry the v123 strength diagnostics so the damage-review
+                    # body floor applies the wider early slack only to v123
+                    # captures (None on legacy -> treated as pre-v123).
+                    "build_strength": debug.get("build_strength"),
+                    "strength_tier": debug.get("strength_tier"),
                 }
             )
             replay = _route_replay(payload)
@@ -582,8 +699,13 @@ def audit_run(
     loot_dash_violations: list[dict[str, Any]] = []
     loot_dash_capture_count = 0
     dash_streak = 0
+    # v123: strength diagnostics are audited on every capture (inert on legacy).
+    strength_violations: list[dict[str, Any]] = []
     for payload in captures:
         debug = payload["teacher"]["contributions"]["finale_translation"]
+        strength_fault = _strength_violation(payload)
+        if strength_fault is not None:
+            strength_violations.append(strength_fault)
         if bool(debug.get("loot_dash_active", False)):
             loot_dash_capture_count += 1
             dash_streak += 1
@@ -597,12 +719,22 @@ def audit_run(
             player = payload.get("player", {})
             max_hp = max(float(player.get("max_hp", 0.0)), 1.0)
             hp_ratio = float(player.get("hp", 0.0)) / max_hp
-            if hp_ratio < LOOT_DASH_MIN_HP_RATIO - FLOAT_TOLERANCE:
+            # v123 captures use the wave-indexed, strength-shifted floor
+            # (abort = 0.8 x effective arm; audit floor = abort - 0.05). Legacy
+            # captures keep the flat v122 floor.
+            if _is_v123_capture(debug):
+                dash_floor = _dash_audit_hp_floor(
+                    payload.get("wave"), debug.get("strength_tier")
+                )
+            else:
+                dash_floor = LEGACY_LOOT_DASH_MIN_HP_RATIO
+            if hp_ratio < dash_floor - FLOAT_TOLERANCE:
                 loot_dash_violations.append(
                     {
                         "capture_seq": payload["capture_seq"],
                         "reason": "dash active below the HP floor",
                         "hp_ratio": hp_ratio,
+                        "required": dash_floor,
                     }
                 )
         else:
@@ -619,7 +751,7 @@ def audit_run(
         input_clearance = float(debug["body_input_clearance"])
         best_clearance = float(debug["body_best_clearance"])
         selected_clearance = float(debug["body_selected_clearance"])
-        body_floor = _required_body_floor(debug, True)
+        body_floor = _required_body_floor(debug, True, int(payload.get("wave", 0)))
         active_body_emergencies += bool(debug.get("body_emergency_active", False))
         if selected_clearance < body_floor - FLOAT_TOLERANCE:
             body_tier_violations.append(
@@ -717,6 +849,7 @@ def audit_run(
         + len(hard_wall_violations)
         + len(avoidable_damage_violations)
         + len(loot_dash_violations)
+        + len(strength_violations)
         + (1 if nonfresh_finale_captures else 0)
         + telemetry_error_events
         + (0 if terminal_valid else 1)
@@ -763,6 +896,7 @@ def audit_run(
         "nonfresh_finale_capture_sample": nonfresh_finale_captures[:20],
         "loot_dash_capture_count": loot_dash_capture_count,
         "loot_dash_violations": loot_dash_violations,
+        "strength_violations": strength_violations,
         "damage_events": damage_events,
         "avoidable_damage_violations": avoidable_damage_violations,
         "events_sha256": _sha256(events_path),

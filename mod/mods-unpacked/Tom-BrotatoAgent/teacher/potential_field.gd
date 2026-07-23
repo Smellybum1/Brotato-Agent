@@ -11,6 +11,9 @@ const BotConfig = preload("res://mods-unpacked/Tom-BrotatoAgent/teacher/config.g
 # Soldier-style stop-and-shoot supported via state.can_attack_while_moving.
 
 var _prev_move = Vector2.ZERO
+# v123: strength + tier actually used for THIS decision, emitted per-capture.
+var _build_strength_used := 1.0
+var _strength_tier := "neutral"
 var _finale_commit_dir = Vector2.ZERO
 var _finale_commit_origin = Vector2.ZERO
 var _finale_commit_ticks := 0
@@ -55,6 +58,10 @@ func compute_movement(state, profile) -> Vector2:
 	if player.empty():
 		return Vector2.ZERO
 	var pos = Vector2(player.get("x", 0.0), player.get("y", 0.0))
+
+	# v123: refresh the strength tier once per decision (hysteretic). Consumes the
+	# controller's smoothed build_strength; drives ordinary-path aggression only.
+	_update_strength_tier(clamp(float(state.get("build_strength", 1.0)), 0.0, 2.0))
 
 	var enemies = state.get("enemies", [])
 	var bosses = state.get("bosses", [])
@@ -177,7 +184,7 @@ func compute_movement(state, profile) -> Vector2:
 			enemies, profile)
 		safe_survival = _finale_body_safety(
 			pos, safe_survival, player_speed, arena, enemies, bosses,
-			projectiles, profile, true)
+			projectiles, profile, wave, true)
 		_prev_move = safe_survival
 		return _prev_move
 	var finale = wave >= BotConfig.BOSS_FINALE_WAVE
@@ -203,7 +210,7 @@ func compute_movement(state, profile) -> Vector2:
 		# allow a bounded opportunistic dash to a substantial nearby pile.
 		desire = _apply_loot_dash(
 			pos, desire, hp_ratio, enemies, bosses, projectiles, loot,
-			player_speed, profile, arena)
+			player_speed, profile, arena, wave)
 
 	# Projectile-escape: sample candidate directions, pick safest, blend by urgency.
 	var escape_dir = Vector2.ZERO
@@ -263,7 +270,7 @@ func compute_movement(state, profile) -> Vector2:
 	# incoming route already meets the tier, preserving ordinary farming paths.
 	final_move = _finale_body_safety(
 		pos, final_move, player_speed, arena, enemies, bosses,
-		projectiles, profile, not _loot_dash_active, _loot_dash_active)
+		projectiles, profile, wave, not _loot_dash_active, _loot_dash_active)
 	_prev_move = final_move
 	return _prev_move
 
@@ -300,7 +307,7 @@ func _best_loot_cluster(pos: Vector2, loot) -> Array:
 
 func _apply_loot_dash(pos: Vector2, desire: Vector2, hp_ratio: float,
 		enemies, bosses, projectiles, loot, player_speed: float, profile,
-		arena) -> Vector2:
+		arena, wave: int = 1) -> Vector2:
 	# v118: ordinary loot attraction hard-zeroes under local density
 	# (PACK_DENSITY_SOFT) and per-pile corridor vetoes, so a pressured agent
 	# starves while the ground saturates at the 50-material cap. This bounded
@@ -309,6 +316,11 @@ func _apply_loot_dash(pos: Vector2, desire: Vector2, hp_ratio: float,
 	# closest-approach clearance. The dash desire still passes the full
 	# projectile / wall / body safety tail; only the body preference tier is
 	# relaxed to the 45-unit contact floor while the dash is active.
+	# v123: arm HP floor, window clearance, stall count and cooldown are
+	# wave-indexed (early / late / wave-19 tiers) and, for the HP floor and
+	# window, further shifted by the strength tier and hard-clamped.
+	var arm_hp_floor := _effective_dash_arm_hp_floor(wave)
+	var window_floor := _effective_dash_window_clearance(wave)
 	if _loot_dash_cooldown > 0:
 		_loot_dash_cooldown -= 1
 	if _loot_dash_active:
@@ -319,14 +331,14 @@ func _apply_loot_dash(pos: Vector2, desire: Vector2, hp_ratio: float,
 			or (pos - _loot_dash_target).length()
 				<= BotConfig.LOOT_DASH_ARRIVE_RADIUS)
 		if (_loot_dash_ticks <= 0 or arrived
-				or hp_ratio < BotConfig.LOOT_DASH_MIN_HP_RATIO * 0.8):
+				or hp_ratio < arm_hp_floor * 0.8):
 			_loot_dash_active = false
-			_loot_dash_cooldown = BotConfig.LOOT_DASH_COOLDOWN_TICKS
+			_loot_dash_cooldown = BotConfig.loot_dash_cooldown_ticks(wave)
 			return desire
 		if int(reacquired[1]) > 0:
 			_loot_dash_target = reacquired[0]
 		return _normalize(_loot_dash_target - pos)
-	if _loot_dash_cooldown > 0 or hp_ratio < BotConfig.LOOT_DASH_MIN_HP_RATIO:
+	if _loot_dash_cooldown > 0 or hp_ratio < arm_hp_floor:
 		return desire
 	# v118 armed only under density suppression, but wave-10 live evidence
 	# showed the ordinary field starving without it: engagement and strafe
@@ -339,7 +351,7 @@ func _apply_loot_dash(pos: Vector2, desire: Vector2, hp_ratio: float,
 			float(item.get("x", 0.0)), float(item.get("y", 0.0)))
 		if (item_pos - pos).length() <= BotConfig.LOOT_DASH_SCAN_RADIUS:
 			scan_count += 1
-	var stalled: bool = scan_count >= BotConfig.LOOT_DASH_STALL_COUNT
+	var stalled: bool = scan_count >= BotConfig.loot_dash_stall_count(wave)
 	if (not stalled
 			and _count_nearby_enemies(pos, enemies, bosses)
 				< BotConfig.PACK_DENSITY_SOFT):
@@ -356,7 +368,7 @@ func _apply_loot_dash(pos: Vector2, desire: Vector2, hp_ratio: float,
 		(target - pos).length() / max(player_speed, 1.0) + 0.1)
 	var window := _predictive_body_path_clearance(
 		pos, direction, player_speed, [dash_sec], enemies, bosses)
-	if window < BotConfig.LOOT_DASH_WINDOW_CLEARANCE:
+	if window < window_floor:
 		return desire
 	if not projectiles.empty():
 		var context := _projectile_clearance_context(
@@ -867,8 +879,11 @@ func _best_wall_safe_projectile_lane(pos: Vector2, baseline: Vector2,
 
 
 func _finale_body_safety(pos: Vector2, desired: Vector2, player_speed: float,
-		arena, enemies, bosses, projectiles, profile,
+		arena, enemies, bosses, projectiles, profile, wave: int,
 		enforce_pack_clearance := false, dash_active := false) -> Vector2:
+	# v123: the near-best body-preference slack is wave-indexed (35 for wave <= 12,
+	# 20 otherwise incl. waves 19/20). The 45-unit contact floor is NOT modulated.
+	var body_slack := BotConfig.body_clearance_slack(wave)
 	# v107: projectile selection and wall projection each reasoned about body
 	# clearance, but the final wall clamp could rotate a safe diagonal back through
 	# a pack. Ordinary late movement also had no final body gate at all. Re-sample
@@ -1093,13 +1108,11 @@ func _finale_body_safety(pos: Vector2, desired: Vector2, player_speed: float,
 		body_floor = max(
 			BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE,
 			min(BotConfig.BOSS_FINALE_BODY_PACK_CLEARANCE,
-				highest_body_clearance
-					- BotConfig.BOSS_FINALE_BODY_CLEARANCE_SLACK))
+				highest_body_clearance - body_slack))
 	elif highest_body_clearance >= BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE:
 		body_floor = BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE
 	else:
-		body_floor = (highest_body_clearance
-			- BotConfig.BOSS_FINALE_BODY_CLEARANCE_SLACK)
+		body_floor = (highest_body_clearance - body_slack)
 	var lowest_enemy_penalty := INF
 	for row in rows:
 		if (float(row[2]) >= projectile_floor
@@ -1224,6 +1237,8 @@ func finale_translation_debug() -> Dictionary:
 		"body_projectile_floor": _finale_body_projectile_floor,
 		"body_selected_projectile_clearance": _finale_body_selected_projectile_clearance,
 		"loot_dash_active": _loot_dash_active,
+		"build_strength": stepify(_build_strength_used, 0.001),
+		"strength_tier": _strength_tier,
 	}
 
 
@@ -1250,12 +1265,65 @@ func _finale_turn_without_reversal(prev: Vector2, desired: Vector2,
 	return left if left_score >= right_score else right
 
 
+# ── v123 strength tier + effective dash-gate helpers ────────────────────────────
+func _update_strength_tier(s: float) -> void:
+	# Hysteretic three-tier assignment; large jumps demote to neutral first then
+	# re-promote in the same call, so a crash from strong lands in weak directly.
+	_build_strength_used = s
+	var tier := _strength_tier
+	if tier == "strong" and s <= BotConfig.STRENGTH_EXIT_STRONG:
+		tier = "neutral"
+	elif tier == "weak" and s >= BotConfig.STRENGTH_EXIT_WEAK:
+		tier = "neutral"
+	if tier == "neutral":
+		if s >= BotConfig.STRENGTH_ENTER_STRONG:
+			tier = "strong"
+		elif s <= BotConfig.STRENGTH_ENTER_WEAK:
+			tier = "weak"
+	_strength_tier = tier
+
+
+func _strength_edge_kite_nearby() -> int:
+	if _strength_tier == "strong":
+		return BotConfig.LATE_EDGE_KITE_NEARBY + BotConfig.STRENGTH_STRONG_EDGE_KITE_DELTA
+	if _strength_tier == "weak":
+		return BotConfig.LATE_EDGE_KITE_NEARBY + BotConfig.STRENGTH_WEAK_EDGE_KITE_DELTA
+	return BotConfig.LATE_EDGE_KITE_NEARBY
+
+
+func _strength_pack_mult() -> float:
+	if _strength_tier == "strong":
+		return BotConfig.STRENGTH_STRONG_PACK_MULT
+	if _strength_tier == "weak":
+		return BotConfig.STRENGTH_WEAK_PACK_MULT
+	return 1.0
+
+
+func _effective_dash_arm_hp_floor(wave: int) -> float:
+	# Stacking rule: wave-indexed base + tier delta, hard-clamped at the config min.
+	var floor_value := BotConfig.loot_dash_arm_hp_floor(wave)
+	if _strength_tier == "strong":
+		floor_value += BotConfig.STRENGTH_STRONG_DASH_HP_FLOOR_DELTA
+	elif _strength_tier == "weak":
+		floor_value += BotConfig.STRENGTH_WEAK_DASH_HP_FLOOR_DELTA
+	return max(floor_value, BotConfig.LOOT_DASH_ARM_FLOOR_MIN)
+
+
+func _effective_dash_window_clearance(wave: int) -> float:
+	var window := BotConfig.loot_dash_window_clearance(wave)
+	if _strength_tier == "strong":
+		window += BotConfig.STRENGTH_STRONG_DASH_WINDOW_DELTA
+	elif _strength_tier == "weak":
+		window += BotConfig.STRENGTH_WEAK_DASH_WINDOW_DELTA
+	return max(window, BotConfig.LOOT_DASH_WINDOW_MIN)
+
+
 func _build_desire(pos, enemies, bosses, loot, consumables, trees, weapons, arena, profile, player, wave = 1) -> Vector2:
 	var early = wave <= BotConfig.EARLY_HUNT_WAVE
 	var nearby = _count_nearby_enemies(pos, enemies, bosses)
 	var sparse = nearby <= BotConfig.SPARSE_LOOT_ENEMIES
 	var edge_kite = (wave >= BotConfig.LATE_EDGE_KITE_WAVE
-		and nearby >= BotConfig.LATE_EDGE_KITE_NEARBY)
+		and nearby >= _strength_edge_kite_nearby())
 	var weapon_max = _shortest_weapon_range(weapons)
 	var engage = _engage_distance(profile, player, weapons)
 	# Whole-run DPS band: sit inside shortest weapon range (slightly tight).
@@ -1283,13 +1351,14 @@ func _build_desire(pos, enemies, bosses, loot, consumables, trees, weapons, aren
 			hunt *= BotConfig.TREE_HUNT_YIELD
 		force += hunt
 	elif edge_kite:
-		force += _edge_kite_force(pos, enemies, bosses, arena)
-		force += _pack_density_repulsion(pos, enemies, bosses) * BotConfig.EDGE_PACK_SHOVE
+		force += _edge_kite_force(pos, enemies, bosses, arena, loot, wave)
+		force += (_pack_density_repulsion(pos, enemies, bosses)
+			* BotConfig.EDGE_PACK_SHOVE * _strength_pack_mult())
 	elif not out_of_range:
 		# Only shove off dense packs once already in DPS range.
-		force += _pack_density_repulsion(pos, enemies, bosses)
+		force += _pack_density_repulsion(pos, enemies, bosses) * _strength_pack_mult()
 	if at_weapon_range and not edge_kite:
-		force += _engage_strafe_force(pos, enemies, bosses, arena, nearest_d, loot)
+		force += _engage_strafe_force(pos, enemies, bosses, arena, nearest_d, loot, wave)
 		# Kill residual charge into the pack once inside weapon max range.
 		var nearest_target = _nearest_threat_pos(pos, enemies, bosses)
 		if nearest_target != null:
@@ -1326,7 +1395,7 @@ func _build_desire(pos, enemies, bosses, loot, consumables, trees, weapons, aren
 	return _normalize(force)
 
 
-func _edge_kite_force(pos, enemies, bosses, arena) -> Vector2:
+func _edge_kite_force(pos, enemies, bosses, arena, loot = [], wave = 1) -> Vector2:
 	# Pull onto a border rail and orbit so the swarm approaches from one side.
 	var w = float(arena.get("width", 2048.0))
 	var h = float(arena.get("height", 1536.0))
@@ -1378,6 +1447,14 @@ func _edge_kite_force(pos, enemies, bosses, arena) -> Vector2:
 		# Prefer the tangent less aligned into the pack.
 		if abs((-tangent).dot(pack_dir)) < abs(tangent.dot(pack_dir)):
 			tangent = -tangent
+	# v123: bounded loot/open-space bias BEFORE the continuity flip, so continuity
+	# still has the final say. The loot term inside _score_strafe_side is capped by
+	# engage_strafe_loot_cap(wave); enemy pressure and wall openness keep their
+	# weights, so this cannot steer the orbit into a pack.
+	var forward_score = _score_strafe_side(pos, tangent, enemies, bosses, arena, loot, wave)
+	var back_score = _score_strafe_side(pos, -tangent, enemies, bosses, arena, loot, wave)
+	if back_score > forward_score:
+		tangent = -tangent
 	if _prev_move.length() > 0.1 and _prev_move.dot(tangent) < 0.0:
 		tangent = -tangent
 
@@ -1386,9 +1463,28 @@ func _edge_kite_force(pos, enemies, bosses, arena) -> Vector2:
 	var rail_d = max(to_rail.length(), 1.0)
 	force += (to_rail / rail_d) * BotConfig.EDGE_BIAS
 	force += tangent * BotConfig.EDGE_ORBIT
+	# v123: anti corner-parking. With no enemy/boss ahead on the rail within
+	# RAIL_CLEAR_RADIUS, add a tangential drift so the agent traverses the wall
+	# toward open space/materials instead of parking in a corner.
+	if not _rail_ahead_pressure(pos, enemies, bosses, tangent):
+		force += tangent * BotConfig.EDGE_RAIL_DRIFT
 	if n > 0 and to_pack.length() > 1.0:
 		force -= to_pack.normalized() * 0.55
 	return force
+
+
+func _rail_ahead_pressure(pos, enemies, bosses, tangent_dir: Vector2) -> bool:
+	for e in enemies:
+		var off_e = Vector2(e.get("x", 0.0), e.get("y", 0.0)) - pos
+		if (off_e.length() <= BotConfig.RAIL_CLEAR_RADIUS
+				and off_e.dot(tangent_dir) > 0.0):
+			return true
+	for b in bosses:
+		var off_b = Vector2(b.get("x", 0.0), b.get("y", 0.0)) - pos
+		if (off_b.length() <= BotConfig.RAIL_CLEAR_RADIUS
+				and off_b.dot(tangent_dir) > 0.0):
+			return true
+	return false
 
 
 func _late_corner_escape(pos, arena) -> Vector2:
@@ -1466,7 +1562,7 @@ func _nearest_threat_pos(pos, enemies, bosses):
 	return nearest
 
 
-func _engage_strafe_force(pos, enemies, bosses, arena, nearest_d, loot = []) -> Vector2:
+func _engage_strafe_force(pos, enemies, bosses, arena, nearest_d, loot = [], wave = 1) -> Vector2:
 	# Lateral orbit once inside shortest-weapon max range.
 	var target = _nearest_threat_pos(pos, enemies, bosses)
 	if target == null:
@@ -1476,8 +1572,8 @@ func _engage_strafe_force(pos, enemies, bosses, arena, nearest_d, loot = []) -> 
 	var dir_in = to_enemy / td
 	var left = Vector2(-dir_in.y, dir_in.x)
 	var right = -left
-	var left_score = _score_strafe_side(pos, left, enemies, bosses, arena, loot)
-	var right_score = _score_strafe_side(pos, right, enemies, bosses, arena, loot)
+	var left_score = _score_strafe_side(pos, left, enemies, bosses, arena, loot, wave)
+	var right_score = _score_strafe_side(pos, right, enemies, bosses, arena, loot, wave)
 	var side = left
 	if right_score > left_score:
 		side = right
@@ -1491,7 +1587,7 @@ func _engage_strafe_force(pos, enemies, bosses, arena, nearest_d, loot = []) -> 
 	return side * BotConfig.ENGAGE_STRAFE * band
 
 
-func _score_strafe_side(pos, side: Vector2, enemies, bosses, arena, loot = []) -> float:
+func _score_strafe_side(pos, side: Vector2, enemies, bosses, arena, loot = [], wave = 1) -> float:
 	# Higher = better: open wall lane + fewer enemies on that flank.
 	# v119: plus a bounded bonus for materials on that flank, so the orbit
 	# sweeps over currency instead of the empty side at equal safety.
@@ -1537,7 +1633,7 @@ func _score_strafe_side(pos, side: Vector2, enemies, bosses, arena, loot = []) -
 		if ilateral <= 0.0:
 			continue
 		loot_bonus += (ilateral / idist) * (1.0 / idist) * BotConfig.ENGAGE_STRAFE_LOOT_WEIGHT
-	loot_bonus = min(loot_bonus, BotConfig.ENGAGE_STRAFE_LOOT_CAP)
+	loot_bonus = min(loot_bonus, BotConfig.engage_strafe_loot_cap(wave))
 	return (wall_score * BotConfig.ENGAGE_STRAFE_WALL_WEIGHT
 		- enemy_pressure * BotConfig.ENGAGE_STRAFE_ENEMY_WEIGHT
 		+ loot_bonus)

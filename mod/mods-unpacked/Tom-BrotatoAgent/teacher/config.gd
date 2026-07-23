@@ -91,6 +91,13 @@ const EDGE_ORBIT := 1.15
 const EDGE_PACK_SHOVE := 2.75
 const EDGE_ENGAGE_SCALE := 1.18
 const EDGE_CAUTION_SCALE := 1.55
+# v123 rail traversal (anti corner-parking): when no enemy/boss is ahead along
+# the border rail within RAIL_CLEAR_RADIUS, add a tangential drift so the agent
+# skates the wall instead of parking in a corner. EDGE_RAIL_DRIFT is a
+# CALIBRATION TARGET (recalibrate at campaign run 5/20; goal < 40% wave-19 corner
+# occupancy without a damage regression). Corner guard/margins/blend UNCHANGED.
+const RAIL_CLEAR_RADIUS := 240.0
+const EDGE_RAIL_DRIFT := 0.45
 # Dense late waves can carry the edge orbit into a corner where both exits
 # collapse.  Keep the rail strategy, but force a decisive inward line once
 # two arena boundaries are simultaneously close.
@@ -329,10 +336,10 @@ const ESCAPE_PANIC_CLEARANCE := 55.0
 const LOOT_DASH_SCAN_RADIUS := 420.0
 const LOOT_DASH_CLUSTER_RADIUS := 130.0
 const LOOT_DASH_MIN_PILE := 5
-const LOOT_DASH_MIN_HP_RATIO := 0.5
-const LOOT_DASH_WINDOW_CLEARANCE := 45.0
+# v123: dash arm HP floor and window clearance are wave-indexed getters
+# (loot_dash_arm_hp_floor / loot_dash_window_clearance) with strength-tier deltas
+# and hard clamps. Cooldown is likewise wave-indexed (loot_dash_cooldown_ticks).
 const LOOT_DASH_MAX_TICKS := 72        # 60 Hz decisions: ~1.2 s commit
-const LOOT_DASH_COOLDOWN_TICKS := 180  # ~3 s between dashes
 const LOOT_DASH_ARRIVE_RADIUS := 60.0
 # v120: calibrated against v119 smoke run_1784779931_16883 (waves 6-10):
 # materials within 420 units of the player peak at p90 11 / max 23 and the
@@ -348,14 +355,43 @@ const LOOT_DASH_ARRIVE_RADIUS := 60.0
 # has stalled: arm the dash on it regardless of density, and bias the strafe
 # orbit toward the currency-bearing flank (bounded so enemy pressure and wall
 # openness still dominate).
-const LOOT_DASH_STALL_COUNT := 12
+# v123: LOOT_DASH_STALL_COUNT and ENGAGE_STRAFE_LOOT_CAP are wave-indexed getters
+# (loot_dash_stall_count / engage_strafe_loot_cap).
 const ENGAGE_STRAFE_LOOT_WEIGHT := 4.0
-const ENGAGE_STRAFE_LOOT_CAP := 0.35
 const ESCAPE_WALL_MARGIN := 90.0
 const ESCAPE_WALL_PENALTY := 250.0
 const ESCAPE_ALIGN_BONUS := 14.0
 const ENEMY_AVOID_DIST := 120.0
 const ENEMY_AVOID_PENALTY := 4.0
+
+# ── v123 strength-conditioned aggression (hysteretic tiers) ─────────────────────
+# Smoothed build strength S = EMA of clamp(weapon_dps / dps_target, 0, 2), updated
+# in the controller. Three discrete tiers with hysteresis so the mode does not
+# flap around a single threshold: enter strong at >= 1.25 / exit at <= 1.15;
+# enter weak at <= 0.75 / exit at >= 0.85; otherwise neutral.
+const STRENGTH_ENTER_STRONG := 1.25
+const STRENGTH_EXIT_STRONG := 1.15
+const STRENGTH_ENTER_WEAK := 0.75
+const STRENGTH_EXIT_WEAK := 0.85
+# Tier deltas (strong = more aggressive; weak = mirrored caution). Applied only
+# where the base value is consumed on the ordinary kiter path. NEVER on the
+# ordered safety tail, late-survival branch, or hard floors (see potential_field).
+const STRENGTH_STRONG_EDGE_KITE_DELTA := 4
+const STRENGTH_WEAK_EDGE_KITE_DELTA := -4
+const STRENGTH_STRONG_PACK_MULT := 0.85
+const STRENGTH_WEAK_PACK_MULT := 1.15
+const STRENGTH_STRONG_DASH_WINDOW_DELTA := -10.0
+const STRENGTH_WEAK_DASH_WINDOW_DELTA := 10.0
+const STRENGTH_STRONG_DASH_HP_FLOOR_DELTA := -0.05
+const STRENGTH_WEAK_DASH_HP_FLOOR_DELTA := 0.05
+
+# ── v123 early-greed budget (wave <= 12, plus wave-19 final-shop window) ─────────
+# Wave-indexed getters below (offense_dps_target precedent). The dash-gate
+# stacking rule with strength is: effective = getter(wave) + tier delta, then a
+# hard clamp (arm HP floor >= LOOT_DASH_ARM_FLOOR_MIN, window >= LOOT_DASH_WINDOW_MIN).
+const EARLY_GREED_MAX_WAVE := 12
+const LOOT_DASH_ARM_FLOOR_MIN := 0.30
+const LOOT_DASH_WINDOW_MIN := 20.0
 
 # ── Combat model (DPS / EHP valuation) ─────────────────────────────────────────
 const DPS_PRIORITY := 1.0
@@ -488,6 +524,31 @@ static func offense_dps_target(wave: int) -> float:
 static func defense_ehp_target(wave: int) -> float:
 	var idx := int(clamp(wave, 1, DEFENSE_EHP_TARGETS_BY_WAVE.size())) - 1
 	return float(DEFENSE_EHP_TARGETS_BY_WAVE[idx])
+
+# ── v123 wave-indexed early-greed getters ───────────────────────────────────────
+# Early tier = wave <= EARLY_GREED_MAX_WAVE (12). Late tier = otherwise. The
+# final-shop wave (FINAL_SHOP_WAVE = 19) funds the last shop before the wave-20
+# boss, so it re-enters the greedy tier for persistence-only parameters
+# (stall/cooldown/strafe-cap); dash arm HP floor, window clearance, and body slack
+# stay at their LATE values on wave 19 (highest non-boss pressure -> buy
+# collection with persistence, not with thinner safety margins).
+static func loot_dash_arm_hp_floor(wave: int) -> float:
+	return 0.35 if wave <= EARLY_GREED_MAX_WAVE else 0.5
+
+static func loot_dash_window_clearance(wave: int) -> float:
+	return 30.0 if wave <= EARLY_GREED_MAX_WAVE else 45.0
+
+static func loot_dash_stall_count(wave: int) -> int:
+	return 8 if wave <= EARLY_GREED_MAX_WAVE or wave == FINAL_SHOP_WAVE else 12
+
+static func loot_dash_cooldown_ticks(wave: int) -> int:
+	return 90 if wave <= EARLY_GREED_MAX_WAVE or wave == FINAL_SHOP_WAVE else 180
+
+static func engage_strafe_loot_cap(wave: int) -> float:
+	return 0.6 if wave <= EARLY_GREED_MAX_WAVE or wave == FINAL_SHOP_WAVE else 0.35
+
+static func body_clearance_slack(wave: int) -> float:
+	return 35.0 if wave <= EARLY_GREED_MAX_WAVE else 20.0
 # v74 mid-game safety floors. Below the offense target, pure additions to an
 # already-safe layer lose to DPS from wave 10 onward.
 const DEFENSE_ADEQUATE_MID_MAX_HP := 45.0

@@ -13,7 +13,7 @@ const LOG_NAME = "Tom:BrotatoAgent:Runner"
 var active: bool = false
 var auto_start_benchmark: bool = true
 var current_move_vector: Vector2 = Vector2.ZERO
-var policy_version: String = "teacher_v1-0.1.122-gun-wp1"
+var policy_version: String = "teacher_v1-0.1.123-gun-wp1"
 var last_move_debug: Dictionary = {}
 var last_meta_debug: Dictionary = {}
 var _manual_override: bool = false
@@ -21,6 +21,9 @@ var _run_started: bool = false
 var _last_hp: float = -1.0
 var _last_known_max_hp: float = -1.0
 var _combat_tick_counter: int = 0
+# v123: smoothed build strength S = EMA of clamp(weapon_dps / dps_target, 0, 2).
+# Default 1.0 (neutral) until the first build-metrics update (wave 1 pre-shop).
+var _build_strength: float = 1.0
 var _wp2_capture_seq: int = 0
 var _wp2_previous_action: Vector2 = Vector2.ZERO
 var _wp2_last_capture_player_pos: Vector2 = Vector2.ZERO
@@ -201,6 +204,15 @@ func _handle_combat(main) -> void:
 		var build_metrics := _build_metrics(
 			current_build.get("stats", {}), current_build.get("weapons", []),
 			int(state.get("wave", 0)), _last_known_max_hp)
+		# v123: update the smoothed build-strength signal from this build's
+		# weapon DPS vs the winner-median target BEFORE the HUD/telemetry consume
+		# build_metrics. tau ~1.7-2.0 s at the 0.5 s (30-tick) cadence.
+		var strength_offense: Dictionary = build_metrics.get("offense", {})
+		var strength_raw := clamp(
+			float(strength_offense.get("weapon_dps", 0.0))
+				/ max(float(strength_offense.get("dps_target", 1.0)), 1.0),
+			0.0, 2.0)
+		_build_strength = _build_strength * 0.75 + strength_raw * 0.25
 		_update_build_metrics_hud(build_metrics)
 		if _telem != null:
 			_telem.emit("combat_tick", {
@@ -329,6 +341,11 @@ func _gather_combat_state(main) -> Dictionary:
 
 	# Stand-still check input for Soldier
 	state["can_attack_while_moving"] = RunData.get_player_effect(Keys.can_attack_while_moving_hash, 0) > 0
+
+	# v123: strength-conditioned aggression. Consume the PREVIOUS 0.5 s smoothed
+	# value (the %30 block updates _build_strength after choose_movement); the
+	# one-update staleness is intentional and simpler.
+	state["build_strength"] = _build_strength
 
 	# Arena
 	var zone_data = _get_current_zone_data()

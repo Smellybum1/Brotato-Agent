@@ -2,11 +2,16 @@ from scripts.wp2_teacher_safety_audit import (
     _avoidable_damage_violations,
     _body_clearance,
     _body_projectile_floor_unavailable,
+    _body_slack_for_wave,
     _damage_rows,
+    _dash_audit_hp_floor,
+    _effective_dash_arm_floor,
     _hard_wall_faults,
     _projectile_route_clearance,
     _required_body_floor,
     _route_replay,
+    _strength_tier_consistent,
+    _strength_violation,
     _wall_body_relief_violation,
     _wall_recovery_progress_violation,
 )
@@ -447,3 +452,215 @@ def test_projectile_floor_unavailable_only_accepts_unchanged_no_repair_fallback(
     assert not _body_projectile_floor_unavailable(
         {**fallback, "body_projectile_floor": -1.0e18}
     )
+
+
+# ── v123 wave-indexed / strength-conditioned audit units ────────────────────────
+
+def _EPS():
+    return 1e-9
+
+
+def test_v123_required_body_floor_is_wave_indexed():
+    # The wider early slack (35) applies ONLY to v123 captures (build_strength
+    # present); enforce-pack branch with best 90 makes it visible below 160.
+    v123 = {"body_best_clearance": 90.0, "build_strength": 1.0}
+    assert abs(_required_body_floor(v123, True, 12) - 55.0) < _EPS()    # 90 - 35
+    assert abs(_required_body_floor(v123, True, 13) - 70.0) < _EPS()    # 90 - 20
+    assert abs(_required_body_floor(v123, True, 19) - 70.0) < _EPS()    # slack stays 20
+    assert abs(_required_body_floor(v123, True, 20) - 70.0) < _EPS()
+
+    # Below-tier branch (best < 45) also carries the wave-indexed slack (v123).
+    low = {"body_best_clearance": 40.0, "build_strength": 1.0}
+    assert abs(_required_body_floor(low, False, 12) - 5.0) < _EPS()     # 40 - 35
+    assert abs(_required_body_floor(low, False, 13) - 20.0) < _EPS()    # 40 - 20
+
+    assert _body_slack_for_wave(12) == 35.0
+    assert _body_slack_for_wave(13) == 20.0
+    assert _body_slack_for_wave(None) == 20.0
+
+
+def test_v123_legacy_captures_keep_pre_v123_body_slack():
+    # A legacy capture (no strength diagnostics) must keep the flat 20 slack at
+    # every wave, so a v122-campaign audit reproduces v122 strictness exactly.
+    legacy = {"body_best_clearance": 90.0}
+    v123 = {"body_best_clearance": 90.0, "build_strength": 1.0}
+    # (c) At wave 10 the legacy capture keeps slack 20 while v123 gets 35.
+    assert abs(_required_body_floor(legacy, True, 10) - 70.0) < _EPS()   # 90 - 20
+    assert abs(_required_body_floor(v123, True, 10) - 55.0) < _EPS()     # 90 - 35
+    # No wave supplied -> late 20 slack regardless of v123 status.
+    assert abs(_required_body_floor(legacy, True) - 70.0) < _EPS()
+    assert abs(_required_body_floor(v123, True) - 70.0) < _EPS()
+
+
+def test_v123_dash_hp_floor_clamp_arithmetic():
+    # Effective arm floor = wave base (0.35 early / 0.5 late) + strength delta,
+    # hard-clamped at 0.30. Early + strong hits the clamp at exactly 0.30.
+    assert abs(_effective_dash_arm_floor(12, None) - 0.35) < _EPS()
+    assert abs(_effective_dash_arm_floor(12, "strong") - 0.30) < _EPS()   # clamp exact
+    assert _effective_dash_arm_floor(12, "strong") >= 0.30
+    assert abs(_effective_dash_arm_floor(12, "weak") - 0.40) < _EPS()
+    assert abs(_effective_dash_arm_floor(13, None) - 0.5) < _EPS()
+    assert abs(_effective_dash_arm_floor(13, "strong") - 0.45) < _EPS()
+    # Wave 19 keeps the LATE arm floor (only stall/cooldown/strafe re-greed).
+    assert abs(_effective_dash_arm_floor(19, None) - 0.5) < _EPS()
+
+    # Audit HP floor = 0.8 x effective arm - 0.05 (today's 0.40 -> 0.35 margin).
+    assert abs(_dash_audit_hp_floor(13, None) - 0.35) < _EPS()
+    assert abs(_dash_audit_hp_floor(12, None) - 0.23) < _EPS()
+    assert abs(_dash_audit_hp_floor(12, "strong") - 0.19) < _EPS()
+
+
+def _dash_run(tmp_path, name, *, v123):
+    """A single wave-8 dash capture at hp_ratio 0.30, legacy or v123 (neutral)."""
+    import json
+
+    debug = {"loot_dash_active": True}
+    if v123:
+        debug["build_strength"] = 1.0
+        debug["strength_tier"] = "neutral"
+    events = [
+        {
+            "event": "combat_capture",
+            "ts_ms": 1001,
+            "payload": {
+                "capture_seq": 1,
+                "observation_ts_ms": 1001,
+                "wave": 8,
+                "player": {"x": 1024.0, "y": 768.0, "speed": 400.0, "hp": 30, "max_hp": 100},
+                "teacher": {
+                    "action": {"x": 1.0, "y": 0.0},
+                    "action_fresh": True,
+                    "contributions": {"finale_translation": debug},
+                },
+                "entities": {"enemies": [], "bosses": [], "projectiles": []},
+                "arena": {"width": 2048.0, "height": 1536.0},
+            },
+        },
+        {"event": "run_end", "ts_ms": 3000, "payload": {}},
+    ]
+    run_dir = tmp_path / name
+    run_dir.mkdir()
+    (run_dir / "events.jsonl").write_text(
+        "\n".join(json.dumps(e) for e in events) + "\n", encoding="utf-8"
+    )
+    (run_dir / "summary.json").write_text(json.dumps({
+        "telemetry_complete": True, "errors": 0, "hangs": 0,
+        "illegal_actions": 0, "result": "victory", "last_wave": 20,
+    }), encoding="utf-8")
+    return run_dir
+
+
+def test_v123_legacy_dash_floor_is_strict_while_v123_dash_floor_loosens(tmp_path):
+    from scripts.wp2_teacher_safety_audit import audit_run
+
+    # (a) Legacy capture, wave 8, dash at hp_ratio 0.30 -> flagged (flat 0.35).
+    legacy = audit_run(_dash_run(tmp_path, "legacy", v123=False))
+    assert [v["reason"] for v in legacy["loot_dash_violations"]] == [
+        "dash active below the HP floor"
+    ]
+    assert not legacy["accepted"]
+
+    # (b) Same capture with v123 keys (neutral tier) -> NOT flagged (floor 0.23).
+    v123 = audit_run(_dash_run(tmp_path, "v123", v123=True))
+    assert v123["loot_dash_violations"] == []
+    assert v123["accepted"]
+
+
+def test_v123_strength_tier_consistency_gate():
+    # Single-sample necessary bands implied by the hysteresis thresholds.
+    assert _strength_tier_consistent("strong", 1.30)
+    assert not _strength_tier_consistent("strong", 1.10)
+    assert _strength_tier_consistent("weak", 0.70)
+    assert not _strength_tier_consistent("weak", 0.90)
+    assert _strength_tier_consistent("neutral", 1.00)
+    assert not _strength_tier_consistent("neutral", 1.30)
+    assert not _strength_tier_consistent("neutral", 0.50)
+
+    def payload(strength=None, tier=None, extra=None):
+        debug = {}
+        if strength is not None:
+            debug["build_strength"] = strength
+        if tier is not None:
+            debug["strength_tier"] = tier
+        if extra:
+            debug.update(extra)
+        return {
+            "capture_seq": 1,
+            "wave": 8,
+            "teacher": {"contributions": {"finale_translation": debug}},
+        }
+
+    # Legacy capture (no strength fields) is inert.
+    assert _strength_violation(payload()) is None
+    # A consistent record passes.
+    assert _strength_violation(payload(1.50, "strong")) is None
+    # Out-of-range strength is flagged.
+    assert "recorded build_strength outside [0, 2]" in _strength_violation(
+        payload(3.0, "neutral")
+    )["reasons"]
+    # A tier that cannot hold at the recorded strength is flagged.
+    assert "strength_tier inconsistent with recorded strength" in _strength_violation(
+        payload(0.5, "strong")
+    )["reasons"]
+    # An unknown tier label is flagged.
+    assert "unknown strength_tier" in _strength_violation(
+        payload(1.0, "turbo")
+    )["reasons"]
+
+
+def test_v123_audit_run_rejects_inconsistent_strength_and_low_hp_dash(tmp_path):
+    from scripts.wp2_teacher_safety_audit import audit_run
+    import json
+
+    def capture(seq, *, dash=False, strength=1.0, tier="neutral", hp=60, wave=12):
+        return {
+            "event": "combat_capture",
+            "ts_ms": 1000 + seq,
+            "payload": {
+                "capture_seq": seq,
+                "observation_ts_ms": 1000 + seq,
+                "wave": wave,
+                "player": {"x": 1024.0, "y": 768.0, "speed": 400.0, "hp": hp, "max_hp": 100},
+                "teacher": {
+                    "action": {"x": 1.0, "y": 0.0},
+                    "action_fresh": True,
+                    "contributions": {
+                        "finale_translation": {
+                            "loot_dash_active": dash,
+                            "build_strength": strength,
+                            "strength_tier": tier,
+                        }
+                    },
+                },
+                "entities": {"enemies": [], "bosses": [], "projectiles": []},
+                "arena": {"width": 2048.0, "height": 1536.0},
+            },
+        }
+
+    events = [
+        # Consistent, healthy dash at wave 12 strong tier (floor 0.19): hp 0.30 ok.
+        capture(1, dash=True, strength=1.30, tier="strong", hp=30),
+        # Strong tier recorded at a strength that cannot hold it -> strength fault.
+        capture(2, strength=0.50, tier="strong", hp=80),
+        # Dash active below the wave-12 neutral floor (0.23): hp 0.20 -> HP fault.
+        capture(3, dash=True, strength=1.00, tier="neutral", hp=20),
+        {"event": "run_end", "ts_ms": 5000, "payload": {}},
+    ]
+    run_dir = tmp_path / "run_v123"
+    run_dir.mkdir()
+    (run_dir / "events.jsonl").write_text(
+        "\n".join(json.dumps(e) for e in events) + "\n", encoding="utf-8"
+    )
+    (run_dir / "summary.json").write_text(json.dumps({
+        "telemetry_complete": True, "errors": 0, "hangs": 0,
+        "illegal_actions": 0, "result": "victory", "last_wave": 20,
+    }), encoding="utf-8")
+
+    audit = audit_run(run_dir)
+    assert len(audit["strength_violations"]) == 1
+    assert audit["strength_violations"][0]["capture_seq"] == 2
+    dash_reasons = [v["reason"] for v in audit["loot_dash_violations"]]
+    assert "dash active below the HP floor" in dash_reasons
+    # The healthy strong-tier dash at hp 0.30 (floor 0.19) is NOT flagged.
+    assert all(v["capture_seq"] != 1 for v in audit["loot_dash_violations"])
+    assert not audit["accepted"]

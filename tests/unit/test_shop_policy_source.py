@@ -128,12 +128,174 @@ def test_wp2_capture_build_versions_the_v122_crossing_tier_policy():
     controller = CONTROLLER.read_text(encoding="utf-8")
     telemetry = TELEMETRY.read_text(encoding="utf-8")
 
+    # v123 bumps the policy version now; mod_version and the manifest are rebuilt
+    # only at deploy time (after the campaign), so they still read the v122 build.
     assert '"version_number": "0.2.30"' in manifest
     assert "v122 deterministic teacher" in manifest
-    assert controller.count("teacher_v1-0.1.122-gun-wp1") == 1
+    assert controller.count("teacher_v1-0.1.123-gun-wp1") == 1
     assert controller.count("0.2.30-wp2-capture") == 1
-    assert telemetry.count("teacher_v1-0.1.122-gun-wp1") == 1
+    assert telemetry.count("teacher_v1-0.1.123-gun-wp1") == 1
     assert telemetry.count("0.2.30-wp2-capture") == 1
+
+
+def test_v123_strength_signal_is_plumbed_through_controller_and_field():
+    controller = CONTROLLER.read_text(encoding="utf-8")
+    potential = POTENTIAL_FIELD.read_text(encoding="utf-8")
+
+    # Controller: smoothed EMA member, update before HUD/telemetry, state inject.
+    assert "var _build_strength: float = 1.0" in controller
+    assert "_build_strength = _build_strength * 0.75 + strength_raw * 0.25" in controller
+    assert 'state["build_strength"] = _build_strength' in controller
+    combat = controller.split("func _handle_combat", 1)[1].split(
+        "func _gather_combat_state", 1
+    )[0]
+    # The EMA update must consume build_metrics before the HUD/telemetry do.
+    assert combat.index("_build_strength = _build_strength * 0.75") < combat.index(
+        "_update_build_metrics_hud(build_metrics)"
+    )
+
+    # Field: per-decision hysteretic tier update + per-capture visibility.
+    assert (
+        "_update_strength_tier(clamp(float(state.get(\"build_strength\", 1.0)), 0.0, 2.0))"
+        in potential
+    )
+    assert "func _update_strength_tier(s: float) -> void:" in potential
+    assert "func _strength_edge_kite_nearby() -> int:" in potential
+    assert "func _strength_pack_mult() -> float:" in potential
+    assert '"build_strength": stepify(_build_strength_used, 0.001)' in potential
+    assert '"strength_tier": _strength_tier' in potential
+
+
+def test_v123_strength_tiers_are_hysteretic_and_bounded():
+    config = CONFIG.read_text(encoding="utf-8")
+    potential = POTENTIAL_FIELD.read_text(encoding="utf-8")
+
+    for declaration in (
+        "const STRENGTH_ENTER_STRONG := 1.25",
+        "const STRENGTH_EXIT_STRONG := 1.15",
+        "const STRENGTH_ENTER_WEAK := 0.75",
+        "const STRENGTH_EXIT_WEAK := 0.85",
+        "const STRENGTH_STRONG_EDGE_KITE_DELTA := 4",
+        "const STRENGTH_WEAK_EDGE_KITE_DELTA := -4",
+        "const STRENGTH_STRONG_PACK_MULT := 0.85",
+        "const STRENGTH_WEAK_PACK_MULT := 1.15",
+        "const STRENGTH_STRONG_DASH_WINDOW_DELTA := -10.0",
+        "const STRENGTH_WEAK_DASH_WINDOW_DELTA := 10.0",
+        "const STRENGTH_STRONG_DASH_HP_FLOOR_DELTA := -0.05",
+        "const STRENGTH_WEAK_DASH_HP_FLOOR_DELTA := 0.05",
+    ):
+        assert declaration in config
+
+    tier = potential.split("func _update_strength_tier", 1)[1].split(
+        "func _strength_edge_kite_nearby", 1
+    )[0]
+    # Demote-first-then-repromote handles a large jump straight across neutral.
+    assert 'if tier == "strong" and s <= BotConfig.STRENGTH_EXIT_STRONG:' in tier
+    assert 'elif tier == "weak" and s >= BotConfig.STRENGTH_EXIT_WEAK:' in tier
+    assert "if s >= BotConfig.STRENGTH_ENTER_STRONG:" in tier
+    assert "elif s <= BotConfig.STRENGTH_ENTER_WEAK:" in tier
+
+    # Deltas are consumed only on the ordinary kiter path.
+    assert "and nearby >= _strength_edge_kite_nearby())" in potential
+    assert "BotConfig.EDGE_PACK_SHOVE * _strength_pack_mult()" in potential
+    assert "_pack_density_repulsion(pos, enemies, bosses) * _strength_pack_mult()" in potential
+
+    # Reproduce the hysteresis with the pinned thresholds: strong holds through
+    # 1.20 and exits at 1.10; a crash to 0.5 lands directly in weak.
+    def next_tier(t, s):
+        if t == "strong" and s <= 1.15:
+            t = "neutral"
+        elif t == "weak" and s >= 0.85:
+            t = "neutral"
+        if t == "neutral":
+            if s >= 1.25:
+                t = "strong"
+            elif s <= 0.75:
+                t = "weak"
+        return t
+
+    assert next_tier("neutral", 1.25) == "strong"
+    assert next_tier("strong", 1.20) == "strong"
+    assert next_tier("strong", 1.10) == "neutral"
+    assert next_tier("strong", 0.50) == "weak"
+    assert next_tier("weak", 0.80) == "weak"
+    assert next_tier("weak", 0.90) == "neutral"
+    assert next_tier("weak", 1.30) == "strong"
+
+
+def test_v123_wave_indexed_greed_getters_and_boundaries():
+    config = CONFIG.read_text(encoding="utf-8")
+
+    assert "const EARLY_GREED_MAX_WAVE := 12" in config
+    assert "const LOOT_DASH_ARM_FLOOR_MIN := 0.30" in config
+    assert "const LOOT_DASH_WINDOW_MIN := 20.0" in config
+    # FINAL_SHOP_WAVE is reused (already 19) as the wave-19 greedy re-entry key.
+    assert "const FINAL_SHOP_WAVE := 19" in config
+
+    # Two-case getters (early vs late; wave 19 stays LATE).
+    assert (
+        "static func loot_dash_arm_hp_floor(wave: int) -> float:\n"
+        "\treturn 0.35 if wave <= EARLY_GREED_MAX_WAVE else 0.5"
+    ) in config
+    assert (
+        "static func loot_dash_window_clearance(wave: int) -> float:\n"
+        "\treturn 30.0 if wave <= EARLY_GREED_MAX_WAVE else 45.0"
+    ) in config
+    assert (
+        "static func body_clearance_slack(wave: int) -> float:\n"
+        "\treturn 35.0 if wave <= EARLY_GREED_MAX_WAVE else 20.0"
+    ) in config
+
+    # Three-case getters (early OR wave-19 greedy; else late) — pins the 12/13,
+    # 18/19 and 19/20 boundaries in a single expression each.
+    assert (
+        "static func loot_dash_stall_count(wave: int) -> int:\n"
+        "\treturn 8 if wave <= EARLY_GREED_MAX_WAVE or wave == FINAL_SHOP_WAVE else 12"
+    ) in config
+    assert (
+        "static func loot_dash_cooldown_ticks(wave: int) -> int:\n"
+        "\treturn 90 if wave <= EARLY_GREED_MAX_WAVE or wave == FINAL_SHOP_WAVE else 180"
+    ) in config
+    assert (
+        "static func engage_strafe_loot_cap(wave: int) -> float:\n"
+        "\treturn 0.6 if wave <= EARLY_GREED_MAX_WAVE or wave == FINAL_SHOP_WAVE else 0.35"
+    ) in config
+
+    # Independent Python mirror of the three-case rule to pin the boundaries.
+    def greedy(wave):
+        return wave <= 12 or wave == 19
+
+    assert greedy(12) and not greedy(13)      # early boundary
+    assert not greedy(18) and greedy(19)      # final-shop re-entry
+    assert greedy(19) and not greedy(20)      # boss wave drops back to late
+
+
+def test_v123_rail_traversal_drift_avoids_corner_parking():
+    config = CONFIG.read_text(encoding="utf-8")
+    potential = POTENTIAL_FIELD.read_text(encoding="utf-8")
+
+    assert "const RAIL_CLEAR_RADIUS := 240.0" in config
+    assert "const EDGE_RAIL_DRIFT := 0.45" in config
+
+    edge = potential.split("func _edge_kite_force", 1)[1].split(
+        "func _rail_ahead_pressure", 1
+    )[0]
+    # Bounded loot/open-space bias runs BEFORE the continuity flip (continuity
+    # keeps the final say), and the drift only fires with no rail-ahead pressure.
+    bias = edge.index("var forward_score = _score_strafe_side(pos, tangent")
+    continuity = edge.index("_prev_move.dot(tangent) < 0.0")
+    drift = edge.index("force += tangent * BotConfig.EDGE_RAIL_DRIFT")
+    assert bias < continuity < drift
+    assert "if not _rail_ahead_pressure(pos, enemies, bosses, tangent):" in edge
+
+    pressure = potential.split("func _rail_ahead_pressure", 1)[1].split(
+        "func _late_corner_escape", 1
+    )[0]
+    assert "off_e.length() <= BotConfig.RAIL_CLEAR_RADIUS" in pressure
+    assert "off_e.dot(tangent_dir) > 0.0" in pressure
+    # Corner guard is untouched.
+    assert "func _late_corner_escape(pos, arena) -> Vector2:" in potential
+    assert "if inward_x == 0.0 or inward_y == 0.0:" in potential
 
 
 def test_v84_item_audit_and_conditional_effect_corrections():
@@ -1011,12 +1173,14 @@ def test_v110_final_body_gate_stays_near_best_inside_the_projectile_tier():
         1,
     )[1].split("else:", 1)[0]
 
-    assert "projectiles, profile, true)" in potential
+    assert "projectiles, profile, wave, true)" in potential
     assert "enforce_pack_clearance := false" in safety
     assert "body_floor = max(" in ordinary_floor
     assert "BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE" in ordinary_floor
     assert "BotConfig.BOSS_FINALE_BODY_PACK_CLEARANCE" in ordinary_floor
-    assert "BotConfig.BOSS_FINALE_BODY_CLEARANCE_SLACK" in ordinary_floor
+    # v123: the near-best slack is now the wave-indexed body_slack local.
+    assert "highest_body_clearance - body_slack" in ordinary_floor
+    assert "var body_slack := BotConfig.body_clearance_slack(wave)" in safety
 
     # Frozen v109 exact-20 run 2 capture 21282. The selected lane and a much
     # clearer alternative both satisfied the active projectile tier.
@@ -1136,16 +1300,17 @@ def test_v119_stall_trigger_and_loot_biased_strafe():
     config = CONFIG.read_text(encoding="utf-8")
     potential = POTENTIAL_FIELD.read_text(encoding="utf-8")
 
-    assert "const LOOT_DASH_STALL_COUNT := 12" in config
+    # v123: stall count and strafe loot cap are wave-indexed getters.
+    assert "static func loot_dash_stall_count(wave: int) -> int:" in config
     assert "const ENGAGE_STRAFE_LOOT_WEIGHT := 4.0" in config
-    assert "const ENGAGE_STRAFE_LOOT_CAP := 0.35" in config
+    assert "static func engage_strafe_loot_cap(wave: int) -> float:" in config
 
     dash = potential.split("func _apply_loot_dash", 1)[1].split(
         "func _reset_finale_commit", 1
     )[0]
     # Heavy accumulation arms the dash at any density; otherwise the density
     # gate still applies.
-    assert "scan_count >= BotConfig.LOOT_DASH_STALL_COUNT" in dash
+    assert "scan_count >= BotConfig.loot_dash_stall_count(wave)" in dash
     assert "not stalled" in dash
     assert "< BotConfig.PACK_DENSITY_SOFT" in dash
 
@@ -1155,9 +1320,9 @@ def test_v119_stall_trigger_and_loot_biased_strafe():
     # Bounded flank bonus for materials; enemy pressure and wall openness
     # keep their existing weights.
     assert "BotConfig.ENGAGE_STRAFE_LOOT_WEIGHT" in strafe
-    assert "loot_bonus = min(loot_bonus, BotConfig.ENGAGE_STRAFE_LOOT_CAP)" in strafe
+    assert "loot_bonus = min(loot_bonus, BotConfig.engage_strafe_loot_cap(wave))" in strafe
     assert "+ loot_bonus)" in strafe
-    assert "_engage_strafe_force(pos, enemies, bosses, arena, nearest_d, loot)" in potential
+    assert "_engage_strafe_force(pos, enemies, bosses, arena, nearest_d, loot, wave)" in potential
 
     # Frozen v118 smoke wave-10 evidence (run_1784778591_87017): 1,241
     # captures, density always below 8, materials p50 19 / p90 49-50 with an
@@ -1213,12 +1378,14 @@ def test_v118_loot_dash_is_bounded_hp_gated_and_window_tested():
     config = CONFIG.read_text(encoding="utf-8")
     potential = POTENTIAL_FIELD.read_text(encoding="utf-8")
 
+    # v123: LOOT_DASH_MIN_PILE and MAX_TICKS stay literal; arm HP floor, window
+    # clearance and cooldown became wave-indexed getters.
     for declaration in (
         "const LOOT_DASH_MIN_PILE := 5",
-        "const LOOT_DASH_MIN_HP_RATIO := 0.5",
-        "const LOOT_DASH_WINDOW_CLEARANCE := 45.0",
         "const LOOT_DASH_MAX_TICKS := 72",
-        "const LOOT_DASH_COOLDOWN_TICKS := 180",
+        "static func loot_dash_arm_hp_floor(wave: int) -> float:",
+        "static func loot_dash_window_clearance(wave: int) -> float:",
+        "static func loot_dash_cooldown_ticks(wave: int) -> int:",
     ):
         assert declaration in config
 
@@ -1232,14 +1399,18 @@ def test_v118_loot_dash_is_bounded_hp_gated_and_window_tested():
     assert "_count_nearby_enemies(pos, enemies, bosses)" in dash
     assert "< BotConfig.PACK_DENSITY_SOFT" in dash
     assert "int(cluster[1]) < BotConfig.LOOT_DASH_MIN_PILE" in dash
-    assert "hp_ratio < BotConfig.LOOT_DASH_MIN_HP_RATIO" in dash
+    # v123: arm HP floor / window are wave-indexed + strength-shifted effective
+    # locals (see _effective_dash_arm_hp_floor / _effective_dash_window_clearance).
+    assert "var arm_hp_floor := _effective_dash_arm_hp_floor(wave)" in dash
+    assert "hp_ratio < arm_hp_floor" in dash
     assert "_predictive_body_path_clearance(" in dash
-    assert "window < BotConfig.LOOT_DASH_WINDOW_CLEARANCE" in dash
+    assert "var window_floor := _effective_dash_window_clearance(wave)" in dash
+    assert "window < window_floor" in dash
     # Bullet-window test still honors the panic clearance with caution.
     assert "BotConfig.ESCAPE_PANIC_CLEARANCE" in dash
     # The commit is time-boxed with a cooldown afterwards.
     assert "_loot_dash_ticks = BotConfig.LOOT_DASH_MAX_TICKS" in dash
-    assert "_loot_dash_cooldown = BotConfig.LOOT_DASH_COOLDOWN_TICKS" in dash
+    assert "_loot_dash_cooldown = BotConfig.loot_dash_cooldown_ticks(wave)" in dash
 
     # Survival and finale paths always drop an active dash.
     movement = potential.split("func compute_movement", 1)[1].split(
@@ -1302,7 +1473,7 @@ def test_v114_final_body_gate_covers_every_combat_wave_and_uses_open_pack_tier()
     return_move = final_tail.index("return _prev_move")
     assert late_guard < all_wave_comment < all_wave_body < return_move
     assert (
-        "projectiles, profile, not _loot_dash_active, _loot_dash_active)"
+        "projectiles, profile, wave, not _loot_dash_active, _loot_dash_active)"
         in final_tail[all_wave_body:return_move]
     )
 
