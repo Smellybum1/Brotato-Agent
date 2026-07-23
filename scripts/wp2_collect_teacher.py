@@ -136,10 +136,71 @@ def set_auto_start(enabled: bool) -> None:
     atomic_json(path, payload)
 
 
+def prepare_mod_environment(root: Path) -> None:
+    """Undo ModLoader's crash-guard before a collector-owned launch.
+
+    The collector stops Brotato with Stop-Process -Force, so the next boot
+    trips ModLoader's "Mods are currently disabled" latch (cleared by
+    emptying the logs directory) and that disabled boot also wipes the
+    mod_list in mod_user_profiles.json. Every pre-campaign launch happened
+    to follow scripts/deploy_mod.py, which cleared the latch as a side
+    effect; the first exact-20 launch on 2026-07-23 did not, and the game
+    sat modless on the title screen. Restore both here so a collector
+    launch is self-sufficient.
+    """
+    appdata = Path(os.environ["APPDATA"]) / "Brotato"
+    log_dir = appdata / "logs"
+    if log_dir.exists():
+        archive = root / "reports" / f"logs_archive_{time.strftime('%Y%m%d_%H%M%S')}"
+        archive.mkdir(parents=True, exist_ok=True)
+        for entry in log_dir.iterdir():
+            if entry.is_file():
+                archive.joinpath(entry.name).write_bytes(entry.read_bytes())
+                entry.unlink()
+    stamp_path = root / ".deploy_stamp"
+    if not stamp_path.exists():
+        raise RuntimeError("missing .deploy_stamp; deploy the mod before collecting")
+    stamp = json.loads(stamp_path.read_text(encoding="utf-8"))
+    if stamp.get("target") != "agent":
+        raise RuntimeError(f"deploy stamp targets {stamp.get('target')!r}, not the agent mod")
+    zip_path = Path(stamp["zip"])
+    if not zip_path.exists():
+        raise RuntimeError(f"deployed mod zip missing: {zip_path}")
+    profile_path = appdata / "mod_user_profiles.json"
+    profile: dict[str, Any] = {}
+    if profile_path.exists():
+        try:
+            profile = json.loads(profile_path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            profile = {}
+    mod_list = (
+        profile.get("profiles", {}).get("default", {}).get("mod_list", {})
+        if isinstance(profile, dict)
+        else {}
+    )
+    entry = mod_list.get("Tom-BrotatoAgent") if isinstance(mod_list, dict) else None
+    if not (isinstance(entry, dict) and entry.get("is_active")):
+        profile = {
+            "current_profile": "default",
+            "profiles": {
+                "default": {
+                    "mod_list": {
+                        "Tom-BrotatoAgent": {
+                            "is_active": True,
+                            "zip_path": str(zip_path.resolve()).replace("\\", "/"),
+                        }
+                    }
+                }
+            },
+        }
+        profile_path.write_text(json.dumps(profile, indent="\t") + "\n", encoding="utf-8")
+
+
 def launch_game(root: Path) -> None:
     # Use the proven Steam route so ModLoader can enumerate subscribed ZIPs.
     # Direct EXE launches may restart through Steam without an initialized UGC
     # interface, leaving the capture mod unloaded even though the ZIP is valid.
+    prepare_mod_environment(root)
     subprocess.check_call([sys.executable, str(root / "scripts" / "launch_benchmark.py")])
 
 

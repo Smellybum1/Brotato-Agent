@@ -70,7 +70,21 @@ def test_read_json_when_ready_retries_partial_summary(tmp_path: Path, monkeypatc
     assert reads == 2
 
 
+def _mod_environment(tmp_path: Path, monkeypatch) -> Path:
+    """Deployed-agent fixture: APPDATA tree, deploy stamp, and mod zip."""
+    appdata = tmp_path / "appdata"
+    (appdata / "Brotato" / "logs").mkdir(parents=True)
+    monkeypatch.setenv("APPDATA", str(appdata))
+    zip_path = tmp_path / "Tom-BrotatoAgent.zip"
+    zip_path.write_bytes(b"zip")
+    (tmp_path / ".deploy_stamp").write_text(
+        json.dumps({"target": "agent", "zip": str(zip_path)}), encoding="utf-8"
+    )
+    return appdata / "Brotato"
+
+
 def test_launch_game_uses_steam_route(tmp_path: Path, monkeypatch):
+    _mod_environment(tmp_path, monkeypatch)
     calls: list[list[str]] = []
     monkeypatch.setattr(
         "scripts.wp2_collect_teacher.subprocess.check_call",
@@ -85,6 +99,60 @@ def test_launch_game_uses_steam_route(tmp_path: Path, monkeypatch):
             str(tmp_path / "scripts" / "launch_benchmark.py"),
         ]
     ]
+
+
+def test_launch_clears_modloader_latch_and_restores_wiped_profile(
+    tmp_path: Path, monkeypatch
+):
+    # Frozen 2026-07-23 campaign incident: the collector's forced stop trips
+    # ModLoader's "Mods are currently disabled" latch on the next boot, and
+    # that disabled boot wipes mod_user_profiles.json's mod_list. The first
+    # launch without a preceding deploy left Brotato modless on the title
+    # screen with the collector waiting forever.
+    brotato = _mod_environment(tmp_path, monkeypatch)
+    (brotato / "logs" / "godot.log").write_text("stale", encoding="utf-8")
+    profile_path = brotato / "mod_user_profiles.json"
+    profile_path.write_text(
+        json.dumps({"current_profile": "default", "profiles": {"default": {"mod_list": {}}}}),
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(
+        "scripts.wp2_collect_teacher.subprocess.check_call", lambda command: None
+    )
+
+    launch_game(tmp_path)
+
+    assert list((brotato / "logs").iterdir()) == []
+    archives = list((tmp_path / "reports").glob("logs_archive_*"))
+    assert archives and (archives[0] / "godot.log").read_text(encoding="utf-8") == "stale"
+    profile = json.loads(profile_path.read_text(encoding="utf-8"))
+    entry = profile["profiles"]["default"]["mod_list"]["Tom-BrotatoAgent"]
+    assert entry["is_active"] is True
+    assert entry["zip_path"].endswith("Tom-BrotatoAgent.zip")
+
+
+def test_launch_preserves_healthy_profile(tmp_path: Path, monkeypatch):
+    brotato = _mod_environment(tmp_path, monkeypatch)
+    profile_path = brotato / "mod_user_profiles.json"
+    healthy = {
+        "current_profile": "default",
+        "profiles": {
+            "default": {
+                "mod_list": {
+                    "Tom-BrotatoAgent": {"is_active": True, "zip_path": "keep/me.zip"},
+                    "Other-Mod": {"is_active": False, "zip_path": "other.zip"},
+                }
+            }
+        },
+    }
+    profile_path.write_text(json.dumps(healthy), encoding="utf-8")
+    monkeypatch.setattr(
+        "scripts.wp2_collect_teacher.subprocess.check_call", lambda command: None
+    )
+
+    launch_game(tmp_path)
+
+    assert json.loads(profile_path.read_text(encoding="utf-8")) == healthy
 
 
 def test_summary_fault_accepts_clean_current_terminal_summary():
