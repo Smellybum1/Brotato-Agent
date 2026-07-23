@@ -1,9 +1,21 @@
-# WP2 v124 change record (DRAFT) — mid-game offense conversion via reroll-boost guard
+# WP2 v124 change record — mid-game offense conversion via reroll-boost guard
 
-DRAFT — built on branch `wp2-combat-learning`, NOT deployed, NOT committed.
-Implements the FINAL DESIGN v2 section of `.tmp/wp2_v124_design_note.md`
-(OPERATOR-APPROVED 2026-07-23). Build/deploy only AFTER v123 qualifies. No
-game run, no ZIP rebuild while Brotato.exe runs.
+**STATUS: REJECTED on smoke evidence (2026-07-24).** Deployed as
+`teacher_v1-0.1.124-gun-wp1` / mod `0.2.32-wp2-capture` (commit `97aff20`);
+smoke `run_1784817058_71742` was safety-clean but behaviorally rejected —
+stripping only the +8 reroll-worth boost was insufficient: residual reroll worth
+and especially FREE rerolls still preempted qualifying buys. Four guard-applicable
+rerolls (wave 11 paid past potato/bait/cyclops_worm; wave 15 free past
+bait/dynamite) fired over affordable gate-clearing offense items vs. the expected
+zero. Evidence: **`reports/wp2/v124_deploy_record.md`** (rule-extraction section).
+Superseded by v125 (`reports/wp2/v125_change_record_draft.md`), which disallows the
+reroll ACTION outright while the guard condition holds. The v124 +8-boost guard is
+retained in v125 as cheap belt-and-braces.
+
+Original draft below (built on branch `wp2-combat-learning`). Implemented the
+FINAL DESIGN v2 section of `.tmp/wp2_v124_design_note.md` (OPERATOR-APPROVED
+2026-07-23). The design note's spec error (boost-strip only) was acknowledged by
+the coordinator.
 
 ## Intent
 
