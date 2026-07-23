@@ -396,7 +396,8 @@ def replay(runs: dict[str, list[dict]], results: dict[str, str], wstats: dict):
                     shop_trust["trusted"] += int(trusted)
                     if last_offer is not None:
                         _record_offers(offer_records, last_offer, action, rid, result,
-                                       wave, stats, weapons if trusted else None)
+                                       wave, stats, weapons if trusted else None,
+                                       gold_before=pl.get("gold_before"), offense=off)
                 # apply the decision to the running loadout
                 if action.get("type") == "shop_buy" and last_offer:
                     for it in last_offer.get("items", []):
@@ -413,9 +414,11 @@ def replay(runs: dict[str, list[dict]], results: dict[str, str], wstats: dict):
     return offer_records, parity_samples, shop_trust
 
 
-def _record_offers(records, offer, action, rid, result, wave, stats, weapons):
+def _record_offers(records, offer, action, rid, result, wave, stats, weapons,
+                   gold_before=None, offense=None):
     band = "9-12" if wave <= 12 else "13-15"
     bought_slot = action.get("slot") if action.get("type") == "shop_buy" else None
+    offense = offense or {}
     for it in offer.get("items", []):
         if it.get("category") != "item":
             continue
@@ -448,6 +451,19 @@ def _record_offers(records, offer, action, rid, result, wave, stats, weapons):
             "dps_gain": dps_gain,
             "dps_method": method,
             "computable": dps_gain is not None,
+            # decision-level diagnostic context (for skip classification)
+            "price": it.get("price"),
+            "gold_before": gold_before,
+            "action_type": action.get("type"),
+            "action_slot": action.get("slot"),
+            "reroll_price": offer.get("reroll_price"),
+            "offense_total": offense.get("total"),
+            "weapon_dps": offense.get("weapon_dps"),
+            "dps_target": offense.get("dps_target"),
+            "prev_p90_density": offense.get("previous_wave_p90_density"),
+            "prev_peak_density": offense.get("previous_wave_peak_density"),
+            "tags": it.get("tags", []),
+            "locked": bool(it.get("locked", False)),
         })
 
 

@@ -1,0 +1,592 @@
+{
+  "meta": {
+    "question": "Actual blocking condition for skipped positive-gain offense offers (defeat, w9-15) that clear the current gate.",
+    "note": "Classified from recorded decision evidence (action taken, gold_before, item price, build_metrics offense) -- no full item_score parity required.",
+    "well_rounded_min_buy_score": 5.0,
+    "well_rounded_gold_reserve": 40.0,
+    "offense_impact_min_item_gain": 6.0
+  },
+  "defeat": {
+    "n": 118,
+    "buckets": {
+      "outscored": {
+        "count": 41,
+        "frac": 0.347
+      },
+      "loop_exit": {
+        "count": 36,
+        "frac": 0.305
+      },
+      "gold_blocked": {
+        "count": 24,
+        "frac": 0.203
+      },
+      "other": {
+        "count": 17,
+        "frac": 0.144
+      }
+    },
+    "root_causes": {
+      "deficient_but_outranked_this_board": {
+        "count": 39,
+        "frac": 0.331
+      },
+      "deficient_but_rerolled_for_more_impact": {
+        "count": 35,
+        "frac": 0.297
+      },
+      "unaffordable": {
+        "count": 24,
+        "frac": 0.203
+      },
+      "deficient_but_board_did_shop_sell": {
+        "count": 13,
+        "frac": 0.11
+      },
+      "deficient_but_board_did_shop_combine": {
+        "count": 2,
+        "frac": 0.017
+      },
+      "deficient_but_board_did_shop_unlock": {
+        "count": 2,
+        "frac": 0.017
+      },
+      "offense_adequate_no_mandatory_path": {
+        "count": 2,
+        "frac": 0.017
+      },
+      "deficient_but_shop_exited": {
+        "count": 1,
+        "frac": 0.008
+      }
+    },
+    "affordable": 94,
+    "offense_deficient": 112,
+    "band_gate_active": 16,
+    "clears_6": 75,
+    "loop_exit_reroll": 35,
+    "loop_exit_go": 1,
+    "outscored_won_by_offense_item": 15,
+    "outscored_won_by_weapon_or_other": 26,
+    "other_shop_sell": 13,
+    "gold_blocked_n": 24,
+    "gold_blocked_median_shortfall": 60,
+    "band_gate_active_n": 16,
+    "distinct_items": 62,
+    "distinct_true_miss": 49
+  },
+  "victory_control": {
+    "n": 158,
+    "buckets": {
+      "outscored": {
+        "count": 66,
+        "frac": 0.418
+      },
+      "loop_exit": {
+        "count": 34,
+        "frac": 0.215
+      },
+      "gold_blocked": {
+        "count": 32,
+        "frac": 0.203
+      },
+      "other": {
+        "count": 26,
+        "frac": 0.165
+      }
+    },
+    "root_causes": {
+      "deficient_but_outranked_this_board": {
+        "count": 53,
+        "frac": 0.335
+      },
+      "unaffordable": {
+        "count": 32,
+        "frac": 0.203
+      },
+      "offense_adequate_no_mandatory_path": {
+        "count": 25,
+        "frac": 0.158
+      },
+      "deficient_but_rerolled_for_more_impact": {
+        "count": 23,
+        "frac": 0.146
+      },
+      "deficient_but_board_did_shop_sell": {
+        "count": 20,
+        "frac": 0.127
+      },
+      "deficient_but_other": {
+        "count": 3,
+        "frac": 0.019
+      },
+      "deficient_but_shop_exited": {
+        "count": 2,
+        "frac": 0.013
+      }
+    },
+    "affordable": 126,
+    "offense_deficient": 128,
+    "band_gate_active": 10,
+    "clears_6": 85,
+    "loop_exit_reroll": 31,
+    "loop_exit_go": 3,
+    "outscored_won_by_offense_item": 35,
+    "outscored_won_by_weapon_or_other": 31,
+    "other_shop_sell": 22,
+    "gold_blocked_n": 32,
+    "gold_blocked_median_shortfall": 35,
+    "band_gate_active_n": 10,
+    "distinct_items": 69,
+    "distinct_true_miss": 46
+  },
+  "dominant_blocker": {
+    "raw_plurality_bucket": "outscored",
+    "count": 41,
+    "frac_of_defeat_skips": 0.347,
+    "source": "shop_strategy.gd:1360-1411 (generic best-purchase loop: a higher item_score item is bought first; offense item never reaches best_action)",
+    "interpretation": "The 6.0 gate is NOT the blocker: band_gate is active in only 16/118 skips (it is structurally off below wave 13, where most skips occur), and where active the item cleared it. 'outscored' is the raw plurality but largely reflects the offense-first single-best pick buying a higher-ranked offense item or a weapon on the same board (offense IS converted, just a different item): 15 lost to another offense item, 26 to a weapon/other item.",
+    "actionable_blocker": "reroll-for-impact pressure -- of the items truly LEFT on the board, 35 were rerolled away and only 1 left by shop-exit. While offense-deficient the reroll worth is boosted by +8 (shop_strategy.gd:1514-1518), so the shop rerolls past affordable gate-clearing offense items instead of banking the buy. Second: gold_blocked (24, median 60 gold short).",
+    "actionable_source": "shop_strategy.gd:1514-1518 (+8 offense-deficient reroll boost) and :1525-1527 (reroll when best_here < worth)"
+  },
+  "examples": [
+    {
+      "run": "run_1784786723_17546",
+      "wave": 9,
+      "item_id": "item_hedgehog",
+      "offense_keys": [
+        "stat_ranged_damage"
+      ],
+      "direct_gain": 1.0,
+      "clears_6.0": false,
+      "price": 62,
+      "gold_before": 498,
+      "affordable": true,
+      "offense_total": 27.1,
+      "offense_target": 116.0,
+      "offense_deficient": true,
+      "weapon_dps": 406.7,
+      "dps_target": 645,
+      "band_gate": false,
+      "board_action_taken": "shop_reroll",
+      "bucket": "loop_exit",
+      "root_cause": "deficient_but_rerolled_for_more_impact",
+      "shop_decision_sequence": [
+        {
+          "action": "shop_reroll",
+          "gold_before": 498,
+          "bought": null
+        },
+        {
+          "action": "shop_buy",
+          "gold_before": 489,
+          "bought": {
+            "id": "weapon_revolver_1",
+            "price": 44
+          }
+        },
+        {
+          "action": "shop_buy",
+          "gold_before": 445,
+          "bought": {
+            "id": "item_recycling_machine",
+            "price": 71
+          }
+        },
+        {
+          "action": "shop_buy",
+          "gold_before": 374,
+          "bought": {
+            "id": "item_padding",
+            "price": 89
+          }
+        },
+        {
+          "action": "shop_combine",
+          "gold_before": 285,
+          "bought": null
+        },
+        {
+          "action": "shop_reroll",
+          "gold_before": 285,
+          "bought": null
+        },
+        {
+          "action": "shop_reroll",
+          "gold_before": 273,
+          "bought": null
+        },
+        {
+          "action": "shop_buy",
+          "gold_before": 258,
+          "bought": {
+            "id": "weapon_smg_2",
+            "price": 78
+          }
+        },
+        {
+          "action": "shop_buy",
+          "gold_before": 180,
+          "bought": {
+            "id": "item_piggy_bank",
+            "price": 80
+          }
+        },
+        {
+          "action": "shop_buy",
+          "gold_before": 100,
+          "bought": {
+            "id": "item_terrified_onion",
+            "price": 35
+          }
+        },
+        {
+          "action": "shop_go",
+          "gold_before": 65,
+          "bought": null
+        }
+      ]
+    },
+    {
+      "run": "run_1784786723_17546",
+      "wave": 10,
+      "item_id": "item_ball_and_chain",
+      "offense_keys": [
+        "stat_percent_damage"
+      ],
+      "direct_gain": 15.0,
+      "clears_6.0": true,
+      "price": 152,
+      "gold_before": 379,
+      "affordable": true,
+      "offense_total": 35.7,
+      "offense_target": 215.0,
+      "offense_deficient": true,
+      "weapon_dps": 534.9,
+      "dps_target": 765,
+      "band_gate": false,
+      "board_action_taken": "shop_sell",
+      "bucket": "other",
+      "root_cause": "deficient_but_board_did_shop_sell",
+      "shop_decision_sequence": [
+        {
+          "action": "shop_sell",
+          "gold_before": 379,
+          "bought": null
+        },
+        {
+          "action": "shop_buy",
+          "gold_before": 401,
+          "bought": {
+            "id": "weapon_laser_gun_2",
+            "price": 68
+          }
+        },
+        {
+          "action": "shop_buy",
+          "gold_before": 333,
+          "bought": {
+            "id": "item_poisonous_tonic",
+            "price": 161
+          }
+        },
+        {
+          "action": "shop_combine",
+          "gold_before": 172,
+          "bought": null
+        },
+        {
+          "action": "shop_reroll",
+          "gold_before": 172,
+          "bought": null
+        },
+        {
+          "action": "shop_buy",
+          "gold_before": 161,
+          "bought": {
+            "id": "weapon_double_barrel_shotgun_1",
+            "price": 47
+          }
+        },
+        {
+          "action": "shop_buy",
+          "gold_before": 114,
+          "bought": {
+            "id": "item_blindfold",
+            "price": 95
+          }
+        },
+        {
+          "action": "shop_go",
+          "gold_before": 19,
+          "bought": null
+        }
+      ]
+    },
+    {
+      "run": "run_1784786723_17546",
+      "wave": 10,
+      "item_id": "item_poisonous_tonic",
+      "offense_keys": [
+        "stat_attack_speed",
+        "stat_crit_chance"
+      ],
+      "direct_gain": 10.0,
+      "clears_6.0": true,
+      "price": 161,
+      "gold_before": 401,
+      "affordable": true,
+      "offense_total": 32.5,
+      "offense_target": 215.0,
+      "offense_deficient": true,
+      "weapon_dps": 487.0,
+      "dps_target": 765,
+      "band_gate": false,
+      "board_action_taken": "shop_buy",
+      "bucket": "outscored",
+      "root_cause": "deficient_but_outranked_this_board",
+      "shop_decision_sequence": [
+        {
+          "action": "shop_sell",
+          "gold_before": 379,
+          "bought": null
+        },
+        {
+          "action": "shop_buy",
+          "gold_before": 401,
+          "bought": {
+            "id": "weapon_laser_gun_2",
+            "price": 68
+          }
+        },
+        {
+          "action": "shop_buy",
+          "gold_before": 333,
+          "bought": {
+            "id": "item_poisonous_tonic",
+            "price": 161
+          }
+        },
+        {
+          "action": "shop_combine",
+          "gold_before": 172,
+          "bought": null
+        },
+        {
+          "action": "shop_reroll",
+          "gold_before": 172,
+          "bought": null
+        },
+        {
+          "action": "shop_buy",
+          "gold_before": 161,
+          "bought": {
+            "id": "weapon_double_barrel_shotgun_1",
+            "price": 47
+          }
+        },
+        {
+          "action": "shop_buy",
+          "gold_before": 114,
+          "bought": {
+            "id": "item_blindfold",
+            "price": 95
+          }
+        },
+        {
+          "action": "shop_go",
+          "gold_before": 19,
+          "bought": null
+        }
+      ]
+    },
+    {
+      "run": "run_1784790063_90333",
+      "wave": 12,
+      "item_id": "item_glass_cannon",
+      "offense_keys": [
+        "stat_percent_damage"
+      ],
+      "direct_gain": 25.0,
+      "clears_6.0": true,
+      "price": 177,
+      "gold_before": 147,
+      "affordable": false,
+      "offense_total": 107.8,
+      "offense_target": 102.0,
+      "offense_deficient": false,
+      "weapon_dps": 1616.9,
+      "dps_target": 1150,
+      "band_gate": false,
+      "board_action_taken": "shop_reroll",
+      "bucket": "gold_blocked",
+      "root_cause": "unaffordable",
+      "shop_decision_sequence": [
+        {
+          "action": "shop_reroll",
+          "gold_before": 520,
+          "bought": null
+        },
+        {
+          "action": "shop_reroll",
+          "gold_before": 507,
+          "bought": null
+        },
+        {
+          "action": "shop_reroll",
+          "gold_before": 490,
+          "bought": null
+        },
+        {
+          "action": "shop_buy",
+          "gold_before": 469,
+          "bought": {
+            "id": "weapon_smg_1",
+            "price": 56
+          }
+        },
+        {
+          "action": "shop_buy",
+          "gold_before": 413,
+          "bought": {
+            "id": "item_poisonous_tonic",
+            "price": 188
+          }
+        },
+        {
+          "action": "shop_buy",
+          "gold_before": 225,
+          "bought": {
+            "id": "item_dangerous_bunny",
+            "price": 78
+          }
+        },
+        {
+          "action": "shop_reroll",
+          "gold_before": 147,
+          "bought": null
+        },
+        {
+          "action": "shop_sell",
+          "gold_before": 147,
+          "bought": null
+        },
+        {
+          "action": "shop_buy",
+          "gold_before": 180,
+          "bought": {
+            "id": "weapon_smg_3",
+            "price": 174
+          }
+        },
+        {
+          "action": "shop_combine",
+          "gold_before": 6,
+          "bought": null
+        },
+        {
+          "action": "shop_go",
+          "gold_before": 6,
+          "bought": null
+        }
+      ]
+    },
+    {
+      "run": "run_1784786723_17546",
+      "wave": 9,
+      "item_id": "item_retromations_hoodie",
+      "offense_keys": [
+        "stat_attack_speed"
+      ],
+      "direct_gain": 2.0,
+      "clears_6.0": false,
+      "price": 207,
+      "gold_before": 498,
+      "affordable": true,
+      "offense_total": 27.1,
+      "offense_target": 116.0,
+      "offense_deficient": true,
+      "weapon_dps": 406.7,
+      "dps_target": 645,
+      "band_gate": false,
+      "board_action_taken": "shop_reroll",
+      "bucket": "loop_exit",
+      "root_cause": "deficient_but_rerolled_for_more_impact",
+      "shop_decision_sequence": [
+        {
+          "action": "shop_reroll",
+          "gold_before": 498,
+          "bought": null
+        },
+        {
+          "action": "shop_buy",
+          "gold_before": 489,
+          "bought": {
+            "id": "weapon_revolver_1",
+            "price": 44
+          }
+        },
+        {
+          "action": "shop_buy",
+          "gold_before": 445,
+          "bought": {
+            "id": "item_recycling_machine",
+            "price": 71
+          }
+        },
+        {
+          "action": "shop_buy",
+          "gold_before": 374,
+          "bought": {
+            "id": "item_padding",
+            "price": 89
+          }
+        },
+        {
+          "action": "shop_combine",
+          "gold_before": 285,
+          "bought": null
+        },
+        {
+          "action": "shop_reroll",
+          "gold_before": 285,
+          "bought": null
+        },
+        {
+          "action": "shop_reroll",
+          "gold_before": 273,
+          "bought": null
+        },
+        {
+          "action": "shop_buy",
+          "gold_before": 258,
+          "bought": {
+            "id": "weapon_smg_2",
+            "price": 78
+          }
+        },
+        {
+          "action": "shop_buy",
+          "gold_before": 180,
+          "bought": {
+            "id": "item_piggy_bank",
+            "price": 80
+          }
+        },
+        {
+          "action": "shop_buy",
+          "gold_before": 100,
+          "bought": {
+            "id": "item_terrified_onion",
+            "price": 35
+          }
+        },
+        {
+          "action": "shop_go",
+          "gold_before": 65,
+          "bought": null
+        }
+      ]
+    }
+  ]
+}
