@@ -46,6 +46,10 @@ reports/raw/
 reports/*.jsonl
 !reports/.gitkeep
 
+# Combat observation dataset shards (large NPZ, never committed;
+# manifest.json + reports/wp2 report are small and ARE tracked)
+datasets/**/*.npz
+
 # Deploy markers
 .deploy_stamp
 *.log

@@ -1,0 +1,2496 @@
+{
+  "schema_id": "combat_obs_v1",
+  "observation_schema_hash": "C653D836F3EBC821A51AFC70482D3772FC7B7B927D393A6B9BBADC2718BB9B2A",
+  "source_capture_schema_hash": "95B6444796A21FD44E94113B75BA2097BC381D5F72ED784F9B9A4A99DD46D951",
+  "encoder_path": "trainer/observation/encoder_v1.py",
+  "repo_head_commit": "0be6c80875b5e729e099d5d3384628e57de7de4c",
+  "runs_root": "C:\\Users\\moxhe\\AppData\\Roaming\\Brotato\\brotato_agent\\runs",
+  "run_count": 20,
+  "aggregate": {
+    "total": 388067,
+    "valid": 388067,
+    "temporal_valid": 387695,
+    "valid_and_temporal_valid": 387695,
+    "fault_count": 0,
+    "dataset_bytes": 400773981
+  },
+  "runs": [
+    {
+      "run_id": "run_1784785556_51395",
+      "shard_file": "run_1784785556_51395.npz",
+      "shard_sha256": "CB1C99EB90FE5EAFC9185C2CAE65B7C85A04D28F80DC90A37B10FA99196514B8",
+      "shard_bytes": 23587198,
+      "capture_seq_monotonic": true,
+      "counts": {
+        "total": 21061,
+        "valid": 21061,
+        "temporal_valid": 21041,
+        "valid_and_temporal_valid": 21041
+      },
+      "per_wave_total": {
+        "1": 440,
+        "2": 545,
+        "3": 641,
+        "4": 740,
+        "5": 840,
+        "6": 946,
+        "7": 1046,
+        "8": 1166,
+        "9": 1256,
+        "10": 1241,
+        "11": 1251,
+        "12": 1251,
+        "13": 1240,
+        "14": 1240,
+        "15": 1246,
+        "16": 1251,
+        "17": 1251,
+        "18": 1240,
+        "19": 1251,
+        "20": 979
+      },
+      "per_wave_valid": {
+        "1": 440,
+        "2": 545,
+        "3": 641,
+        "4": 740,
+        "5": 840,
+        "6": 946,
+        "7": 1046,
+        "8": 1166,
+        "9": 1256,
+        "10": 1241,
+        "11": 1251,
+        "12": 1251,
+        "13": 1240,
+        "14": 1240,
+        "15": 1246,
+        "16": 1251,
+        "17": 1251,
+        "18": 1240,
+        "19": 1251,
+        "20": 979
+      },
+      "overflow": {
+        "enemies": {
+          "overflow_samples": 0,
+          "max_raw": 48,
+          "capacity": 64
+        },
+        "bosses": {
+          "overflow_samples": 0,
+          "max_raw": 1,
+          "capacity": 2
+        },
+        "projectiles": {
+          "overflow_samples": 0,
+          "max_raw": 27,
+          "capacity": 32
+        },
+        "materials": {
+          "overflow_samples": 0,
+          "max_raw": 50,
+          "capacity": 64
+        },
+        "consumables": {
+          "overflow_samples": 0,
+          "max_raw": 13,
+          "capacity": 24
+        },
+        "crates": {
+          "overflow_samples": 0,
+          "max_raw": 2,
+          "capacity": 2
+        },
+        "obstacles": {
+          "overflow_samples": 0,
+          "max_raw": 2,
+          "capacity": 8
+        }
+      },
+      "fault_count": 0,
+      "faults": [],
+      "determinism_spot_check": [
+        {
+          "position": 0,
+          "capture_seq": 1,
+          "digest": "2D34E87C19AC802314394261BFBB05278B1F167E442A27AA7CEEA50D1A392298"
+        },
+        {
+          "position": 5000,
+          "capture_seq": 5001,
+          "digest": "9E81A77B4061C44F438D43C2D916BBE845DDA08A4FE7AF0631FB630AD2A30E68"
+        },
+        {
+          "position": 10000,
+          "capture_seq": 10001,
+          "digest": "2A9D977EDEBDA40915AE2D9709BE53134E39758F8FDDEDDA22C853E81110A34F"
+        },
+        {
+          "position": 15000,
+          "capture_seq": 15001,
+          "digest": "2144D7970B45D090C5069CD6E63B7BC9BDEFDBCD919EB53E372FEA8714936A1C"
+        },
+        {
+          "position": 20000,
+          "capture_seq": 20001,
+          "digest": "03933D98E40858D8BD7EBB84F877E0AD18CD8B089FA38537CFE5874393A25E4A"
+        },
+        {
+          "position": 21060,
+          "capture_seq": 21061,
+          "digest": "1657C9B41D0E6885911D8877ECC934D93C3341BFE63019AB6298E33772C42EFA"
+        }
+      ],
+      "build_seconds": 14.21
+    },
+    {
+      "run_id": "run_1784786723_17546",
+      "shard_file": "run_1784786723_17546.npz",
+      "shard_sha256": "14F164D6E95FA5140368B5AB22292B3BD7AFA53A127196934D94E98793EE8550",
+      "shard_bytes": 18238183,
+      "capture_seq_monotonic": true,
+      "counts": {
+        "total": 17341,
+        "valid": 17341,
+        "temporal_valid": 17323,
+        "valid_and_temporal_valid": 17323
+      },
+      "per_wave_total": {
+        "1": 440,
+        "2": 545,
+        "3": 641,
+        "4": 740,
+        "5": 846,
+        "6": 940,
+        "7": 1040,
+        "8": 1140,
+        "9": 1245,
+        "10": 1241,
+        "11": 1246,
+        "12": 1251,
+        "13": 1240,
+        "14": 1240,
+        "15": 1240,
+        "16": 1246,
+        "17": 1060
+      },
+      "per_wave_valid": {
+        "1": 440,
+        "2": 545,
+        "3": 641,
+        "4": 740,
+        "5": 846,
+        "6": 940,
+        "7": 1040,
+        "8": 1140,
+        "9": 1245,
+        "10": 1241,
+        "11": 1246,
+        "12": 1251,
+        "13": 1240,
+        "14": 1240,
+        "15": 1240,
+        "16": 1246,
+        "17": 1060
+      },
+      "overflow": {
+        "enemies": {
+          "overflow_samples": 0,
+          "max_raw": 45,
+          "capacity": 64
+        },
+        "bosses": {
+          "overflow_samples": 0,
+          "max_raw": 0,
+          "capacity": 2
+        },
+        "projectiles": {
+          "overflow_samples": 0,
+          "max_raw": 15,
+          "capacity": 32
+        },
+        "materials": {
+          "overflow_samples": 0,
+          "max_raw": 51,
+          "capacity": 64
+        },
+        "consumables": {
+          "overflow_samples": 0,
+          "max_raw": 6,
+          "capacity": 24
+        },
+        "crates": {
+          "overflow_samples": 0,
+          "max_raw": 1,
+          "capacity": 2
+        },
+        "obstacles": {
+          "overflow_samples": 0,
+          "max_raw": 2,
+          "capacity": 8
+        }
+      },
+      "fault_count": 0,
+      "faults": [],
+      "determinism_spot_check": [
+        {
+          "position": 0,
+          "capture_seq": 1,
+          "digest": "345894848884746DFD8BE193D4B7C995D03ECA9123B27B0BC63D6ACAF31439E9"
+        },
+        {
+          "position": 5000,
+          "capture_seq": 5001,
+          "digest": "A853B7D2D81514945869F17C5BB7A2B94C481A50CE8B2DD469789C1AF6A402C9"
+        },
+        {
+          "position": 10000,
+          "capture_seq": 10001,
+          "digest": "57C11D45090A5212C3242676768065BE43FD526F4D99CC633B6DCFDFF7C2F4D6"
+        },
+        {
+          "position": 15000,
+          "capture_seq": 15001,
+          "digest": "BA5E6CE90B5AF2D52D546016DD69A652D33F04F778387D8BBDF3DA1FD754089E"
+        },
+        {
+          "position": 17340,
+          "capture_seq": 17341,
+          "digest": "67034AC33DD03A0B59066B3CB08779B868233B62FC3782BDBCDFE488764F0875"
+        }
+      ],
+      "build_seconds": 12.16
+    },
+    {
+      "run_id": "run_1784787688_32406",
+      "shard_file": "run_1784787688_32406.npz",
+      "shard_sha256": "CB8D965D26C7DAB0FADE6BC75AB417DA749A76C9FD1D22960E3F559AC03D8E87",
+      "shard_bytes": 20041227,
+      "capture_seq_monotonic": true,
+      "counts": {
+        "total": 21795,
+        "valid": 21795,
+        "temporal_valid": 21775,
+        "valid_and_temporal_valid": 21775
+      },
+      "per_wave_total": {
+        "1": 440,
+        "2": 545,
+        "3": 641,
+        "4": 740,
+        "5": 840,
+        "6": 946,
+        "7": 1040,
+        "8": 1146,
+        "9": 1256,
+        "10": 1246,
+        "11": 1266,
+        "12": 1251,
+        "13": 1251,
+        "14": 1246,
+        "15": 1245,
+        "16": 1241,
+        "17": 1255,
+        "18": 1246,
+        "19": 1261,
+        "20": 1693
+      },
+      "per_wave_valid": {
+        "1": 440,
+        "2": 545,
+        "3": 641,
+        "4": 740,
+        "5": 840,
+        "6": 946,
+        "7": 1040,
+        "8": 1146,
+        "9": 1256,
+        "10": 1246,
+        "11": 1266,
+        "12": 1251,
+        "13": 1251,
+        "14": 1246,
+        "15": 1245,
+        "16": 1241,
+        "17": 1255,
+        "18": 1246,
+        "19": 1261,
+        "20": 1693
+      },
+      "overflow": {
+        "enemies": {
+          "overflow_samples": 0,
+          "max_raw": 41,
+          "capacity": 64
+        },
+        "bosses": {
+          "overflow_samples": 0,
+          "max_raw": 1,
+          "capacity": 2
+        },
+        "projectiles": {
+          "overflow_samples": 0,
+          "max_raw": 31,
+          "capacity": 32
+        },
+        "materials": {
+          "overflow_samples": 0,
+          "max_raw": 50,
+          "capacity": 64
+        },
+        "consumables": {
+          "overflow_samples": 0,
+          "max_raw": 11,
+          "capacity": 24
+        },
+        "crates": {
+          "overflow_samples": 261,
+          "max_raw": 4,
+          "capacity": 2
+        },
+        "obstacles": {
+          "overflow_samples": 0,
+          "max_raw": 2,
+          "capacity": 8
+        }
+      },
+      "fault_count": 0,
+      "faults": [],
+      "determinism_spot_check": [
+        {
+          "position": 0,
+          "capture_seq": 1,
+          "digest": "6F8B547A1E59C57701E8E5D9DCD6C8FC6807BBC502C38858E9547EF1069FBB0D"
+        },
+        {
+          "position": 5000,
+          "capture_seq": 5001,
+          "digest": "6911783B19A38656979FEFC395956BBD569F7B66BE8B208B13AD8BB4909939AF"
+        },
+        {
+          "position": 10000,
+          "capture_seq": 10001,
+          "digest": "A07E7AADE6F0D8466D019F37BF7211018806FD3B90953A708A1C698BBBE60DAA"
+        },
+        {
+          "position": 15000,
+          "capture_seq": 15001,
+          "digest": "54C112371DF8546AF59F540D2AF992AE435C6F5B599220F5812C2D8AF30058F5"
+        },
+        {
+          "position": 20000,
+          "capture_seq": 20001,
+          "digest": "197B09D3B9D89014131A52856168DB657C54E4F2D78546FDAE0F9EF03100FF9D"
+        },
+        {
+          "position": 21794,
+          "capture_seq": 21795,
+          "digest": "49625392B70CD8264F5DE8A982D76AA76C81C57079AF08378291E971520FA639"
+        }
+      ],
+      "build_seconds": 11.97
+    },
+    {
+      "run_id": "run_1784788917_7315",
+      "shard_file": "run_1784788917_7315.npz",
+      "shard_sha256": "A53940859CA05E769AF7BA775FF23BA1D34CE752ED875E52D5DD4B0957EF1CCC",
+      "shard_bytes": 22952101,
+      "capture_seq_monotonic": true,
+      "counts": {
+        "total": 21013,
+        "valid": 21013,
+        "temporal_valid": 20993,
+        "valid_and_temporal_valid": 20993
+      },
+      "per_wave_total": {
+        "1": 440,
+        "2": 545,
+        "3": 640,
+        "4": 741,
+        "5": 840,
+        "6": 946,
+        "7": 1040,
+        "8": 1146,
+        "9": 1251,
+        "10": 1240,
+        "11": 1245,
+        "12": 1241,
+        "13": 1251,
+        "14": 1251,
+        "15": 1240,
+        "16": 1240,
+        "17": 1241,
+        "18": 1246,
+        "19": 1245,
+        "20": 984
+      },
+      "per_wave_valid": {
+        "1": 440,
+        "2": 545,
+        "3": 640,
+        "4": 741,
+        "5": 840,
+        "6": 946,
+        "7": 1040,
+        "8": 1146,
+        "9": 1251,
+        "10": 1240,
+        "11": 1245,
+        "12": 1241,
+        "13": 1251,
+        "14": 1251,
+        "15": 1240,
+        "16": 1240,
+        "17": 1241,
+        "18": 1246,
+        "19": 1245,
+        "20": 984
+      },
+      "overflow": {
+        "enemies": {
+          "overflow_samples": 0,
+          "max_raw": 55,
+          "capacity": 64
+        },
+        "bosses": {
+          "overflow_samples": 0,
+          "max_raw": 1,
+          "capacity": 2
+        },
+        "projectiles": {
+          "overflow_samples": 0,
+          "max_raw": 23,
+          "capacity": 32
+        },
+        "materials": {
+          "overflow_samples": 0,
+          "max_raw": 50,
+          "capacity": 64
+        },
+        "consumables": {
+          "overflow_samples": 0,
+          "max_raw": 14,
+          "capacity": 24
+        },
+        "crates": {
+          "overflow_samples": 0,
+          "max_raw": 2,
+          "capacity": 2
+        },
+        "obstacles": {
+          "overflow_samples": 0,
+          "max_raw": 2,
+          "capacity": 8
+        }
+      },
+      "fault_count": 0,
+      "faults": [],
+      "determinism_spot_check": [
+        {
+          "position": 0,
+          "capture_seq": 1,
+          "digest": "F990CF144A1B953F6E3292A362BDACB411C42449E8E204D87C0DE247F7C07B0A"
+        },
+        {
+          "position": 5000,
+          "capture_seq": 5001,
+          "digest": "2965793184FFFD0EFA0975423CBE37165FEC9D395044FF9C1B9F52BB3117FC29"
+        },
+        {
+          "position": 10000,
+          "capture_seq": 10001,
+          "digest": "E24C9A13BFDCD9EF247C793F230D2E82F83F2AD87D887D4A272B6AD3A7D62216"
+        },
+        {
+          "position": 15000,
+          "capture_seq": 15001,
+          "digest": "05FDACBF2B7B6F8ED5392F4436B63C2E56F5311BF97EE346F0B9233D15E0D515"
+        },
+        {
+          "position": 20000,
+          "capture_seq": 20001,
+          "digest": "A75BC40283C130FF37110025B7BE0DEA27AD253FDDAEF777CBDF879AD59E3B6B"
+        },
+        {
+          "position": 21012,
+          "capture_seq": 21013,
+          "digest": "9DC3405ECF8CB50CA01CD4EE60AD829B07E94F343E872CDA203112ED429CDDF9"
+        }
+      ],
+      "build_seconds": 12.65
+    },
+    {
+      "run_id": "run_1784790063_90333",
+      "shard_file": "run_1784790063_90333.npz",
+      "shard_sha256": "78E8BD1ECF1A01120DC3F79C9C55F9C57C9E23C1AAA3E9823877CEBF1B739C21",
+      "shard_bytes": 23105984,
+      "capture_seq_monotonic": true,
+      "counts": {
+        "total": 20835,
+        "valid": 20835,
+        "temporal_valid": 20815,
+        "valid_and_temporal_valid": 20815
+      },
+      "per_wave_total": {
+        "1": 440,
+        "2": 546,
+        "3": 640,
+        "4": 746,
+        "5": 851,
+        "6": 945,
+        "7": 1041,
+        "8": 1151,
+        "9": 1251,
+        "10": 1240,
+        "11": 1240,
+        "12": 1246,
+        "13": 1240,
+        "14": 1241,
+        "15": 1240,
+        "16": 1251,
+        "17": 1247,
+        "18": 1246,
+        "19": 1245,
+        "20": 788
+      },
+      "per_wave_valid": {
+        "1": 440,
+        "2": 546,
+        "3": 640,
+        "4": 746,
+        "5": 851,
+        "6": 945,
+        "7": 1041,
+        "8": 1151,
+        "9": 1251,
+        "10": 1240,
+        "11": 1240,
+        "12": 1246,
+        "13": 1240,
+        "14": 1241,
+        "15": 1240,
+        "16": 1251,
+        "17": 1247,
+        "18": 1246,
+        "19": 1245,
+        "20": 788
+      },
+      "overflow": {
+        "enemies": {
+          "overflow_samples": 0,
+          "max_raw": 59,
+          "capacity": 64
+        },
+        "bosses": {
+          "overflow_samples": 0,
+          "max_raw": 1,
+          "capacity": 2
+        },
+        "projectiles": {
+          "overflow_samples": 0,
+          "max_raw": 30,
+          "capacity": 32
+        },
+        "materials": {
+          "overflow_samples": 0,
+          "max_raw": 52,
+          "capacity": 64
+        },
+        "consumables": {
+          "overflow_samples": 0,
+          "max_raw": 9,
+          "capacity": 24
+        },
+        "crates": {
+          "overflow_samples": 0,
+          "max_raw": 1,
+          "capacity": 2
+        },
+        "obstacles": {
+          "overflow_samples": 0,
+          "max_raw": 2,
+          "capacity": 8
+        }
+      },
+      "fault_count": 0,
+      "faults": [],
+      "determinism_spot_check": [
+        {
+          "position": 0,
+          "capture_seq": 1,
+          "digest": "9D425CFEE6CEAF0EFE7D27273324735BDAB44F2EF28F06DBB37036F496463FE5"
+        },
+        {
+          "position": 5000,
+          "capture_seq": 5001,
+          "digest": "CC6A1AFB8C0152C628EFE9276D912181524BC0C052496C090D12127BC5F7EBCB"
+        },
+        {
+          "position": 10000,
+          "capture_seq": 10001,
+          "digest": "DA93A2456DCFDE6C8BC167EED67F9B345D63B9C05DBBEB96716BA32868986649"
+        },
+        {
+          "position": 15000,
+          "capture_seq": 15001,
+          "digest": "C0AD587026F4E30ADEBC051B8A264294BC7CB56D492CEBFF991F10FC184D789B"
+        },
+        {
+          "position": 20000,
+          "capture_seq": 20001,
+          "digest": "281C5EAA3AC0E7C1D9D9C509CF1B824715468D10F9BCBAB81E68D8B14DDCA3EF"
+        },
+        {
+          "position": 20834,
+          "capture_seq": 20835,
+          "digest": "267CF7E462B92B88D8F6F10663E9AB6DED6A82D79C40B06D547676120834E9D6"
+        }
+      ],
+      "build_seconds": 12.66
+    },
+    {
+      "run_id": "run_1784791214_74323",
+      "shard_file": "run_1784791214_74323.npz",
+      "shard_sha256": "39D333E8BF87D4A1DF152E239F0458A3C8C59FD579387920B9760158633F1A8D",
+      "shard_bytes": 14106182,
+      "capture_seq_monotonic": true,
+      "counts": {
+        "total": 17478,
+        "valid": 17478,
+        "temporal_valid": 17461,
+        "valid_and_temporal_valid": 17461
+      },
+      "per_wave_total": {
+        "1": 440,
+        "2": 546,
+        "3": 646,
+        "4": 751,
+        "5": 851,
+        "6": 945,
+        "7": 1046,
+        "8": 1141,
+        "9": 1251,
+        "10": 1246,
+        "11": 1240,
+        "12": 1240,
+        "13": 1240,
+        "14": 1246,
+        "15": 1241,
+        "16": 1245,
+        "17": 1163
+      },
+      "per_wave_valid": {
+        "1": 440,
+        "2": 546,
+        "3": 646,
+        "4": 751,
+        "5": 851,
+        "6": 945,
+        "7": 1046,
+        "8": 1141,
+        "9": 1251,
+        "10": 1246,
+        "11": 1240,
+        "12": 1240,
+        "13": 1240,
+        "14": 1246,
+        "15": 1241,
+        "16": 1245,
+        "17": 1163
+      },
+      "overflow": {
+        "enemies": {
+          "overflow_samples": 0,
+          "max_raw": 44,
+          "capacity": 64
+        },
+        "bosses": {
+          "overflow_samples": 0,
+          "max_raw": 0,
+          "capacity": 2
+        },
+        "projectiles": {
+          "overflow_samples": 0,
+          "max_raw": 15,
+          "capacity": 32
+        },
+        "materials": {
+          "overflow_samples": 0,
+          "max_raw": 49,
+          "capacity": 64
+        },
+        "consumables": {
+          "overflow_samples": 0,
+          "max_raw": 7,
+          "capacity": 24
+        },
+        "crates": {
+          "overflow_samples": 0,
+          "max_raw": 1,
+          "capacity": 2
+        },
+        "obstacles": {
+          "overflow_samples": 0,
+          "max_raw": 1,
+          "capacity": 8
+        }
+      },
+      "fault_count": 0,
+      "faults": [],
+      "determinism_spot_check": [
+        {
+          "position": 0,
+          "capture_seq": 1,
+          "digest": "770179F26D83F834665D66005C2FB1E8B8134E16CF442D7BD05A5E3EEA7D444A"
+        },
+        {
+          "position": 5000,
+          "capture_seq": 5001,
+          "digest": "5BE891BD18FC57F789F2E091909B1FFDCC52CDE3F415BC2A0F052D51E1FFC000"
+        },
+        {
+          "position": 10000,
+          "capture_seq": 10001,
+          "digest": "9B06C9BD8D417A10B69EC42C967B5CEA16E0ECB333165825B2015B927131AF36"
+        },
+        {
+          "position": 15000,
+          "capture_seq": 15001,
+          "digest": "E6658FF6DD4EC02EBD65D80CA3F6671D003CA622F9FD9ED902BEBF81775B50CF"
+        },
+        {
+          "position": 17477,
+          "capture_seq": 17478,
+          "digest": "B281400A01424DA0549E8C4F7029F7A9D8DFD3B2379BE52E245B4FD806BF12B3"
+        }
+      ],
+      "build_seconds": 8.52
+    },
+    {
+      "run_id": "run_1784792179_82981",
+      "shard_file": "run_1784792179_82981.npz",
+      "shard_sha256": "501DA5ECED7EA145FDAA4C3D0528E92898F4B11F9EB34D994054BEAB9837F8AC",
+      "shard_bytes": 6960657,
+      "capture_seq_monotonic": true,
+      "counts": {
+        "total": 8638,
+        "valid": 8638,
+        "temporal_valid": 8628,
+        "valid_and_temporal_valid": 8628
+      },
+      "per_wave_total": {
+        "1": 440,
+        "2": 540,
+        "3": 646,
+        "4": 740,
+        "5": 851,
+        "6": 940,
+        "7": 1046,
+        "8": 1150,
+        "9": 1246,
+        "10": 1039
+      },
+      "per_wave_valid": {
+        "1": 440,
+        "2": 540,
+        "3": 646,
+        "4": 740,
+        "5": 851,
+        "6": 940,
+        "7": 1046,
+        "8": 1150,
+        "9": 1246,
+        "10": 1039
+      },
+      "overflow": {
+        "enemies": {
+          "overflow_samples": 0,
+          "max_raw": 49,
+          "capacity": 64
+        },
+        "bosses": {
+          "overflow_samples": 0,
+          "max_raw": 0,
+          "capacity": 2
+        },
+        "projectiles": {
+          "overflow_samples": 0,
+          "max_raw": 2,
+          "capacity": 32
+        },
+        "materials": {
+          "overflow_samples": 0,
+          "max_raw": 50,
+          "capacity": 64
+        },
+        "consumables": {
+          "overflow_samples": 0,
+          "max_raw": 7,
+          "capacity": 24
+        },
+        "crates": {
+          "overflow_samples": 0,
+          "max_raw": 1,
+          "capacity": 2
+        },
+        "obstacles": {
+          "overflow_samples": 0,
+          "max_raw": 5,
+          "capacity": 8
+        }
+      },
+      "fault_count": 0,
+      "faults": [],
+      "determinism_spot_check": [
+        {
+          "position": 0,
+          "capture_seq": 1,
+          "digest": "38ABCB983AB14ED1524B8F91A40A494B37DBAD20786598CA125CB27B428F8D00"
+        },
+        {
+          "position": 5000,
+          "capture_seq": 5001,
+          "digest": "38ED1EF61AFD9960B475AE95381CA76F16D3EF9DA44289BA8EC60084FDE5D143"
+        },
+        {
+          "position": 8637,
+          "capture_seq": 8638,
+          "digest": "E608B943E4F7E5B09E2EB527F55CB5CD8DDB2BD84711B38797933CFDDF7E25CC"
+        }
+      ],
+      "build_seconds": 4.29
+    },
+    {
+      "run_id": "run_1784792652_7723",
+      "shard_file": "run_1784792652_7723.npz",
+      "shard_sha256": "F5C9613379CC34FD3E3CC71654B8C9EEC2DC5A1457D8791C4D25A04F51AE1CDD",
+      "shard_bytes": 23692002,
+      "capture_seq_monotonic": true,
+      "counts": {
+        "total": 21852,
+        "valid": 21852,
+        "temporal_valid": 21832,
+        "valid_and_temporal_valid": 21832
+      },
+      "per_wave_total": {
+        "1": 440,
+        "2": 551,
+        "3": 640,
+        "4": 746,
+        "5": 846,
+        "6": 951,
+        "7": 1045,
+        "8": 1141,
+        "9": 1256,
+        "10": 1246,
+        "11": 1251,
+        "12": 1246,
+        "13": 1240,
+        "14": 1240,
+        "15": 1241,
+        "16": 1251,
+        "17": 1240,
+        "18": 1241,
+        "19": 1240,
+        "20": 1800
+      },
+      "per_wave_valid": {
+        "1": 440,
+        "2": 551,
+        "3": 640,
+        "4": 746,
+        "5": 846,
+        "6": 951,
+        "7": 1045,
+        "8": 1141,
+        "9": 1256,
+        "10": 1246,
+        "11": 1251,
+        "12": 1246,
+        "13": 1240,
+        "14": 1240,
+        "15": 1241,
+        "16": 1251,
+        "17": 1240,
+        "18": 1241,
+        "19": 1240,
+        "20": 1800
+      },
+      "overflow": {
+        "enemies": {
+          "overflow_samples": 0,
+          "max_raw": 47,
+          "capacity": 64
+        },
+        "bosses": {
+          "overflow_samples": 0,
+          "max_raw": 1,
+          "capacity": 2
+        },
+        "projectiles": {
+          "overflow_samples": 0,
+          "max_raw": 31,
+          "capacity": 32
+        },
+        "materials": {
+          "overflow_samples": 0,
+          "max_raw": 51,
+          "capacity": 64
+        },
+        "consumables": {
+          "overflow_samples": 0,
+          "max_raw": 8,
+          "capacity": 24
+        },
+        "crates": {
+          "overflow_samples": 0,
+          "max_raw": 2,
+          "capacity": 2
+        },
+        "obstacles": {
+          "overflow_samples": 0,
+          "max_raw": 3,
+          "capacity": 8
+        }
+      },
+      "fault_count": 0,
+      "faults": [],
+      "determinism_spot_check": [
+        {
+          "position": 0,
+          "capture_seq": 1,
+          "digest": "97C50AE298797893A130DA08F4B61E38F36429FD68C46E32DA89C59FF978D44D"
+        },
+        {
+          "position": 5000,
+          "capture_seq": 5001,
+          "digest": "3C8BFE293FF57DE4ED575CC71B271CF5F0244AC34A33C1CB8F1FFB3D9963E740"
+        },
+        {
+          "position": 10000,
+          "capture_seq": 10001,
+          "digest": "742F4FA260C032A5CBA86BFB0DAC46D242D4BB7908B2E1225F827B60FFC1F63F"
+        },
+        {
+          "position": 15000,
+          "capture_seq": 15001,
+          "digest": "726CCBA2D1B33A4EBEB393484AB6A841952BAE5F671849E3A15185CF91804A5B"
+        },
+        {
+          "position": 20000,
+          "capture_seq": 20001,
+          "digest": "9170878B21FFD963FBCDEC19BDDFE728E01542B91625C45D835C490D3FDBA5E7"
+        },
+        {
+          "position": 21851,
+          "capture_seq": 21852,
+          "digest": "8382EAE0F0C4277A48B18DFD6255923D39B9B8569D9DD8D4BD39C259E60E7662"
+        }
+      ],
+      "build_seconds": 14.02
+    },
+    {
+      "run_id": "run_1784793833_32034",
+      "shard_file": "run_1784793833_32034.npz",
+      "shard_sha256": "79F07FA0A97A59CDBC8B7F8EDBBF2581B12232159880013B6CF8EEF6A49AAC16",
+      "shard_bytes": 18476562,
+      "capture_seq_monotonic": true,
+      "counts": {
+        "total": 17416,
+        "valid": 17416,
+        "temporal_valid": 17399,
+        "valid_and_temporal_valid": 17399
+      },
+      "per_wave_total": {
+        "1": 440,
+        "2": 546,
+        "3": 640,
+        "4": 740,
+        "5": 841,
+        "6": 945,
+        "7": 1041,
+        "8": 1140,
+        "9": 1251,
+        "10": 1240,
+        "11": 1246,
+        "12": 1245,
+        "13": 1241,
+        "14": 1240,
+        "15": 1240,
+        "16": 1246,
+        "17": 1134
+      },
+      "per_wave_valid": {
+        "1": 440,
+        "2": 546,
+        "3": 640,
+        "4": 740,
+        "5": 841,
+        "6": 945,
+        "7": 1041,
+        "8": 1140,
+        "9": 1251,
+        "10": 1240,
+        "11": 1246,
+        "12": 1245,
+        "13": 1241,
+        "14": 1240,
+        "15": 1240,
+        "16": 1246,
+        "17": 1134
+      },
+      "overflow": {
+        "enemies": {
+          "overflow_samples": 0,
+          "max_raw": 43,
+          "capacity": 64
+        },
+        "bosses": {
+          "overflow_samples": 0,
+          "max_raw": 0,
+          "capacity": 2
+        },
+        "projectiles": {
+          "overflow_samples": 0,
+          "max_raw": 11,
+          "capacity": 32
+        },
+        "materials": {
+          "overflow_samples": 0,
+          "max_raw": 51,
+          "capacity": 64
+        },
+        "consumables": {
+          "overflow_samples": 0,
+          "max_raw": 12,
+          "capacity": 24
+        },
+        "crates": {
+          "overflow_samples": 0,
+          "max_raw": 1,
+          "capacity": 2
+        },
+        "obstacles": {
+          "overflow_samples": 0,
+          "max_raw": 3,
+          "capacity": 8
+        }
+      },
+      "fault_count": 0,
+      "faults": [],
+      "determinism_spot_check": [
+        {
+          "position": 0,
+          "capture_seq": 1,
+          "digest": "CCCC39298E924B20AB88CBA2FEBC3558614DC61B3F66F4F1B8EF604004FE102D"
+        },
+        {
+          "position": 5000,
+          "capture_seq": 5001,
+          "digest": "BC155CCA90BE108E08060501613616E462E6D1A422DA219CC0C38E79970DBE73"
+        },
+        {
+          "position": 10000,
+          "capture_seq": 10001,
+          "digest": "4C0094030CCA58634038F0226AA91A55E552767CD37F4AC9899A03531A309B0E"
+        },
+        {
+          "position": 15000,
+          "capture_seq": 15001,
+          "digest": "42EB3CF496EC7CB4EBE5BA3A839AD0E5F3C18C9A3636E2B7B8021684B452A0D8"
+        },
+        {
+          "position": 17415,
+          "capture_seq": 17416,
+          "digest": "821A1350D330DD0ACBAC18631A2F81600FE4434B686F1870FD1CF91A689AD3BC"
+        }
+      ],
+      "build_seconds": 10.06
+    },
+    {
+      "run_id": "run_1784794784_69267",
+      "shard_file": "run_1784794784_69267.npz",
+      "shard_sha256": "30416D586A22171A22099966BAC56D2EB72E8BF1E0E12BC0F1F797543715DF8C",
+      "shard_bytes": 22350803,
+      "capture_seq_monotonic": true,
+      "counts": {
+        "total": 20860,
+        "valid": 20860,
+        "temporal_valid": 20840,
+        "valid_and_temporal_valid": 20840
+      },
+      "per_wave_total": {
+        "1": 440,
+        "2": 545,
+        "3": 641,
+        "4": 746,
+        "5": 845,
+        "6": 940,
+        "7": 1046,
+        "8": 1151,
+        "9": 1246,
+        "10": 1240,
+        "11": 1251,
+        "12": 1245,
+        "13": 1252,
+        "14": 1240,
+        "15": 1246,
+        "16": 1246,
+        "17": 1240,
+        "18": 1240,
+        "19": 1246,
+        "20": 814
+      },
+      "per_wave_valid": {
+        "1": 440,
+        "2": 545,
+        "3": 641,
+        "4": 746,
+        "5": 845,
+        "6": 940,
+        "7": 1046,
+        "8": 1151,
+        "9": 1246,
+        "10": 1240,
+        "11": 1251,
+        "12": 1245,
+        "13": 1252,
+        "14": 1240,
+        "15": 1246,
+        "16": 1246,
+        "17": 1240,
+        "18": 1240,
+        "19": 1246,
+        "20": 814
+      },
+      "overflow": {
+        "enemies": {
+          "overflow_samples": 0,
+          "max_raw": 41,
+          "capacity": 64
+        },
+        "bosses": {
+          "overflow_samples": 0,
+          "max_raw": 1,
+          "capacity": 2
+        },
+        "projectiles": {
+          "overflow_samples": 0,
+          "max_raw": 30,
+          "capacity": 32
+        },
+        "materials": {
+          "overflow_samples": 0,
+          "max_raw": 50,
+          "capacity": 64
+        },
+        "consumables": {
+          "overflow_samples": 0,
+          "max_raw": 9,
+          "capacity": 24
+        },
+        "crates": {
+          "overflow_samples": 0,
+          "max_raw": 2,
+          "capacity": 2
+        },
+        "obstacles": {
+          "overflow_samples": 0,
+          "max_raw": 2,
+          "capacity": 8
+        }
+      },
+      "fault_count": 0,
+      "faults": [],
+      "determinism_spot_check": [
+        {
+          "position": 0,
+          "capture_seq": 1,
+          "digest": "4596BFC9F9229FCA4F4649B00314688DF7A9128E6611EE0DFAE148DE841C8EA5"
+        },
+        {
+          "position": 5000,
+          "capture_seq": 5001,
+          "digest": "CEF9F91145D8B30972CD476D7D9AE327143ABD28823304B9B320F7E23708DBBE"
+        },
+        {
+          "position": 10000,
+          "capture_seq": 10001,
+          "digest": "8E9621D985D78AAFE8A373398A66710A895E995D4AB5433C0292108114B86C23"
+        },
+        {
+          "position": 15000,
+          "capture_seq": 15001,
+          "digest": "A6AC78B3B0CA81C1BCACEE0807223C94DE0CAFB78AE7F7CB97C2712C73F6D057"
+        },
+        {
+          "position": 20000,
+          "capture_seq": 20001,
+          "digest": "30ED282CB959308233C0074F6C696659E58DAD156BC2E8F64C269AD1384FDEAF"
+        },
+        {
+          "position": 20859,
+          "capture_seq": 20860,
+          "digest": "C68460D065A20AD8E8079BCBF75D4B05E45EFDD6ECDF2C92FB387F44A0E7D393"
+        }
+      ],
+      "build_seconds": 12.17
+    },
+    {
+      "run_id": "run_1784795927_93597",
+      "shard_file": "run_1784795927_93597.npz",
+      "shard_sha256": "38156018591DA1EA5B3D09515681DA817955CC545A5A8975FE8A50E9EFDDD0D8",
+      "shard_bytes": 22425844,
+      "capture_seq_monotonic": true,
+      "counts": {
+        "total": 21059,
+        "valid": 21059,
+        "temporal_valid": 21039,
+        "valid_and_temporal_valid": 21039
+      },
+      "per_wave_total": {
+        "1": 440,
+        "2": 545,
+        "3": 646,
+        "4": 740,
+        "5": 851,
+        "6": 947,
+        "7": 1040,
+        "8": 1151,
+        "9": 1245,
+        "10": 1241,
+        "11": 1240,
+        "12": 1240,
+        "13": 1241,
+        "14": 1251,
+        "15": 1240,
+        "16": 1251,
+        "17": 1240,
+        "18": 1246,
+        "19": 1246,
+        "20": 1018
+      },
+      "per_wave_valid": {
+        "1": 440,
+        "2": 545,
+        "3": 646,
+        "4": 740,
+        "5": 851,
+        "6": 947,
+        "7": 1040,
+        "8": 1151,
+        "9": 1245,
+        "10": 1241,
+        "11": 1240,
+        "12": 1240,
+        "13": 1241,
+        "14": 1251,
+        "15": 1240,
+        "16": 1251,
+        "17": 1240,
+        "18": 1246,
+        "19": 1246,
+        "20": 1018
+      },
+      "overflow": {
+        "enemies": {
+          "overflow_samples": 0,
+          "max_raw": 57,
+          "capacity": 64
+        },
+        "bosses": {
+          "overflow_samples": 0,
+          "max_raw": 1,
+          "capacity": 2
+        },
+        "projectiles": {
+          "overflow_samples": 0,
+          "max_raw": 27,
+          "capacity": 32
+        },
+        "materials": {
+          "overflow_samples": 0,
+          "max_raw": 51,
+          "capacity": 64
+        },
+        "consumables": {
+          "overflow_samples": 0,
+          "max_raw": 8,
+          "capacity": 24
+        },
+        "crates": {
+          "overflow_samples": 0,
+          "max_raw": 2,
+          "capacity": 2
+        },
+        "obstacles": {
+          "overflow_samples": 0,
+          "max_raw": 3,
+          "capacity": 8
+        }
+      },
+      "fault_count": 0,
+      "faults": [],
+      "determinism_spot_check": [
+        {
+          "position": 0,
+          "capture_seq": 1,
+          "digest": "D0693A8C87C1DCC55319A99BFAF4CC1EC389BC113C60286AF90FC4F546F1E8D4"
+        },
+        {
+          "position": 5000,
+          "capture_seq": 5001,
+          "digest": "E5B124BB3D8EBD5DFCFDECF7480C114C962B5E93D156C7600396D2555CAFBC61"
+        },
+        {
+          "position": 10000,
+          "capture_seq": 10001,
+          "digest": "FDAC9D54C965D8F4A0AD17EDBAFF2423AD47B9F153F3E72BC3843FEA6445F9D5"
+        },
+        {
+          "position": 15000,
+          "capture_seq": 15001,
+          "digest": "0A74324F0191A787DCAB87778F5263D2013B8ABFC5A7904A4D643ADE9F11C83D"
+        },
+        {
+          "position": 20000,
+          "capture_seq": 20001,
+          "digest": "6A6BBC4117CF43E2A4937269FB05A3AA268F770F61699437AF40D23A0788CAFE"
+        },
+        {
+          "position": 21058,
+          "capture_seq": 21059,
+          "digest": "D3AEAEFF5D7F5AFA8F88268B4F80E4B35794267E9D3F942FBF17569DBF86CA60"
+        }
+      ],
+      "build_seconds": 12.19
+    },
+    {
+      "run_id": "run_1784797082_83949",
+      "shard_file": "run_1784797082_83949.npz",
+      "shard_sha256": "7E4782C9E2E38F4D7FB1265B4F0E1555A649989032E9A58C48E8A3D0D33B759F",
+      "shard_bytes": 19363900,
+      "capture_seq_monotonic": true,
+      "counts": {
+        "total": 21616,
+        "valid": 21616,
+        "temporal_valid": 21596,
+        "valid_and_temporal_valid": 21596
+      },
+      "per_wave_total": {
+        "1": 440,
+        "2": 545,
+        "3": 646,
+        "4": 741,
+        "5": 851,
+        "6": 940,
+        "7": 1051,
+        "8": 1140,
+        "9": 1241,
+        "10": 1245,
+        "11": 1251,
+        "12": 1246,
+        "13": 1246,
+        "14": 1240,
+        "15": 1246,
+        "16": 1246,
+        "17": 1240,
+        "18": 1240,
+        "19": 1241,
+        "20": 1580
+      },
+      "per_wave_valid": {
+        "1": 440,
+        "2": 545,
+        "3": 646,
+        "4": 741,
+        "5": 851,
+        "6": 940,
+        "7": 1051,
+        "8": 1140,
+        "9": 1241,
+        "10": 1245,
+        "11": 1251,
+        "12": 1246,
+        "13": 1246,
+        "14": 1240,
+        "15": 1246,
+        "16": 1246,
+        "17": 1240,
+        "18": 1240,
+        "19": 1241,
+        "20": 1580
+      },
+      "overflow": {
+        "enemies": {
+          "overflow_samples": 0,
+          "max_raw": 46,
+          "capacity": 64
+        },
+        "bosses": {
+          "overflow_samples": 0,
+          "max_raw": 1,
+          "capacity": 2
+        },
+        "projectiles": {
+          "overflow_samples": 0,
+          "max_raw": 30,
+          "capacity": 32
+        },
+        "materials": {
+          "overflow_samples": 0,
+          "max_raw": 50,
+          "capacity": 64
+        },
+        "consumables": {
+          "overflow_samples": 0,
+          "max_raw": 10,
+          "capacity": 24
+        },
+        "crates": {
+          "overflow_samples": 0,
+          "max_raw": 2,
+          "capacity": 2
+        },
+        "obstacles": {
+          "overflow_samples": 0,
+          "max_raw": 2,
+          "capacity": 8
+        }
+      },
+      "fault_count": 0,
+      "faults": [],
+      "determinism_spot_check": [
+        {
+          "position": 0,
+          "capture_seq": 1,
+          "digest": "450F67017A411EF678CFC1D68CF2B5638A3C3A26D0E48538B5AE5A76EACFECF5"
+        },
+        {
+          "position": 5000,
+          "capture_seq": 5001,
+          "digest": "FB612D4D150E2BC43EDF093455B11242717B5A9514F16834C12EB37C0087C05A"
+        },
+        {
+          "position": 10000,
+          "capture_seq": 10001,
+          "digest": "1BC35E7860F204E2A051C6D3E78D59B77DAC1B4D22AD832FE18D7E34A96D4650"
+        },
+        {
+          "position": 15000,
+          "capture_seq": 15001,
+          "digest": "42FC0DE9CEABAFF1B7FD8AE5886E341949386A6A4657930B47DB712A09FECF08"
+        },
+        {
+          "position": 20000,
+          "capture_seq": 20001,
+          "digest": "BBC727C889212C19A80933CC8CB56B0DCF55370D541C7750A31BF0B98192E311"
+        },
+        {
+          "position": 21615,
+          "capture_seq": 21616,
+          "digest": "EA3AE0B1D2B5CDFFEAAD0708B7FB922B7193393B157E1777C8D68EA3729CCFE5"
+        }
+      ],
+      "build_seconds": 11.08
+    },
+    {
+      "run_id": "run_1784798249_41022",
+      "shard_file": "run_1784798249_41022.npz",
+      "shard_sha256": "8C0D96A71E6382CC117818428869CAD88770870439F9B9D8C77FD0E712EF89C8",
+      "shard_bytes": 21975818,
+      "capture_seq_monotonic": true,
+      "counts": {
+        "total": 21111,
+        "valid": 21111,
+        "temporal_valid": 21091,
+        "valid_and_temporal_valid": 21091
+      },
+      "per_wave_total": {
+        "1": 440,
+        "2": 546,
+        "3": 640,
+        "4": 740,
+        "5": 846,
+        "6": 946,
+        "7": 1051,
+        "8": 1146,
+        "9": 1256,
+        "10": 1246,
+        "11": 1240,
+        "12": 1246,
+        "13": 1257,
+        "14": 1245,
+        "15": 1252,
+        "16": 1245,
+        "17": 1240,
+        "18": 1246,
+        "19": 1240,
+        "20": 1043
+      },
+      "per_wave_valid": {
+        "1": 440,
+        "2": 546,
+        "3": 640,
+        "4": 740,
+        "5": 846,
+        "6": 946,
+        "7": 1051,
+        "8": 1146,
+        "9": 1256,
+        "10": 1246,
+        "11": 1240,
+        "12": 1246,
+        "13": 1257,
+        "14": 1245,
+        "15": 1252,
+        "16": 1245,
+        "17": 1240,
+        "18": 1246,
+        "19": 1240,
+        "20": 1043
+      },
+      "overflow": {
+        "enemies": {
+          "overflow_samples": 0,
+          "max_raw": 38,
+          "capacity": 64
+        },
+        "bosses": {
+          "overflow_samples": 0,
+          "max_raw": 1,
+          "capacity": 2
+        },
+        "projectiles": {
+          "overflow_samples": 0,
+          "max_raw": 30,
+          "capacity": 32
+        },
+        "materials": {
+          "overflow_samples": 0,
+          "max_raw": 51,
+          "capacity": 64
+        },
+        "consumables": {
+          "overflow_samples": 0,
+          "max_raw": 9,
+          "capacity": 24
+        },
+        "crates": {
+          "overflow_samples": 0,
+          "max_raw": 2,
+          "capacity": 2
+        },
+        "obstacles": {
+          "overflow_samples": 0,
+          "max_raw": 3,
+          "capacity": 8
+        }
+      },
+      "fault_count": 0,
+      "faults": [],
+      "determinism_spot_check": [
+        {
+          "position": 0,
+          "capture_seq": 1,
+          "digest": "F990CF144A1B953F6E3292A362BDACB411C42449E8E204D87C0DE247F7C07B0A"
+        },
+        {
+          "position": 5000,
+          "capture_seq": 5001,
+          "digest": "B0AC9AAC115885B7C0D9169CCE81DB98E75595E90D8F4281D3F9F7116A1ED5E8"
+        },
+        {
+          "position": 10000,
+          "capture_seq": 10001,
+          "digest": "C41D9BD4240D6962436727AB86175D3929FD1B4890517FDAFC7B4CEB564E184E"
+        },
+        {
+          "position": 15000,
+          "capture_seq": 15001,
+          "digest": "24D148A051E2B9130BD1C8AF1F3B4CCE177011188E101BE8D969F0CC92FE9BAC"
+        },
+        {
+          "position": 20000,
+          "capture_seq": 20001,
+          "digest": "03339A0048A296DF6DFCD0AF99FA0E90FC78FACC8FACA1E9DA50EB4D678247D5"
+        },
+        {
+          "position": 21110,
+          "capture_seq": 21111,
+          "digest": "5742FBCE9D1A7FE82DEC6353AB52AE71385073C5E0A015BF082F0DBEF7D2A380"
+        }
+      ],
+      "build_seconds": 12.6
+    },
+    {
+      "run_id": "run_1784799404_80018",
+      "shard_file": "run_1784799404_80018.npz",
+      "shard_sha256": "60680F5C112CABD0AF8ED7E28DDFB1AD046D951A2E3CF3EAF2910A04591E4BF2",
+      "shard_bytes": 17233362,
+      "capture_seq_monotonic": true,
+      "counts": {
+        "total": 20926,
+        "valid": 20926,
+        "temporal_valid": 20906,
+        "valid_and_temporal_valid": 20906
+      },
+      "per_wave_total": {
+        "1": 440,
+        "2": 545,
+        "3": 646,
+        "4": 746,
+        "5": 846,
+        "6": 940,
+        "7": 1040,
+        "8": 1141,
+        "9": 1250,
+        "10": 1246,
+        "11": 1251,
+        "12": 1240,
+        "13": 1241,
+        "14": 1245,
+        "15": 1257,
+        "16": 1251,
+        "17": 1240,
+        "18": 1240,
+        "19": 1246,
+        "20": 875
+      },
+      "per_wave_valid": {
+        "1": 440,
+        "2": 545,
+        "3": 646,
+        "4": 746,
+        "5": 846,
+        "6": 940,
+        "7": 1040,
+        "8": 1141,
+        "9": 1250,
+        "10": 1246,
+        "11": 1251,
+        "12": 1240,
+        "13": 1241,
+        "14": 1245,
+        "15": 1257,
+        "16": 1251,
+        "17": 1240,
+        "18": 1240,
+        "19": 1246,
+        "20": 875
+      },
+      "overflow": {
+        "enemies": {
+          "overflow_samples": 0,
+          "max_raw": 42,
+          "capacity": 64
+        },
+        "bosses": {
+          "overflow_samples": 0,
+          "max_raw": 1,
+          "capacity": 2
+        },
+        "projectiles": {
+          "overflow_samples": 0,
+          "max_raw": 25,
+          "capacity": 32
+        },
+        "materials": {
+          "overflow_samples": 0,
+          "max_raw": 50,
+          "capacity": 64
+        },
+        "consumables": {
+          "overflow_samples": 0,
+          "max_raw": 13,
+          "capacity": 24
+        },
+        "crates": {
+          "overflow_samples": 0,
+          "max_raw": 1,
+          "capacity": 2
+        },
+        "obstacles": {
+          "overflow_samples": 0,
+          "max_raw": 3,
+          "capacity": 8
+        }
+      },
+      "fault_count": 0,
+      "faults": [],
+      "determinism_spot_check": [
+        {
+          "position": 0,
+          "capture_seq": 1,
+          "digest": "6F3C4023D5AC87EEBA717E0959431EAF185F46D548E3235CD01AA04226AB1AAA"
+        },
+        {
+          "position": 5000,
+          "capture_seq": 5001,
+          "digest": "310FEAEC174351C7D51AB87858A0EDDC0A2153F5E925C831668EAE6A0784A502"
+        },
+        {
+          "position": 10000,
+          "capture_seq": 10001,
+          "digest": "04DD71F2006991ACBDE5291129B7FFA5E670153016424FC97436EF89769B2700"
+        },
+        {
+          "position": 15000,
+          "capture_seq": 15001,
+          "digest": "2B4308815A0F8C7C995E6A9ADC7D187A75A2CEF8AD85BBBBA1BCB05B288CF8CD"
+        },
+        {
+          "position": 20000,
+          "capture_seq": 20001,
+          "digest": "F325DCD09B1B301CAD84E6ABB6FE5784F6DB1889867FAEF3272340C9FDA2FE7C"
+        },
+        {
+          "position": 20925,
+          "capture_seq": 20926,
+          "digest": "9E9BF6E4F4C1D7450A0D7AC34F1AAF882E63EAA2998FF8152DB12ED0B89B79C8"
+        }
+      ],
+      "build_seconds": 10.19
+    },
+    {
+      "run_id": "run_1784800561_47448",
+      "shard_file": "run_1784800561_47448.npz",
+      "shard_sha256": "5B22DFBC43E01F7E43CA86921DEBB3FF4552D1FF81A46B852DC3DE92C76D82B1",
+      "shard_bytes": 26331459,
+      "capture_seq_monotonic": true,
+      "counts": {
+        "total": 21313,
+        "valid": 21313,
+        "temporal_valid": 21293,
+        "valid_and_temporal_valid": 21293
+      },
+      "per_wave_total": {
+        "1": 440,
+        "2": 546,
+        "3": 640,
+        "4": 740,
+        "5": 841,
+        "6": 945,
+        "7": 1046,
+        "8": 1140,
+        "9": 1251,
+        "10": 1246,
+        "11": 1241,
+        "12": 1251,
+        "13": 1240,
+        "14": 1246,
+        "15": 1246,
+        "16": 1246,
+        "17": 1240,
+        "18": 1240,
+        "19": 1246,
+        "20": 1282
+      },
+      "per_wave_valid": {
+        "1": 440,
+        "2": 546,
+        "3": 640,
+        "4": 740,
+        "5": 841,
+        "6": 945,
+        "7": 1046,
+        "8": 1140,
+        "9": 1251,
+        "10": 1246,
+        "11": 1241,
+        "12": 1251,
+        "13": 1240,
+        "14": 1246,
+        "15": 1246,
+        "16": 1246,
+        "17": 1240,
+        "18": 1240,
+        "19": 1246,
+        "20": 1282
+      },
+      "overflow": {
+        "enemies": {
+          "overflow_samples": 0,
+          "max_raw": 52,
+          "capacity": 64
+        },
+        "bosses": {
+          "overflow_samples": 0,
+          "max_raw": 1,
+          "capacity": 2
+        },
+        "projectiles": {
+          "overflow_samples": 0,
+          "max_raw": 30,
+          "capacity": 32
+        },
+        "materials": {
+          "overflow_samples": 0,
+          "max_raw": 51,
+          "capacity": 64
+        },
+        "consumables": {
+          "overflow_samples": 0,
+          "max_raw": 15,
+          "capacity": 24
+        },
+        "crates": {
+          "overflow_samples": 0,
+          "max_raw": 2,
+          "capacity": 2
+        },
+        "obstacles": {
+          "overflow_samples": 0,
+          "max_raw": 3,
+          "capacity": 8
+        }
+      },
+      "fault_count": 0,
+      "faults": [],
+      "determinism_spot_check": [
+        {
+          "position": 0,
+          "capture_seq": 1,
+          "digest": "00154BB308DDED45488AAD7CA02288B9F30A56483BE2EF5D88FEC8244E4B8286"
+        },
+        {
+          "position": 5000,
+          "capture_seq": 5001,
+          "digest": "25F8A95E38DEEA80BA0C4B38CAE2FC6C3087B8B997723023B8D35E8651A949F6"
+        },
+        {
+          "position": 10000,
+          "capture_seq": 10001,
+          "digest": "C8609AEEC971C2CF629C7488DE995B0E65188D28CEE21C590F92B72B0AE7B1C1"
+        },
+        {
+          "position": 15000,
+          "capture_seq": 15001,
+          "digest": "8557CC5722744056D0168D284CDF4E6F278F366C36ECFD68FA26244CFC6F7701"
+        },
+        {
+          "position": 20000,
+          "capture_seq": 20001,
+          "digest": "0E77457C521C699E830DA2285DAEA008253D45C80D62998D6006A0945B647427"
+        },
+        {
+          "position": 21312,
+          "capture_seq": 21313,
+          "digest": "804D54ED6100072C7CA15824729A94DD7FDDBDAEBF197747AA5BAE3D60B55CD1"
+        }
+      ],
+      "build_seconds": 13.65
+    },
+    {
+      "run_id": "run_1784801716_88465",
+      "shard_file": "run_1784801716_88465.npz",
+      "shard_sha256": "FC9D754C16DA83C88CCAC5D62AE994D62DFFC4EB83433B0936C84AB812CD1A47",
+      "shard_bytes": 6749406,
+      "capture_seq_monotonic": true,
+      "counts": {
+        "total": 8550,
+        "valid": 8550,
+        "temporal_valid": 8540,
+        "valid_and_temporal_valid": 8540
+      },
+      "per_wave_total": {
+        "1": 440,
+        "2": 546,
+        "3": 640,
+        "4": 740,
+        "5": 856,
+        "6": 941,
+        "7": 1040,
+        "8": 1140,
+        "9": 1252,
+        "10": 955
+      },
+      "per_wave_valid": {
+        "1": 440,
+        "2": 546,
+        "3": 640,
+        "4": 740,
+        "5": 856,
+        "6": 941,
+        "7": 1040,
+        "8": 1140,
+        "9": 1252,
+        "10": 955
+      },
+      "overflow": {
+        "enemies": {
+          "overflow_samples": 0,
+          "max_raw": 49,
+          "capacity": 64
+        },
+        "bosses": {
+          "overflow_samples": 0,
+          "max_raw": 0,
+          "capacity": 2
+        },
+        "projectiles": {
+          "overflow_samples": 0,
+          "max_raw": 3,
+          "capacity": 32
+        },
+        "materials": {
+          "overflow_samples": 0,
+          "max_raw": 50,
+          "capacity": 64
+        },
+        "consumables": {
+          "overflow_samples": 0,
+          "max_raw": 6,
+          "capacity": 24
+        },
+        "crates": {
+          "overflow_samples": 0,
+          "max_raw": 1,
+          "capacity": 2
+        },
+        "obstacles": {
+          "overflow_samples": 0,
+          "max_raw": 2,
+          "capacity": 8
+        }
+      },
+      "fault_count": 0,
+      "faults": [],
+      "determinism_spot_check": [
+        {
+          "position": 0,
+          "capture_seq": 1,
+          "digest": "6C09AB4EC5AF57863F225A9D320E286D1A2BD1FA4ACC68D95C198E33EF8BE312"
+        },
+        {
+          "position": 5000,
+          "capture_seq": 5001,
+          "digest": "3DDEFB6EF661F6CA2F534D2AF261B44D2AAA8E62F3350E681C30C4EAF9766859"
+        },
+        {
+          "position": 8549,
+          "capture_seq": 8550,
+          "digest": "AAA41BB7A24FD191FC4963B3B8EB4A22A17AE58EB8D8F854E3A7837CDD2FC02B"
+        }
+      ],
+      "build_seconds": 4.24
+    },
+    {
+      "run_id": "run_1784802191_76892",
+      "shard_file": "run_1784802191_76892.npz",
+      "shard_sha256": "E5DE81C3C37C62765DD939BCD2CA3DBEE7F25E9731B0352A0558F377EDCFAA1F",
+      "shard_bytes": 24401694,
+      "capture_seq_monotonic": true,
+      "counts": {
+        "total": 20568,
+        "valid": 20568,
+        "temporal_valid": 20548,
+        "valid_and_temporal_valid": 20548
+      },
+      "per_wave_total": {
+        "1": 440,
+        "2": 546,
+        "3": 640,
+        "4": 746,
+        "5": 840,
+        "6": 945,
+        "7": 1041,
+        "8": 1140,
+        "9": 1251,
+        "10": 1245,
+        "11": 1251,
+        "12": 1246,
+        "13": 1246,
+        "14": 1240,
+        "15": 1246,
+        "16": 1240,
+        "17": 1241,
+        "18": 1240,
+        "19": 1246,
+        "20": 538
+      },
+      "per_wave_valid": {
+        "1": 440,
+        "2": 546,
+        "3": 640,
+        "4": 746,
+        "5": 840,
+        "6": 945,
+        "7": 1041,
+        "8": 1140,
+        "9": 1251,
+        "10": 1245,
+        "11": 1251,
+        "12": 1246,
+        "13": 1246,
+        "14": 1240,
+        "15": 1246,
+        "16": 1240,
+        "17": 1241,
+        "18": 1240,
+        "19": 1246,
+        "20": 538
+      },
+      "overflow": {
+        "enemies": {
+          "overflow_samples": 0,
+          "max_raw": 58,
+          "capacity": 64
+        },
+        "bosses": {
+          "overflow_samples": 0,
+          "max_raw": 1,
+          "capacity": 2
+        },
+        "projectiles": {
+          "overflow_samples": 0,
+          "max_raw": 16,
+          "capacity": 32
+        },
+        "materials": {
+          "overflow_samples": 0,
+          "max_raw": 54,
+          "capacity": 64
+        },
+        "consumables": {
+          "overflow_samples": 0,
+          "max_raw": 9,
+          "capacity": 24
+        },
+        "crates": {
+          "overflow_samples": 0,
+          "max_raw": 1,
+          "capacity": 2
+        },
+        "obstacles": {
+          "overflow_samples": 0,
+          "max_raw": 2,
+          "capacity": 8
+        }
+      },
+      "fault_count": 0,
+      "faults": [],
+      "determinism_spot_check": [
+        {
+          "position": 0,
+          "capture_seq": 1,
+          "digest": "DBCC07E0D9A5788B92303E53979A76C57DB3EE1185E68A6E96B8FAA4F1C22722"
+        },
+        {
+          "position": 5000,
+          "capture_seq": 5001,
+          "digest": "6E3AEB719A0CCFBD6571CDF6180CADAACE0864BAC2245DBB316524A44921FA88"
+        },
+        {
+          "position": 10000,
+          "capture_seq": 10001,
+          "digest": "4EF4871665CD7EEB083A78F446B6E81542A2F6A26797DB31710DE7E910513E85"
+        },
+        {
+          "position": 15000,
+          "capture_seq": 15001,
+          "digest": "15A9391CE0409708D1ABDF10C49E7B031803A425519BA6D151FB1BCFDDDD3838"
+        },
+        {
+          "position": 20000,
+          "capture_seq": 20001,
+          "digest": "BD96902614A546C7D927B7F8FEC5222CED5914F28E268A0E3B86EFD63B22E6B5"
+        },
+        {
+          "position": 20567,
+          "capture_seq": 20568,
+          "digest": "99C2C393D7CB87E0C9E43BCC70B81EB6DE5B0AC61CF5C2905504F283C6B0FBB2"
+        }
+      ],
+      "build_seconds": 12.94
+    },
+    {
+      "run_id": "run_1784803299_7195",
+      "shard_file": "run_1784803299_7195.npz",
+      "shard_sha256": "4F3B0864DA6E3936C7D578B682ED04EFABD398921B2ECD9D5D49FA19471733A3",
+      "shard_bytes": 23803046,
+      "capture_seq_monotonic": true,
+      "counts": {
+        "total": 21060,
+        "valid": 21060,
+        "temporal_valid": 21040,
+        "valid_and_temporal_valid": 21040
+      },
+      "per_wave_total": {
+        "1": 440,
+        "2": 545,
+        "3": 641,
+        "4": 740,
+        "5": 851,
+        "6": 941,
+        "7": 1040,
+        "8": 1151,
+        "9": 1246,
+        "10": 1251,
+        "11": 1245,
+        "12": 1240,
+        "13": 1240,
+        "14": 1246,
+        "15": 1245,
+        "16": 1241,
+        "17": 1240,
+        "18": 1240,
+        "19": 1240,
+        "20": 1037
+      },
+      "per_wave_valid": {
+        "1": 440,
+        "2": 545,
+        "3": 641,
+        "4": 740,
+        "5": 851,
+        "6": 941,
+        "7": 1040,
+        "8": 1151,
+        "9": 1246,
+        "10": 1251,
+        "11": 1245,
+        "12": 1240,
+        "13": 1240,
+        "14": 1246,
+        "15": 1245,
+        "16": 1241,
+        "17": 1240,
+        "18": 1240,
+        "19": 1240,
+        "20": 1037
+      },
+      "overflow": {
+        "enemies": {
+          "overflow_samples": 0,
+          "max_raw": 57,
+          "capacity": 64
+        },
+        "bosses": {
+          "overflow_samples": 0,
+          "max_raw": 1,
+          "capacity": 2
+        },
+        "projectiles": {
+          "overflow_samples": 0,
+          "max_raw": 30,
+          "capacity": 32
+        },
+        "materials": {
+          "overflow_samples": 0,
+          "max_raw": 50,
+          "capacity": 64
+        },
+        "consumables": {
+          "overflow_samples": 0,
+          "max_raw": 8,
+          "capacity": 24
+        },
+        "crates": {
+          "overflow_samples": 0,
+          "max_raw": 2,
+          "capacity": 2
+        },
+        "obstacles": {
+          "overflow_samples": 0,
+          "max_raw": 2,
+          "capacity": 8
+        }
+      },
+      "fault_count": 0,
+      "faults": [],
+      "determinism_spot_check": [
+        {
+          "position": 0,
+          "capture_seq": 1,
+          "digest": "6C09AB4EC5AF57863F225A9D320E286D1A2BD1FA4ACC68D95C198E33EF8BE312"
+        },
+        {
+          "position": 5000,
+          "capture_seq": 5001,
+          "digest": "8894F21EB88583FFE8C0B825CD5CAC3F8BEC2B5C634A3C45FA999F4733BCFF6F"
+        },
+        {
+          "position": 10000,
+          "capture_seq": 10001,
+          "digest": "0FC0D502C6D24C5ECBCB813D2CA01F9C9E286958EDFC2656EA6F3A7E2E8EA297"
+        },
+        {
+          "position": 15000,
+          "capture_seq": 15001,
+          "digest": "6F6355C77F0E320018D251314DC8C6FD9F4D97E01E594A6CE1F4F52E87451201"
+        },
+        {
+          "position": 20000,
+          "capture_seq": 20001,
+          "digest": "F32692DD47365C9523B87CD9D2E90818162A41CAD3B27CBB7C9524D61F58D0AB"
+        },
+        {
+          "position": 21059,
+          "capture_seq": 21060,
+          "digest": "6BA99AB11131940CD1339FE149F384A270274085617BEBAD95FBFC7FBB1E7351"
+        }
+      ],
+      "build_seconds": 12.67
+    },
+    {
+      "run_id": "run_1784804435_39794",
+      "shard_file": "run_1784804435_39794.npz",
+      "shard_sha256": "656018B37B745D87EE1B8ED7BABEAF0A24093B76971076DA540F2B0C1939EADD",
+      "shard_bytes": 17830153,
+      "capture_seq_monotonic": true,
+      "counts": {
+        "total": 21730,
+        "valid": 21730,
+        "temporal_valid": 21710,
+        "valid_and_temporal_valid": 21710
+      },
+      "per_wave_total": {
+        "1": 440,
+        "2": 546,
+        "3": 640,
+        "4": 745,
+        "5": 841,
+        "6": 940,
+        "7": 1045,
+        "8": 1140,
+        "9": 1252,
+        "10": 1245,
+        "11": 1246,
+        "12": 1246,
+        "13": 1251,
+        "14": 1251,
+        "15": 1246,
+        "16": 1246,
+        "17": 1241,
+        "18": 1245,
+        "19": 1246,
+        "20": 1678
+      },
+      "per_wave_valid": {
+        "1": 440,
+        "2": 546,
+        "3": 640,
+        "4": 745,
+        "5": 841,
+        "6": 940,
+        "7": 1045,
+        "8": 1140,
+        "9": 1252,
+        "10": 1245,
+        "11": 1246,
+        "12": 1246,
+        "13": 1251,
+        "14": 1251,
+        "15": 1246,
+        "16": 1246,
+        "17": 1241,
+        "18": 1245,
+        "19": 1246,
+        "20": 1678
+      },
+      "overflow": {
+        "enemies": {
+          "overflow_samples": 0,
+          "max_raw": 42,
+          "capacity": 64
+        },
+        "bosses": {
+          "overflow_samples": 0,
+          "max_raw": 1,
+          "capacity": 2
+        },
+        "projectiles": {
+          "overflow_samples": 0,
+          "max_raw": 32,
+          "capacity": 32
+        },
+        "materials": {
+          "overflow_samples": 0,
+          "max_raw": 41,
+          "capacity": 64
+        },
+        "consumables": {
+          "overflow_samples": 0,
+          "max_raw": 18,
+          "capacity": 24
+        },
+        "crates": {
+          "overflow_samples": 2,
+          "max_raw": 3,
+          "capacity": 2
+        },
+        "obstacles": {
+          "overflow_samples": 0,
+          "max_raw": 2,
+          "capacity": 8
+        }
+      },
+      "fault_count": 0,
+      "faults": [],
+      "determinism_spot_check": [
+        {
+          "position": 0,
+          "capture_seq": 1,
+          "digest": "B6A1D51F0D45952D90C4A6B72040F440C20C0ACC1C605912B02D7D4CC9A0F40D"
+        },
+        {
+          "position": 5000,
+          "capture_seq": 5001,
+          "digest": "5850AA82039E412D17B5285FB3BED84F21438716729D990EEE616CDBB8C83054"
+        },
+        {
+          "position": 10000,
+          "capture_seq": 10001,
+          "digest": "A0C13934E480B0707169301093D4BB58244038F1FCF3A516A200C0ABBFBB7F74"
+        },
+        {
+          "position": 15000,
+          "capture_seq": 15001,
+          "digest": "70AB6B7E1BF447F68251CC3B6D515E41011CA51BD30CBFED33C87E130F545953"
+        },
+        {
+          "position": 20000,
+          "capture_seq": 20001,
+          "digest": "8534067FFFB40B8223885AF227918CA345BC8E2E94270F9CCFFFB96D6685C4DA"
+        },
+        {
+          "position": 21729,
+          "capture_seq": 21730,
+          "digest": "1F7C5B509D3F703B3330EA6EFE8225D76CB9E6A49769A44C4B52F17825E06B36"
+        }
+      ],
+      "build_seconds": 11.59
+    },
+    {
+      "run_id": "run_1784805636_10804",
+      "shard_file": "run_1784805636_10804.npz",
+      "shard_sha256": "EBCD92A8C1EFB72B12FAFA8969B228CC16C4E082476C52D420718597514951F9",
+      "shard_bytes": 27148400,
+      "capture_seq_monotonic": true,
+      "counts": {
+        "total": 21845,
+        "valid": 21845,
+        "temporal_valid": 21825,
+        "valid_and_temporal_valid": 21825
+      },
+      "per_wave_total": {
+        "1": 440,
+        "2": 545,
+        "3": 646,
+        "4": 741,
+        "5": 845,
+        "6": 940,
+        "7": 1051,
+        "8": 1151,
+        "9": 1251,
+        "10": 1240,
+        "11": 1241,
+        "12": 1251,
+        "13": 1240,
+        "14": 1251,
+        "15": 1241,
+        "16": 1245,
+        "17": 1240,
+        "18": 1246,
+        "19": 1240,
+        "20": 1800
+      },
+      "per_wave_valid": {
+        "1": 440,
+        "2": 545,
+        "3": 646,
+        "4": 741,
+        "5": 845,
+        "6": 940,
+        "7": 1051,
+        "8": 1151,
+        "9": 1251,
+        "10": 1240,
+        "11": 1241,
+        "12": 1251,
+        "13": 1240,
+        "14": 1251,
+        "15": 1241,
+        "16": 1245,
+        "17": 1240,
+        "18": 1246,
+        "19": 1240,
+        "20": 1800
+      },
+      "overflow": {
+        "enemies": {
+          "overflow_samples": 0,
+          "max_raw": 61,
+          "capacity": 64
+        },
+        "bosses": {
+          "overflow_samples": 0,
+          "max_raw": 1,
+          "capacity": 2
+        },
+        "projectiles": {
+          "overflow_samples": 0,
+          "max_raw": 30,
+          "capacity": 32
+        },
+        "materials": {
+          "overflow_samples": 0,
+          "max_raw": 50,
+          "capacity": 64
+        },
+        "consumables": {
+          "overflow_samples": 0,
+          "max_raw": 10,
+          "capacity": 24
+        },
+        "crates": {
+          "overflow_samples": 0,
+          "max_raw": 1,
+          "capacity": 2
+        },
+        "obstacles": {
+          "overflow_samples": 0,
+          "max_raw": 4,
+          "capacity": 8
+        }
+      },
+      "fault_count": 0,
+      "faults": [],
+      "determinism_spot_check": [
+        {
+          "position": 0,
+          "capture_seq": 1,
+          "digest": "363341FF342C854909CFEFDD401521C3326C8ADDE8E590F4DE63797F094AD687"
+        },
+        {
+          "position": 5000,
+          "capture_seq": 5001,
+          "digest": "D0ACF7109DF17C9B8983D1962B825B34B1C2546BFA97001DDBF149DC3BF3E540"
+        },
+        {
+          "position": 10000,
+          "capture_seq": 10001,
+          "digest": "576890328A9D898595E263DE2FAD2C54000117D84D84FABDCD1469DA6FD553B0"
+        },
+        {
+          "position": 15000,
+          "capture_seq": 15001,
+          "digest": "08F87427369FEBE3E74D6609C69082261475A73AC53AE8B6EDB4E3DB6017F8F7"
+        },
+        {
+          "position": 20000,
+          "capture_seq": 20001,
+          "digest": "14A00CF7980CDA11C468B8F62039623844BB66BD8BA22F05FB4C4867CC27B114"
+        },
+        {
+          "position": 21844,
+          "capture_seq": 21845,
+          "digest": "8F59F79529C9D0DE8D4ED0DD9631B6343659F57CF26B59BE7E2C2A1FB70B8D32"
+        }
+      ],
+      "build_seconds": 14.41
+    }
+  ]
+}

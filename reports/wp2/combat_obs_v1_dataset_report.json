@@ -1,0 +1,353 @@
+{
+  "schema_id": "combat_obs_v1",
+  "observation_schema_hash": "C653D836F3EBC821A51AFC70482D3772FC7B7B927D393A6B9BBADC2718BB9B2A",
+  "source_capture_schema_hash": "95B6444796A21FD44E94113B75BA2097BC381D5F72ED784F9B9A4A99DD46D951",
+  "encoder_path": "trainer/observation/encoder_v1.py",
+  "repo_head_commit": "0be6c80875b5e729e099d5d3384628e57de7de4c",
+  "run_count": 20,
+  "build_wall_seconds": 228.26,
+  "dataset_bytes": 400773981,
+  "aggregate": {
+    "total": 388067,
+    "valid": 388067,
+    "temporal_valid": 387695,
+    "valid_and_temporal_valid": 387695,
+    "fault_count": 0
+  },
+  "per_wave_valid": {
+    "1": 8800,
+    "2": 10909,
+    "3": 12841,
+    "4": 14849,
+    "5": 16919,
+    "6": 18869,
+    "7": 20876,
+    "8": 22912,
+    "9": 25004,
+    "10": 24379,
+    "11": 22442,
+    "12": 22422,
+    "13": 22397,
+    "14": 22399,
+    "15": 22398,
+    "16": 22428,
+    "17": 21993,
+    "18": 18642,
+    "19": 18679,
+    "20": 17909
+  },
+  "overflow": {
+    "enemies": {
+      "overflow_samples": 0,
+      "max_raw": 61,
+      "capacity": 64
+    },
+    "bosses": {
+      "overflow_samples": 0,
+      "max_raw": 1,
+      "capacity": 2
+    },
+    "projectiles": {
+      "overflow_samples": 0,
+      "max_raw": 32,
+      "capacity": 32
+    },
+    "materials": {
+      "overflow_samples": 0,
+      "max_raw": 54,
+      "capacity": 64
+    },
+    "consumables": {
+      "overflow_samples": 0,
+      "max_raw": 18,
+      "capacity": 24
+    },
+    "crates": {
+      "overflow_samples": 263,
+      "max_raw": 4,
+      "capacity": 2
+    },
+    "obstacles": {
+      "overflow_samples": 0,
+      "max_raw": 5,
+      "capacity": 8
+    }
+  },
+  "gates": [
+    {
+      "name": "valid_and_temporal_valid_min",
+      "status": "PASS",
+      "value": 387695,
+      "threshold": 200000,
+      "detail": "387695 >= 200000"
+    },
+    {
+      "name": "all_waves_1_20_represented",
+      "status": "PASS",
+      "value": 20,
+      "threshold": 20,
+      "missing_waves": [],
+      "tail_waves_17_20_valid": 77223,
+      "tail_fraction": 0.198994,
+      "detail": "all waves 1-20 present among valid samples"
+    },
+    {
+      "name": "zero_encoding_faults",
+      "status": "PASS",
+      "value": 0,
+      "threshold": 0,
+      "detail": "0 ObservationError faults"
+    },
+    {
+      "name": "all_shards_written",
+      "status": "PASS",
+      "value": 20,
+      "threshold": 20,
+      "detail": "20/20 shards written with checksums"
+    }
+  ],
+  "overflow_gate": "REPORT",
+  "overall_status": "PASS",
+  "runs": [
+    {
+      "run_id": "run_1784785556_51395",
+      "shard_file": "run_1784785556_51395.npz",
+      "shard_sha256": "CB1C99EB90FE5EAFC9185C2CAE65B7C85A04D28F80DC90A37B10FA99196514B8",
+      "counts": {
+        "total": 21061,
+        "valid": 21061,
+        "temporal_valid": 21041,
+        "valid_and_temporal_valid": 21041
+      },
+      "fault_count": 0
+    },
+    {
+      "run_id": "run_1784786723_17546",
+      "shard_file": "run_1784786723_17546.npz",
+      "shard_sha256": "14F164D6E95FA5140368B5AB22292B3BD7AFA53A127196934D94E98793EE8550",
+      "counts": {
+        "total": 17341,
+        "valid": 17341,
+        "temporal_valid": 17323,
+        "valid_and_temporal_valid": 17323
+      },
+      "fault_count": 0
+    },
+    {
+      "run_id": "run_1784787688_32406",
+      "shard_file": "run_1784787688_32406.npz",
+      "shard_sha256": "CB8D965D26C7DAB0FADE6BC75AB417DA749A76C9FD1D22960E3F559AC03D8E87",
+      "counts": {
+        "total": 21795,
+        "valid": 21795,
+        "temporal_valid": 21775,
+        "valid_and_temporal_valid": 21775
+      },
+      "fault_count": 0
+    },
+    {
+      "run_id": "run_1784788917_7315",
+      "shard_file": "run_1784788917_7315.npz",
+      "shard_sha256": "A53940859CA05E769AF7BA775FF23BA1D34CE752ED875E52D5DD4B0957EF1CCC",
+      "counts": {
+        "total": 21013,
+        "valid": 21013,
+        "temporal_valid": 20993,
+        "valid_and_temporal_valid": 20993
+      },
+      "fault_count": 0
+    },
+    {
+      "run_id": "run_1784790063_90333",
+      "shard_file": "run_1784790063_90333.npz",
+      "shard_sha256": "78E8BD1ECF1A01120DC3F79C9C55F9C57C9E23C1AAA3E9823877CEBF1B739C21",
+      "counts": {
+        "total": 20835,
+        "valid": 20835,
+        "temporal_valid": 20815,
+        "valid_and_temporal_valid": 20815
+      },
+      "fault_count": 0
+    },
+    {
+      "run_id": "run_1784791214_74323",
+      "shard_file": "run_1784791214_74323.npz",
+      "shard_sha256": "39D333E8BF87D4A1DF152E239F0458A3C8C59FD579387920B9760158633F1A8D",
+      "counts": {
+        "total": 17478,
+        "valid": 17478,
+        "temporal_valid": 17461,
+        "valid_and_temporal_valid": 17461
+      },
+      "fault_count": 0
+    },
+    {
+      "run_id": "run_1784792179_82981",
+      "shard_file": "run_1784792179_82981.npz",
+      "shard_sha256": "501DA5ECED7EA145FDAA4C3D0528E92898F4B11F9EB34D994054BEAB9837F8AC",
+      "counts": {
+        "total": 8638,
+        "valid": 8638,
+        "temporal_valid": 8628,
+        "valid_and_temporal_valid": 8628
+      },
+      "fault_count": 0
+    },
+    {
+      "run_id": "run_1784792652_7723",
+      "shard_file": "run_1784792652_7723.npz",
+      "shard_sha256": "F5C9613379CC34FD3E3CC71654B8C9EEC2DC5A1457D8791C4D25A04F51AE1CDD",
+      "counts": {
+        "total": 21852,
+        "valid": 21852,
+        "temporal_valid": 21832,
+        "valid_and_temporal_valid": 21832
+      },
+      "fault_count": 0
+    },
+    {
+      "run_id": "run_1784793833_32034",
+      "shard_file": "run_1784793833_32034.npz",
+      "shard_sha256": "79F07FA0A97A59CDBC8B7F8EDBBF2581B12232159880013B6CF8EEF6A49AAC16",
+      "counts": {
+        "total": 17416,
+        "valid": 17416,
+        "temporal_valid": 17399,
+        "valid_and_temporal_valid": 17399
+      },
+      "fault_count": 0
+    },
+    {
+      "run_id": "run_1784794784_69267",
+      "shard_file": "run_1784794784_69267.npz",
+      "shard_sha256": "30416D586A22171A22099966BAC56D2EB72E8BF1E0E12BC0F1F797543715DF8C",
+      "counts": {
+        "total": 20860,
+        "valid": 20860,
+        "temporal_valid": 20840,
+        "valid_and_temporal_valid": 20840
+      },
+      "fault_count": 0
+    },
+    {
+      "run_id": "run_1784795927_93597",
+      "shard_file": "run_1784795927_93597.npz",
+      "shard_sha256": "38156018591DA1EA5B3D09515681DA817955CC545A5A8975FE8A50E9EFDDD0D8",
+      "counts": {
+        "total": 21059,
+        "valid": 21059,
+        "temporal_valid": 21039,
+        "valid_and_temporal_valid": 21039
+      },
+      "fault_count": 0
+    },
+    {
+      "run_id": "run_1784797082_83949",
+      "shard_file": "run_1784797082_83949.npz",
+      "shard_sha256": "7E4782C9E2E38F4D7FB1265B4F0E1555A649989032E9A58C48E8A3D0D33B759F",
+      "counts": {
+        "total": 21616,
+        "valid": 21616,
+        "temporal_valid": 21596,
+        "valid_and_temporal_valid": 21596
+      },
+      "fault_count": 0
+    },
+    {
+      "run_id": "run_1784798249_41022",
+      "shard_file": "run_1784798249_41022.npz",
+      "shard_sha256": "8C0D96A71E6382CC117818428869CAD88770870439F9B9D8C77FD0E712EF89C8",
+      "counts": {
+        "total": 21111,
+        "valid": 21111,
+        "temporal_valid": 21091,
+        "valid_and_temporal_valid": 21091
+      },
+      "fault_count": 0
+    },
+    {
+      "run_id": "run_1784799404_80018",
+      "shard_file": "run_1784799404_80018.npz",
+      "shard_sha256": "60680F5C112CABD0AF8ED7E28DDFB1AD046D951A2E3CF3EAF2910A04591E4BF2",
+      "counts": {
+        "total": 20926,
+        "valid": 20926,
+        "temporal_valid": 20906,
+        "valid_and_temporal_valid": 20906
+      },
+      "fault_count": 0
+    },
+    {
+      "run_id": "run_1784800561_47448",
+      "shard_file": "run_1784800561_47448.npz",
+      "shard_sha256": "5B22DFBC43E01F7E43CA86921DEBB3FF4552D1FF81A46B852DC3DE92C76D82B1",
+      "counts": {
+        "total": 21313,
+        "valid": 21313,
+        "temporal_valid": 21293,
+        "valid_and_temporal_valid": 21293
+      },
+      "fault_count": 0
+    },
+    {
+      "run_id": "run_1784801716_88465",
+      "shard_file": "run_1784801716_88465.npz",
+      "shard_sha256": "FC9D754C16DA83C88CCAC5D62AE994D62DFFC4EB83433B0936C84AB812CD1A47",
+      "counts": {
+        "total": 8550,
+        "valid": 8550,
+        "temporal_valid": 8540,
+        "valid_and_temporal_valid": 8540
+      },
+      "fault_count": 0
+    },
+    {
+      "run_id": "run_1784802191_76892",
+      "shard_file": "run_1784802191_76892.npz",
+      "shard_sha256": "E5DE81C3C37C62765DD939BCD2CA3DBEE7F25E9731B0352A0558F377EDCFAA1F",
+      "counts": {
+        "total": 20568,
+        "valid": 20568,
+        "temporal_valid": 20548,
+        "valid_and_temporal_valid": 20548
+      },
+      "fault_count": 0
+    },
+    {
+      "run_id": "run_1784803299_7195",
+      "shard_file": "run_1784803299_7195.npz",
+      "shard_sha256": "4F3B0864DA6E3936C7D578B682ED04EFABD398921B2ECD9D5D49FA19471733A3",
+      "counts": {
+        "total": 21060,
+        "valid": 21060,
+        "temporal_valid": 21040,
+        "valid_and_temporal_valid": 21040
+      },
+      "fault_count": 0
+    },
+    {
+      "run_id": "run_1784804435_39794",
+      "shard_file": "run_1784804435_39794.npz",
+      "shard_sha256": "656018B37B745D87EE1B8ED7BABEAF0A24093B76971076DA540F2B0C1939EADD",
+      "counts": {
+        "total": 21730,
+        "valid": 21730,
+        "temporal_valid": 21710,
+        "valid_and_temporal_valid": 21710
+      },
+      "fault_count": 0
+    },
+    {
+      "run_id": "run_1784805636_10804",
+      "shard_file": "run_1784805636_10804.npz",
+      "shard_sha256": "EBCD92A8C1EFB72B12FAFA8969B228CC16C4E082476C52D420718597514951F9",
+      "counts": {
+        "total": 21845,
+        "valid": 21845,
+        "temporal_valid": 21825,
+        "valid_and_temporal_valid": 21825
+      },
+      "fault_count": 0
+    }
+  ]
+}
