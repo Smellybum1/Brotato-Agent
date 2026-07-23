@@ -1,0 +1,179 @@
+{
+  "run_id": "run_1784817058_71742",
+  "source": "reports/wp2/v124_deploy_record.md",
+  "note": "Guard-applicable rerolls that fired past an affordable gate-clearing offense item under v124 (+8-boost guard). v125 hard gate must disallow these.",
+  "wave": 15,
+  "impact_gate": 6.0,
+  "boards": [
+    {
+      "decision_seq": 16880,
+      "offer_seq": 16879,
+      "gold": 403,
+      "reroll_price": 0,
+      "reroll_kind": "free",
+      "action_taken": "shop_reroll",
+      "offense_proxy_total": 79.332512,
+      "offense_target": 257,
+      "items": [
+        {
+          "slot": 0,
+          "id": "weapon_ghost_scepter_1",
+          "price": 47,
+          "category": "weapon",
+          "affordable": true,
+          "effects": [
+            {
+              "key": "effect_gain_stat_every_killed_enemies",
+              "value": 20,
+              "sign": 3
+            }
+          ],
+          "direct_offense_gain": 0.0
+        },
+        {
+          "slot": 1,
+          "id": "item_toolbox",
+          "price": 137,
+          "category": "item",
+          "affordable": true,
+          "effects": [
+            {
+              "key": "stat_engineering",
+              "value": 6,
+              "sign": 3
+            },
+            {
+              "key": "stat_attack_speed",
+              "value": -8,
+              "sign": 3
+            }
+          ],
+          "direct_offense_gain": -8.0
+        },
+        {
+          "slot": 2,
+          "id": "item_bait",
+          "price": 69,
+          "category": "item",
+          "affordable": true,
+          "effects": [
+            {
+              "key": "stat_percent_damage",
+              "value": 8,
+              "sign": 3
+            },
+            {
+              "key": "extra_enemies_next_wave",
+              "value": 1,
+              "sign": 3
+            }
+          ],
+          "direct_offense_gain": 8.0
+        },
+        {
+          "slot": 3,
+          "id": "item_pocket_factory",
+          "price": 182,
+          "category": "item",
+          "affordable": true,
+          "effects": [
+            {
+              "key": "stat_engineering",
+              "value": 2,
+              "sign": 3
+            },
+            {
+              "key": "tree_turrets",
+              "value": 1,
+              "sign": 3
+            }
+          ],
+          "direct_offense_gain": 0.0
+        }
+      ],
+      "gate_clearing_ids": [
+        "item_bait"
+      ]
+    },
+    {
+      "decision_seq": 16882,
+      "offer_seq": 16881,
+      "gold": 403,
+      "reroll_price": 0,
+      "reroll_kind": "free",
+      "action_taken": "shop_reroll",
+      "offense_proxy_total": 79.332512,
+      "offense_target": 257,
+      "items": [
+        {
+          "slot": 0,
+          "id": "item_butterfly",
+          "price": 81,
+          "category": "item",
+          "affordable": true,
+          "effects": [
+            {
+              "key": "stat_lifesteal",
+              "value": 2,
+              "sign": 3
+            },
+            {
+              "key": "stat_elemental_damage",
+              "value": -1,
+              "sign": 3
+            }
+          ],
+          "direct_offense_gain": 0.0
+        },
+        {
+          "slot": 1,
+          "id": "item_dynamite",
+          "price": 58,
+          "category": "item",
+          "affordable": true,
+          "effects": [
+            {
+              "key": "explosion_damage",
+              "value": 15,
+              "sign": 3
+            }
+          ],
+          "direct_offense_gain": 15.0
+        },
+        {
+          "slot": 2,
+          "id": "weapon_taser_2",
+          "price": 83,
+          "category": "weapon",
+          "affordable": true,
+          "effects": [
+            {
+              "key": "effect_slow_in_zone",
+              "value": 1,
+              "sign": 3
+            }
+          ],
+          "direct_offense_gain": 0.0
+        },
+        {
+          "slot": 3,
+          "id": "weapon_wand_1",
+          "price": 36,
+          "category": "weapon",
+          "affordable": true,
+          "effects": [
+            {
+              "key": "effect_burning",
+              "value": 0,
+              "sign": 0
+            }
+          ],
+          "direct_offense_gain": 0.0
+        }
+      ],
+      "gate_clearing_ids": [
+        "item_dynamite"
+      ]
+    }
+  ]
+}

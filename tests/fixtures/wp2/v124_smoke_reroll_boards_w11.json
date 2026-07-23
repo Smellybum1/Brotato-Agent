@@ -1,0 +1,225 @@
+{
+  "run_id": "run_1784817058_71742",
+  "source": "reports/wp2/v124_deploy_record.md",
+  "note": "Guard-applicable rerolls that fired past an affordable gate-clearing offense item under v124 (+8-boost guard). v125 hard gate must disallow these.",
+  "wave": 11,
+  "impact_gate": 6.0,
+  "boards": [
+    {
+      "decision_seq": 11315,
+      "offer_seq": 11314,
+      "gold": 342,
+      "reroll_price": 12,
+      "reroll_kind": "paid",
+      "action_taken": "shop_reroll",
+      "offense_proxy_total": 53.529215,
+      "offense_target": 95,
+      "items": [
+        {
+          "slot": 0,
+          "id": "item_landmines",
+          "price": 38,
+          "category": "item",
+          "affordable": true,
+          "effects": [
+            {
+              "key": "",
+              "value": 1,
+              "sign": 3
+            }
+          ],
+          "direct_offense_gain": 0.0
+        },
+        {
+          "slot": 1,
+          "id": "item_potato",
+          "price": 189,
+          "category": "item",
+          "affordable": true,
+          "effects": [
+            {
+              "key": "stat_max_hp",
+              "value": 3,
+              "sign": 3
+            },
+            {
+              "key": "stat_hp_regeneration",
+              "value": 2,
+              "sign": 3
+            },
+            {
+              "key": "stat_lifesteal",
+              "value": 1,
+              "sign": 3
+            },
+            {
+              "key": "stat_percent_damage",
+              "value": 5,
+              "sign": 3
+            },
+            {
+              "key": "stat_attack_speed",
+              "value": 5,
+              "sign": 3
+            },
+            {
+              "key": "stat_speed",
+              "value": 3,
+              "sign": 3
+            },
+            {
+              "key": "stat_dodge",
+              "value": 3,
+              "sign": 3
+            },
+            {
+              "key": "stat_armor",
+              "value": 1,
+              "sign": 3
+            },
+            {
+              "key": "stat_luck",
+              "value": 5,
+              "sign": 3
+            }
+          ],
+          "direct_offense_gain": 10.0
+        },
+        {
+          "slot": 2,
+          "id": "item_cog",
+          "price": 76,
+          "category": "item",
+          "affordable": true,
+          "effects": [
+            {
+              "key": "stat_engineering",
+              "value": 4,
+              "sign": 3
+            },
+            {
+              "key": "knockback",
+              "value": 1,
+              "sign": 3
+            },
+            {
+              "key": "stat_percent_damage",
+              "value": -4,
+              "sign": 3
+            }
+          ],
+          "direct_offense_gain": -4.0
+        },
+        {
+          "slot": 3,
+          "id": "weapon_pruner_1",
+          "price": 38,
+          "category": "weapon",
+          "affordable": true,
+          "effects": [
+            {
+              "key": "",
+              "value": 1,
+              "sign": 3
+            }
+          ],
+          "direct_offense_gain": 0.0
+        }
+      ],
+      "gate_clearing_ids": [
+        "item_potato"
+      ]
+    },
+    {
+      "decision_seq": 11319,
+      "offer_seq": 11318,
+      "gold": 314,
+      "reroll_price": 20,
+      "reroll_kind": "paid",
+      "action_taken": "shop_reroll",
+      "offense_proxy_total": 53.529215,
+      "offense_target": 95,
+      "items": [
+        {
+          "slot": 0,
+          "id": "item_bait",
+          "price": 57,
+          "category": "item",
+          "affordable": true,
+          "effects": [
+            {
+              "key": "stat_percent_damage",
+              "value": 8,
+              "sign": 3
+            },
+            {
+              "key": "extra_enemies_next_wave",
+              "value": 1,
+              "sign": 3
+            }
+          ],
+          "direct_offense_gain": 8.0
+        },
+        {
+          "slot": 1,
+          "id": "item_cyclops_worm",
+          "price": 94,
+          "category": "item",
+          "affordable": true,
+          "effects": [
+            {
+              "key": "stat_percent_damage",
+              "value": 12,
+              "sign": 3
+            },
+            {
+              "key": "stat_range",
+              "value": -12,
+              "sign": 3
+            }
+          ],
+          "direct_offense_gain": 12.0
+        },
+        {
+          "slot": 2,
+          "id": "weapon_ghost_scepter_1",
+          "price": 38,
+          "category": "weapon",
+          "affordable": true,
+          "effects": [
+            {
+              "key": "effect_gain_stat_every_killed_enemies",
+              "value": 20,
+              "sign": 3
+            }
+          ],
+          "direct_offense_gain": 0.0
+        },
+        {
+          "slot": 3,
+          "id": "item_weird_food",
+          "price": 47,
+          "category": "item",
+          "affordable": true,
+          "effects": [
+            {
+              "key": "consumable_heal",
+              "value": 2,
+              "sign": 3
+            },
+            {
+              "key": "stat_dodge",
+              "value": -2,
+              "sign": 3
+            }
+          ],
+          "direct_offense_gain": 0.0
+        }
+      ],
+      "gate_clearing_ids": [
+        "item_bait",
+        "item_cyclops_worm"
+      ]
+    }
+  ]
+}

@@ -1,3 +1,4 @@
+import json
 import math
 import re
 from pathlib import Path
@@ -128,14 +129,14 @@ def test_wp2_capture_build_versions_the_v122_crossing_tier_policy():
     controller = CONTROLLER.read_text(encoding="utf-8")
     telemetry = TELEMETRY.read_text(encoding="utf-8")
 
-    # v124 (buy-before-reroll) bumps policy and the deploy surface together:
-    # mod 0.2.32 across manifest, controller meta, and telemetry default.
-    assert '"version_number": "0.2.32"' in manifest
-    assert "v124 deterministic teacher" in manifest
-    assert controller.count("teacher_v1-0.1.124-gun-wp1") == 1
-    assert controller.count("0.2.32-wp2-capture") == 1
-    assert telemetry.count("teacher_v1-0.1.124-gun-wp1") == 1
-    assert telemetry.count("0.2.32-wp2-capture") == 1
+    # v125 (hard reroll gate) bumps policy and the deploy surface together:
+    # mod 0.2.33 across manifest, controller meta, and telemetry default.
+    assert '"version_number": "0.2.33"' in manifest
+    assert "v125 deterministic teacher" in manifest
+    assert controller.count("teacher_v1-0.1.125-gun-wp1") == 1
+    assert controller.count("0.2.33-wp2-capture") == 1
+    assert telemetry.count("teacher_v1-0.1.125-gun-wp1") == 1
+    assert telemetry.count("0.2.33-wp2-capture") == 1
 
 
 def test_v123_strength_signal_is_plumbed_through_controller_and_field():
@@ -2033,3 +2034,146 @@ def test_v124_reroll_boost_decision_table_mirror():
     # Case 3: offense adequate -> unchanged (boost never applied regardless of board).
     assert reroll_worth(base, False, [aff_gate_item]) == base
     assert reroll_worth(base, False, []) == base
+
+
+# --- v125: hard reroll gate (the ordering rule proper) -------------------------
+# v124's +8-boost guard was insufficient — residual reroll worth and especially
+# FREE rerolls still preempted qualifying buys (reports/wp2/v124_deploy_record.md,
+# run_1784817058_71742: 4 guard-applicable rerolls at waves 11 (paid) and 15
+# (free)). v125 disallows the reroll ACTION outright while the guard condition
+# holds. The v124 +8-boost guard is kept as-is.
+
+WP2_FIXTURES = ROOT / "tests/fixtures/wp2"
+
+
+def _v125_direct_offense_gain(effects):
+    # Mirror of _direct_offense_gain: the three primary offense stats sum; the
+    # explosive/crowd keys count max(1, value) when positive; crit is never an
+    # offense-gain key. sign 3 (_SIGN_FROM_VALUE) => value used as-is.
+    direct = {"stat_ranged_damage", "stat_percent_damage", "stat_attack_speed"}
+    explosive = {"piercing", "piercing_damage", "bounce", "explosion_damage",
+                 "explosion_size", "effect_explode", "explode_on_death",
+                 "projectiles_on_death", "burning_spread"}
+
+    def signed(e):
+        val = e.get("value", 0) or 0
+        s = e.get("sign", 3)
+        return {0: abs(float(val)), 1: -abs(float(val)), 2: 0.0}.get(s, float(val))
+
+    gain = 0.0
+    for e in effects:
+        k = e.get("key", "")
+        v = signed(e)
+        if k in direct:
+            gain += v
+        elif k in explosive and v > 0.0:
+            gain += max(1.0, v)
+    return gain
+
+
+def _v125_board_has_gate_clearing_offense(items, impact_gate=6.0):
+    for it in items:
+        if it.get("category") == "weapon":
+            continue
+        if not it.get("affordable", False) or not it.get("can_buy", True):
+            continue
+        if _v125_direct_offense_gain(it.get("effects", [])) >= impact_gate:
+            return True
+    return False
+
+
+def _v125_reroll_disallowed(deficient, items):
+    # Mirror of the v125 hard gate: reroll is denied (paid AND free) while
+    # offense-deficient with a gate-clearing offense item on the board.
+    return deficient and _v125_board_has_gate_clearing_offense(items)
+
+
+def test_v125_reroll_gate_source_shape_denies_paid_and_free_rerolls():
+    strategy = STRATEGY.read_text(encoding="utf-8")
+    decide = strategy.split("func decide_shop", 1)[1].split(
+        "func decide_levelup", 1
+    )[0]
+
+    # Hard gate boolean reuses the exact v124 guard condition.
+    assert (
+        "var offense_reroll_gate: bool = (offense_target > 0.0\n"
+        "\t\t\t\tand _offense_proxy(build) < offense_target\n"
+        "\t\t\t\tand _board_has_gate_clearing_offense(items))"
+    ) in decide
+    # The reroll action is denied outright — the gate joins the fire condition,
+    # so budget (paid vs free) is irrelevant once the gate holds.
+    assert (
+        "if (best_here < worth or need_fill) and not offense_reroll_gate:"
+    ) in decide
+    # The gate is evaluated before the reroll fires, and shop_go is the fallthrough.
+    gate = decide.index("var offense_reroll_gate")
+    fire = decide.index('return {"type": "shop_reroll", "score": best_here}')
+    go = decide.rindex('return {"type": "shop_go", "score": 0.0}')  # final fallthrough
+    assert gate < fire < go
+    # The v124 +8-boost guard is preserved unchanged (kept as cheap belt-and-braces).
+    assert (
+        "if (offense_target > 0.0 and _offense_proxy(build) < offense_target\n"
+        "\t\t\t\tand not _board_has_gate_clearing_offense(items)):"
+    ) in decide
+    assert "worth += 8.0" in decide
+
+
+def test_v125_reroll_gate_decision_table_mirror():
+    gate_item = {"affordable": True, "can_buy": True,
+                 "effects": [{"key": "stat_percent_damage", "value": 10.0, "sign": 3}]}
+    free_note = "free rerolls are gated too — budget is not consulted once the gate holds"
+
+    # deficient + qualifying item on board -> reroll DISALLOWED (even if free).
+    assert _v125_reroll_disallowed(True, [gate_item]) is True, free_note
+    # deficient + none qualifying -> reroll ALLOWED.
+    assert _v125_reroll_disallowed(True, []) is False
+    unaff = {"affordable": False, "can_buy": True,
+             "effects": [{"key": "stat_percent_damage", "value": 10.0, "sign": 3}]}
+    small = {"affordable": True, "can_buy": True,
+             "effects": [{"key": "stat_ranged_damage", "value": 1.0, "sign": 3}]}
+    crit = {"affordable": True, "can_buy": True,
+            "effects": [{"key": "stat_crit_chance", "value": 20.0, "sign": 3}]}
+    weapon = {"category": "weapon", "affordable": True, "can_buy": True,
+              "effects": [{"key": "stat_percent_damage", "value": 30.0, "sign": 3}]}
+    assert _v125_reroll_disallowed(True, [unaff]) is False   # not affordable
+    assert _v125_reroll_disallowed(True, [small]) is False   # gain < gate
+    assert _v125_reroll_disallowed(True, [crit]) is False    # crit excluded
+    assert _v125_reroll_disallowed(True, [weapon]) is False  # weapons excluded
+    # offense adequate -> unchanged (gate never engages, reroll allowed).
+    assert _v125_reroll_disallowed(False, [gate_item]) is False
+    assert _v125_reroll_disallowed(False, []) is False
+
+
+def test_v125_reroll_gate_replays_frozen_smoke_boards():
+    # Frozen regression: the four guard-applicable rerolls v124 let through must
+    # ALL be reroll-disallowed under the v125 gate. Covers paid (w11) and free
+    # (w15) rerolls, and the explosive-key gate item (item_dynamite).
+    kinds = set()
+    dynamite_seen = False
+    for wave in (11, 15):
+        fx = json.loads(
+            (WP2_FIXTURES / f"v124_smoke_reroll_boards_w{wave}.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        assert fx["boards"], f"wave {wave} fixture has no boards"
+        for board in fx["boards"]:
+            deficient = board["offense_proxy_total"] < board["offense_target"]
+            assert deficient, f"seq {board['decision_seq']} was not offense-deficient"
+            # Recompute gate qualification from raw item fields and cross-check the
+            # frozen precomputed gains and gate ids.
+            gate_ids = [
+                it["id"] for it in board["items"]
+                if it.get("category") != "weapon" and it.get("affordable", False)
+                and _v125_direct_offense_gain(it.get("effects", [])) >= fx["impact_gate"]
+            ]
+            assert gate_ids == board["gate_clearing_ids"]
+            for it in board["items"]:
+                assert _v125_direct_offense_gain(it["effects"]) == it["direct_offense_gain"]
+            # The v124 telemetry recorded a reroll here; v125 must disallow it.
+            assert board["action_taken"] == "shop_reroll"
+            assert _v125_reroll_disallowed(deficient, board["items"]) is True
+            kinds.add(board["reroll_kind"])
+            dynamite_seen = dynamite_seen or "item_dynamite" in board["gate_clearing_ids"]
+    assert kinds == {"paid", "free"}  # both budget regimes are gated
+    assert dynamite_seen  # explosive-key gate item is covered

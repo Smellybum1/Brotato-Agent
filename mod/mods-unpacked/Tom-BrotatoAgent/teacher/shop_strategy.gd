@@ -1542,7 +1542,17 @@ func decide_shop(state: Dictionary, profile) -> Dictionary:
 			worth += BotConfig.OFFENSE_BAND_REROLL_PRESSURE
 		var fill_target: int = min(slots, BotConfig.WEAPON_FILL_TARGET) if BotConfig.WEAPON_FILL_TARGET > 0 else 0
 		var need_fill: bool = fill_target > 0 and weapons.size() < fill_target
-		if best_here < worth or need_fill:
+		# v125: hard reroll gate. While offense-deficient with an affordable
+		# gate-clearing offense item on the board, the reroll action is disallowed
+		# outright — paid AND free (the v124 +8-boost guard above was insufficient:
+		# residual worth and especially free rerolls still preempted the buy). The
+		# reroll worth and all buy scoring are untouched; if the buy loop bought
+		# nothing, the shop-exit below proceeds (exiting with gold beats losing the
+		# board). Evidence: reports/wp2/v124_deploy_record.md (run_1784817058_71742).
+		var offense_reroll_gate: bool = (offense_target > 0.0
+				and _offense_proxy(build) < offense_target
+				and _board_has_gate_clearing_offense(items))
+		if (best_here < worth or need_fill) and not offense_reroll_gate:
 			_session_rerolls += 1
 			return {"type": "shop_reroll", "score": best_here}
 
