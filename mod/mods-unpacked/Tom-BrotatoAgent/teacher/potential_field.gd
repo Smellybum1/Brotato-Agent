@@ -805,18 +805,23 @@ func _finale_body_safety(pos: Vector2, desired: Vector2, player_speed: float,
 			rows.append(row)
 			strict_wall_body_clearance = max(
 				strict_wall_body_clearance, body_clearance)
-	# v112: the final body pass is the last movement arbiter. It must preserve a
+	# v115: the final body pass is the last movement arbiter. It must preserve a
 	# relief selected by wall safety, and it may independently discover the same
-	# long-horizon pack conflict that the shorter wall lookahead cannot see.
+	# long-horizon pack conflict that the shorter wall lookahead cannot see. Use
+	# the more dangerous of the strict-pool best and the command actually entering
+	# this pass as the relief reference. The v114 smoke showed that continuity can
+	# select slightly below the strict-pool best and hide a real 60-unit escape.
+	var wall_body_relief_reference := min(
+		strict_wall_body_clearance, _finale_body_input_clearance)
 	if (_finale_wall_recovery_active
 			and not _finale_projectile_safety_active
 			and (_finale_wall_body_relief_active
 				or (hard_safe_wall_body_clearance
 						>= BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE
-					and strict_wall_body_clearance
+					and wall_body_relief_reference
 						< BotConfig.BOSS_FINALE_WALL_BODY_RELIEF_TRIGGER
 					and hard_safe_wall_body_clearance
-						>= strict_wall_body_clearance
+						>= wall_body_relief_reference
 							+ BotConfig.BOSS_FINALE_WALL_BODY_RELIEF_MIN_GAIN))):
 		rows = hard_safe_rows
 		_finale_wall_body_relief_active = true

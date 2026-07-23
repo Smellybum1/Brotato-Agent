@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-07-23T00:53:09Z",
+  "qualification": "rejected",
+  "run_id": "run_1784766556_15347",
+  "result": "victory",
+  "last_wave": 20,
+  "policy_version": "teacher_v1-0.1.114-gun-wp1",
+  "mod_version": "0.2.22-wp2-capture",
+  "capture_schema_hash": "95B6444796A21FD44E94113B75BA2097BC381D5F72ED784F9B9A4A99DD46D951",
+  "capture_count": 21144,
+  "telemetry_complete": true,
+  "telemetry_errors": 0,
+  "hangs": 0,
+  "illegal_actions": 0,
+  "post_start_appcrash_count": 0,
+  "process_shutdown": {
+    "collector_stopped": true,
+    "brotato_stopped": true,
+    "auto_start": false
+  },
+  "capture_audit": {
+    "malformed_lines": 0,
+    "schema_mismatches": 0,
+    "invalid_captures": 0,
+    "invalid_actions": 0,
+    "all_waves_represented": true
+  },
+  "safety_audit": {
+    "accepted": false,
+    "violation_count": 2,
+    "wall_body_relief_violations": [
+      {
+        "capture_seq": 20467,
+        "selected_clearance": 18.939451620862286,
+        "hard_safe_relief_clearance": 79.40276492444039,
+        "gain": 60.4633133035781
+      },
+      {
+        "capture_seq": 20468,
+        "selected_clearance": -2.579877391539455,
+        "hard_safe_relief_clearance": 57.67991019544726,
+        "gain": 60.25978758698671
+      }
+    ],
+    "body_tier_violations": 0,
+    "projectile_floor_violations": 0,
+    "hard_wall_violations": 0,
+    "avoidable_damage_violations": 0
+  },
+  "root_cause": "The final wall/body relief trigger compared the hard-safe best lane only against the restricted wall-progress pool's best clearance. Continuity could emit a slightly worse baseline, hiding a real 60-unit relief gain over the command actually emitted.",
+  "repair": {
+    "policy_version": "teacher_v1-0.1.115-gun-wp1",
+    "mod_version": "0.2.23-wp2-capture",
+    "change": "Use min(strict wall-pool best, final body input clearance) as the wall/body relief reference before selecting the final route.",
+    "focused_tests": "96 passed",
+    "full_tests": "122 passed"
+  },
+  "checksums": {
+    "events_sha256": "9DA71B3BAE3D7A509D918BB080EA704C9E03C8D082E26D59502183293F417429",
+    "summary_sha256": "5C2D0B24B098C0A1B3D9CBA897E74D16DA53F096196C455AB01CA454DD4F99E6",
+    "capture_audit_sha256": "4E90113D23A3CF369C837D128081EE4A8229636233CFCC6F044D73343A6C8A91",
+    "safety_audit_sha256": "F684BEF9F63090D2B55FAB9B4F45FBBD2AC6DE6FA01646DFF69FE79DEAC8A2D0"
+  }
+}

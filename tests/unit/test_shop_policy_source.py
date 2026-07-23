@@ -123,17 +123,17 @@ def test_v64_blood_donation_is_vetoed_for_gate_reliability():
     assert '"item_blood_donation": {"never": true}' in requirement_block
 
 
-def test_wp2_capture_build_versions_the_v114_all_wave_pack_safety_policy():
+def test_wp2_capture_build_versions_the_v115_wall_relief_reference_policy():
     manifest = MANIFEST.read_text(encoding="utf-8")
     controller = CONTROLLER.read_text(encoding="utf-8")
     telemetry = TELEMETRY.read_text(encoding="utf-8")
 
-    assert '"version_number": "0.2.22"' in manifest
-    assert "v114 deterministic teacher" in manifest
-    assert controller.count("teacher_v1-0.1.114-gun-wp1") == 1
-    assert controller.count("0.2.22-wp2-capture") == 1
-    assert telemetry.count("teacher_v1-0.1.114-gun-wp1") == 1
-    assert telemetry.count("0.2.22-wp2-capture") == 1
+    assert '"version_number": "0.2.23"' in manifest
+    assert "v115 deterministic teacher" in manifest
+    assert controller.count("teacher_v1-0.1.115-gun-wp1") == 1
+    assert controller.count("0.2.23-wp2-capture") == 1
+    assert telemetry.count("teacher_v1-0.1.115-gun-wp1") == 1
+    assert telemetry.count("0.2.23-wp2-capture") == 1
 
 
 def test_v84_item_audit_and_conditional_effect_corrections():
@@ -1072,6 +1072,31 @@ def test_v113_final_body_arbiter_preserves_or_discovers_tight_wall_relief():
     )[0]
     assert "BOSS_FINALE_BODY_CRITICAL_CLEARANCE" in relief_floor
     assert "BOSS_FINALE_WALL_BODY_RELIEF_CLEARANCE_SLACK" in relief_floor
+
+
+def test_v115_wall_relief_compares_against_the_emitted_baseline():
+    potential = POTENTIAL_FIELD.read_text(encoding="utf-8")
+    safety = potential.split("func _finale_body_safety", 1)[1].split(
+        "func _finale_committed_escape", 1
+    )[0]
+
+    assert "var wall_body_relief_reference := min(" in safety
+    assert "strict_wall_body_clearance, _finale_body_input_clearance" in safety
+    assert "and wall_body_relief_reference" in safety
+    assert ">= wall_body_relief_reference" in safety
+
+    # Frozen v114 smoke captures 20467-20468. The strict wall-progress pool
+    # contained a marginally clearer lane than the emitted baseline, masking
+    # the hard-safe route's actual 60-unit improvement over the final command.
+    cases = [
+        {"baseline": 18.9394516, "strict_best": 23.7, "hard_safe": 79.4027649},
+        {"baseline": -2.5798774, "strict_best": 9.0, "hard_safe": 57.6799102},
+    ]
+    for case in cases:
+        old_reference = case["strict_best"]
+        emitted_reference = min(case["strict_best"], case["baseline"])
+        assert case["hard_safe"] < old_reference + 60.0
+        assert case["hard_safe"] >= emitted_reference + 60.0
 
 
 def test_v114_final_body_gate_covers_every_combat_wave_and_uses_open_pack_tier():
