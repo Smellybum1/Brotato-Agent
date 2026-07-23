@@ -128,14 +128,14 @@ def test_wp2_capture_build_versions_the_v122_crossing_tier_policy():
     controller = CONTROLLER.read_text(encoding="utf-8")
     telemetry = TELEMETRY.read_text(encoding="utf-8")
 
-    # v123 bumps the policy version now; mod_version and the manifest are rebuilt
-    # only at deploy time (after the campaign), so they still read the v122 build.
-    assert '"version_number": "0.2.30"' in manifest
-    assert "v122 deterministic teacher" in manifest
+    # v123 deployed 2026-07-23 as mod 0.2.31: policy and mod identities now
+    # both read the v123 build everywhere.
+    assert '"version_number": "0.2.31"' in manifest
+    assert "v123 deterministic teacher" in manifest
     assert controller.count("teacher_v1-0.1.123-gun-wp1") == 1
-    assert controller.count("0.2.30-wp2-capture") == 1
+    assert controller.count("0.2.31-wp2-capture") == 1
     assert telemetry.count("teacher_v1-0.1.123-gun-wp1") == 1
-    assert telemetry.count("0.2.30-wp2-capture") == 1
+    assert telemetry.count("0.2.31-wp2-capture") == 1
 
 
 def test_v123_strength_signal_is_plumbed_through_controller_and_field():
