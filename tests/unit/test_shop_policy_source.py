@@ -123,17 +123,17 @@ def test_v64_blood_donation_is_vetoed_for_gate_reliability():
     assert '"item_blood_donation": {"never": true}' in requirement_block
 
 
-def test_wp2_capture_build_versions_the_v116_continuous_clearance_policy():
+def test_wp2_capture_build_versions_the_v117_relief_and_alignment_policy():
     manifest = MANIFEST.read_text(encoding="utf-8")
     controller = CONTROLLER.read_text(encoding="utf-8")
     telemetry = TELEMETRY.read_text(encoding="utf-8")
 
-    assert '"version_number": "0.2.24"' in manifest
-    assert "v116 deterministic teacher" in manifest
-    assert controller.count("teacher_v1-0.1.116-gun-wp1") == 1
-    assert controller.count("0.2.24-wp2-capture") == 1
-    assert telemetry.count("teacher_v1-0.1.116-gun-wp1") == 1
-    assert telemetry.count("0.2.24-wp2-capture") == 1
+    assert '"version_number": "0.2.25"' in manifest
+    assert "v117 deterministic teacher" in manifest
+    assert controller.count("teacher_v1-0.1.117-gun-wp1") == 1
+    assert controller.count("0.2.25-wp2-capture") == 1
+    assert telemetry.count("teacher_v1-0.1.117-gun-wp1") == 1
+    assert telemetry.count("0.2.25-wp2-capture") == 1
 
 
 def test_v84_item_audit_and_conditional_effect_corrections():
@@ -1033,7 +1033,7 @@ def test_v113_wall_recovery_intervenes_early_and_stays_near_best():
         "func _finale_projectile_safety", 1
     )[0]
 
-    assert "const BOSS_FINALE_WALL_BODY_RELIEF_TRIGGER := 140.0" in config
+    assert "const BOSS_FINALE_WALL_BODY_RELIEF_TRIGGER := 200.0" in config
     assert "const BOSS_FINALE_WALL_BODY_RELIEF_MIN_GAIN := 60.0" in config
     assert "const BOSS_FINALE_WALL_BODY_RELIEF_CLEARANCE_SLACK := 10.0" in config
     assert "candidate_rows = hard_safe_rows" in selector
@@ -1052,7 +1052,7 @@ def test_v113_wall_recovery_intervenes_early_and_stays_near_best():
     # more than 180 units clearer.
     selected_body = 85.795204
     relief_body = 267.219028
-    assert selected_body < 140.0
+    assert selected_body < 200.0
     assert relief_body >= selected_body + 60.0
 
 
@@ -1130,6 +1130,38 @@ def test_v116_clearances_use_the_continuous_closest_approach():
     # t~56 ms while the t=0 and t=0.12 samples both read ~28 units.
     assert 95.305712 > 45.0 > -10.5
     assert 28.078943 > 23.0 > 1.74
+
+
+def test_v117_finale_captures_align_with_recompute_ticks_and_relief_extends():
+    config = CONFIG.read_text(encoding="utf-8")
+    controller = CONTROLLER.read_text(encoding="utf-8")
+    combat = controller.split("func _handle_combat", 1)[1].split(
+        "func _record_density_sample", 1
+    )[0]
+
+    # Captures on finale waves are emitted on the recompute tick itself, so
+    # wave-20 freshness no longer depends on the counter phase at wave entry.
+    assert "var emit_capture := _combat_tick_counter % _WP2_CAPTURE_DIVISOR == 0" in combat
+    assert "if wave >= _CONFIG_SCRIPT.BOSS_FINALE_WAVE:" in combat
+    assert "emit_capture = recompute_move" in combat
+    assert "if emit_capture:" in combat
+    assert "_emit_wp2_combat_capture(main, state, recompute_move)" in combat
+
+    assert "const BOSS_FINALE_WALL_BODY_RELIEF_TRIGGER := 200.0" in config
+
+    # Frozen v116 smoke (run_1784771165_61226) missed-relief captures: the
+    # relief reference sat just above the old 140 trigger while hard-safe
+    # lanes were 75-212 units clearer; the run died on wave 20.
+    cases = [
+        {"reference": 145.285248, "hard_safe": 223.153137},
+        {"reference": 151.144669, "hard_safe": 269.427734},
+        {"reference": 140.66243, "hard_safe": 215.368134},
+        {"reference": 147.218948, "hard_safe": 369.706909},
+    ]
+    for case in cases:
+        assert case["reference"] >= 140.0  # old trigger missed it
+        assert case["reference"] < 200.0  # extended trigger arms
+        assert case["hard_safe"] >= case["reference"] + 60.0
 
 
 def test_v114_final_body_gate_covers_every_combat_wave_and_uses_open_pack_tier():

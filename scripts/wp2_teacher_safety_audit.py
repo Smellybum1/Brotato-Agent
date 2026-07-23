@@ -17,7 +17,9 @@ BODY_TIER = 45.0
 BODY_SLACK = 20.0
 BODY_PACK_CLEARANCE = 160.0
 BODY_EMERGENCY_SLACK = 5.0
-WALL_BODY_RELIEF_TRIGGER = 140.0
+# v117: extended from 140 after the v116 smoke died with references at
+# 140.7-151.1 while hard-safe lanes offered 75-212 more units.
+WALL_BODY_RELIEF_TRIGGER = 200.0
 WALL_BODY_RELIEF_MIN_GAIN = 60.0
 HARD_WALL_MARGIN = 96.0
 COMMAND_HORIZON_SEC = 0.30
@@ -499,6 +501,18 @@ def audit_run(
     active_wall_recovery = 0
     active_wall_body_relief = 0
     body_diagnostic_captures = 0
+    # v117: finale captures must land on recompute ticks. The v116 smoke drew
+    # an unlucky capture/decision phase (0 of 496 wave-20 captures fresh), so
+    # every fresh-gated check silently skipped the fatal wave. Legacy replays
+    # predate the alignment and are exempt.
+    nonfresh_finale_captures: list[int] = []
+    if not legacy_sampled:
+        nonfresh_finale_captures = [
+            payload["capture_seq"]
+            for payload in captures
+            if int(payload.get("wave", 0)) >= 20
+            and not payload["teacher"].get("action_fresh", False)
+        ]
     for payload in late:
         faults = _hard_wall_faults(payload)
         if faults:
@@ -641,6 +655,7 @@ def audit_run(
         + len(wall_body_relief_selection_violations)
         + len(hard_wall_violations)
         + len(avoidable_damage_violations)
+        + (1 if nonfresh_finale_captures else 0)
         + telemetry_error_events
         + (0 if terminal_valid else 1)
     )
@@ -682,6 +697,8 @@ def audit_run(
         "wall_body_relief_violations": wall_body_relief_violations,
         "wall_body_relief_selection_violations": wall_body_relief_selection_violations,
         "hard_wall_violations": hard_wall_violations,
+        "nonfresh_finale_capture_count": len(nonfresh_finale_captures),
+        "nonfresh_finale_capture_sample": nonfresh_finale_captures[:20],
         "damage_events": damage_events,
         "avoidable_damage_violations": avoidable_damage_violations,
         "events_sha256": _sha256(events_path),

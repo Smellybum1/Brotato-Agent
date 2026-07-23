@@ -211,6 +211,18 @@ qualification; see `reports/wp2/v116_route_quality_stop_repair_report.md`.
 The exact-20 dataset campaign starts only after a v116 isolated smoke passes
 the new gates.
 
+The v116 smoke (`run_1784771165_61226`) validated the continuous metric
+(perfect diagnostic parity, no route-crossing damage, cleaner waves 1-19)
+but died on wave 20 and was rejected. Two defects: finale capture/decision
+phase misalignment made wave-20 freshness a per-run coin flip (v116 drew
+0/496 fresh, silently skipping fresh-gated audits on the fatal wave), and
+the 140-unit wall-body-relief trigger was a knife edge (references
+140.7-151.1 while hard-safe lanes offered 75-212 more). v117 emits finale
+captures on the recompute tick, extends the relief trigger to 200, and adds
+an audit gate rejecting any non-fresh finale capture; see
+`reports/wp2/v117_relief_alignment_stop_repair_report.md`. A v117 isolated
+smoke gates the exact-20 campaign.
+
 Evidence-driven modifications to `Grok_4.5_Brotato_Work_Package_2_Prompt.md`
 (operator/director approval required — the directive says "unchanged", so these
 are recorded here as the operator's amendments):

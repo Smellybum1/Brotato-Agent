@@ -168,7 +168,11 @@ const BOSS_FINALE_ENEMY_PENALTY_SLACK := 20.0
 # runs through a pack but a hard-wall-safe sampled lane is materially clearer.
 # This is deliberately exceptional so the v104 recovery latch still advances
 # whenever an adequately open inward lane exists.
-const BOSS_FINALE_WALL_BODY_RELIEF_TRIGGER := 140.0
+# v117: 140 was a knife edge. The v116 smoke died on wave 20 with relief
+# references of 140.7-151.1 while hard-wall-safe lanes offered 75-212 more
+# units (captures 20390/20464/20468/20527). 200 covers those plus ~45 units
+# of intra-hold geometry decay at wave-20 relative speeds.
+const BOSS_FINALE_WALL_BODY_RELIEF_TRIGGER := 200.0
 const BOSS_FINALE_WALL_BODY_RELIEF_MIN_GAIN := 60.0
 # Keep a buffer inside the audit's 20-unit near-best requirement so one frame of
 # moving enemy geometry cannot turn a valid decision into a visibly worse route.

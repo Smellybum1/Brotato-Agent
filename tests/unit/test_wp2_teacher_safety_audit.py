@@ -70,6 +70,50 @@ def test_v116_projectile_route_clearance_sees_straddled_bullets():
     assert _projectile_route_clearance(payload) < 5.0
 
 
+def test_v117_nonfresh_finale_captures_reject_the_run(tmp_path):
+    from scripts.wp2_teacher_safety_audit import audit_run
+    import json
+
+    def capture(seq, fresh):
+        return {
+            "event": "combat_capture",
+            "ts_ms": 1000 + seq,
+            "payload": {
+                "capture_seq": seq,
+                "observation_ts_ms": 1000 + seq,
+                "wave": 20,
+                "player": {"x": 1024.0, "y": 768.0, "speed": 400.0},
+                "teacher": {
+                    "action": {"x": 1.0, "y": 0.0},
+                    "action_fresh": fresh,
+                    "contributions": {"finale_translation": {}},
+                },
+                "entities": {"enemies": [], "bosses": [], "projectiles": []},
+                "arena": {"width": 2048.0, "height": 1536.0},
+            },
+        }
+
+    events = [capture(1, False), capture(2, False),
+              {"event": "run_end", "ts_ms": 2000, "payload": {}}]
+    run_dir = tmp_path / "run_test"
+    run_dir.mkdir()
+    (run_dir / "events.jsonl").write_text(
+        "\n".join(json.dumps(e) for e in events) + "\n", encoding="utf-8"
+    )
+    (run_dir / "summary.json").write_text(json.dumps({
+        "telemetry_complete": True, "errors": 0, "hangs": 0,
+        "illegal_actions": 0, "result": "victory", "last_wave": 20,
+    }), encoding="utf-8")
+
+    audit = audit_run(run_dir)
+    assert audit["nonfresh_finale_capture_count"] == 2
+    assert not audit["accepted"]
+
+    legacy = audit_run(run_dir, legacy_sampled=True)
+    assert legacy["nonfresh_finale_capture_count"] == 0
+    assert legacy["accepted"]
+
+
 def test_v116_route_replay_flags_avoidable_projectile_crossing():
     payload = _payload(x=1549.171997, y=818.717346, action=(0.258819, -0.965926), speed=504.0)
     payload["entities"]["projectiles"] = [

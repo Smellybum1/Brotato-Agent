@@ -13,7 +13,7 @@ const LOG_NAME = "Tom:BrotatoAgent:Runner"
 var active: bool = false
 var auto_start_benchmark: bool = true
 var current_move_vector: Vector2 = Vector2.ZERO
-var policy_version: String = "teacher_v1-0.1.116-gun-wp1"
+var policy_version: String = "teacher_v1-0.1.117-gun-wp1"
 var last_move_debug: Dictionary = {}
 var last_meta_debug: Dictionary = {}
 var _manual_override: bool = false
@@ -181,7 +181,16 @@ func _handle_combat(main) -> void:
 	if _orch != null and current_move_vector.length() > 0.01:
 		_orch.note_move()
 	_combat_tick_counter += 1
-	if _combat_tick_counter % _WP2_CAPTURE_DIVISOR == 0:
+	# v117: on finale waves, decisions recompute on _finale_move_tick's phase
+	# while captures used _combat_tick_counter's. Whether wave-20 captures
+	# landed on recompute ticks depended on the counter phase at wave entry:
+	# the v115 smoke drew the aligned phase (all fresh), the v116 smoke drew
+	# an offset (0/496 fresh) and every fresh-gated audit silently skipped
+	# the death sequence. Emit finale captures on the recompute tick itself.
+	var emit_capture := _combat_tick_counter % _WP2_CAPTURE_DIVISOR == 0
+	if wave >= _CONFIG_SCRIPT.BOSS_FINALE_WAVE:
+		emit_capture = recompute_move
+	if emit_capture:
 		_emit_wp2_combat_capture(main, state, recompute_move)
 	if _combat_tick_counter % 30 == 0:
 		_record_density_sample(int(state.get("wave", 0)), state.get("enemies", []).size())
@@ -1612,7 +1621,7 @@ func _start_run() -> void:
 		"endless": false,
 		"wave_retry": false,
 		"game_version": "1.1.15.4",
-		"mod_version": "0.2.24-wp2-capture",
+		"mod_version": "0.2.25-wp2-capture",
 		"config_id": "well_rounded_d0_anyranged",
 		"policy_version": policy_version,
 	}
