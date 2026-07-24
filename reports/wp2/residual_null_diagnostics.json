@@ -1,0 +1,473 @@
+{
+  "task": "wp2_stage_f_phase2_residual_null_diagnostics",
+  "device": "cuda",
+  "seed": 2,
+  "steps": 4000,
+  "batch_size": 512,
+  "theta_max_deg": 5.0,
+  "parent_model_sha256": "1AD517B04843B69966841C7B795B927AE86B2727789456224321FC091F29F331",
+  "pool": {
+    "n_transitions": 183343,
+    "n_states": 183408,
+    "transitions_match": true,
+    "expected_transitions": 183343,
+    "per_run": [
+      {
+        "run_id": "run_1784890075_95641",
+        "conn": 0,
+        "pool": "probe",
+        "states": 14176,
+        "transitions": 14166,
+        "terminal": "defeat"
+      },
+      {
+        "run_id": "run_1784891038_60320",
+        "conn": 1,
+        "pool": "probe",
+        "states": 20032,
+        "transitions": 20025,
+        "terminal": "victory"
+      },
+      {
+        "run_id": "run_1784892185_3194",
+        "conn": 1,
+        "pool": "probe",
+        "states": 19177,
+        "transitions": 19170,
+        "terminal": "defeat"
+      },
+      {
+        "run_id": "run_1784893276_88958",
+        "conn": 1,
+        "pool": "probe",
+        "states": 14064,
+        "transitions": 14059,
+        "terminal": "defeat"
+      },
+      {
+        "run_id": "run_1784894100_69759",
+        "conn": 1,
+        "pool": "probe",
+        "states": 20059,
+        "transitions": 20048,
+        "terminal": "defeat"
+      },
+      {
+        "run_id": "run_1784895219_19972",
+        "conn": 1,
+        "pool": "probe",
+        "states": 19882,
+        "transitions": 19872,
+        "terminal": "victory"
+      },
+      {
+        "run_id": "run_1784899404_47424",
+        "conn": 0,
+        "pool": "pi1",
+        "states": 18200,
+        "transitions": 18199,
+        "terminal": "defeat"
+      },
+      {
+        "run_id": "run_1784900592_3839",
+        "conn": 1,
+        "pool": "pi1",
+        "states": 19964,
+        "transitions": 19958,
+        "terminal": "defeat"
+      },
+      {
+        "run_id": "run_1784901757_13286",
+        "conn": 1,
+        "pool": "pi1",
+        "states": 20155,
+        "transitions": 20152,
+        "terminal": "victory"
+      },
+      {
+        "run_id": "run_1784902921_28807",
+        "conn": 1,
+        "pool": "pi1",
+        "states": 17699,
+        "transitions": 17694,
+        "terminal": "defeat"
+      }
+    ]
+  },
+  "diagnostic1": {
+    "description": "regularizer ablation; |z|,|delta| over all pool states",
+    "baseline_pi2_report": {
+      "p99_abs_z": 0.012825585901737213,
+      "lambda_zero": 0.01
+    },
+    "arms": [
+      {
+        "n_states": 183408,
+        "p99_abs_z": 1.5579367876052856,
+        "max_abs_z": 3.041088581085205,
+        "abs_z": {
+          "p50": 0.41389578580856323,
+          "p90": 1.1356136798858643,
+          "p99": 1.5579367876052856
+        },
+        "abs_delta_deg": {
+          "p50": 1.9588775634765625,
+          "p90": 4.064659118652344,
+          "p99": 4.575428009033203
+        },
+        "max_abs_delta_deg": 4.977220058441162,
+        "mean_abs_delta_deg": 2.0973706245422363,
+        "lambda_zero": 0.0,
+        "final_losses": {
+          "critic_loss": 0.0035213115625083447,
+          "actor_loss": 0.07075907289981842
+        }
+      },
+      {
+        "n_states": 183408,
+        "p99_abs_z": 0.11385002732276917,
+        "max_abs_z": 1.2004624605178833,
+        "abs_z": {
+          "p50": 0.00887775607407093,
+          "p90": 0.02832331694662571,
+          "p99": 0.11385002732276917
+        },
+        "abs_delta_deg": {
+          "p50": 0.04438761621713638,
+          "p90": 0.14157871901988983,
+          "p99": 0.5668033361434937
+        },
+        "max_abs_delta_deg": 4.168978214263916,
+        "mean_abs_delta_deg": 0.07600551843643188,
+        "lambda_zero": 0.001,
+        "final_losses": {
+          "critic_loss": 0.0030718818306922913,
+          "actor_loss": 0.07128781080245972
+        }
+      },
+      {
+        "n_states": 183408,
+        "p99_abs_z": 0.02413737028837204,
+        "max_abs_z": 0.48214107751846313,
+        "abs_z": {
+          "p50": 0.0011693345149978995,
+          "p90": 0.0026852928567677736,
+          "p99": 0.02413737028837204
+        },
+        "abs_delta_deg": {
+          "p50": 0.005846669897437096,
+          "p90": 0.013426431454718113,
+          "p99": 0.12066341936588287
+        },
+        "max_abs_delta_deg": 2.239783525466919,
+        "mean_abs_delta_deg": 0.01150444708764553,
+        "lambda_zero": 0.01,
+        "final_losses": {
+          "critic_loss": 0.0033390801399946213,
+          "actor_loss": 0.07105246186256409
+        }
+      }
+    ],
+    "deployed_pi2_checkpoint": {
+      "n_states": 183408,
+      "p99_abs_z": 0.012825547717511654,
+      "max_abs_z": 0.34860822558403015,
+      "abs_z": {
+        "p50": 0.0006884634494781494,
+        "p90": 0.002620910992845893,
+        "p99": 0.012825547717511654
+      },
+      "abs_delta_deg": {
+        "p50": 0.0034423163160681725,
+        "p90": 0.013104524463415146,
+        "p99": 0.0641242265701294
+      },
+      "max_abs_delta_deg": 1.6757032871246338,
+      "mean_abs_delta_deg": 0.008353899233043194
+    },
+    "interpretation": "lambda_0 monotonically suppresses the residual: |delta| p99 = 4.575 deg at 0.0, 0.567 deg at 0.001, 0.121 deg at 0.01 (p99|z| = 1.558 / 0.114 / 0.024). With NO regularizer the actor moves well off the teacher (|delta| median 1.96 deg), so the near-zero residual at lambda_0=0.01 is produced BY the regularizer, not by an actor that fails to find a direction. The regularizer is NOT exonerated."
+  },
+  "diagnostic2": {
+    "description": "critic state-conditional advantage A*(s)=max_d Q1(s,d)-Q1(s,0)",
+    "critic_source": "re-fit pi2 critic: the joint-trained lambda=0.01 arm's twin critic (run_iterate does not checkpoint the critic; this reproduces the pi2 joint TD3 training on the same pool with a controlled seed)",
+    "grid_deltas_deg": [
+      -5.0,
+      -4.5,
+      -4.0,
+      -3.5,
+      -3.0,
+      -2.5,
+      -2.0,
+      -1.5,
+      -1.0,
+      -0.5,
+      0.0,
+      0.5,
+      1.0,
+      1.5,
+      2.0,
+      2.5,
+      3.0,
+      3.5,
+      4.0,
+      4.5,
+      5.0
+    ],
+    "advantage_thresholds": [
+      0.001,
+      0.01,
+      0.05
+    ],
+    "overall": {
+      "n": 183408,
+      "a_star_percentiles": {
+        "p50": 0.001262914389371872,
+        "p90": 0.004360753111541271,
+        "p99": 0.01778535172343254,
+        "max": 0.2799224257469177
+      },
+      "mean_abs_q0": 0.07509228587150574,
+      "frac_a_star_gt": {
+        "0.001": 0.5694299049114543,
+        "0.01": 0.021798394835557882,
+        "0.05": 0.0010413940504231003
+      },
+      "frac_a_star_gt_rel_meanabsq": {
+        "0.001": 0.9203469859548111,
+        "0.01": 0.6435542615371195,
+        "0.05": 0.1346560673471168
+      },
+      "mean_abs_argmax_delta_deg": 3.4799954891204834,
+      "frac_argmax_at_zero": 0.031934266771351305
+    },
+    "by_wave_band": {
+      "1-5": {
+        "n": 29926,
+        "a_star_percentiles": {
+          "p50": 0.0012609921395778656,
+          "p90": 0.003743741661310196,
+          "p99": 0.006701245903968811,
+          "max": 0.03996334969997406
+        },
+        "mean_abs_q0": 0.06290516257286072,
+        "frac_a_star_gt": {
+          "0.001": 0.5727461070640915,
+          "0.01": 0.0027400922274944863,
+          "0.05": 0.0
+        },
+        "frac_a_star_gt_rel_meanabsq": {
+          "0.001": 0.9310298736884315,
+          "0.01": 0.6907705673995856,
+          "0.05": 0.15471496357682282
+        },
+        "mean_abs_argmax_delta_deg": 3.606128454208374,
+        "frac_argmax_at_zero": 0.029171957495154714
+      },
+      "6-10": {
+        "n": 53516,
+        "a_star_percentiles": {
+          "p50": 0.0011437200009822845,
+          "p90": 0.0036953091621398926,
+          "p99": 0.007652785163372755,
+          "max": 0.13699451088905334
+        },
+        "mean_abs_q0": 0.06867972016334534,
+        "frac_a_star_gt": {
+          "0.001": 0.5419874430076986,
+          "0.01": 0.004634128111219074,
+          "0.05": 9.343000224232005e-05
+        },
+        "frac_a_star_gt_rel_meanabsq": {
+          "0.001": 0.9196688840720533,
+          "0.01": 0.6405187233724493,
+          "0.05": 0.12054338889304134
+        },
+        "mean_abs_argmax_delta_deg": 3.437037467956543,
+        "frac_argmax_at_zero": 0.033522684804544435
+      },
+      "11-15": {
+        "n": 58930,
+        "a_star_percentiles": {
+          "p50": 0.001224510371685028,
+          "p90": 0.004323741886764765,
+          "p99": 0.014721250161528587,
+          "max": 0.17532449960708618
+        },
+        "mean_abs_q0": 0.07562307268381119,
+        "frac_a_star_gt": {
+          "0.001": 0.5601052095706771,
+          "0.01": 0.018225012726964196,
+          "0.05": 0.0008484642796538266
+        },
+        "frac_a_star_gt_rel_meanabsq": {
+          "0.001": 0.9193280162905142,
+          "0.01": 0.6342270490412354,
+          "0.05": 0.13012048192771083
+        },
+        "mean_abs_argmax_delta_deg": 3.430044174194336,
+        "frac_argmax_at_zero": 0.032224673341252334
+      },
+      "16-19": {
+        "n": 37172,
+        "a_star_percentiles": {
+          "p50": 0.0013683587312698364,
+          "p90": 0.005074835382401943,
+          "p99": 0.0235065296292305,
+          "max": 0.12402209639549255
+        },
+        "mean_abs_q0": 0.0823325365781784,
+        "frac_a_star_gt": {
+          "0.001": 0.5897718713009792,
+          "0.01": 0.031071774453890026,
+          "0.05": 0.0005918433229312386
+        },
+        "frac_a_star_gt_rel_meanabsq": {
+          "0.001": 0.9166846013128161,
+          "0.01": 0.6385451415043581,
+          "0.05": 0.14484020230280856
+        },
+        "mean_abs_argmax_delta_deg": 3.4434924125671387,
+        "frac_argmax_at_zero": 0.03292801033035618
+      },
+      "20": {
+        "n": 3864,
+        "a_star_percentiles": {
+          "p50": 0.006421715021133423,
+          "p90": 0.027149753645062447,
+          "p99": 0.08834269642829895,
+          "max": 0.2799224257469177
+        },
+        "mean_abs_q0": 0.18054549396038055,
+        "frac_a_star_gt": {
+          "0.001": 0.8703416149068323,
+          "0.01": 0.3724120082815735,
+          "0.05": 0.029503105590062112
+        },
+        "frac_a_star_gt_rel_meanabsq": {
+          "0.001": 0.9516045548654244,
+          "0.01": 0.802536231884058,
+          "0.05": 0.40217391304347827
+        },
+        "mean_abs_argmax_delta_deg": 4.211050510406494,
+        "frac_argmax_at_zero": 0.017339544513457556
+      }
+    },
+    "by_risk_stratum": {
+      "0.00-0.25": {
+        "n": 155446,
+        "a_star_percentiles": {
+          "p50": 0.0012443214654922485,
+          "p90": 0.004172854125499725,
+          "p99": 0.01283707283437252,
+          "max": 0.19967889785766602
+        },
+        "mean_abs_q0": 0.07270660251379013,
+        "frac_a_star_gt": {
+          "0.001": 0.565733437978462,
+          "0.01": 0.015368681085392999,
+          "0.05": 0.0004889157649601791
+        },
+        "frac_a_star_gt_rel_meanabsq": {
+          "0.001": 0.9217992100150535,
+          "0.01": 0.6479098851047952,
+          "0.05": 0.13416234576637545
+        },
+        "mean_abs_argmax_delta_deg": 3.4787192344665527,
+        "frac_argmax_at_zero": 0.03147716892039679
+      },
+      "0.25-0.50": {
+        "n": 21393,
+        "a_star_percentiles": {
+          "p50": 0.0012683570384979248,
+          "p90": 0.004696501884609461,
+          "p99": 0.024393904954195023,
+          "max": 0.2799224257469177
+        },
+        "mean_abs_q0": 0.07954125106334686,
+        "frac_a_star_gt": {
+          "0.001": 0.5695788341981022,
+          "0.01": 0.03211330809143178,
+          "0.05": 0.0016827934371055953
+        },
+        "frac_a_star_gt_rel_meanabsq": {
+          "0.001": 0.9140373019211891,
+          "0.01": 0.6310942831767401,
+          "0.05": 0.13322114710419297
+        },
+        "mean_abs_argmax_delta_deg": 3.4513626098632812,
+        "frac_argmax_at_zero": 0.03496470808208292
+      },
+      "0.50-0.75": {
+        "n": 5953,
+        "a_star_percentiles": {
+          "p50": 0.0017279833555221558,
+          "p90": 0.012144642882049084,
+          "p99": 0.04944121465086937,
+          "max": 0.22328011691570282
+        },
+        "mean_abs_q0": 0.11158633232116699,
+        "frac_a_star_gt": {
+          "0.001": 0.6393415084831178,
+          "0.01": 0.11540399798420964,
+          "0.05": 0.009407021669746347
+        },
+        "frac_a_star_gt_rel_meanabsq": {
+          "0.001": 0.9094574164286914,
+          "0.01": 0.6141441290105829,
+          "0.05": 0.18881236351419453
+        },
+        "mean_abs_argmax_delta_deg": 3.556946039199829,
+        "frac_argmax_at_zero": 0.034436418612464305
+      },
+      "0.75-inf": {
+        "n": 616,
+        "a_star_percentiles": {
+          "p50": 0.0052906833589077,
+          "p90": 0.037263333797454834,
+          "p99": 0.0651184469461441,
+          "max": 0.0790698230266571
+        },
+        "mean_abs_q0": 0.16992740333080292,
+        "frac_a_star_gt": {
+          "0.001": 0.8214285714285714,
+          "0.01": 0.3814935064935065,
+          "0.05": 0.037337662337662336
+        },
+        "frac_a_star_gt_rel_meanabsq": {
+          "0.001": 0.935064935064935,
+          "0.01": 0.7418831168831169,
+          "0.05": 0.4172077922077922
+        },
+        "mean_abs_argmax_delta_deg": 4.052759647369385,
+        "frac_argmax_at_zero": 0.017857142857142856
+      }
+    },
+    "risk_hist": {
+      "0.00-0.25": 155446,
+      "0.25-0.50": 21393,
+      "0.50-0.75": 5953,
+      "0.75-inf": 616
+    },
+    "wave_hist": {
+      "1-5": 29926,
+      "6-10": 53516,
+      "11-15": 58930,
+      "16-19": 37172,
+      "20": 3864
+    },
+    "interpretation": "The critic prefers a NONZERO delta for 96.8% of states (mean preferred |delta|=3.48 deg), so it does not certify the teacher as locally optimal -- but the gain is small in absolute return (A* median 0.0013, p99 0.0178, max 0.2799; mean|Q0|=0.0751). It is negligible in early/low-risk states and concentrates in the known-weak strata: wave 20 (A* p99 0.0883, 37% of states >0.01, mean|Q0| 0.181) and risk>=0.5 (0.75+ stratum A* p99 0.0651, 38% >0.01). These are the same strata where bc_v2 offline error is largest."
+  },
+  "bookkeeping": {
+    "probe": {
+      "states": 107390,
+      "trans": 107340
+    },
+    "pi1": {
+      "states": 76018,
+      "trans": 76003
+    },
+    "cumulative_residual_ticks": 183408,
+    "note": "residual tick = a usable student control state contributing an n-step transition to the pool (valid, non-recovery). run_1784904016_34435 aborted with 0 ticks and is excluded."
+  },
+  "summary": "The regularizer is the proximate cause of the near-zero residual, and the critic does not certify the teacher as locally optimal. Ablation: with lambda_0=0.0 the actor moves substantially off the teacher (|delta| median 1.96 deg, p99 4.58 deg, p99|z|=1.56); lambda_0=0.001 already suppresses it to |delta| p99 0.57 deg; lambda_0=0.01 pins it to p99|z|=0.024 (deployed pi2 0.0128). So lambda_0=0.01 monotonically overwhelms whatever value signal exists. That signal is small but real: the pi2 critic prefers a nonzero delta for 96.8% of states (mean preferred |delta|=3.48 deg) yet the gain is tiny in absolute return (A* median 0.0013, p99 0.0178, mean|Q0|=0.075). The advantage is negligible in early/low-risk states (w1-5 A* p99 0.0067) and concentrates where bc_v2 is weakest -- wave 20 (A* p99 0.088, 37% of states >0.01, mean|Q0| 0.18) and risk>=0.5 (0.75+ A* p99 0.065, 38% >0.01). Net: the collapse to ~0 is caused by lambda_0=0.01, not by an absence of critic-perceived advantage; but the suppressed advantages are small-magnitude and clustered in high-risk/late-wave pockets. Whether those pockets are genuine teacher-improvements or critic approximation error is not resolvable offline -- the live random-control checkpoint (design 6) would decide."
+}

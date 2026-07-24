@@ -28,6 +28,7 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from trainer.rl.replay import (  # noqa: E402
+    ActRecord,
     RewardConfig,
     ReplayPool,
     assemble_transitions,
@@ -77,12 +78,26 @@ def build_replay(
     device: str,
     log=print,
 ) -> ReplayPool:
-    """Assemble transitions from every run and trunk-embed the referenced states."""
-    act_maps = parse_sidecar_actlog(sidecar_log)
+    """Assemble transitions from every run and trunk-embed the referenced states.
+
+    ``run_conn`` values may be a bare connection index (act log = ``sidecar_log``)
+    or a ``(conn, logpath)`` tuple for runs recorded in a different sidecar log —
+    the growing replay pool spans multiple collection sessions (probe pilot +
+    each pi_k batch), each with its own log file.
+    """
+    log_cache: dict[str, dict[int, dict[int, ActRecord]]] = {}
+
+    def _acts_for(logpath: str | Path) -> dict[int, dict[int, ActRecord]]:
+        key = str(logpath)
+        if key not in log_cache:
+            log_cache[key] = parse_sidecar_actlog(logpath)
+        return log_cache[key]
+
     all_states = []
     all_trans = []
-    for run_id, conn in run_conn.items():
-        act_map = act_maps.get(conn, {})
+    for run_id, spec in run_conn.items():
+        conn, logpath = spec if isinstance(spec, tuple) else (spec, None)
+        act_map = _acts_for(logpath or sidecar_log).get(conn, {})
         run = build_run_telemetry(run_id, runs_root, act_map)
         states, trans = assemble_transitions(
             run, reward, nstep=nstep, recovery_ticks=recovery_ticks,
@@ -356,17 +371,28 @@ def run_iterate(args) -> int:
     return 0 if gates["overall_pass"] else 1
 
 
-def _load_run_conn(spec: str | None) -> dict[str, int]:
-    """Parse a ``run_id:conn,run_id:conn`` spec, defaulting to the probe set."""
+def _load_run_conn(spec: str | None) -> dict[str, object]:
+    """Parse a ``run_id:conn[:logpath]`` comma list, defaulting to the probe set.
+
+    The optional third field routes that run's act-log join to a different
+    sidecar log file than ``--sidecar-log`` (multi-session replay pools).
+    """
     if not spec:
         return dict(PROBE_RUN_CONN)
-    out: dict[str, int] = {}
+    out: dict[str, object] = {}
     for item in spec.split(","):
         item = item.strip()
         if not item:
             continue
-        run_id, _, conn = item.partition(":")
-        out[run_id.strip()] = int(conn or 0)
+        # split at most twice: the third field is a path and may itself
+        # contain a drive colon (C:/...).
+        parts = item.split(":", 2)
+        run_id = parts[0].strip()
+        conn = int(parts[1]) if len(parts) > 1 and parts[1] else 0
+        if len(parts) > 2 and parts[2].strip():
+            out[run_id] = (conn, parts[2].strip())
+        else:
+            out[run_id] = conn
     return out
 
 
