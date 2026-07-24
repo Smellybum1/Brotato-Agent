@@ -29,6 +29,7 @@ from trainer.bridge.sidecar import (  # noqa: E402
     DEFAULT_LOG_PATH,
     DEFAULT_PORT,
     OnnxModelService,
+    ResidualProbeService,
     SidecarConfig,
     SidecarStartupError,
     StudentSidecar,
@@ -37,10 +38,38 @@ from trainer.bridge.sidecar import (  # noqa: E402
 
 DEFAULT_REGISTRY = REPO_ROOT / "models" / "registry" / "bc_v1_s1_full.json"
 DEFAULT_ONNX_REGISTRY = REPO_ROOT / "models" / "registry" / "bc_v1_s1_full_onnx.json"
+DEFAULT_SCHEMA = REPO_ROOT / "configs" / "wp2" / "observation_v1.yaml"
+DEFAULT_THETA_MAX_DEG = 5.0
 
 
 def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Serve the bc_v1 student policy over loopback TCP.")
+    parser.add_argument(
+        "--mode",
+        choices=("student", "residual-probe"),
+        default="student",
+        help="serving mode: 'student' (verified bc_v1 model) or 'residual-probe' "
+        "(torch-free bounded angular perturbation of the teacher action; design §2)",
+    )
+    parser.add_argument(
+        "--theta-max-deg",
+        type=float,
+        default=DEFAULT_THETA_MAX_DEG,
+        help=f"residual-probe: half-width of the uniform angular delta in degrees "
+        f"(default {DEFAULT_THETA_MAX_DEG})",
+    )
+    parser.add_argument(
+        "--probe-seed",
+        type=int,
+        default=None,
+        help="residual-probe: REQUIRED integer seed for the per-run delta stream",
+    )
+    parser.add_argument(
+        "--schema",
+        default=str(DEFAULT_SCHEMA),
+        help="residual-probe: observation schema yaml providing the capture schema "
+        "hash to pin at handshake (default: configs/wp2/observation_v1.yaml)",
+    )
     parser.add_argument(
         "--registry",
         default=str(DEFAULT_REGISTRY),
@@ -70,20 +99,54 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
+def _load_probe_capture_schema(schema_path: Path) -> dict:
+    """Read the observation schema yaml for the probe's capture-schema pin.
+
+    Torch-free by design (residual-probe mode requires no torch and no registry):
+    only the ``source_capture_schema_hash`` / ``schema_id`` are needed so the
+    handshake presents the hash the live mod pins.
+    """
+    import yaml
+
+    try:
+        data = yaml.safe_load(schema_path.read_text(encoding="utf-8"))
+    except OSError as exc:
+        raise SidecarStartupError(f"schema unreadable: {exc}") from exc
+    if not isinstance(data, dict) or "source_capture_schema_hash" not in data:
+        raise SidecarStartupError(f"schema missing source_capture_schema_hash: {schema_path}")
+    return data
+
+
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
     if args.host not in ("127.0.0.1", "localhost"):
         print(f"error: refusing non-loopback bind host {args.host!r}", file=sys.stderr)
         return 1
 
-    try:
-        if args.backend == "onnx":
-            service = OnnxModelService.from_registry(args.onnx_registry, checkpoint=args.checkpoint)
-        else:
-            service = TorchModelService.from_registry(args.registry, checkpoint=args.checkpoint)
-    except SidecarStartupError as exc:
-        print(f"startup error: {exc}", file=sys.stderr)
-        return 2
+    if args.mode == "residual-probe":
+        if args.probe_seed is None:
+            print("error: --probe-seed is required in residual-probe mode", file=sys.stderr)
+            return 1
+        try:
+            schema = _load_probe_capture_schema(Path(args.schema))
+            service = ResidualProbeService(
+                theta_max_deg=args.theta_max_deg,
+                seed=args.probe_seed,
+                capture_schema_hash=str(schema["source_capture_schema_hash"]),
+                schema_id=str(schema.get("schema_id", "combat_obs_v1")),
+            )
+        except SidecarStartupError as exc:
+            print(f"startup error: {exc}", file=sys.stderr)
+            return 2
+    else:
+        try:
+            if args.backend == "onnx":
+                service = OnnxModelService.from_registry(args.onnx_registry, checkpoint=args.checkpoint)
+            else:
+                service = TorchModelService.from_registry(args.registry, checkpoint=args.checkpoint)
+        except SidecarStartupError as exc:
+            print(f"startup error: {exc}", file=sys.stderr)
+            return 2
 
     identity = service.identity
     print(

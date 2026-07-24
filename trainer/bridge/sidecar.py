@@ -45,6 +45,14 @@ from trainer.bridge.protocol import (
 LOOPBACK_HOSTS = frozenset({"127.0.0.1"})
 #: Backend identity string for the ONNX Runtime CPU serving path (packet §14.2).
 BACKEND_ONNX_CPU = "onnxruntime-cpu"
+#: Backend identity string for the torch-free residual probe (design §2, F-1).
+BACKEND_RESIDUAL_PROBE = "residual-probe"
+#: Stable, deterministic model identity for the residual probe. The probe has no
+#: model weights, so the value the mod pins as ``expected_model_sha256`` must be a
+#: fixed literal it can match case-insensitively at handshake. theta_max/seed are
+#: run parameters (not model identity) and live in ``registry_run_name`` instead —
+#: a given probe *mechanism* revision is "residual-probe-v1" regardless of theta.
+RESIDUAL_PROBE_MODEL_SHA256 = "residual-probe-v1"
 DEFAULT_PORT = 51888
 DEFAULT_IDLE_EXIT_SEC = 120.0
 DEFAULT_LOG_PATH = Path(".tmp") / "student_sidecar_log.jsonl"
@@ -118,6 +126,19 @@ class ModelService(abc.ABC):
     @abc.abstractmethod
     def predict(self, payload: Mapping[str, Any]) -> tuple[float, float, float]:
         """Return ``(ax, ay, model_ms)`` for one raw capture payload."""
+
+    def act_log_extra(self) -> Mapping[str, Any]:
+        """Extra key/value fields to merge into the per-act log line for the most
+        recent :meth:`predict` call.
+
+        Default: none — model backends log only ``ax``/``ay``/``model_ms`` and the
+        line is byte-identical to before. Stateful probe services override this to
+        surface what they sampled (e.g. the residual-probe delta). Serving is
+        strictly FIFO on a single thread and this is called immediately after
+        ``predict`` for the same tick, so reading state set during ``predict`` here
+        is race-free.
+        """
+        return {}
 
 
 # ---------------------------------------------------------------------------
@@ -462,6 +483,104 @@ class OnnxModelService(ModelService):
 
 
 # ---------------------------------------------------------------------------
+# Residual probe service (torch-free; design §2 / Amendment F-1)
+# ---------------------------------------------------------------------------
+def _teacher_action(payload: Mapping[str, Any]) -> tuple[float, float]:
+    """Extract ``(x, y)`` from ``payload["teacher"]["action"]`` (design §2).
+
+    The mod ships ``teacher.action`` in every act payload. A missing or malformed
+    teacher block raises ``ValueError`` so the serving loop maps it to a per-tick
+    ``error`` reply rather than emitting a bad action.
+    """
+    teacher = payload.get("teacher")
+    if not isinstance(teacher, Mapping):
+        raise ValueError("act payload missing teacher block")
+    action = teacher.get("action")
+    if not isinstance(action, Mapping):
+        raise ValueError("act payload missing teacher.action")
+    try:
+        return float(action["x"]), float(action["y"])
+    except (KeyError, TypeError, ValueError) as exc:
+        raise ValueError(f"malformed teacher.action: {exc}") from exc
+
+
+class ResidualProbeService(ModelService):
+    """Torch-free probe returning the teacher's own action rotated by a small,
+    seeded, uniform angular perturbation (design §2, Amendment F-1).
+
+    Per control tick it reads ``payload["teacher"]["action"]``, samples
+    ``delta ~ Uniform(-theta_max, +theta_max)`` degrees from a per-instance seeded
+    numpy ``Generator``, and returns the teacher direction rotated by ``delta`` with
+    magnitude preserved (a rotation is norm-preserving by construction). A zero
+    teacher vector is passed through unchanged and consumes NO random draw — the
+    delta stream stays clean and, given the frozen payload order, exactly
+    reproducible from the seed. ``delta`` for a zero tick is logged as ``None``.
+
+    No torch, no registry, no weights: pure numpy/stdlib. The identity advertises
+    backend ``residual-probe`` and the fixed :data:`RESIDUAL_PROBE_MODEL_SHA256`
+    literal (so the mod's ``expected_model_sha256`` pin matches deterministically);
+    theta_max and seed are recorded in ``registry_run_name``. Per-act logging is
+    extended via :meth:`act_log_extra` with ``{delta_deg, teacher_x, teacher_y}``.
+    """
+
+    def __init__(
+        self,
+        *,
+        theta_max_deg: float = 5.0,
+        seed: int,
+        capture_schema_hash: str,
+        schema_id: str = "combat_obs_v1",
+    ) -> None:
+        # numpy only (no torch): deferred import keeps the module torch-free.
+        import numpy as np
+
+        self._theta_max_deg = float(theta_max_deg)
+        self._seed = int(seed)
+        self._rng = np.random.default_rng(self._seed)
+        self._last_extra: dict[str, Any] = {}
+        self._identity = ServiceIdentity(
+            schema_id=str(schema_id),
+            observation_schema_hash="residual-probe",
+            input_config_sha256="residual-probe",
+            model_sha256=RESIDUAL_PROBE_MODEL_SHA256,
+            normalization_sha256="residual-probe",
+            registry_run_name=f"residual_probe_theta{self._theta_max_deg:g}_seed{self._seed}",
+            source_capture_schema_hash=str(capture_schema_hash).upper(),
+            backend=BACKEND_RESIDUAL_PROBE,
+        )
+
+    @property
+    def identity(self) -> ServiceIdentity:
+        return self._identity
+
+    def predict(self, payload: Mapping[str, Any]) -> tuple[float, float, float]:
+        tx, ty = _teacher_action(payload)
+        start = time.perf_counter()
+        if math.hypot(tx, ty) == 0.0:
+            # Zero teacher vector: pass through, no perturbation, no random draw.
+            self._last_extra = {"delta_deg": None, "teacher_x": tx, "teacher_y": ty}
+            model_ms = (time.perf_counter() - start) * 1000.0
+            return tx, ty, model_ms
+
+        delta_deg = float(self._rng.uniform(-self._theta_max_deg, self._theta_max_deg))
+        theta = math.radians(delta_deg)
+        cos_t = math.cos(theta)
+        sin_t = math.sin(theta)
+        rx = tx * cos_t - ty * sin_t
+        ry = tx * sin_t + ty * cos_t
+        model_ms = (time.perf_counter() - start) * 1000.0
+        self._last_extra = {
+            "delta_deg": round(delta_deg, 6),
+            "teacher_x": round(tx, 6),
+            "teacher_y": round(ty, 6),
+        }
+        return rx, ry, model_ms
+
+    def act_log_extra(self) -> Mapping[str, Any]:
+        return self._last_extra
+
+
+# ---------------------------------------------------------------------------
 # Rolling latency / health stats
 # ---------------------------------------------------------------------------
 class LatencyStats:
@@ -709,7 +828,7 @@ class StudentSidecar:
         if self._config.log_actions:
             self._log_event(
                 "act", seq=int(seq), ax=round(ax, 6), ay=round(ay, 6),
-                model_ms=round(model_ms, 3),
+                model_ms=round(model_ms, 3), **self._service.act_log_extra(),
             )
         self._send(
             conn,

@@ -1,0 +1,81 @@
+# WP2 Stage F — reward_v1 (Phase 1: COMPONENT DECLARATIONS ONLY)
+#
+# Packet-planned config (Grok_4.5 prompt §7). This file DECLARES the reward
+# vector's components and the discount form for Phase 1 residual-support
+# collection (design .tmp/wp2_stage_f_residual_design.md §2). It is a logging /
+# bookkeeping contract, not a scalar objective.
+#
+# DELIBERATE OMISSION — no weights in Phase 1. The packet mandate is to LOG the
+# reward vector BEFORE weighting: Phase 1 collects data and measures local
+# effect estimability under the teacher shield with NO training and NO
+# improvement claims, so any weight vector here would be premature and could
+# leak an objective into a phase that has none. Weights are assigned in a
+# separate Phase 2 design once the components are validated.
+#
+# All components are DERIVABLE FROM EXISTING CAPTURE TELEMETRY at dataset-build
+# time (combat_capture_v2, source_capture_schema_hash
+# 95B6444796A21FD44E94113B75BA2097BC381D5F72ED784F9B9A4A99DD46D951). Phase 1
+# introduces NO new mod telemetry.
+
+schema_version: 1
+reward_id: reward_v1
+phase: 1
+status: components_only            # weights intentionally absent (see header)
+source_capture_schema_id: combat_capture_v2
+source_capture_schema_hash: 95B6444796A21FD44E94113B75BA2097BC381D5F72ED784F9B9A4A99DD46D951
+
+# Temporal discount. Continuous form over wall-clock inter-tick spacing so the
+# discount is invariant to control-tick jitter:
+#     gamma_step = exp(-delta_t / tau)
+# tau recorded and tunable; 15.0 s => ~10.4 s half-life (ln(2) * tau).
+discount:
+  form: exp(-delta_t / tau)
+  tau_sec: 15.0
+  half_life_sec: 10.397          # ln(2) * tau_sec, informational
+  delta_t_source: control_dt_ms  # payload.control_dt_ms (per-tick spacing, ms)
+
+# Component declarations. `derivation` names the capture telemetry each is built
+# from; no weighting is applied in Phase 1.
+components:
+
+  # --- per control tick ---------------------------------------------------
+  per_tick:
+    - name: damage_taken
+      cadence: tick
+      units: hp
+      derivation: "negative step in player.hp attributable to damage (drop in
+        player.hp not explained by max_hp change / regen), per capture tick"
+    - name: hp_delta
+      cadence: tick
+      units: hp
+      derivation: "signed step in player.hp between consecutive capture ticks"
+    - name: materials_delta
+      cadence: tick
+      units: materials
+      derivation: "signed change in materials collected between consecutive
+        capture ticks (materials pickup telemetry in the run event stream)"
+    - name: risk_exposure
+      cadence: tick
+      units: normalized
+      derivation: "max contact_risk over the tick — the peak proximity/contact
+        pressure from enemies and projectiles (entities.enemies /
+        entities.projectiles closest-approach features)"
+
+  # --- per wave -----------------------------------------------------------
+  per_wave:
+    - name: wave_completed
+      cadence: wave
+      units: bool
+      derivation: "wave boundary reached with the player alive (wave increment
+        in capture telemetry)"
+    - name: wave_time
+      cadence: wave
+      units: sec
+      derivation: "wave duration from wave_time.elapsed_sec / duration_sec"
+
+  # --- terminal -----------------------------------------------------------
+  terminal:
+    - name: victory
+      cadence: terminal
+      units: bool
+      derivation: "run reached the victory terminal (last wave cleared)"
