@@ -519,6 +519,10 @@ class SidecarConfig:
     stats_window: int = DEFAULT_STATS_WINDOW
     accept_timeout: float = DEFAULT_ACCEPT_TIMEOUT
     stats_log_interval_sec: float = DEFAULT_STATS_LOG_INTERVAL_SEC
+    # DAgger logging-triple completion (design §7 / follow-up ruling 3): persist
+    # the RAW pre-clamp proposal per act so (proposal, teacher, executed) is
+    # fully recoverable — the mod's magnitude clamp happens after this reply.
+    log_actions: bool = True
 
 
 # Connection outcomes.
@@ -702,6 +706,11 @@ class StudentSidecar:
 
         total_ms = (time.perf_counter() - start) * 1000.0
         self._stats.record(model_ms)
+        if self._config.log_actions:
+            self._log_event(
+                "act", seq=int(seq), ax=round(ax, 6), ay=round(ay, 6),
+                model_ms=round(model_ms, 3),
+            )
         self._send(
             conn,
             protocol.build_action(seq=int(seq), ax=ax, ay=ay, model_ms=model_ms, total_ms=total_ms),

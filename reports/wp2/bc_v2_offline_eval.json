@@ -1,0 +1,440 @@
+{
+  "report": "bc_v2_offline_eval",
+  "generated": "2026-07-24 15:18:25",
+  "source_offline_eval": "reports/wp2/bc_offline_eval_bc_v2.json (unchanged bc_offline path)",
+  "val_split": "combat_obs_v1 dataset_split_v1 validation (81790 rows), frozen, unchanged",
+  "bc_v1_reference": {
+    "overall_median": 4.800814151763916,
+    "overall_mean": 13.725914001464844,
+    "overall_magerr": 0.051681600511074066,
+    "overall_sat": 0.0,
+    "risk_050_075_median": 18.213207244873047,
+    "risk_075_median": 30.98355484008789,
+    "wave20_median": 18.251476287841797
+  },
+  "design_s5_gates": {
+    "bc_v2_a_s1": {
+      "gates": {
+        "G1_risk_0.50-0.75_median": {
+          "value": 27.130619049072266,
+          "threshold_le": 15.5,
+          "bc_v1": 18.213207244873047,
+          "pass": false
+        },
+        "G2_risk_0.75+_median": {
+          "value": 45.52951431274414,
+          "threshold_le": 26.3,
+          "bc_v1": 30.98355484008789,
+          "pass": false
+        },
+        "G3_wave20_median": {
+          "value": 19.11086082458496,
+          "threshold_lt": 17.0,
+          "bc_v1": 18.251476287841797,
+          "pass": false
+        },
+        "G4_overall_median": {
+          "value": 10.14691162109375,
+          "threshold_le": 5.0,
+          "bc_v1": 4.800814151763916,
+          "pass": false
+        },
+        "G5_no_sat_or_mag_regression": {
+          "saturation": 0.0,
+          "bc_v1_saturation": 0.0,
+          "saturation_ok": true,
+          "mean_abs_mag_err": 0.11285828053951263,
+          "bc_v1_mean_abs_mag_err": 0.051681600511074066,
+          "magnitude_ok": false,
+          "pass": false
+        }
+      },
+      "overall_qualifies": false
+    },
+    "bc_v2_b_s1": {
+      "gates": {
+        "G1_risk_0.50-0.75_median": {
+          "value": 27.449142456054688,
+          "threshold_le": 15.5,
+          "bc_v1": 18.213207244873047,
+          "pass": false
+        },
+        "G2_risk_0.75+_median": {
+          "value": 44.00080871582031,
+          "threshold_le": 26.3,
+          "bc_v1": 30.98355484008789,
+          "pass": false
+        },
+        "G3_wave20_median": {
+          "value": 18.931262969970703,
+          "threshold_lt": 17.0,
+          "bc_v1": 18.251476287841797,
+          "pass": false
+        },
+        "G4_overall_median": {
+          "value": 9.247859001159668,
+          "threshold_le": 5.0,
+          "bc_v1": 4.800814151763916,
+          "pass": false
+        },
+        "G5_no_sat_or_mag_regression": {
+          "saturation": 0.0003667930141091347,
+          "bc_v1_saturation": 0.0,
+          "saturation_ok": false,
+          "mean_abs_mag_err": 0.11192058026790619,
+          "bc_v1_mean_abs_mag_err": 0.051681600511074066,
+          "magnitude_ok": false,
+          "pass": false
+        }
+      },
+      "overall_qualifies": false
+    }
+  },
+  "candidate_preference": {
+    "rule": "B preferred over A only if it beats A on the weak strata",
+    "weak_strata_A_vs_B": {
+      "risk_0.50-0.75_median": {
+        "A": 27.130619049072266,
+        "B": 27.449142456054688
+      },
+      "risk_0.75+_median": {
+        "A": 45.52951431274414,
+        "B": 44.00080871582031
+      },
+      "wave20_median": {
+        "A": 19.11086082458496,
+        "B": 18.931262969970703
+      }
+    },
+    "conclusion": "Neither candidate qualifies; preference is moot. B is marginally better overall and on 2 of 3 weak metrics but WORSE at risk 0.50-0.75; both fail every gate."
+  },
+  "candidate_B_aux_holdout_metrics": {
+    "aux_damage": {
+      "auc": 0.9635515158118095,
+      "base_rate": 0.019334187731146812,
+      "bce": 0.04809241369366646,
+      "n": 7810,
+      "pred_mean": 0.022880377247929573,
+      "pred_neg_mean": 0.016725314781069756,
+      "pred_pos_mean": 0.33507660031318665
+    },
+    "aux_margin": {
+      "label_mean": 0.7613008618354797,
+      "mae": 0.17172876000404358,
+      "n": 7810,
+      "pearson_r": 0.666907520790255,
+      "pred_mean": 0.7504071593284607,
+      "rmse": 0.21695660054683685
+    }
+  },
+  "runs": {
+    "bc_v2_a_s1": {
+      "overall": {
+        "mean_abs_magnitude_error": 0.11285828053951263,
+        "mean_angular_error_deg": 20.52549934387207,
+        "mean_cosine": 0.8570590615272522,
+        "median_angular_error_deg": 10.14691162109375,
+        "n": 81790,
+        "n_direction": 81790,
+        "saturation_fraction": 0.0,
+        "val_direction_term": 0.142940953373909,
+        "val_loss": 0.1502070426940918,
+        "val_magnitude_term": 0.014532148838043213
+      },
+      "by_risk_stratum": {
+        "0.00-0.25": {
+          "mean_abs_magnitude_error": 0.10975991934537888,
+          "mean_angular_error_deg": 18.798917770385742,
+          "mean_cosine": 0.8768068552017212,
+          "median_angular_error_deg": 9.684015274047852,
+          "n": 71206,
+          "n_direction": 71206,
+          "saturation_fraction": 0.0
+        },
+        "0.25-0.50": {
+          "mean_abs_magnitude_error": 0.12201988697052002,
+          "mean_angular_error_deg": 26.072046279907227,
+          "mean_cosine": 0.7961788177490234,
+          "median_angular_error_deg": 12.369487762451172,
+          "n": 8004,
+          "n_direction": 8004,
+          "saturation_fraction": 0.0
+        },
+        "0.50-0.75": {
+          "mean_abs_magnitude_error": 0.16872359812259674,
+          "mean_angular_error_deg": 49.916351318359375,
+          "mean_cosine": 0.5145992040634155,
+          "median_angular_error_deg": 27.130619049072266,
+          "n": 2384,
+          "n_direction": 2384,
+          "saturation_fraction": 0.0
+        },
+        "0.75-inf": {
+          "mean_abs_magnitude_error": 0.18484364449977875,
+          "mean_angular_error_deg": 63.793724060058594,
+          "mean_cosine": 0.33433759212493896,
+          "median_angular_error_deg": 45.52951431274414,
+          "n": 196,
+          "n_direction": 196,
+          "saturation_fraction": 0.0
+        }
+      },
+      "by_wave_band": {
+        "1-5": {
+          "mean_abs_magnitude_error": 0.08218900859355927,
+          "mean_angular_error_deg": 11.190756797790527,
+          "mean_cosine": 0.9583327174186707,
+          "median_angular_error_deg": 7.487000942230225,
+          "n": 12828,
+          "n_direction": 12828,
+          "saturation_fraction": 0.0
+        },
+        "11-15": {
+          "mean_abs_magnitude_error": 0.11579477041959763,
+          "mean_angular_error_deg": 19.325271606445312,
+          "mean_cosine": 0.8736741542816162,
+          "median_angular_error_deg": 10.14512825012207,
+          "n": 24925,
+          "n_direction": 24925,
+          "saturation_fraction": 0.0
+        },
+        "16-19": {
+          "mean_abs_magnitude_error": 0.1437251716852188,
+          "mean_angular_error_deg": 30.54511070251465,
+          "mean_cosine": 0.7426093816757202,
+          "median_angular_error_deg": 13.744909286499023,
+          "n": 17324,
+          "n_direction": 17324,
+          "saturation_fraction": 0.0
+        },
+        "20": {
+          "mean_abs_magnitude_error": 0.13389787077903748,
+          "mean_angular_error_deg": 43.244476318359375,
+          "mean_cosine": 0.5865519046783447,
+          "median_angular_error_deg": 19.11086082458496,
+          "n": 4243,
+          "n_direction": 4243,
+          "saturation_fraction": 0.0
+        },
+        "6-10": {
+          "mean_abs_magnitude_error": 0.09933909773826599,
+          "mean_angular_error_deg": 15.171045303344727,
+          "mean_cosine": 0.9201304912567139,
+          "median_angular_error_deg": 9.025476455688477,
+          "n": 22470,
+          "n_direction": 22470,
+          "saturation_fraction": 0.0
+        }
+      },
+      "baselines": {
+        "copy_previous": {
+          "mean_abs_magnitude_error": 2.245183594595801e-07,
+          "mean_angular_error_deg": 21.20212173461914,
+          "mean_cosine": 0.8140265941619873,
+          "median_angular_error_deg": 4.318469524383545,
+          "n": 81790,
+          "n_direction": 81790,
+          "saturation_fraction": 0.07842645794153214
+        },
+        "mean_direction": {
+          "direction": [
+            -0.8915970921516418,
+            -0.4528294503688812
+          ],
+          "mean_abs_magnitude_error": 2.435351404983521e-07,
+          "mean_angular_error_deg": 87.98641967773438,
+          "mean_cosine": 0.022830791771411896,
+          "median_angular_error_deg": 86.92535400390625,
+          "n": 81790,
+          "n_direction": 81790,
+          "saturation_fraction": 0.0
+        }
+      },
+      "m2_sanity_gates": {
+        "beats_copy_previous_mean_change": true,
+        "beats_copy_previous_mean_overall": true,
+        "beats_copy_previous_median_change": true,
+        "beats_mean_direction_mean": true,
+        "beats_mean_direction_median": true,
+        "copy_previous_change_mean_deg": 34.60691833496094,
+        "copy_previous_change_median_deg": 14.999988555908203,
+        "copy_previous_gate": true,
+        "copy_previous_mean_deg": 21.20212173461914,
+        "informational_overall_median": {
+          "copy_previous_median_deg": 4.318469524383545,
+          "model_median_deg": 10.14691162109375,
+          "note": "not a gate (persistence artifact \u2014 see architecture note \u00a77)"
+        },
+        "mean_direction_gate": true,
+        "mean_direction_mean_deg": 87.98641967773438,
+        "mean_direction_median_deg": 86.92535400390625,
+        "model_change_mean_deg": 23.262672424316406,
+        "model_change_median_deg": 11.521400451660156,
+        "model_mean_deg": 20.52549934387207,
+        "model_median_deg": 10.14691162109375,
+        "overall_pass": true
+      }
+    },
+    "bc_v2_b_s1": {
+      "overall": {
+        "mean_abs_magnitude_error": 0.11192058026790619,
+        "mean_angular_error_deg": 19.713359832763672,
+        "mean_cosine": 0.862378716468811,
+        "median_angular_error_deg": 9.247859001159668,
+        "n": 81790,
+        "n_direction": 81790,
+        "saturation_fraction": 0.0003667930141091347,
+        "val_direction_term": 0.13762125372886658,
+        "val_loss": 0.14491577446460724,
+        "val_magnitude_term": 0.014589029364287853
+      },
+      "by_risk_stratum": {
+        "0.00-0.25": {
+          "mean_abs_magnitude_error": 0.10881282389163971,
+          "mean_angular_error_deg": 17.9403076171875,
+          "mean_cosine": 0.8823623657226562,
+          "median_angular_error_deg": 8.794775009155273,
+          "n": 71206,
+          "n_direction": 71206,
+          "saturation_fraction": 0.00039322528755292296
+        },
+        "0.25-0.50": {
+          "mean_abs_magnitude_error": 0.1208544373512268,
+          "mean_angular_error_deg": 25.695199966430664,
+          "mean_cosine": 0.7979469895362854,
+          "median_angular_error_deg": 11.724421501159668,
+          "n": 8004,
+          "n_direction": 8004,
+          "saturation_fraction": 0.00018740630184765905
+        },
+        "0.50-0.75": {
+          "mean_abs_magnitude_error": 0.16511251032352448,
+          "mean_angular_error_deg": 49.03992462158203,
+          "mean_cosine": 0.5237470865249634,
+          "median_angular_error_deg": 27.449142456054688,
+          "n": 2384,
+          "n_direction": 2384,
+          "saturation_fraction": 0.0
+        },
+        "0.75-inf": {
+          "mean_abs_magnitude_error": 0.22913949191570282,
+          "mean_angular_error_deg": 62.870792388916016,
+          "mean_cosine": 0.35248029232025146,
+          "median_angular_error_deg": 44.00080871582031,
+          "n": 196,
+          "n_direction": 196,
+          "saturation_fraction": 0.0025510203558951616
+        }
+      },
+      "by_wave_band": {
+        "1-5": {
+          "mean_abs_magnitude_error": 0.07999801635742188,
+          "mean_angular_error_deg": 10.778976440429688,
+          "mean_cosine": 0.960171103477478,
+          "median_angular_error_deg": 6.998968124389648,
+          "n": 12828,
+          "n_direction": 12828,
+          "saturation_fraction": 0.0020657936111092567
+        },
+        "11-15": {
+          "mean_abs_magnitude_error": 0.11841164529323578,
+          "mean_angular_error_deg": 18.25469970703125,
+          "mean_cosine": 0.8821747899055481,
+          "median_angular_error_deg": 9.265820503234863,
+          "n": 24925,
+          "n_direction": 24925,
+          "saturation_fraction": 0.0
+        },
+        "16-19": {
+          "mean_abs_magnitude_error": 0.14242811501026154,
+          "mean_angular_error_deg": 29.324195861816406,
+          "mean_cosine": 0.7527496218681335,
+          "median_angular_error_deg": 12.370763778686523,
+          "n": 17324,
+          "n_direction": 17324,
+          "saturation_fraction": 2.8861693863291293e-05
+        },
+        "20": {
+          "mean_abs_magnitude_error": 0.13297870755195618,
+          "mean_angular_error_deg": 42.936702728271484,
+          "mean_cosine": 0.5890332460403442,
+          "median_angular_error_deg": 18.931262969970703,
+          "n": 4243,
+          "n_direction": 4243,
+          "saturation_fraction": 0.0
+        },
+        "6-10": {
+          "mean_abs_magnitude_error": 0.09544753283262253,
+          "mean_angular_error_deg": 14.636934280395508,
+          "mean_cosine": 0.9207286834716797,
+          "median_angular_error_deg": 8.13556957244873,
+          "n": 22470,
+          "n_direction": 22470,
+          "saturation_fraction": 0.00013351134839467704
+        }
+      },
+      "baselines": {
+        "copy_previous": {
+          "mean_abs_magnitude_error": 2.245183594595801e-07,
+          "mean_angular_error_deg": 21.20212173461914,
+          "mean_cosine": 0.8140265941619873,
+          "median_angular_error_deg": 4.318469524383545,
+          "n": 81790,
+          "n_direction": 81790,
+          "saturation_fraction": 0.07842645794153214
+        },
+        "mean_direction": {
+          "direction": [
+            -0.8915970921516418,
+            -0.4528294503688812
+          ],
+          "mean_abs_magnitude_error": 2.435351404983521e-07,
+          "mean_angular_error_deg": 87.98641967773438,
+          "mean_cosine": 0.022830791771411896,
+          "median_angular_error_deg": 86.92535400390625,
+          "n": 81790,
+          "n_direction": 81790,
+          "saturation_fraction": 0.0
+        }
+      },
+      "m2_sanity_gates": {
+        "beats_copy_previous_mean_change": true,
+        "beats_copy_previous_mean_overall": true,
+        "beats_copy_previous_median_change": true,
+        "beats_mean_direction_mean": true,
+        "beats_mean_direction_median": true,
+        "copy_previous_change_mean_deg": 34.60691833496094,
+        "copy_previous_change_median_deg": 14.999988555908203,
+        "copy_previous_gate": true,
+        "copy_previous_mean_deg": 21.20212173461914,
+        "informational_overall_median": {
+          "copy_previous_median_deg": 4.318469524383545,
+          "model_median_deg": 9.247859001159668,
+          "note": "not a gate (persistence artifact \u2014 see architecture note \u00a77)"
+        },
+        "mean_direction_gate": true,
+        "mean_direction_mean_deg": 87.98641967773438,
+        "mean_direction_median_deg": 86.92535400390625,
+        "model_change_mean_deg": 22.586946487426758,
+        "model_change_median_deg": 10.92645263671875,
+        "model_mean_deg": 19.713359832763672,
+        "model_median_deg": 9.247859001159668,
+        "overall_pass": true
+      }
+    }
+  },
+  "root_cause_diagnostic": {
+    "summary": "Both candidates regress on ALL strata (incl. the weak strata the corrective data targeted). Root cause: the previous_action->label relationship in the corrective set is nearly the inverse of the teacher-generated val.",
+    "base_prev_action_vs_label": {
+      "frac_cos_gt_0.999": 0.4522,
+      "median_cosine": 0.9973
+    },
+    "dagger_prev_action_vs_label": {
+      "frac_cos_gt_0.999": 0.0254,
+      "median_cosine": 0.238
+    },
+    "mechanism": "Executed (clamped) student action enters as prev_action state (design section 7, ruling 3 logging-triple gap). It is near-orthogonal to the teacher counterfactual label, so 25pct corrective mass teaches the model to distrust prev_action - catastrophic on the teacher-distribution frozen val where prev_action ~ label 45pct of the time.",
+    "normalization_drift": "negligible (<5pct on a handful of columns); labels are sane unit vectors (|a|~1.0). Not a pipeline bug."
+  },
+  "verdict": "NEITHER candidate qualifies. Per design section 5, escalate to round 2 (more/targeted corrective runs; round-2 precondition: complete the sidecar per-request action logging so raw pre-clamp student proposals are captured). Do NOT relax gates."
+}

@@ -1,0 +1,113 @@
+{
+  "report": "bc_v2_training",
+  "generated": "2026-07-24 15:18:25",
+  "device": "cuda",
+  "environment": {
+    "cuda": "NVIDIA GeForce RTX 4090",
+    "numpy": "2.5.1",
+    "python": "3.12.5",
+    "torch": "2.13.0+cu126"
+  },
+  "composite_dataset": {
+    "base": "combat_obs_v1 train (dataset_split_v1), unchanged",
+    "dagger": "combat_dagger_r1 (all 78874 valid&temporal rows)",
+    "holdout_frac": 0.1,
+    "holdout_seed": 20260724,
+    "n_base_train": 305905,
+    "n_dagger_total": 78874,
+    "n_dagger_train": 70987,
+    "n_dagger_holdout": 7887,
+    "s_scalar": 1.4360567764802015,
+    "achieved_mass_fraction": 0.24999999042288443,
+    "weight_reduction": "sum(w*per_sample)/sum(w); base weight 1.0; dagger weight = event_weight * s"
+  },
+  "candidate_A": {
+    "run_name": "bc_v2_a_s1",
+    "candidate": "A",
+    "seed": 1,
+    "wall_time_sec": 56.68,
+    "epochs_run": 23,
+    "best_epoch": 17,
+    "s_scalar": 1.4360567764802015,
+    "achieved_mass_fraction": 0.24999999042288443,
+    "lambda_aux": null,
+    "n_base_train": 305905,
+    "n_dagger_train": 70987,
+    "n_dagger_holdout": 7887,
+    "model_parameters": 651202,
+    "model_base_parameters": 651202,
+    "serving_export": "base_state_dict (BCPolicyV1 strict-load verified)",
+    "best_val_metrics_overall": {
+      "median_angular_error_deg": 10.14691162109375,
+      "mean_angular_error_deg": 20.52549934387207,
+      "val_loss": 0.1502070426940918
+    },
+    "best_checkpoint_sha256": "6D49095BD44CACE9F439755EC4B0E0B343AC1FF63FD1AF6CDC66DBBB245DCFE0",
+    "normalization_manifest_hash": "3BEC515CE33D71CB8FCF18B7E20C3F461256C0DBAEB743ABEDD1B1A1C1EE0DFF",
+    "dataset_manifest_hash_combat_obs_v1": "6E7FAB14DD0614FDC85BC92438239FED4FFBB2DD53CA7B17077D5089EDEE09AA",
+    "dagger_manifest_hash": "7AF8403FD4C39CAFCEA19CAF9CAEFB05AF7DD5418DDF5A4AEDF01CBBCD35EE84",
+    "aux_base_rates": {
+      "holdout_aux_damage_base_rate": 0.019334187731146812,
+      "holdout_aux_margin_mean": 0.7613008618354797,
+      "train_aux_damage_base_rate": 0.018262306228280067,
+      "train_aux_margin_mean": 0.7602006196975708
+    }
+  },
+  "candidate_B": {
+    "run_name": "bc_v2_b_s1",
+    "candidate": "B",
+    "seed": 1,
+    "wall_time_sec": 55.11,
+    "epochs_run": 16,
+    "best_epoch": 10,
+    "s_scalar": 1.4360567764802015,
+    "achieved_mass_fraction": 0.24999999042288443,
+    "lambda_aux": 0.05,
+    "n_base_train": 305905,
+    "n_dagger_train": 70987,
+    "n_dagger_holdout": 7887,
+    "model_parameters": 651716,
+    "model_base_parameters": 651202,
+    "serving_export": "base_state_dict (BCPolicyV1 strict-load verified)",
+    "best_val_metrics_overall": {
+      "median_angular_error_deg": 9.247859001159668,
+      "mean_angular_error_deg": 19.713359832763672,
+      "val_loss": 0.14491577446460724
+    },
+    "best_checkpoint_sha256": "B261BF65CA8A75A511C15428C566829A800FD9EC88A70AF5F56093DB995EA125",
+    "normalization_manifest_hash": "3BEC515CE33D71CB8FCF18B7E20C3F461256C0DBAEB743ABEDD1B1A1C1EE0DFF",
+    "dataset_manifest_hash_combat_obs_v1": "6E7FAB14DD0614FDC85BC92438239FED4FFBB2DD53CA7B17077D5089EDEE09AA",
+    "dagger_manifest_hash": "7AF8403FD4C39CAFCEA19CAF9CAEFB05AF7DD5418DDF5A4AEDF01CBBCD35EE84",
+    "aux_base_rates": {
+      "holdout_aux_damage_base_rate": 0.019334187731146812,
+      "holdout_aux_margin_mean": 0.7613008618354797,
+      "train_aux_damage_base_rate": 0.018262306228280067,
+      "train_aux_margin_mean": 0.7602006196975708
+    }
+  },
+  "candidate_B_aux_holdout_metrics_best": {
+    "aux_damage": {
+      "auc": 0.9635515158118095,
+      "base_rate": 0.019334187731146812,
+      "bce": 0.04809241369366646,
+      "n": 7810,
+      "pred_mean": 0.022880377247929573,
+      "pred_neg_mean": 0.016725314781069756,
+      "pred_pos_mean": 0.33507660031318665
+    },
+    "aux_margin": {
+      "label_mean": 0.7613008618354797,
+      "mae": 0.17172876000404358,
+      "n": 7810,
+      "pearson_r": 0.666907520790255,
+      "pred_mean": 0.7504071593284607,
+      "rmse": 0.21695660054683685
+    }
+  },
+  "test_suite": {
+    "total_passed": 372,
+    "baseline": 349,
+    "new_bc_v2_tests": 23
+  },
+  "note": "Full training/selection verdict is in bc_v2_offline_eval. Both candidates FAIL all design section-5 gates."
+}

@@ -1,0 +1,542 @@
+{
+  "anomalies": [],
+  "baselines": {
+    "copy_previous": {
+      "by_risk_stratum": {
+        "0.00-0.25": {
+          "mean_abs_magnitude_error": 0.025183910503983498,
+          "mean_angular_error_deg": 77.66065979003906,
+          "mean_cosine": 0.15942740440368652,
+          "median_angular_error_deg": 72.3074722290039,
+          "n": 6233,
+          "n_direction": 6233,
+          "saturation_fraction": 8.021819667192176e-05
+        },
+        "0.25-0.50": {
+          "mean_abs_magnitude_error": 0.02417619153857231,
+          "mean_angular_error_deg": 77.9211654663086,
+          "mean_cosine": 0.17222514748573303,
+          "median_angular_error_deg": 69.6480484008789,
+          "n": 880,
+          "n_direction": 880,
+          "saturation_fraction": 0.0
+        },
+        "0.50-0.75": {
+          "mean_abs_magnitude_error": 0.023257208988070488,
+          "mean_angular_error_deg": 95.2407455444336,
+          "mean_cosine": -0.062496088445186615,
+          "median_angular_error_deg": 95.12418365478516,
+          "n": 583,
+          "n_direction": 583,
+          "saturation_fraction": 0.0
+        },
+        "0.75-inf": {
+          "mean_abs_magnitude_error": 0.01815604232251644,
+          "mean_angular_error_deg": 105.0400619506836,
+          "mean_cosine": -0.20130345225334167,
+          "median_angular_error_deg": 111.69640350341797,
+          "n": 191,
+          "n_direction": 191,
+          "saturation_fraction": 0.0
+        }
+      },
+      "by_wave_band": {
+        "1-5": {
+          "mean_abs_magnitude_error": 0.026842672377824783,
+          "mean_angular_error_deg": 72.32855987548828,
+          "mean_cosine": 0.23320689797401428,
+          "median_angular_error_deg": 62.88720703125,
+          "n": 1645,
+          "n_direction": 1645,
+          "saturation_fraction": 0.0
+        },
+        "11-15": {
+          "mean_abs_magnitude_error": 0.024240288883447647,
+          "mean_angular_error_deg": 82.6193618774414,
+          "mean_cosine": 0.0930105671286583,
+          "median_angular_error_deg": 80.306640625,
+          "n": 2355,
+          "n_direction": 2355,
+          "saturation_fraction": 0.00021231421851553023
+        },
+        "16-19": {
+          "mean_abs_magnitude_error": 0.02544289454817772,
+          "mean_angular_error_deg": 92.6081771850586,
+          "mean_cosine": -0.03580692410469055,
+          "median_angular_error_deg": 93.26604461669922,
+          "n": 968,
+          "n_direction": 968,
+          "saturation_fraction": 0.0
+        },
+        "20": {
+          "mean_abs_magnitude_error": 0.031128747388720512,
+          "mean_angular_error_deg": 68.47145080566406,
+          "mean_cosine": 0.2877327799797058,
+          "median_angular_error_deg": 54.756103515625,
+          "n": 86,
+          "n_direction": 86,
+          "saturation_fraction": 0.0
+        },
+        "6-10": {
+          "mean_abs_magnitude_error": 0.02355285920202732,
+          "mean_angular_error_deg": 77.35091400146484,
+          "mean_cosine": 0.16859711706638336,
+          "median_angular_error_deg": 71.49909973144531,
+          "n": 2833,
+          "n_direction": 2833,
+          "saturation_fraction": 0.0
+        }
+      },
+      "overall": {
+        "mean_abs_magnitude_error": 0.02475886046886444,
+        "mean_angular_error_deg": 79.65227508544922,
+        "mean_cosine": 0.1357150673866272,
+        "median_angular_error_deg": 74.5653305053711,
+        "n": 7887,
+        "n_direction": 7887,
+        "saturation_fraction": 6.339546234812587e-05
+      }
+    },
+    "mean_direction": {
+      "by_risk_stratum": {
+        "0.00-0.25": {
+          "mean_abs_magnitude_error": 2.3298694884488214e-07,
+          "mean_angular_error_deg": 84.04148864746094,
+          "mean_cosine": 0.0789477601647377,
+          "median_angular_error_deg": 79.50806427001953,
+          "n": 6233,
+          "n_direction": 6233,
+          "saturation_fraction": 0.0
+        },
+        "0.25-0.50": {
+          "mean_abs_magnitude_error": 2.338804847568099e-07,
+          "mean_angular_error_deg": 88.05799102783203,
+          "mean_cosine": 0.026586221531033516,
+          "median_angular_error_deg": 86.92535400390625,
+          "n": 880,
+          "n_direction": 880,
+          "saturation_fraction": 0.0
+        },
+        "0.50-0.75": {
+          "mean_abs_magnitude_error": 2.410767763194599e-07,
+          "mean_angular_error_deg": 87.31504821777344,
+          "mean_cosine": 0.035844836384058,
+          "median_angular_error_deg": 86.92535400390625,
+          "n": 583,
+          "n_direction": 583,
+          "saturation_fraction": 0.0
+        },
+        "0.75-inf": {
+          "mean_abs_magnitude_error": 2.3904271984065417e-07,
+          "mean_angular_error_deg": 90.04061889648438,
+          "mean_cosine": 0.0010969938011839986,
+          "median_angular_error_deg": 93.07464599609375,
+          "n": 191,
+          "n_direction": 191,
+          "saturation_fraction": 0.0
+        }
+      },
+      "by_wave_band": {
+        "1-5": {
+          "mean_abs_magnitude_error": 2.3262116144451284e-07,
+          "mean_angular_error_deg": 78.79948425292969,
+          "mean_cosine": 0.15287914872169495,
+          "median_angular_error_deg": 72.05964660644531,
+          "n": 1645,
+          "n_direction": 1645,
+          "saturation_fraction": 0.0
+        },
+        "11-15": {
+          "mean_abs_magnitude_error": 2.3401466364703083e-07,
+          "mean_angular_error_deg": 84.35057830810547,
+          "mean_cosine": 0.07585547119379044,
+          "median_angular_error_deg": 79.90003204345703,
+          "n": 2355,
+          "n_direction": 2355,
+          "saturation_fraction": 0.0
+        },
+        "16-19": {
+          "mean_abs_magnitude_error": 2.2739664018445183e-07,
+          "mean_angular_error_deg": 97.53365325927734,
+          "mean_cosine": -0.10449761897325516,
+          "median_angular_error_deg": 101.92536926269531,
+          "n": 968,
+          "n_direction": 968,
+          "saturation_fraction": 0.0
+        },
+        "20": {
+          "mean_abs_magnitude_error": 2.342601135296718e-07,
+          "mean_angular_error_deg": 102.5058822631836,
+          "mean_cosine": -0.16365517675876617,
+          "median_angular_error_deg": 108.07463836669922,
+          "n": 86,
+          "n_direction": 86,
+          "saturation_fraction": 0.0
+        },
+        "6-10": {
+          "mean_abs_magnitude_error": 2.365671036841377e-07,
+          "mean_angular_error_deg": 83.98345947265625,
+          "mean_cosine": 0.07825152575969696,
+          "median_angular_error_deg": 81.52719116210938,
+          "n": 2833,
+          "n_direction": 2833,
+          "saturation_fraction": 0.0
+        }
+      },
+      "direction": [
+        -0.8915970921516418,
+        -0.4528294503688812
+      ],
+      "overall": {
+        "mean_abs_magnitude_error": 2.3383128677778586e-07,
+        "mean_angular_error_deg": 84.87689208984375,
+        "mean_cosine": 0.06803402304649353,
+        "median_angular_error_deg": 81.29798126220703,
+        "n": 7887,
+        "n_direction": 7887,
+        "saturation_fraction": 0.0
+      }
+    }
+  },
+  "case": "A (student-visited deployment distribution: dagger holdout rows)",
+  "device": "cuda",
+  "generated": "2026-07-24 15:25:14",
+  "holdout": {
+    "base_manifest_hash": "6E7FAB14DD0614FDC85BC92438239FED4FFBB2DD53CA7B17077D5089EDEE09AA",
+    "dagger_dataset_dir": "C:\\Codex\\Brotato Agent\\datasets\\combat_dagger_r1",
+    "dagger_manifest_hash": "7AF8403FD4C39CAFCEA19CAF9CAEFB05AF7DD5418DDF5A4AEDF01CBBCD35EE84",
+    "expected_n": 7887,
+    "holdout_frac": 0.1,
+    "holdout_seed": 20260724,
+    "n": 7887,
+    "n_dagger_holdout_registry": 7887,
+    "split_reproduction_check": {
+      "holdout_aux_damage_base_rate": 0.019334187731146812,
+      "holdout_aux_margin_mean": 0.7613008618354797,
+      "registry_holdout_aux_damage_base_rate": 0.019334187731146812,
+      "registry_holdout_aux_margin_mean": 0.7613008618354797,
+      "reproduces_training_split": true
+    }
+  },
+  "label": "teacher.action (dataset action label)",
+  "mag_eps": 0.01,
+  "models": {
+    "bc_v1_s1_full": {
+      "by_risk_stratum": {
+        "0.00-0.25": {
+          "mean_abs_magnitude_error": 0.04058555141091347,
+          "mean_angular_error_deg": 75.54694366455078,
+          "mean_cosine": 0.1878257393836975,
+          "median_angular_error_deg": 69.14410400390625,
+          "n": 6233,
+          "n_direction": 6233,
+          "saturation_fraction": 0.0
+        },
+        "0.25-0.50": {
+          "mean_abs_magnitude_error": 0.03786544129252434,
+          "mean_angular_error_deg": 76.86136627197266,
+          "mean_cosine": 0.18643084168434143,
+          "median_angular_error_deg": 68.11666107177734,
+          "n": 880,
+          "n_direction": 880,
+          "saturation_fraction": 0.0
+        },
+        "0.50-0.75": {
+          "mean_abs_magnitude_error": 0.04061896726489067,
+          "mean_angular_error_deg": 94.10889434814453,
+          "mean_cosine": -0.046453289687633514,
+          "median_angular_error_deg": 94.1714096069336,
+          "n": 583,
+          "n_direction": 583,
+          "saturation_fraction": 0.0
+        },
+        "0.75-inf": {
+          "mean_abs_magnitude_error": 0.04036620631814003,
+          "mean_angular_error_deg": 104.80341339111328,
+          "mean_cosine": -0.1974921077489853,
+          "median_angular_error_deg": 112.04106903076172,
+          "n": 191,
+          "n_direction": 191,
+          "saturation_fraction": 0.0
+        }
+      },
+      "by_wave_band": {
+        "1-5": {
+          "mean_abs_magnitude_error": 0.037552859634160995,
+          "mean_angular_error_deg": 70.0634536743164,
+          "mean_cosine": 0.26321640610694885,
+          "median_angular_error_deg": 59.01401138305664,
+          "n": 1645,
+          "n_direction": 1645,
+          "saturation_fraction": 0.0
+        },
+        "11-15": {
+          "mean_abs_magnitude_error": 0.04036841168999672,
+          "mean_angular_error_deg": 80.48886108398438,
+          "mean_cosine": 0.12212130427360535,
+          "median_angular_error_deg": 77.76290893554688,
+          "n": 2355,
+          "n_direction": 2355,
+          "saturation_fraction": 0.0
+        },
+        "16-19": {
+          "mean_abs_magnitude_error": 0.04867175966501236,
+          "mean_angular_error_deg": 91.67180633544922,
+          "mean_cosine": -0.02326485700905323,
+          "median_angular_error_deg": 91.35327911376953,
+          "n": 968,
+          "n_direction": 968,
+          "saturation_fraction": 0.0
+        },
+        "20": {
+          "mean_abs_magnitude_error": 0.05005601420998573,
+          "mean_angular_error_deg": 68.74188995361328,
+          "mean_cosine": 0.2889930307865143,
+          "median_angular_error_deg": 51.71291732788086,
+          "n": 86,
+          "n_direction": 86,
+          "saturation_fraction": 0.0
+        },
+        "6-10": {
+          "mean_abs_magnitude_error": 0.03862370550632477,
+          "mean_angular_error_deg": 75.52037048339844,
+          "mean_cosine": 0.19310054183006287,
+          "median_angular_error_deg": 69.12122344970703,
+          "n": 2833,
+          "n_direction": 2833,
+          "saturation_fraction": 0.0
+        }
+      },
+      "checkpoint_path": "C:\\Codex\\Brotato Agent\\models\\bc_v1\\bc_v1_s1_full\\best.pt",
+      "checkpoint_sha256": "BE7E82326EC8A424A1EDF33134E65A26E06EDA68DA7F22D37705F3C26D6A9F0F",
+      "normalization_manifest": "C:\\Codex\\Brotato Agent\\models\\bc_v1\\bc_v1_s1_full\\normalization_manifest.json",
+      "normalization_manifest_hash": "FD3C55F62F210A6588B67787323CCE1E64311C57AF6A2FBFB136C86B6D27D166",
+      "overall": {
+        "mean_abs_magnitude_error": 0.04027920961380005,
+        "mean_angular_error_deg": 77.77418518066406,
+        "mean_cosine": 0.16102111339569092,
+        "median_angular_error_deg": 71.50366973876953,
+        "n": 7887,
+        "n_direction": 7887,
+        "saturation_fraction": 0.0
+      }
+    },
+    "bc_v2_a_s1": {
+      "by_risk_stratum": {
+        "0.00-0.25": {
+          "mean_abs_magnitude_error": 0.14105549454689026,
+          "mean_angular_error_deg": 27.859342575073242,
+          "mean_cosine": 0.8011683225631714,
+          "median_angular_error_deg": 18.08184051513672,
+          "n": 6233,
+          "n_direction": 6233,
+          "saturation_fraction": 0.00032087278668768704
+        },
+        "0.25-0.50": {
+          "mean_abs_magnitude_error": 0.16702286899089813,
+          "mean_angular_error_deg": 33.4208984375,
+          "mean_cosine": 0.7460678815841675,
+          "median_angular_error_deg": 22.033740997314453,
+          "n": 880,
+          "n_direction": 880,
+          "saturation_fraction": 0.0
+        },
+        "0.50-0.75": {
+          "mean_abs_magnitude_error": 0.18025483191013336,
+          "mean_angular_error_deg": 32.96747970581055,
+          "mean_cosine": 0.7514864206314087,
+          "median_angular_error_deg": 23.04052734375,
+          "n": 583,
+          "n_direction": 583,
+          "saturation_fraction": 0.0
+        },
+        "0.75-inf": {
+          "mean_abs_magnitude_error": 0.19663409888744354,
+          "mean_angular_error_deg": 41.29270935058594,
+          "mean_cosine": 0.6531603932380676,
+          "median_angular_error_deg": 29.953948974609375,
+          "n": 191,
+          "n_direction": 191,
+          "saturation_fraction": 0.0
+        }
+      },
+      "by_wave_band": {
+        "1-5": {
+          "mean_abs_magnitude_error": 0.13316994905471802,
+          "mean_angular_error_deg": 28.483604431152344,
+          "mean_cosine": 0.7889795899391174,
+          "median_angular_error_deg": 17.556550979614258,
+          "n": 1645,
+          "n_direction": 1645,
+          "saturation_fraction": 0.0
+        },
+        "11-15": {
+          "mean_abs_magnitude_error": 0.1534890979528427,
+          "mean_angular_error_deg": 28.648632049560547,
+          "mean_cosine": 0.7975057363510132,
+          "median_angular_error_deg": 19.376361846923828,
+          "n": 2355,
+          "n_direction": 2355,
+          "saturation_fraction": 0.0006369426846504211
+        },
+        "16-19": {
+          "mean_abs_magnitude_error": 0.1745728701353073,
+          "mean_angular_error_deg": 33.029048919677734,
+          "mean_cosine": 0.7486540675163269,
+          "median_angular_error_deg": 22.89621353149414,
+          "n": 968,
+          "n_direction": 968,
+          "saturation_fraction": 0.0005165289039723575
+        },
+        "20": {
+          "mean_abs_magnitude_error": 0.16392782330513,
+          "mean_angular_error_deg": 33.71027755737305,
+          "mean_cosine": 0.7370753884315491,
+          "median_angular_error_deg": 25.301040649414062,
+          "n": 86,
+          "n_direction": 86,
+          "saturation_fraction": 0.0
+        },
+        "6-10": {
+          "mean_abs_magnitude_error": 0.1430317461490631,
+          "mean_angular_error_deg": 28.581132888793945,
+          "mean_cosine": 0.7938611507415771,
+          "median_angular_error_deg": 18.2337703704834,
+          "n": 2833,
+          "n_direction": 2833,
+          "saturation_fraction": 0.0
+        }
+      },
+      "checkpoint_path": "C:\\Codex\\Brotato Agent\\models\\bc_v2\\bc_v2_a_s1\\best.pt",
+      "checkpoint_sha256": "6D49095BD44CACE9F439755EC4B0E0B343AC1FF63FD1AF6CDC66DBBB245DCFE0",
+      "normalization_manifest": "C:\\Codex\\Brotato Agent\\models\\bc_v2\\bc_v2_a_s1\\normalization_manifest.json",
+      "normalization_manifest_hash": "3BEC515CE33D71CB8FCF18B7E20C3F461256C0DBAEB743ABEDD1B1A1C1EE0DFF",
+      "overall": {
+        "mean_abs_magnitude_error": 0.14819636940956116,
+        "mean_angular_error_deg": 29.182785034179688,
+        "mean_cosine": 0.7877637147903442,
+        "median_angular_error_deg": 19.195911407470703,
+        "n": 7887,
+        "n_direction": 7887,
+        "saturation_fraction": 0.0002535818493925035
+      }
+    },
+    "bc_v2_b_s1": {
+      "by_risk_stratum": {
+        "0.00-0.25": {
+          "mean_abs_magnitude_error": 0.14694683253765106,
+          "mean_angular_error_deg": 30.792301177978516,
+          "mean_cosine": 0.7662158608436584,
+          "median_angular_error_deg": 19.675779342651367,
+          "n": 6233,
+          "n_direction": 6233,
+          "saturation_fraction": 8.021819667192176e-05
+        },
+        "0.25-0.50": {
+          "mean_abs_magnitude_error": 0.17776939272880554,
+          "mean_angular_error_deg": 37.0544319152832,
+          "mean_cosine": 0.705028772354126,
+          "median_angular_error_deg": 25.01908302307129,
+          "n": 880,
+          "n_direction": 880,
+          "saturation_fraction": 0.0
+        },
+        "0.50-0.75": {
+          "mean_abs_magnitude_error": 0.18802379071712494,
+          "mean_angular_error_deg": 35.69789505004883,
+          "mean_cosine": 0.7186746597290039,
+          "median_angular_error_deg": 24.076807022094727,
+          "n": 583,
+          "n_direction": 583,
+          "saturation_fraction": 0.0008576329564675689
+        },
+        "0.75-inf": {
+          "mean_abs_magnitude_error": 0.21069994568824768,
+          "mean_angular_error_deg": 43.45221710205078,
+          "mean_cosine": 0.6252330541610718,
+          "median_angular_error_deg": 33.39486312866211,
+          "n": 191,
+          "n_direction": 191,
+          "saturation_fraction": 0.0
+        }
+      },
+      "by_wave_band": {
+        "1-5": {
+          "mean_abs_magnitude_error": 0.127150759100914,
+          "mean_angular_error_deg": 31.028993606567383,
+          "mean_cosine": 0.7559803128242493,
+          "median_angular_error_deg": 18.44046401977539,
+          "n": 1645,
+          "n_direction": 1645,
+          "saturation_fraction": 0.0
+        },
+        "11-15": {
+          "mean_abs_magnitude_error": 0.16279825568199158,
+          "mean_angular_error_deg": 31.495901107788086,
+          "mean_cosine": 0.765478789806366,
+          "median_angular_error_deg": 21.03339958190918,
+          "n": 2355,
+          "n_direction": 2355,
+          "saturation_fraction": 0.00021231421851553023
+        },
+        "16-19": {
+          "mean_abs_magnitude_error": 0.19579637050628662,
+          "mean_angular_error_deg": 35.92469024658203,
+          "mean_cosine": 0.7162575125694275,
+          "median_angular_error_deg": 25.21172332763672,
+          "n": 968,
+          "n_direction": 968,
+          "saturation_fraction": 0.0
+        },
+        "20": {
+          "mean_abs_magnitude_error": 0.14932815730571747,
+          "mean_angular_error_deg": 34.03055191040039,
+          "mean_cosine": 0.7239425778388977,
+          "median_angular_error_deg": 21.069679260253906,
+          "n": 86,
+          "n_direction": 86,
+          "saturation_fraction": 0.0058139534667134285
+        },
+        "6-10": {
+          "mean_abs_magnitude_error": 0.15082675218582153,
+          "mean_angular_error_deg": 32.026214599609375,
+          "mean_cosine": 0.752830445766449,
+          "median_angular_error_deg": 20.507221221923828,
+          "n": 2833,
+          "n_direction": 2833,
+          "saturation_fraction": 0.0
+        }
+      },
+      "checkpoint_path": "C:\\Codex\\Brotato Agent\\models\\bc_v2\\bc_v2_b_s1\\best.pt",
+      "checkpoint_sha256": "B261BF65CA8A75A511C15428C566829A800FD9EC88A70AF5F56093DB995EA125",
+      "normalization_manifest": "C:\\Codex\\Brotato Agent\\models\\bc_v2\\bc_v2_b_s1\\normalization_manifest.json",
+      "normalization_manifest_hash": "3BEC515CE33D71CB8FCF18B7E20C3F461256C0DBAEB743ABEDD1B1A1C1EE0DFF",
+      "overall": {
+        "mean_abs_magnitude_error": 0.15496619045734406,
+        "mean_angular_error_deg": 32.16020965576172,
+        "mean_cosine": 0.7524604797363281,
+        "median_angular_error_deg": 20.82746124267578,
+        "n": 7887,
+        "n_direction": 7887,
+        "saturation_fraction": 0.00012679092469625175
+      }
+    }
+  },
+  "report": "wp2_dagger_holdout_eval",
+  "stratum_n": {
+    "by_risk_stratum": {
+      "0.00-0.25": 6233,
+      "0.25-0.50": 880,
+      "0.50-0.75": 583,
+      "0.75-inf": 191
+    },
+    "by_wave_band": {
+      "1-5": 1645,
+      "11-15": 2355,
+      "16-19": 968,
+      "20": 86,
+      "6-10": 2833
+    },
+    "overall": 7887
+  }
+}

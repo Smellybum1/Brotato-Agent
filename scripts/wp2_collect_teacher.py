@@ -126,13 +126,25 @@ def stop_game() -> None:
 
 
 def set_auto_start(enabled: bool) -> None:
+    """Set auto_start, preserving any other config keys already present.
+
+    The M3 student-inference path stores `student_enabled` / `student_port` /
+    `student_model_sha256` in the same file; a fixed-dict overwrite would
+    silently strip them and turn a DAgger collection campaign into a teacher
+    campaign. Defaults below only fill keys that are missing.
+    """
     path = Path(os.environ["APPDATA"]) / "Brotato" / "brotato_agent" / "agent_config.json"
-    payload = {
-        "auto_start": enabled,
-        "character": "character_well_rounded",
-        "danger": 0,
-        "weapon_prefixes": ["weapon_smg", "weapon_stick"],
-    }
+    payload: dict[str, Any] = {}
+    try:
+        existing = json.loads(path.read_text(encoding="utf-8"))
+        if isinstance(existing, dict):
+            payload = existing
+    except (FileNotFoundError, json.JSONDecodeError):
+        pass
+    payload.setdefault("character", "character_well_rounded")
+    payload.setdefault("danger", 0)
+    payload.setdefault("weapon_prefixes", ["weapon_smg", "weapon_stick"])
+    payload["auto_start"] = enabled
     atomic_json(path, payload)
 
 

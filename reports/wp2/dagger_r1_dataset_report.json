@@ -1,0 +1,442 @@
+{
+  "dataset_id": "combat_dagger_r1",
+  "observation_schema_hash": "C653D836F3EBC821A51AFC70482D3772FC7B7B927D393A6B9BBADC2718BB9B2A",
+  "source_capture_schema_hash": "95B6444796A21FD44E94113B75BA2097BC381D5F72ED784F9B9A4A99DD46D951",
+  "encoder_path": "trainer/observation/encoder_v1.py",
+  "builder_script": "scripts/wp2_build_combat_dagger_r1.py",
+  "repo_head_commit": "a29fc8a0cf8e146c6e042f63bfd2124d9503c136",
+  "run_count": 5,
+  "build_wall_seconds": 42.38,
+  "dataset_bytes": 82901982,
+  "aggregate": {
+    "total": 78955,
+    "valid": 78955,
+    "temporal_valid": 78874,
+    "valid_and_temporal_valid": 78874,
+    "fault_count": 0,
+    "episodes": 1599
+  },
+  "per_wave_valid": {
+    "1": 2200,
+    "2": 2717,
+    "3": 3229,
+    "4": 3706,
+    "5": 4224,
+    "6": 4734,
+    "7": 5227,
+    "8": 5742,
+    "9": 6243,
+    "10": 6037,
+    "11": 4988,
+    "12": 4978,
+    "13": 4983,
+    "14": 4965,
+    "15": 4128,
+    "16": 2492,
+    "17": 2487,
+    "18": 2480,
+    "19": 2486,
+    "20": 909
+  },
+  "segment_eligible_counts": {
+    "background": 41735,
+    "precursor": 13055,
+    "onset_episode": 7764,
+    "recovery": 16320
+  },
+  "segment_eligible_fractions": {
+    "background": 0.5291,
+    "precursor": 0.1655,
+    "onset_episode": 0.0984,
+    "recovery": 0.2069
+  },
+  "segment_mass_fractions": {
+    "background": 0.45,
+    "precursor": 0.3,
+    "onset_episode": 0.15,
+    "recovery": 0.1
+  },
+  "aux_base_rates": {
+    "horizon_valid_rows": 78145,
+    "aux_damage_base_rate": 0.018363,
+    "aux_margin_mean": 0.760549
+  },
+  "gates": [
+    {
+      "name": "all_shards_written",
+      "status": "PASS",
+      "value": 5,
+      "threshold": 5,
+      "detail": "5/5 shards + aux + weights written"
+    },
+    {
+      "name": "zero_encoding_faults",
+      "status": "PASS",
+      "value": 0,
+      "threshold": 0,
+      "detail": "0 ObservationError faults"
+    },
+    {
+      "name": "valid_and_temporal_positive",
+      "status": "PASS",
+      "value": 78874,
+      "threshold": 1,
+      "detail": "78874 training-eligible rows"
+    },
+    {
+      "name": "aux_weights_aligned",
+      "status": "PASS",
+      "value": 5,
+      "threshold": 5,
+      "detail": "aux/weight arrays length == shard rows for every run"
+    }
+  ],
+  "overall_status": "PASS",
+  "runs": [
+    {
+      "run_id": "run_1784863478_12397",
+      "shard_file": "run_1784863478_12397.npz",
+      "shard_sha256": "307E7A45267233B4AC45366A5FC77594321967C2474695B6BC40D5C59E3AC433",
+      "aux_sha256": "520C205410D220A6E80F37B493FA69101FE95DA8F9275B1E31955AB2E1F0414D",
+      "weights_sha256": "9E5EDF24FF8235FD3F22A449BE0F048AC50E348FB5E94D10F13F0E7DED56E8EE",
+      "counts": {
+        "total": 14817,
+        "valid": 14817,
+        "temporal_valid": 14802,
+        "valid_and_temporal_valid": 14802
+      },
+      "corrective_stats": {
+        "rows": 14817,
+        "eligible_rows": 14802,
+        "episodes": 287,
+        "onset_cap_value": 15.472473867595816,
+        "aux": {
+          "horizon_valid_rows": 14667,
+          "aux_damage_base_rate": 0.02884,
+          "aux_margin_mean": 0.75992
+        },
+        "segment_eligible_counts": {
+          "background": 8033,
+          "precursor": 2310,
+          "onset_episode": 1598,
+          "recovery": 2861
+        },
+        "segment_all_counts": {
+          "background": 8048,
+          "precursor": 2310,
+          "onset_episode": 1598,
+          "recovery": 2861
+        },
+        "segment_weight_mean": {
+          "background": 0.8291921019554138,
+          "precursor": 1.922337532043457,
+          "onset_episode": 1.389424204826355,
+          "recovery": 0.5173715949058533
+        },
+        "segment_mass_fractions": {
+          "background": 0.45,
+          "precursor": 0.3,
+          "onset_episode": 0.15,
+          "recovery": 0.1
+        },
+        "weight_summary": {
+          "min": 0.3292015790939331,
+          "mean": 1.0,
+          "median": 0.8291921019554138,
+          "p99": 1.9223376512527466,
+          "max": 1.9223376512527466
+        }
+      },
+      "student_control": {
+        "student_control_fraction": 0.998515,
+        "student_ticks": 14795,
+        "fallback_ticks": 22,
+        "clamp_count": 5545,
+        "latency_ms": {
+          "n": 14817,
+          "p50": 15.0,
+          "p99": 20.0,
+          "max": 197.0
+        },
+        "wave_reached": 15,
+        "result": "defeat"
+      }
+    },
+    {
+      "run_id": "run_1784864302_38172",
+      "shard_file": "run_1784864302_38172.npz",
+      "shard_sha256": "704B97D60214821D6F07FDD805BA9F6FA0CB7C4A6051529A6CCE360EA51FE58E",
+      "aux_sha256": "C7B685302858970478C1CDACE70C947B35AF81B5D39C34B9E2DCB6E072A695F9",
+      "weights_sha256": "781BE71FCE84549FE4F6AD156EFAC97C626F3E6FF6C3B9B5E85677F1F5A29914",
+      "counts": {
+        "total": 20721,
+        "valid": 20721,
+        "temporal_valid": 20700,
+        "valid_and_temporal_valid": 20700
+      },
+      "corrective_stats": {
+        "rows": 20721,
+        "eligible_rows": 20700,
+        "episodes": 471,
+        "onset_cap_value": 13.184713375796179,
+        "aux": {
+          "horizon_valid_rows": 20511,
+          "aux_damage_base_rate": 0.015455,
+          "aux_margin_mean": 0.74929
+        },
+        "segment_eligible_counts": {
+          "background": 10486,
+          "precursor": 3647,
+          "onset_episode": 2144,
+          "recovery": 4423
+        },
+        "segment_all_counts": {
+          "background": 10506,
+          "precursor": 3647,
+          "onset_episode": 2145,
+          "recovery": 4423
+        },
+        "segment_weight_mean": {
+          "background": 0.8883273005485535,
+          "precursor": 1.7027697563171387,
+          "onset_episode": 1.4482276439666748,
+          "recovery": 0.4680080711841583
+        },
+        "segment_mass_fractions": {
+          "background": 0.45,
+          "precursor": 0.3,
+          "onset_episode": 0.15,
+          "recovery": 0.1
+        },
+        "weight_summary": {
+          "min": 0.3767060935497284,
+          "mean": 1.0,
+          "median": 0.8883273005485535,
+          "p99": 1.8127412796020508,
+          "max": 1.8127412796020508
+        }
+      },
+      "student_control": {
+        "student_control_fraction": 0.998504,
+        "student_ticks": 20690,
+        "fallback_ticks": 31,
+        "clamp_count": 8605,
+        "latency_ms": {
+          "n": 20721,
+          "p50": 15.0,
+          "p99": 19.0,
+          "max": 189.0
+        },
+        "wave_reached": 20,
+        "result": "defeat"
+      }
+    },
+    {
+      "run_id": "run_1784865437_64140",
+      "shard_file": "run_1784865437_64140.npz",
+      "shard_sha256": "EA08165217DE352FFA5CD6F9C47322868F575D24E0CD4BCFF7D5A322BB044B86",
+      "aux_sha256": "715C6FC36EE6BF02D587543AA7524962F816E9EA21DF12E2C33718217B50E39E",
+      "weights_sha256": "6B276D035DDEF1A8CEA86CEB3B1B8D79CD3E6BA657968ABB9FFD0B9BF1B64608",
+      "counts": {
+        "total": 20269,
+        "valid": 20269,
+        "temporal_valid": 20249,
+        "valid_and_temporal_valid": 20249
+      },
+      "corrective_stats": {
+        "rows": 20269,
+        "eligible_rows": 20249,
+        "episodes": 385,
+        "onset_cap_value": 15.778441558441559,
+        "aux": {
+          "horizon_valid_rows": 20069,
+          "aux_damage_base_rate": 0.007474,
+          "aux_margin_mean": 0.775218
+        },
+        "segment_eligible_counts": {
+          "background": 10895,
+          "precursor": 3398,
+          "onset_episode": 1545,
+          "recovery": 4411
+        },
+        "segment_all_counts": {
+          "background": 10915,
+          "precursor": 3398,
+          "onset_episode": 1545,
+          "recovery": 4411
+        },
+        "segment_weight_mean": {
+          "background": 0.8363514542579651,
+          "precursor": 1.7877278327941895,
+          "onset_episode": 1.965922236442566,
+          "recovery": 0.45905691385269165
+        },
+        "segment_mass_fractions": {
+          "background": 0.45,
+          "precursor": 0.3,
+          "onset_episode": 0.15,
+          "recovery": 0.1
+        },
+        "weight_summary": {
+          "min": 0.45905691385269165,
+          "mean": 1.0,
+          "median": 0.8363515138626099,
+          "p99": 2.4877665042877197,
+          "max": 2.4877665042877197
+        }
+      },
+      "student_control": {
+        "student_control_fraction": 0.997829,
+        "student_ticks": 20225,
+        "fallback_ticks": 44,
+        "clamp_count": 7047,
+        "latency_ms": {
+          "n": 20269,
+          "p50": 15.0,
+          "p99": 18.0,
+          "max": 286.0
+        },
+        "wave_reached": 20,
+        "result": "defeat"
+      }
+    },
+    {
+      "run_id": "run_1784866560_35665",
+      "shard_file": "run_1784866560_35665.npz",
+      "shard_sha256": "A7464900B2EC4534FD4BEC567F6FAB1533AC8768BC7F145C43A0EFDD114B133A",
+      "aux_sha256": "FBEC38CE91326A17F271B1B641B72B11C327368336930A9C09C39BD6551744DC",
+      "weights_sha256": "D87395366E0258E30AA81CEF08CAE4669CEE0239D9D96B8C6725581CADDF50F0",
+      "counts": {
+        "total": 14510,
+        "valid": 14510,
+        "temporal_valid": 14495,
+        "valid_and_temporal_valid": 14495
+      },
+      "corrective_stats": {
+        "rows": 14510,
+        "eligible_rows": 14495,
+        "episodes": 313,
+        "onset_cap_value": 13.89297124600639,
+        "aux": {
+          "horizon_valid_rows": 14360,
+          "aux_damage_base_rate": 0.019081,
+          "aux_margin_mean": 0.746232
+        },
+        "segment_eligible_counts": {
+          "background": 7478,
+          "precursor": 2451,
+          "onset_episode": 1611,
+          "recovery": 2955
+        },
+        "segment_all_counts": {
+          "background": 7493,
+          "precursor": 2451,
+          "onset_episode": 1611,
+          "recovery": 2955
+        },
+        "segment_weight_mean": {
+          "background": 0.8722583651542664,
+          "precursor": 1.7741738557815552,
+          "onset_episode": 1.3496276140213013,
+          "recovery": 0.49052444100379944
+        },
+        "segment_mass_fractions": {
+          "background": 0.45,
+          "precursor": 0.3,
+          "onset_episode": 0.15,
+          "recovery": 0.1
+        },
+        "weight_summary": {
+          "min": 0.4905245304107666,
+          "mean": 0.9999998807907104,
+          "median": 0.8722586035728455,
+          "p99": 1.7741738557815552,
+          "max": 1.7741738557815552
+        }
+      },
+      "student_control": {
+        "student_control_fraction": 0.997932,
+        "student_ticks": 14480,
+        "fallback_ticks": 30,
+        "clamp_count": 5271,
+        "latency_ms": {
+          "n": 14510,
+          "p50": 15.0,
+          "p99": 20.0,
+          "max": 212.0
+        },
+        "wave_reached": 15,
+        "result": "defeat"
+      }
+    },
+    {
+      "run_id": "run_1784867357_2622",
+      "shard_file": "run_1784867357_2622.npz",
+      "shard_sha256": "55D7FC850FAEDC08C691E7A085B68317B2E593E0BFCF0317DD700218D3F8C55F",
+      "aux_sha256": "A2591E6C8CA5C57480A0B95C4281CE1053E98FB8D3B7BD2D7CA9288F67069866",
+      "weights_sha256": "5CE40123C5A0600565BB242DB24A4994BA3464032A2ADD080A988FC3F73FC524",
+      "counts": {
+        "total": 8638,
+        "valid": 8638,
+        "temporal_valid": 8628,
+        "valid_and_temporal_valid": 8628
+      },
+      "corrective_stats": {
+        "rows": 8638,
+        "eligible_rows": 8628,
+        "episodes": 143,
+        "onset_cap_value": 18.1006993006993,
+        "aux": {
+          "horizon_valid_rows": 8538,
+          "aux_damage_base_rate": 0.03174,
+          "aux_margin_mean": 0.778279
+        },
+        "segment_eligible_counts": {
+          "background": 4843,
+          "precursor": 1249,
+          "onset_episode": 866,
+          "recovery": 1670
+        },
+        "segment_all_counts": {
+          "background": 4853,
+          "precursor": 1249,
+          "onset_episode": 866,
+          "recovery": 1670
+        },
+        "segment_weight_mean": {
+          "background": 0.8016930222511292,
+          "precursor": 2.072377920150757,
+          "onset_episode": 1.4944573640823364,
+          "recovery": 0.5166467428207397
+        },
+        "segment_mass_fractions": {
+          "background": 0.45,
+          "precursor": 0.3,
+          "onset_episode": 0.15,
+          "recovery": 0.1
+        },
+        "weight_summary": {
+          "min": 0.26618674397468567,
+          "mean": 0.9999998807907104,
+          "median": 0.8016931414604187,
+          "p99": 2.3366358280181885,
+          "max": 2.3366358280181885
+        }
+      },
+      "student_control": {
+        "student_control_fraction": 0.998032,
+        "student_ticks": 8621,
+        "fallback_ticks": 17,
+        "clamp_count": 3084,
+        "latency_ms": {
+          "n": 8638,
+          "p50": 15.0,
+          "p99": 19.0,
+          "max": 196.0
+        },
+        "wave_reached": 10,
+        "result": "defeat"
+      }
+    }
+  ]
+}

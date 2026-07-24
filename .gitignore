@@ -53,6 +53,7 @@ datasets/**/*.npz
 # BC training run artifacts (large checkpoints; the small registry manifests
 # under models/registry/ stay tracked)
 models/bc_v1/
+models/bc_v2/
 
 # Deploy markers
 .deploy_stamp

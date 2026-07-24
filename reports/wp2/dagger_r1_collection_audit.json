@@ -1,0 +1,266 @@
+{
+  "stage": "A",
+  "smoke": false,
+  "expected_capture_schema_hash": "95B6444796A21FD44E94113B75BA2097BC381D5F72ED784F9B9A4A99DD46D951",
+  "expected_model_sha256": "BE7E82326EC8A424A1EDF33134E65A26E06EDA68DA7F22D37705F3C26D6A9F0F",
+  "student_control_gate": 0.95,
+  "campaign": {
+    "policy_version": "teacher_v1-0.1.125-gun-wp1",
+    "mod_version": "0.2.34-wp2-capture",
+    "started_at": "2026-07-24T03:24:29.199617+00:00",
+    "stop_reason": "target reached",
+    "collector_state_file": "C:\\Codex\\Brotato Agent\\.tmp\\dagger_r1_collector_state.json",
+    "sidecar_log": "C:\\Codex\\Brotato Agent\\.tmp\\student_sidecar_dagger_r1.jsonl"
+  },
+  "sidecar_identity": {
+    "log_present": true,
+    "registry_present": true,
+    "identity_ok": true,
+    "checks": {
+      "model_sha256": true,
+      "normalization_sha256": true,
+      "observation_schema_hash": true,
+      "registry_run_name": true
+    },
+    "backend": "torch-cpu",
+    "model_sha256": "BE7E82326EC8A424A1EDF33134E65A26E06EDA68DA7F22D37705F3C26D6A9F0F",
+    "registry_run_name": "bc_v1_s1_full",
+    "handshake_run_ids": [
+      "run_1784863478_12397"
+    ],
+    "serving": {
+      "stats_events": 145,
+      "errors_total": 0,
+      "served_max": 78571,
+      "model_ms_p99_max": 3.196
+    }
+  },
+  "runs": [
+    {
+      "run_id": "run_1784863478_12397",
+      "verdict": "include",
+      "reasons": [],
+      "capture_count": 14817,
+      "student_control_fraction": 0.998515,
+      "student_ticks": 14795,
+      "fallback_ticks": 22,
+      "clamp_count": 5545,
+      "source_counts": {
+        "teacher_fallback": 22,
+        "student": 14795
+      },
+      "cause_counts": {
+        "not_connected": 1,
+        "ok": 9250,
+        "clamped": 5545,
+        "timeout": 21
+      },
+      "fallback_cause_counts": {
+        "not_connected": 1,
+        "timeout": 21
+      },
+      "latency_ms": {
+        "n": 14817,
+        "p50": 15.0,
+        "p99": 20.0,
+        "max": 197.0
+      },
+      "telemetry": {
+        "summary_present": true,
+        "errors": 0,
+        "hangs": 0,
+        "illegal_actions": 0,
+        "capture_schema_hash_mismatches": 0,
+        "captures_missing_teacher_action": 0,
+        "integrity_ok": true
+      },
+      "wave_reached": 15,
+      "summary_last_wave": 15,
+      "waves_completed": 15,
+      "recoveries": 9,
+      "result": "defeat",
+      "smoke_truncated": false
+    },
+    {
+      "run_id": "run_1784864302_38172",
+      "verdict": "include",
+      "reasons": [],
+      "capture_count": 20721,
+      "student_control_fraction": 0.998504,
+      "student_ticks": 20690,
+      "fallback_ticks": 31,
+      "clamp_count": 8605,
+      "source_counts": {
+        "teacher_fallback": 31,
+        "student": 20690
+      },
+      "cause_counts": {
+        "timeout": 31,
+        "ok": 12085,
+        "clamped": 8605
+      },
+      "fallback_cause_counts": {
+        "timeout": 31
+      },
+      "latency_ms": {
+        "n": 20721,
+        "p50": 15.0,
+        "p99": 19.0,
+        "max": 189.0
+      },
+      "telemetry": {
+        "summary_present": true,
+        "errors": 0,
+        "hangs": 0,
+        "illegal_actions": 0,
+        "capture_schema_hash_mismatches": 0,
+        "captures_missing_teacher_action": 0,
+        "integrity_ok": true
+      },
+      "wave_reached": 20,
+      "summary_last_wave": 20,
+      "waves_completed": 20,
+      "recoveries": 14,
+      "result": "defeat",
+      "smoke_truncated": false
+    },
+    {
+      "run_id": "run_1784865437_64140",
+      "verdict": "include",
+      "reasons": [],
+      "capture_count": 20269,
+      "student_control_fraction": 0.997829,
+      "student_ticks": 20225,
+      "fallback_ticks": 44,
+      "clamp_count": 7047,
+      "source_counts": {
+        "teacher_fallback": 44,
+        "student": 20225
+      },
+      "cause_counts": {
+        "timeout": 44,
+        "ok": 13178,
+        "clamped": 7047
+      },
+      "fallback_cause_counts": {
+        "timeout": 44
+      },
+      "latency_ms": {
+        "n": 20269,
+        "p50": 15.0,
+        "p99": 18.0,
+        "max": 286.0
+      },
+      "telemetry": {
+        "summary_present": true,
+        "errors": 0,
+        "hangs": 0,
+        "illegal_actions": 0,
+        "capture_schema_hash_mismatches": 0,
+        "captures_missing_teacher_action": 0,
+        "integrity_ok": true
+      },
+      "wave_reached": 20,
+      "summary_last_wave": 20,
+      "waves_completed": 20,
+      "recoveries": 14,
+      "result": "defeat",
+      "smoke_truncated": false
+    },
+    {
+      "run_id": "run_1784866560_35665",
+      "verdict": "include",
+      "reasons": [],
+      "capture_count": 14510,
+      "student_control_fraction": 0.997932,
+      "student_ticks": 14480,
+      "fallback_ticks": 30,
+      "clamp_count": 5271,
+      "source_counts": {
+        "teacher_fallback": 30,
+        "student": 14480
+      },
+      "cause_counts": {
+        "timeout": 30,
+        "ok": 9209,
+        "clamped": 5271
+      },
+      "fallback_cause_counts": {
+        "timeout": 30
+      },
+      "latency_ms": {
+        "n": 14510,
+        "p50": 15.0,
+        "p99": 20.0,
+        "max": 212.0
+      },
+      "telemetry": {
+        "summary_present": true,
+        "errors": 0,
+        "hangs": 0,
+        "illegal_actions": 0,
+        "capture_schema_hash_mismatches": 0,
+        "captures_missing_teacher_action": 0,
+        "integrity_ok": true
+      },
+      "wave_reached": 15,
+      "summary_last_wave": 15,
+      "waves_completed": 15,
+      "recoveries": 9,
+      "result": "defeat",
+      "smoke_truncated": false
+    },
+    {
+      "run_id": "run_1784867357_2622",
+      "verdict": "include",
+      "reasons": [],
+      "capture_count": 8638,
+      "student_control_fraction": 0.998032,
+      "student_ticks": 8621,
+      "fallback_ticks": 17,
+      "clamp_count": 3084,
+      "source_counts": {
+        "teacher_fallback": 17,
+        "student": 8621
+      },
+      "cause_counts": {
+        "timeout": 17,
+        "ok": 5537,
+        "clamped": 3084
+      },
+      "fallback_cause_counts": {
+        "timeout": 17
+      },
+      "latency_ms": {
+        "n": 8638,
+        "p50": 15.0,
+        "p99": 19.0,
+        "max": 196.0
+      },
+      "telemetry": {
+        "summary_present": true,
+        "errors": 0,
+        "hangs": 0,
+        "illegal_actions": 0,
+        "capture_schema_hash_mismatches": 0,
+        "captures_missing_teacher_action": 0,
+        "integrity_ok": true
+      },
+      "wave_reached": 10,
+      "summary_last_wave": 10,
+      "waves_completed": 10,
+      "recoveries": 4,
+      "result": "defeat",
+      "smoke_truncated": false
+    }
+  ],
+  "included_runs": [
+    "run_1784863478_12397",
+    "run_1784864302_38172",
+    "run_1784865437_64140",
+    "run_1784866560_35665",
+    "run_1784867357_2622"
+  ],
+  "excluded_runs": [],
+  "overall_status": "PASS"
+}

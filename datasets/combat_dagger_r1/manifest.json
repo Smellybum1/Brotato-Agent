@@ -1,0 +1,982 @@
+{
+  "dataset_id": "combat_dagger_r1",
+  "schema_id": "combat_obs_v1",
+  "observation_schema_hash": "C653D836F3EBC821A51AFC70482D3772FC7B7B927D393A6B9BBADC2718BB9B2A",
+  "source_capture_schema_hash": "95B6444796A21FD44E94113B75BA2097BC381D5F72ED784F9B9A4A99DD46D951",
+  "encoder_path": "trainer/observation/encoder_v1.py",
+  "builder_script": "scripts/wp2_build_combat_dagger_r1.py",
+  "reused_pipeline": "scripts/wp2_build_combat_obs_v1.py::build_run",
+  "repo_head_commit": "a29fc8a0cf8e146c6e042f63bfd2124d9503c136",
+  "runs_root": "C:\\Users\\moxhe\\AppData\\Roaming\\Brotato\\brotato_agent\\runs",
+  "run_count": 5,
+  "source_campaign": {
+    "policy_version": "teacher_v1-0.1.125-gun-wp1",
+    "mod_version": "0.2.34-wp2-capture",
+    "started_at": "2026-07-24T03:24:29.199617+00:00",
+    "stop_reason": "target reached",
+    "collector_state_file": "C:\\Codex\\Brotato Agent\\.tmp\\dagger_r1_collector_state.json",
+    "sidecar_log": "C:\\Codex\\Brotato Agent\\.tmp\\student_sidecar_dagger_r1.jsonl",
+    "audit_report": "C:\\Codex\\Brotato Agent\\reports\\wp2\\dagger_r1_collection_audit.json"
+  },
+  "corrective_config": {
+    "control_hz": 20,
+    "aux_horizon_ticks": 10,
+    "risk_threshold": 0.5,
+    "risk_groups": [
+      "enemies",
+      "bosses",
+      "projectiles"
+    ],
+    "precursor_ticks": [
+      10,
+      20
+    ],
+    "recovery_ticks": 20,
+    "segment_target_mass": {
+      "background": 0.45,
+      "precursor": 0.3,
+      "onset_episode": 0.15,
+      "recovery": 0.1
+    },
+    "onset_cap": "2x mean episode mass (2 * 0.15*M / E)",
+    "gap_mask": "temporal_valid (control_dt_ms in (0,250]) over the full horizon",
+    "weight_normalization": "mean weight over eligible rows == 1.0",
+    "contact_risk_feature_index": 11,
+    "hp_ratio_global_index": 8
+  },
+  "aggregate": {
+    "total": 78955,
+    "valid": 78955,
+    "temporal_valid": 78874,
+    "valid_and_temporal_valid": 78874,
+    "fault_count": 0,
+    "episodes": 1599,
+    "dataset_bytes": 82901982
+  },
+  "segment_eligible_counts": {
+    "background": 41735,
+    "precursor": 13055,
+    "onset_episode": 7764,
+    "recovery": 16320
+  },
+  "segment_eligible_fractions": {
+    "background": 0.5291,
+    "precursor": 0.1655,
+    "onset_episode": 0.0984,
+    "recovery": 0.2069
+  },
+  "segment_mass_fractions": {
+    "background": 0.45,
+    "precursor": 0.3,
+    "onset_episode": 0.15,
+    "recovery": 0.1
+  },
+  "aux_base_rates": {
+    "horizon_valid_rows": 78145,
+    "aux_damage_base_rate": 0.018363,
+    "aux_margin_mean": 0.760549
+  },
+  "gates": [
+    {
+      "name": "all_shards_written",
+      "status": "PASS",
+      "value": 5,
+      "threshold": 5,
+      "detail": "5/5 shards + aux + weights written"
+    },
+    {
+      "name": "zero_encoding_faults",
+      "status": "PASS",
+      "value": 0,
+      "threshold": 0,
+      "detail": "0 ObservationError faults"
+    },
+    {
+      "name": "valid_and_temporal_positive",
+      "status": "PASS",
+      "value": 78874,
+      "threshold": 1,
+      "detail": "78874 training-eligible rows"
+    },
+    {
+      "name": "aux_weights_aligned",
+      "status": "PASS",
+      "value": 5,
+      "threshold": 5,
+      "detail": "aux/weight arrays length == shard rows for every run"
+    }
+  ],
+  "overall_status": "PASS",
+  "runs": [
+    {
+      "run_id": "run_1784863478_12397",
+      "shard_file": "run_1784863478_12397.npz",
+      "shard_sha256": "307E7A45267233B4AC45366A5FC77594321967C2474695B6BC40D5C59E3AC433",
+      "shard_bytes": 16729676,
+      "capture_seq_monotonic": true,
+      "counts": {
+        "total": 14817,
+        "valid": 14817,
+        "temporal_valid": 14802,
+        "valid_and_temporal_valid": 14802
+      },
+      "per_wave_total": {
+        "1": 440,
+        "2": 540,
+        "3": 656,
+        "4": 741,
+        "5": 846,
+        "6": 951,
+        "7": 1040,
+        "8": 1152,
+        "9": 1251,
+        "10": 1251,
+        "11": 1261,
+        "12": 1246,
+        "13": 1256,
+        "14": 1245,
+        "15": 941
+      },
+      "per_wave_valid": {
+        "1": 440,
+        "2": 540,
+        "3": 656,
+        "4": 741,
+        "5": 846,
+        "6": 951,
+        "7": 1040,
+        "8": 1152,
+        "9": 1251,
+        "10": 1251,
+        "11": 1261,
+        "12": 1246,
+        "13": 1256,
+        "14": 1245,
+        "15": 941
+      },
+      "overflow": {
+        "enemies": {
+          "overflow_samples": 0,
+          "max_raw": 50,
+          "capacity": 64
+        },
+        "bosses": {
+          "overflow_samples": 0,
+          "max_raw": 0,
+          "capacity": 2
+        },
+        "projectiles": {
+          "overflow_samples": 0,
+          "max_raw": 18,
+          "capacity": 32
+        },
+        "materials": {
+          "overflow_samples": 0,
+          "max_raw": 50,
+          "capacity": 64
+        },
+        "consumables": {
+          "overflow_samples": 0,
+          "max_raw": 9,
+          "capacity": 24
+        },
+        "crates": {
+          "overflow_samples": 0,
+          "max_raw": 2,
+          "capacity": 2
+        },
+        "obstacles": {
+          "overflow_samples": 0,
+          "max_raw": 2,
+          "capacity": 8
+        }
+      },
+      "fault_count": 0,
+      "faults": [],
+      "determinism_spot_check": [
+        {
+          "position": 0,
+          "capture_seq": 1,
+          "digest": "2D34E87C19AC802314394261BFBB05278B1F167E442A27AA7CEEA50D1A392298"
+        },
+        {
+          "position": 5000,
+          "capture_seq": 5001,
+          "digest": "EDDC19EEE2AF24FCC6E62EF923B12F0A47BA92DC42425074DC202DEC0B9D700F"
+        },
+        {
+          "position": 10000,
+          "capture_seq": 10001,
+          "digest": "7E6207432FD977273E986FC0501C0ED54D8F599A0461F2D5C4EA5448699D6C1B"
+        },
+        {
+          "position": 14816,
+          "capture_seq": 14817,
+          "digest": "B2FF253A8C1732E862B008019BD7F9BFF2FF56C77A16375B6BD13832B48BE529"
+        }
+      ],
+      "build_seconds": 8.21,
+      "aux_file": "aux_labels/run_1784863478_12397.npz",
+      "aux_sha256": "520C205410D220A6E80F37B493FA69101FE95DA8F9275B1E31955AB2E1F0414D",
+      "weights_file": "sample_weights/run_1784863478_12397.npz",
+      "weights_sha256": "9E5EDF24FF8235FD3F22A449BE0F048AC50E348FB5E94D10F13F0E7DED56E8EE",
+      "corrective_stats": {
+        "rows": 14817,
+        "eligible_rows": 14802,
+        "episodes": 287,
+        "onset_cap_value": 15.472473867595816,
+        "aux": {
+          "horizon_valid_rows": 14667,
+          "aux_damage_base_rate": 0.02884,
+          "aux_margin_mean": 0.75992
+        },
+        "segment_eligible_counts": {
+          "background": 8033,
+          "precursor": 2310,
+          "onset_episode": 1598,
+          "recovery": 2861
+        },
+        "segment_all_counts": {
+          "background": 8048,
+          "precursor": 2310,
+          "onset_episode": 1598,
+          "recovery": 2861
+        },
+        "segment_weight_mean": {
+          "background": 0.8291921019554138,
+          "precursor": 1.922337532043457,
+          "onset_episode": 1.389424204826355,
+          "recovery": 0.5173715949058533
+        },
+        "segment_mass_fractions": {
+          "background": 0.45,
+          "precursor": 0.3,
+          "onset_episode": 0.15,
+          "recovery": 0.1
+        },
+        "weight_summary": {
+          "min": 0.3292015790939331,
+          "mean": 1.0,
+          "median": 0.8291921019554138,
+          "p99": 1.9223376512527466,
+          "max": 1.9223376512527466
+        }
+      },
+      "student_control": {
+        "student_control_fraction": 0.998515,
+        "student_ticks": 14795,
+        "fallback_ticks": 22,
+        "clamp_count": 5545,
+        "latency_ms": {
+          "n": 14817,
+          "p50": 15.0,
+          "p99": 20.0,
+          "max": 197.0
+        },
+        "wave_reached": 15,
+        "result": "defeat"
+      }
+    },
+    {
+      "run_id": "run_1784864302_38172",
+      "shard_file": "run_1784864302_38172.npz",
+      "shard_sha256": "704B97D60214821D6F07FDD805BA9F6FA0CB7C4A6051529A6CCE360EA51FE58E",
+      "shard_bytes": 21977999,
+      "capture_seq_monotonic": true,
+      "counts": {
+        "total": 20721,
+        "valid": 20721,
+        "temporal_valid": 20700,
+        "valid_and_temporal_valid": 20700
+      },
+      "per_wave_total": {
+        "1": 440,
+        "2": 540,
+        "3": 646,
+        "4": 745,
+        "5": 851,
+        "6": 941,
+        "7": 1045,
+        "8": 1157,
+        "9": 1250,
+        "10": 1240,
+        "11": 1241,
+        "12": 1240,
+        "13": 1240,
+        "14": 1240,
+        "15": 1246,
+        "16": 1251,
+        "17": 1241,
+        "18": 1240,
+        "19": 1240,
+        "20": 687
+      },
+      "per_wave_valid": {
+        "1": 440,
+        "2": 540,
+        "3": 646,
+        "4": 745,
+        "5": 851,
+        "6": 941,
+        "7": 1045,
+        "8": 1157,
+        "9": 1250,
+        "10": 1240,
+        "11": 1241,
+        "12": 1240,
+        "13": 1240,
+        "14": 1240,
+        "15": 1246,
+        "16": 1251,
+        "17": 1241,
+        "18": 1240,
+        "19": 1240,
+        "20": 687
+      },
+      "overflow": {
+        "enemies": {
+          "overflow_samples": 0,
+          "max_raw": 59,
+          "capacity": 64
+        },
+        "bosses": {
+          "overflow_samples": 0,
+          "max_raw": 1,
+          "capacity": 2
+        },
+        "projectiles": {
+          "overflow_samples": 0,
+          "max_raw": 30,
+          "capacity": 32
+        },
+        "materials": {
+          "overflow_samples": 0,
+          "max_raw": 50,
+          "capacity": 64
+        },
+        "consumables": {
+          "overflow_samples": 0,
+          "max_raw": 13,
+          "capacity": 24
+        },
+        "crates": {
+          "overflow_samples": 0,
+          "max_raw": 2,
+          "capacity": 2
+        },
+        "obstacles": {
+          "overflow_samples": 0,
+          "max_raw": 2,
+          "capacity": 8
+        }
+      },
+      "fault_count": 0,
+      "faults": [],
+      "determinism_spot_check": [
+        {
+          "position": 0,
+          "capture_seq": 1,
+          "digest": "BFE3B9F5CE3389D3F89D1EBE71BEECEC5A7634912EC5FC29920C922385A75F67"
+        },
+        {
+          "position": 5000,
+          "capture_seq": 5001,
+          "digest": "DFE41900778E8A4C3C912BAD7AD7A4EE6CADAB348DADF69D1518695B5507A306"
+        },
+        {
+          "position": 10000,
+          "capture_seq": 10001,
+          "digest": "4B4E48C56E28EB1C9FC45F5C0EED32C0E0BBC636384C0323DC988495A44E91F4"
+        },
+        {
+          "position": 15000,
+          "capture_seq": 15001,
+          "digest": "9C8E848EBE6DEBA07BBCE5A5604EBF4820AA61F3C2944369117842DEADFFA42B"
+        },
+        {
+          "position": 20000,
+          "capture_seq": 20001,
+          "digest": "64962464F897B7697BD4204D36D74D52861663C439F9E8DE90D2C112C10301FD"
+        },
+        {
+          "position": 20720,
+          "capture_seq": 20721,
+          "digest": "B0C58C53E2ACEDD380288D42DB93A8FB5EEDBED2477DFE54E50DE3C5BBF77A2A"
+        }
+      ],
+      "build_seconds": 11.42,
+      "aux_file": "aux_labels/run_1784864302_38172.npz",
+      "aux_sha256": "C7B685302858970478C1CDACE70C947B35AF81B5D39C34B9E2DCB6E072A695F9",
+      "weights_file": "sample_weights/run_1784864302_38172.npz",
+      "weights_sha256": "781BE71FCE84549FE4F6AD156EFAC97C626F3E6FF6C3B9B5E85677F1F5A29914",
+      "corrective_stats": {
+        "rows": 20721,
+        "eligible_rows": 20700,
+        "episodes": 471,
+        "onset_cap_value": 13.184713375796179,
+        "aux": {
+          "horizon_valid_rows": 20511,
+          "aux_damage_base_rate": 0.015455,
+          "aux_margin_mean": 0.74929
+        },
+        "segment_eligible_counts": {
+          "background": 10486,
+          "precursor": 3647,
+          "onset_episode": 2144,
+          "recovery": 4423
+        },
+        "segment_all_counts": {
+          "background": 10506,
+          "precursor": 3647,
+          "onset_episode": 2145,
+          "recovery": 4423
+        },
+        "segment_weight_mean": {
+          "background": 0.8883273005485535,
+          "precursor": 1.7027697563171387,
+          "onset_episode": 1.4482276439666748,
+          "recovery": 0.4680080711841583
+        },
+        "segment_mass_fractions": {
+          "background": 0.45,
+          "precursor": 0.3,
+          "onset_episode": 0.15,
+          "recovery": 0.1
+        },
+        "weight_summary": {
+          "min": 0.3767060935497284,
+          "mean": 1.0,
+          "median": 0.8883273005485535,
+          "p99": 1.8127412796020508,
+          "max": 1.8127412796020508
+        }
+      },
+      "student_control": {
+        "student_control_fraction": 0.998504,
+        "student_ticks": 20690,
+        "fallback_ticks": 31,
+        "clamp_count": 8605,
+        "latency_ms": {
+          "n": 20721,
+          "p50": 15.0,
+          "p99": 19.0,
+          "max": 189.0
+        },
+        "wave_reached": 20,
+        "result": "defeat"
+      }
+    },
+    {
+      "run_id": "run_1784865437_64140",
+      "shard_file": "run_1784865437_64140.npz",
+      "shard_sha256": "EA08165217DE352FFA5CD6F9C47322868F575D24E0CD4BCFF7D5A322BB044B86",
+      "shard_bytes": 17851328,
+      "capture_seq_monotonic": true,
+      "counts": {
+        "total": 20269,
+        "valid": 20269,
+        "temporal_valid": 20249,
+        "valid_and_temporal_valid": 20249
+      },
+      "per_wave_total": {
+        "1": 440,
+        "2": 545,
+        "3": 641,
+        "4": 740,
+        "5": 846,
+        "6": 951,
+        "7": 1056,
+        "8": 1146,
+        "9": 1251,
+        "10": 1246,
+        "11": 1240,
+        "12": 1246,
+        "13": 1241,
+        "14": 1240,
+        "15": 1245,
+        "16": 1241,
+        "17": 1246,
+        "18": 1240,
+        "19": 1246,
+        "20": 222
+      },
+      "per_wave_valid": {
+        "1": 440,
+        "2": 545,
+        "3": 641,
+        "4": 740,
+        "5": 846,
+        "6": 951,
+        "7": 1056,
+        "8": 1146,
+        "9": 1251,
+        "10": 1246,
+        "11": 1240,
+        "12": 1246,
+        "13": 1241,
+        "14": 1240,
+        "15": 1245,
+        "16": 1241,
+        "17": 1246,
+        "18": 1240,
+        "19": 1246,
+        "20": 222
+      },
+      "overflow": {
+        "enemies": {
+          "overflow_samples": 0,
+          "max_raw": 54,
+          "capacity": 64
+        },
+        "bosses": {
+          "overflow_samples": 0,
+          "max_raw": 1,
+          "capacity": 2
+        },
+        "projectiles": {
+          "overflow_samples": 0,
+          "max_raw": 30,
+          "capacity": 32
+        },
+        "materials": {
+          "overflow_samples": 0,
+          "max_raw": 50,
+          "capacity": 64
+        },
+        "consumables": {
+          "overflow_samples": 0,
+          "max_raw": 7,
+          "capacity": 24
+        },
+        "crates": {
+          "overflow_samples": 0,
+          "max_raw": 2,
+          "capacity": 2
+        },
+        "obstacles": {
+          "overflow_samples": 0,
+          "max_raw": 2,
+          "capacity": 8
+        }
+      },
+      "fault_count": 0,
+      "faults": [],
+      "determinism_spot_check": [
+        {
+          "position": 0,
+          "capture_seq": 1,
+          "digest": "458CFC9E97F74F8F47BCA0D6699E234F24D86FF4B0E3C8F9D7D90A258F1D0813"
+        },
+        {
+          "position": 5000,
+          "capture_seq": 5001,
+          "digest": "811D294BBF331C79B964DCD3E98582F673B4E9772F3B3F6F824D677844A2DD54"
+        },
+        {
+          "position": 10000,
+          "capture_seq": 10001,
+          "digest": "D8755E2004495FE654E8A92D09D983A278B6553A8807B0C5953409A416B28499"
+        },
+        {
+          "position": 15000,
+          "capture_seq": 15001,
+          "digest": "CBB2A76CB63ED2417C5AC762F172F594F6FF8C5F36E10391C7D62BD8B9B9F1DF"
+        },
+        {
+          "position": 20000,
+          "capture_seq": 20001,
+          "digest": "A17FA01E5351187CD287BFDF7CB5C6DD75BF418B8FF8629952A5486714AAF364"
+        },
+        {
+          "position": 20268,
+          "capture_seq": 20269,
+          "digest": "A15EC84FD3F3ED55B8C9422949260B69942D212436CBD793096A44C19692215E"
+        }
+      ],
+      "build_seconds": 9.65,
+      "aux_file": "aux_labels/run_1784865437_64140.npz",
+      "aux_sha256": "715C6FC36EE6BF02D587543AA7524962F816E9EA21DF12E2C33718217B50E39E",
+      "weights_file": "sample_weights/run_1784865437_64140.npz",
+      "weights_sha256": "6B276D035DDEF1A8CEA86CEB3B1B8D79CD3E6BA657968ABB9FFD0B9BF1B64608",
+      "corrective_stats": {
+        "rows": 20269,
+        "eligible_rows": 20249,
+        "episodes": 385,
+        "onset_cap_value": 15.778441558441559,
+        "aux": {
+          "horizon_valid_rows": 20069,
+          "aux_damage_base_rate": 0.007474,
+          "aux_margin_mean": 0.775218
+        },
+        "segment_eligible_counts": {
+          "background": 10895,
+          "precursor": 3398,
+          "onset_episode": 1545,
+          "recovery": 4411
+        },
+        "segment_all_counts": {
+          "background": 10915,
+          "precursor": 3398,
+          "onset_episode": 1545,
+          "recovery": 4411
+        },
+        "segment_weight_mean": {
+          "background": 0.8363514542579651,
+          "precursor": 1.7877278327941895,
+          "onset_episode": 1.965922236442566,
+          "recovery": 0.45905691385269165
+        },
+        "segment_mass_fractions": {
+          "background": 0.45,
+          "precursor": 0.3,
+          "onset_episode": 0.15,
+          "recovery": 0.1
+        },
+        "weight_summary": {
+          "min": 0.45905691385269165,
+          "mean": 1.0,
+          "median": 0.8363515138626099,
+          "p99": 2.4877665042877197,
+          "max": 2.4877665042877197
+        }
+      },
+      "student_control": {
+        "student_control_fraction": 0.997829,
+        "student_ticks": 20225,
+        "fallback_ticks": 44,
+        "clamp_count": 7047,
+        "latency_ms": {
+          "n": 20269,
+          "p50": 15.0,
+          "p99": 18.0,
+          "max": 286.0
+        },
+        "wave_reached": 20,
+        "result": "defeat"
+      }
+    },
+    {
+      "run_id": "run_1784866560_35665",
+      "shard_file": "run_1784866560_35665.npz",
+      "shard_sha256": "A7464900B2EC4534FD4BEC567F6FAB1533AC8768BC7F145C43A0EFDD114B133A",
+      "shard_bytes": 17634701,
+      "capture_seq_monotonic": true,
+      "counts": {
+        "total": 14510,
+        "valid": 14510,
+        "temporal_valid": 14495,
+        "valid_and_temporal_valid": 14495
+      },
+      "per_wave_total": {
+        "1": 440,
+        "2": 546,
+        "3": 640,
+        "4": 740,
+        "5": 841,
+        "6": 946,
+        "7": 1040,
+        "8": 1146,
+        "9": 1251,
+        "10": 1246,
+        "11": 1246,
+        "12": 1246,
+        "13": 1246,
+        "14": 1240,
+        "15": 696
+      },
+      "per_wave_valid": {
+        "1": 440,
+        "2": 546,
+        "3": 640,
+        "4": 740,
+        "5": 841,
+        "6": 946,
+        "7": 1040,
+        "8": 1146,
+        "9": 1251,
+        "10": 1246,
+        "11": 1246,
+        "12": 1246,
+        "13": 1246,
+        "14": 1240,
+        "15": 696
+      },
+      "overflow": {
+        "enemies": {
+          "overflow_samples": 0,
+          "max_raw": 54,
+          "capacity": 64
+        },
+        "bosses": {
+          "overflow_samples": 0,
+          "max_raw": 0,
+          "capacity": 2
+        },
+        "projectiles": {
+          "overflow_samples": 0,
+          "max_raw": 18,
+          "capacity": 32
+        },
+        "materials": {
+          "overflow_samples": 0,
+          "max_raw": 50,
+          "capacity": 64
+        },
+        "consumables": {
+          "overflow_samples": 0,
+          "max_raw": 10,
+          "capacity": 24
+        },
+        "crates": {
+          "overflow_samples": 0,
+          "max_raw": 1,
+          "capacity": 2
+        },
+        "obstacles": {
+          "overflow_samples": 0,
+          "max_raw": 2,
+          "capacity": 8
+        }
+      },
+      "fault_count": 0,
+      "faults": [],
+      "determinism_spot_check": [
+        {
+          "position": 0,
+          "capture_seq": 1,
+          "digest": "17DBBA8F5A8A6A598421C303A118C0552DE6C7E402217F73C41A323BD9CF6797"
+        },
+        {
+          "position": 5000,
+          "capture_seq": 5001,
+          "digest": "27B2577EA0299213305A1C528DCD56B6E6A30E63E79ED3E0B8D0283939AD3DAE"
+        },
+        {
+          "position": 10000,
+          "capture_seq": 10001,
+          "digest": "86BCF4C6D6D7A41D31EB73AAB1B40067339C466E72B5814A10103AD58E52EC67"
+        },
+        {
+          "position": 14509,
+          "capture_seq": 14510,
+          "digest": "2FF0C0808D030875E52B1FEA89A4CB3F4433CB32F6778D1F496D842097986C73"
+        }
+      ],
+      "build_seconds": 8.38,
+      "aux_file": "aux_labels/run_1784866560_35665.npz",
+      "aux_sha256": "FBEC38CE91326A17F271B1B641B72B11C327368336930A9C09C39BD6551744DC",
+      "weights_file": "sample_weights/run_1784866560_35665.npz",
+      "weights_sha256": "D87395366E0258E30AA81CEF08CAE4669CEE0239D9D96B8C6725581CADDF50F0",
+      "corrective_stats": {
+        "rows": 14510,
+        "eligible_rows": 14495,
+        "episodes": 313,
+        "onset_cap_value": 13.89297124600639,
+        "aux": {
+          "horizon_valid_rows": 14360,
+          "aux_damage_base_rate": 0.019081,
+          "aux_margin_mean": 0.746232
+        },
+        "segment_eligible_counts": {
+          "background": 7478,
+          "precursor": 2451,
+          "onset_episode": 1611,
+          "recovery": 2955
+        },
+        "segment_all_counts": {
+          "background": 7493,
+          "precursor": 2451,
+          "onset_episode": 1611,
+          "recovery": 2955
+        },
+        "segment_weight_mean": {
+          "background": 0.8722583651542664,
+          "precursor": 1.7741738557815552,
+          "onset_episode": 1.3496276140213013,
+          "recovery": 0.49052444100379944
+        },
+        "segment_mass_fractions": {
+          "background": 0.45,
+          "precursor": 0.3,
+          "onset_episode": 0.15,
+          "recovery": 0.1
+        },
+        "weight_summary": {
+          "min": 0.4905245304107666,
+          "mean": 0.9999998807907104,
+          "median": 0.8722586035728455,
+          "p99": 1.7741738557815552,
+          "max": 1.7741738557815552
+        }
+      },
+      "student_control": {
+        "student_control_fraction": 0.997932,
+        "student_ticks": 14480,
+        "fallback_ticks": 30,
+        "clamp_count": 5271,
+        "latency_ms": {
+          "n": 14510,
+          "p50": 15.0,
+          "p99": 20.0,
+          "max": 212.0
+        },
+        "wave_reached": 15,
+        "result": "defeat"
+      }
+    },
+    {
+      "run_id": "run_1784867357_2622",
+      "shard_file": "run_1784867357_2622.npz",
+      "shard_sha256": "55D7FC850FAEDC08C691E7A085B68317B2E593E0BFCF0317DD700218D3F8C55F",
+      "shard_bytes": 8708278,
+      "capture_seq_monotonic": true,
+      "counts": {
+        "total": 8638,
+        "valid": 8638,
+        "temporal_valid": 8628,
+        "valid_and_temporal_valid": 8628
+      },
+      "per_wave_total": {
+        "1": 440,
+        "2": 546,
+        "3": 646,
+        "4": 740,
+        "5": 840,
+        "6": 945,
+        "7": 1046,
+        "8": 1141,
+        "9": 1240,
+        "10": 1054
+      },
+      "per_wave_valid": {
+        "1": 440,
+        "2": 546,
+        "3": 646,
+        "4": 740,
+        "5": 840,
+        "6": 945,
+        "7": 1046,
+        "8": 1141,
+        "9": 1240,
+        "10": 1054
+      },
+      "overflow": {
+        "enemies": {
+          "overflow_samples": 23,
+          "max_raw": 67,
+          "capacity": 64
+        },
+        "bosses": {
+          "overflow_samples": 0,
+          "max_raw": 0,
+          "capacity": 2
+        },
+        "projectiles": {
+          "overflow_samples": 0,
+          "max_raw": 4,
+          "capacity": 32
+        },
+        "materials": {
+          "overflow_samples": 0,
+          "max_raw": 51,
+          "capacity": 64
+        },
+        "consumables": {
+          "overflow_samples": 0,
+          "max_raw": 6,
+          "capacity": 24
+        },
+        "crates": {
+          "overflow_samples": 0,
+          "max_raw": 1,
+          "capacity": 2
+        },
+        "obstacles": {
+          "overflow_samples": 0,
+          "max_raw": 2,
+          "capacity": 8
+        }
+      },
+      "fault_count": 0,
+      "faults": [],
+      "determinism_spot_check": [
+        {
+          "position": 0,
+          "capture_seq": 1,
+          "digest": "68B3560DB7C9CFD1D7ADB0D2FD2D11B8ED26365555BF857B696F5678315481C3"
+        },
+        {
+          "position": 5000,
+          "capture_seq": 5001,
+          "digest": "E30A70DDDCBA391D1D407CD033AB6CA2A97EB0E91F8BFDE0B1F568623E2CDE44"
+        },
+        {
+          "position": 8637,
+          "capture_seq": 8638,
+          "digest": "AC46D2F570737F0998FF933BFCE6C5EDB7EFF18B5243A9E5FD5AF525842C3001"
+        }
+      ],
+      "build_seconds": 4.66,
+      "aux_file": "aux_labels/run_1784867357_2622.npz",
+      "aux_sha256": "A2591E6C8CA5C57480A0B95C4281CE1053E98FB8D3B7BD2D7CA9288F67069866",
+      "weights_file": "sample_weights/run_1784867357_2622.npz",
+      "weights_sha256": "5CE40123C5A0600565BB242DB24A4994BA3464032A2ADD080A988FC3F73FC524",
+      "corrective_stats": {
+        "rows": 8638,
+        "eligible_rows": 8628,
+        "episodes": 143,
+        "onset_cap_value": 18.1006993006993,
+        "aux": {
+          "horizon_valid_rows": 8538,
+          "aux_damage_base_rate": 0.03174,
+          "aux_margin_mean": 0.778279
+        },
+        "segment_eligible_counts": {
+          "background": 4843,
+          "precursor": 1249,
+          "onset_episode": 866,
+          "recovery": 1670
+        },
+        "segment_all_counts": {
+          "background": 4853,
+          "precursor": 1249,
+          "onset_episode": 866,
+          "recovery": 1670
+        },
+        "segment_weight_mean": {
+          "background": 0.8016930222511292,
+          "precursor": 2.072377920150757,
+          "onset_episode": 1.4944573640823364,
+          "recovery": 0.5166467428207397
+        },
+        "segment_mass_fractions": {
+          "background": 0.45,
+          "precursor": 0.3,
+          "onset_episode": 0.15,
+          "recovery": 0.1
+        },
+        "weight_summary": {
+          "min": 0.26618674397468567,
+          "mean": 0.9999998807907104,
+          "median": 0.8016931414604187,
+          "p99": 2.3366358280181885,
+          "max": 2.3366358280181885
+        }
+      },
+      "student_control": {
+        "student_control_fraction": 0.998032,
+        "student_ticks": 8621,
+        "fallback_ticks": 17,
+        "clamp_count": 3084,
+        "latency_ms": {
+          "n": 8638,
+          "p50": 15.0,
+          "p99": 19.0,
+          "max": 196.0
+        },
+        "wave_reached": 10,
+        "result": "defeat"
+      }
+    }
+  ]
+}

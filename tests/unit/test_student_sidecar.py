@@ -234,6 +234,25 @@ def test_act_returns_action_with_seq_echo(tmp_path):
         c.close()
 
 
+def test_act_logs_raw_preclamp_proposal(tmp_path):
+    # DAgger logging-triple completion (design §7 ruling 3): every served act
+    # persists the raw pre-clamp proposal so (proposal, teacher, executed) is
+    # recoverable — the mod's magnitude clamp happens after this reply.
+    log_path = Path(tmp_path) / "sidecar_log.jsonl"
+    with _Harness(FakeModelService(action=(0.9, 0.9)), tmp_path, log_path=log_path) as h:
+        c = h.client()
+        _handshake(c)
+        c.send(protocol.build_act(seq=7, ts_ms=1, wave=2, payload={"k": "v"}))
+        assert frame_type(c.recv()) == protocol.MSG_ACTION
+        c.close()
+    lines = [json.loads(x) for x in log_path.read_text(encoding="utf-8").splitlines() if x.strip()]
+    acts = [e for e in lines if e.get("event") == "act"]
+    assert len(acts) == 1
+    assert acts[0]["seq"] == 7
+    assert acts[0]["ax"] == 0.9 and acts[0]["ay"] == 0.9
+    assert "model_ms" in acts[0]
+
+
 def test_fifo_ordering_of_two_requests(tmp_path):
     with _Harness(FakeModelService(), tmp_path) as h:
         c = h.client()
