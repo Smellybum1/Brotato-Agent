@@ -6,7 +6,7 @@ See also the director master roadmap. Work Package status:
 |-----------|--------|
 | M0 Environment audit | Complete (WP1) |
 | M1 Deterministic teacher + telemetry | **Complete** — v72 certified 18W/2L; v92 promoted; repository/safeguard closeout passed |
-| M2 Learned combat (WP2) | **In progress** — combat capture validated; v111–v115 smokes each exposed and repaired route-quality defects; v115 qualification revoked by the v116 continuous-clearance review; v116 smoke required before the exact-20 collection |
+| M2 Learned combat (WP2) | **In progress** — teacher qualified through v125 (buy-before-reroll gate); `combat_obs_v1` shipped (387,695 samples); BC baseline `bc_v1_s1_full` qualified (4.80° teacher-val median); live student-inference path qualified (M3 smoke PASS) + Stage G ONNX byte-parity; DAgger arc complete, production student **`bc_v2_f_s1`**; residual-RL (Stage F) Phase 1 designed. See Step 4. |
 | M3 Economy planner | Reframe pending (see note 3 below) |
 | M4 Robust D0 agent | Not started |
 | M5–M7 Danger curriculum / expert / characters | Not started |
@@ -267,3 +267,93 @@ and failure modes — input for the WP2 benchmark design and the M5 curriculum.
 D0 winner-trajectory curves (`OFFENSE_DPS_TARGETS_BY_WAVE`,
 `DEFENSE_EHP_TARGETS_BY_WAVE`, RSI) are D0-calibrated and must be re-derived
 per danger level when the curriculum starts.
+
+### Step 4 — WP2 learned combat: capture → BC → live inference → DAgger (2026-07-24)
+
+This is the model-side continuation of Step 3, all still within the top-table
+milestone **M2 (Learned combat, WP2)**. It carries its own internal
+sub-milestone numbering — **M2 BC baseline / M3 student inference / M4 DAgger /
+Stage F residual RL** — which is orthogonal to the top-table M-numbers and is
+used in the design notes and commit history.
+
+**Teacher frozen (v118 → v125).** The deterministic teacher continued its
+stop-repair chain past the v118 loot dash: v119–v122 closed loot-stall and
+crossing-tier route defects, and v123–v125 settled the shop ordering rule. v125
+adds a hard reroll gate — while offense-deficient with a gate-clearing offense
+item affordable on the board, the reroll action is disallowed outright (paid and
+free) — and qualified with zero safety violations and zero rerolls past a
+qualifying offense item (`reports/wp2/v125_change_record.md`). Policy
+`teacher_v1-0.1.125-gun-wp1`, mod `0.2.33`. This is the frozen expert whose
+20 Hz movement was captured.
+
+**M2 — behavior-cloning baseline.** The `combat_obs_v1` transition dataset
+(387,695 samples) was harvested from v122-era teacher runs and the BC policy
+(`BCPolicyV1`, 651,202 params) trained offline. `bc_v1_s1_full` qualified as the
+baseline: **4.80° teacher-val median angular error** (`models/registry/
+bc_v1_s1_full.json`). Selection was made on a change-frame gate; see the memory
+note. Weak spots at qualification: wave-20 / high-risk strata (median 18–31°).
+
+**M3 — student inference (QUALIFIED; `reports/wp2/m3_change_record.md`).** A
+loopback Python torch-CPU sidecar serves `bc_v1_s1_full` over a versioned
+length-prefixed protocol; a Godot bridge (`learned/*.gd`, mod `0.2.34`,
+`student_enabled` default-off) sends the raw capture payload per 20 Hz tick,
+polls with a 40 ms deadline, and falls back to the teacher on any fault. The
+validation ladder passed end to end: 337 unit tests; replay parity **exact 0.0
+over 81,790 val ticks**; latency p99 model 2.07 ms / e2e 3.48 ms offline
+(19.3 ms live); one isolated live smoke (`run_1784859783_62364`) **infra PASS** —
+97 % student control, kill/reconnect, manual override and E-stop all verified
+live, zero nonfinite/malformed, full label integrity. Behavioral quality was
+explicitly out of scope, deferred to M4.
+
+**Stage G — ONNX path (`a29fc8a`).** `bc_v1_s1_full` exported to opset-18 ONNX;
+§14.1 parity gate **max |Δ| 1.13e-06 over 10,000 fixtures** (~88× margin) behind
+the unchanged protocol. Torch-CPU remains the default and sole live-qualified
+backend; a live ONNX smoke is deferred pending operator authorization. ORT
+1.27.0 / onnx 1.22.0 pinned.
+
+**M4 — DAgger arc (CLOSED; `reports/wp2/m4_change_record.md`).** Three
+corrective rounds, zero mod changes (the capture stream already yields the
+`(student-state, teacher-counterfactual)` pair):
+
+- *Round 1* discovered the central negative result: on its own visited states
+  `bc_v1` scores median **71.5°** (≈ `copy_previous` 74.6°, negative high-risk
+  cosine) — the 4.80° offline figure was **copy-through-inflated**. Selection
+  gates were revised (operator-delegated) to a dual-distribution form and then
+  frontier-adjusted on 8 trained points; sole qualifier **`bc_v2_f_s1`**
+  (`combat_dagger_r1`, 78,874 rows).
+- *Round 2* produced the **first student victory** (wave 20) under `bc_v2_f`;
+  gates were made **relative** (beat predecessor median ≥25 %, beat
+  copy_previous ≥1.5×, cosine >0 every stratum); `bc_v3_a_s1` was offline-
+  selected, dominant on the unbiased r2 holdout (`combat_dagger_r2`, 116,269
+  rows).
+- *Paired eval* settled promotion: `bc_v3_a`'s offline dominance did **not**
+  translate live (median wave 16.5 / 0 victories vs `bc_v2_f` 20.0 / 1 victory)
+  → **RETAIN `bc_v2_f_s1`** as the production student. Mechanism (telemetry-
+  only): **risk-exposure attrition, not imitation error** — `bc_v3_a` is a
+  smoother, less-evasive mover that agrees with the teacher *more* while losing,
+  a ~45× higher low-HP rate in waves 6–10. Lesson banked: live behavioral
+  screens must enter selection earlier. `bc_v3_a`'s runs seeded
+  `combat_dagger_r3` (93,203 rows) for the next aggregate.
+
+**Stage F — bounded residual RL, Phase 1 design adopted (operator-approved
+2026-07-24; `.tmp/wp2_stage_f_residual_design.md`).** Two packet amendments
+approved ("your recommendations for both"):
+
+- **F-1 (geometry):** replace the radial-clamp residual with a **bounded angular
+  correction** — `executed_dir = rotate(teacher_dir, θ_max·tanh(z))`, magnitude
+  preserved (unit-or-zero). Basis: the M4 mechanism finding located the live
+  failure axis in magnitude/sluggishness; angular-only correction removes that
+  axis by construction and eliminates the magnitude-clamp intervention class.
+- **F-2 (learner):** replace the PPO-first mandate with an **off-policy residual
+  actor-critic (RLPD-style, replay + teacher-data mixing) primary**, PPO at most
+  a final fine-tuner. Basis: single real-time instance, ~1M transitions ≈ 14 h
+  wall clock; on-policy sample hunger would burn that budget.
+
+Phase 1 is symmetric micro-residual (±5°) support collection under the shield —
+**no training, no improvement claims** — to create residual-support data,
+measure local effect estimability, validate the angular geometry live, and
+produce the matched random-residual control required by later comparisons. A
+go/no-go gate (250–300k live steps) precedes any Phase 2 critic/actor training.
+
+**Next:** operator decision on the Stage F Phase 1 campaign; `bc_v2_f_s1` remains
+the live student in the interim.
