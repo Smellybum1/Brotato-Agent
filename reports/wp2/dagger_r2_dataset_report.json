@@ -1,0 +1,728 @@
+{
+  "dataset_id": "combat_dagger_r2",
+  "student_policy": "bc_v2_f_s1",
+  "observation_schema_hash": "C653D836F3EBC821A51AFC70482D3772FC7B7B927D393A6B9BBADC2718BB9B2A",
+  "source_capture_schema_hash": "95B6444796A21FD44E94113B75BA2097BC381D5F72ED784F9B9A4A99DD46D951",
+  "encoder_path": "trainer/observation/encoder_v1.py",
+  "builder_script": "scripts/wp2_build_combat_dagger_r2.py",
+  "repo_head_commit": "5682ba38a47b9045ce2f0acb8b80d5d3f4606356",
+  "run_count": 6,
+  "build_wall_seconds": 102.27,
+  "dataset_bytes": 137902727,
+  "aggregate": {
+    "total": 116386,
+    "valid": 116386,
+    "temporal_valid": 116269,
+    "valid_and_temporal_valid": 116269,
+    "fault_count": 0,
+    "episodes": 3614
+  },
+  "per_wave_valid": {
+    "1": 2640,
+    "2": 3273,
+    "3": 3859,
+    "4": 4457,
+    "5": 5084,
+    "6": 5653,
+    "7": 6263,
+    "8": 6868,
+    "9": 7502,
+    "10": 7475,
+    "11": 7479,
+    "12": 7463,
+    "13": 7463,
+    "14": 7452,
+    "15": 7474,
+    "16": 7147,
+    "17": 5849,
+    "18": 4982,
+    "19": 4978,
+    "20": 3025
+  },
+  "segment_eligible_counts": {
+    "background": 50563,
+    "precursor": 26727,
+    "onset_episode": 10284,
+    "recovery": 28695
+  },
+  "segment_eligible_fractions": {
+    "background": 0.4349,
+    "precursor": 0.2299,
+    "onset_episode": 0.0885,
+    "recovery": 0.2468
+  },
+  "segment_mass_fractions": {
+    "background": 0.45,
+    "precursor": 0.3,
+    "onset_episode": 0.15,
+    "recovery": 0.1
+  },
+  "aux_base_rates": {
+    "horizon_valid_rows": 115216,
+    "aux_damage_base_rate": 0.010346,
+    "aux_margin_mean": 0.719785
+  },
+  "triple_reconciliation_aggregate": {
+    "student_ticks": 116182,
+    "student_matched": 116182,
+    "student_missing_act": 0,
+    "ok_ticks": 67974,
+    "ok_violations": 0,
+    "ok_max_abs_delta": 0.0,
+    "clamped_ticks": 48208,
+    "clamped_violations": 0,
+    "clamped_max_dir_diff": 1.0499211026693267e-06,
+    "clamped_max_mag_err": 7.197042589668357e-07,
+    "timeout_ticks": 202,
+    "timeout_with_act": 202,
+    "not_connected_ticks": 2,
+    "all_reconciliation_ok": true,
+    "join_coverage": 1.0
+  },
+  "gates": [
+    {
+      "name": "all_shards_written",
+      "status": "PASS",
+      "value": 6,
+      "threshold": 6,
+      "detail": "6/6 shards + aux + weights written"
+    },
+    {
+      "name": "zero_encoding_faults",
+      "status": "PASS",
+      "value": 0,
+      "threshold": 0,
+      "detail": "0 ObservationError faults"
+    },
+    {
+      "name": "valid_and_temporal_positive",
+      "status": "PASS",
+      "value": 116269,
+      "threshold": 1,
+      "detail": "116269 training-eligible rows"
+    },
+    {
+      "name": "aux_weights_aligned",
+      "status": "PASS",
+      "value": 6,
+      "threshold": 6,
+      "detail": "aux/weight arrays length == shard rows for every run"
+    },
+    {
+      "name": "triple_reconciliation_ok",
+      "status": "PASS",
+      "value": 1.0,
+      "threshold": 1.0,
+      "detail": "join_cov=1.0, ok_viol=0, clamp_viol=0, missing_act=0"
+    }
+  ],
+  "overall_status": "PASS",
+  "runs": [
+    {
+      "run_id": "run_1784873462_1600",
+      "smoke_run": false,
+      "connection": 1,
+      "shard_file": "run_1784873462_1600.npz",
+      "shard_sha256": "D0EAE91BE5F35B83B4D2E59A55C230F1C9EA92179736F6ABD5BE23E0F43D2D95",
+      "aux_sha256": "1740904A9A049924A2D885D931D23BBD3FBAF00E0AD1104D0F333CF4767C3D16",
+      "weights_sha256": "44F31C0B0E500F16175CC9AB3BD497C274945289FF70D19B4480158BCDB3AE85",
+      "counts": {
+        "total": 15982,
+        "valid": 15982,
+        "temporal_valid": 15963,
+        "valid_and_temporal_valid": 15963
+      },
+      "corrective_stats": {
+        "rows": 15982,
+        "eligible_rows": 15963,
+        "episodes": 537,
+        "onset_cap_value": 8.917877094972066,
+        "aux": {
+          "horizon_valid_rows": 15792,
+          "aux_damage_base_rate": 0.01811,
+          "aux_margin_mean": 0.709194
+        },
+        "segment_eligible_counts": {
+          "background": 6519,
+          "precursor": 3745,
+          "onset_episode": 1816,
+          "recovery": 3883
+        },
+        "segment_all_counts": {
+          "background": 6537,
+          "precursor": 3746,
+          "onset_episode": 1816,
+          "recovery": 3883
+        },
+        "segment_weight_mean": {
+          "background": 1.1019096374511719,
+          "precursor": 1.2787449359893799,
+          "onset_episode": 1.3185298442840576,
+          "recovery": 0.4110996127128601
+        },
+        "segment_mass_fractions": {
+          "background": 0.45,
+          "precursor": 0.3,
+          "onset_episode": 0.15,
+          "recovery": 0.1
+        },
+        "weight_summary": {
+          "min": 0.31849560141563416,
+          "mean": 0.9999998807907104,
+          "median": 1.1019097566604614,
+          "p99": 1.7610108852386475,
+          "max": 1.7610108852386475
+        }
+      },
+      "student_control": {
+        "student_control_fraction": 0.998248,
+        "student_ticks": 15954,
+        "fallback_ticks": 28,
+        "clamp_count": 6307,
+        "latency_ms": {
+          "n": 15982,
+          "p50": 15.0,
+          "p99": 19.0,
+          "max": 239.0
+        },
+        "wave_reached": 16,
+        "result": "defeat"
+      },
+      "triple_reconciliation": {
+        "connection_act_count": 96059,
+        "student_ticks": 15954,
+        "student_matched": 15954,
+        "student_missing_act": 0,
+        "join_coverage": 1.0,
+        "ok": {
+          "ticks": 9647,
+          "matched": 9647,
+          "max_abs_delta": 0.0,
+          "violations": 0,
+          "tol": 0.0001
+        },
+        "clamped": {
+          "ticks": 6307,
+          "matched": 6307,
+          "max_dir_diff": 1.0127907431045635e-06,
+          "max_mag_err": 6.845497343421769e-07,
+          "violations": 0,
+          "dir_tol": 0.001,
+          "mag_tol": 0.001
+        },
+        "timeout_ticks": 27,
+        "timeout_with_act": 27,
+        "not_connected_ticks": 1,
+        "other_ticks": 0,
+        "referenced_seqs": 15954,
+        "timeout_seqs": 27,
+        "reconciliation_ok": true
+      }
+    },
+    {
+      "run_id": "run_1784874327_52508",
+      "smoke_run": false,
+      "connection": 1,
+      "shard_file": "run_1784874327_52508.npz",
+      "shard_sha256": "F96B289AD42B1739E07CFDCCAC5E7E48561F1CF191B43E73ADEB6993B658BCB6",
+      "aux_sha256": "697408F155CA3547FC4780F6541AA20AF75076ED03F935F9D1C4003535716750",
+      "weights_sha256": "1767207A2B91A8D760D422BFE75452FC96B22D806D0324CD676B1AE818DDD44D",
+      "counts": {
+        "total": 20838,
+        "valid": 20838,
+        "temporal_valid": 20818,
+        "valid_and_temporal_valid": 20818
+      },
+      "corrective_stats": {
+        "rows": 20838,
+        "eligible_rows": 20818,
+        "episodes": 611,
+        "onset_cap_value": 10.221603927986907,
+        "aux": {
+          "horizon_valid_rows": 20638,
+          "aux_damage_base_rate": 0.007753,
+          "aux_margin_mean": 0.713789
+        },
+        "segment_eligible_counts": {
+          "background": 9333,
+          "precursor": 4582,
+          "onset_episode": 1688,
+          "recovery": 5215
+        },
+        "segment_all_counts": {
+          "background": 9353,
+          "precursor": 4582,
+          "onset_episode": 1688,
+          "recovery": 5215
+        },
+        "segment_weight_mean": {
+          "background": 1.0037609338760376,
+          "precursor": 1.3630294799804688,
+          "onset_episode": 1.849940538406372,
+          "recovery": 0.3991946876049042
+        },
+        "segment_mass_fractions": {
+          "background": 0.45,
+          "precursor": 0.3,
+          "onset_episode": 0.15,
+          "recovery": 0.1
+        },
+        "weight_summary": {
+          "min": 0.3991946280002594,
+          "mean": 1.0,
+          "median": 1.003760814666748,
+          "p99": 2.4755446910858154,
+          "max": 2.4755446910858154
+        }
+      },
+      "student_control": {
+        "student_control_fraction": 0.998032,
+        "student_ticks": 20797,
+        "fallback_ticks": 41,
+        "clamp_count": 8524,
+        "latency_ms": {
+          "n": 20838,
+          "p50": 15.0,
+          "p99": 17.0,
+          "max": 179.0
+        },
+        "wave_reached": 20,
+        "result": "defeat"
+      },
+      "triple_reconciliation": {
+        "connection_act_count": 96059,
+        "student_ticks": 20797,
+        "student_matched": 20797,
+        "student_missing_act": 0,
+        "join_coverage": 1.0,
+        "ok": {
+          "ticks": 12273,
+          "matched": 12273,
+          "max_abs_delta": 0.0,
+          "violations": 0,
+          "tol": 0.0001
+        },
+        "clamped": {
+          "ticks": 8524,
+          "matched": 8524,
+          "max_dir_diff": 1.0324445929854598e-06,
+          "max_mag_err": 7.162482436040563e-07,
+          "violations": 0,
+          "dir_tol": 0.001,
+          "mag_tol": 0.001
+        },
+        "timeout_ticks": 41,
+        "timeout_with_act": 41,
+        "not_connected_ticks": 0,
+        "other_ticks": 0,
+        "referenced_seqs": 20797,
+        "timeout_seqs": 41,
+        "reconciliation_ok": true
+      }
+    },
+    {
+      "run_id": "run_1784875463_98163",
+      "smoke_run": false,
+      "connection": 1,
+      "shard_file": "run_1784875463_98163.npz",
+      "shard_sha256": "1C3322114DB0458A082862446AA8594DC2C88B7A2B1791DDF7430DD510342EBC",
+      "aux_sha256": "F506AD1F284D2F7EF1CB0F7A1517F99C20045290A3BEC52FBD5F4A2AB9F6A6D0",
+      "weights_sha256": "5A85FEFC7BF4D97C7C5DF1FE5132DCF7B0436104618074212EA2EE76E1B92355",
+      "counts": {
+        "total": 21497,
+        "valid": 21497,
+        "temporal_valid": 21477,
+        "valid_and_temporal_valid": 21477
+      },
+      "corrective_stats": {
+        "rows": 21497,
+        "eligible_rows": 21477,
+        "episodes": 734,
+        "onset_cap_value": 8.778065395095368,
+        "aux": {
+          "horizon_valid_rows": 21297,
+          "aux_damage_base_rate": 0.010706,
+          "aux_margin_mean": 0.715647
+        },
+        "segment_eligible_counts": {
+          "background": 9131,
+          "precursor": 5282,
+          "onset_episode": 1690,
+          "recovery": 5374
+        },
+        "segment_all_counts": {
+          "background": 9151,
+          "precursor": 5282,
+          "onset_episode": 1690,
+          "recovery": 5374
+        },
+        "segment_weight_mean": {
+          "background": 1.0584440231323242,
+          "precursor": 1.2198219299316406,
+          "onset_episode": 1.9062427282333374,
+          "recovery": 0.39964649081230164
+        },
+        "segment_mass_fractions": {
+          "background": 0.45,
+          "precursor": 0.3,
+          "onset_episode": 0.15,
+          "recovery": 0.1
+        },
+        "weight_summary": {
+          "min": 0.39964643120765686,
+          "mean": 1.0,
+          "median": 1.0584437847137451,
+          "p99": 2.4222254753112793,
+          "max": 2.4222254753112793
+        }
+      },
+      "student_control": {
+        "student_control_fraction": 0.998604,
+        "student_ticks": 21467,
+        "fallback_ticks": 30,
+        "clamp_count": 8219,
+        "latency_ms": {
+          "n": 21497,
+          "p50": 15.0,
+          "p99": 18.0,
+          "max": 211.0
+        },
+        "wave_reached": 20,
+        "result": "victory"
+      },
+      "triple_reconciliation": {
+        "connection_act_count": 96059,
+        "student_ticks": 21467,
+        "student_matched": 21467,
+        "student_missing_act": 0,
+        "join_coverage": 1.0,
+        "ok": {
+          "ticks": 13248,
+          "matched": 13248,
+          "max_abs_delta": 0.0,
+          "violations": 0,
+          "tol": 0.0001
+        },
+        "clamped": {
+          "ticks": 8219,
+          "matched": 8219,
+          "max_dir_diff": 1.0450243014270555e-06,
+          "max_mag_err": 7.029237469868832e-07,
+          "violations": 0,
+          "dir_tol": 0.001,
+          "mag_tol": 0.001
+        },
+        "timeout_ticks": 30,
+        "timeout_with_act": 30,
+        "not_connected_ticks": 0,
+        "other_ticks": 0,
+        "referenced_seqs": 21467,
+        "timeout_seqs": 30,
+        "reconciliation_ok": true
+      }
+    },
+    {
+      "run_id": "run_1784876633_43940",
+      "smoke_run": false,
+      "connection": 1,
+      "shard_file": "run_1784876633_43940.npz",
+      "shard_sha256": "220D4E152E850E901EB76A206720521642B3CE6F8F3ED4D4118FD104E63ABF70",
+      "aux_sha256": "90CDC9563C6E4FFDC8B719816426821A8FC037AA7FC829AD050ABC2D6F174DCF",
+      "weights_sha256": "3CDF8CE564708DF448D621A97DC0A389A18677C6B6E7389217E10C4CE83D8472",
+      "counts": {
+        "total": 17158,
+        "valid": 17158,
+        "temporal_valid": 17141,
+        "valid_and_temporal_valid": 17141
+      },
+      "corrective_stats": {
+        "rows": 17158,
+        "eligible_rows": 17141,
+        "episodes": 427,
+        "onset_cap_value": 12.042857142857143,
+        "aux": {
+          "horizon_valid_rows": 16988,
+          "aux_damage_base_rate": 0.007005,
+          "aux_margin_mean": 0.762556
+        },
+        "segment_eligible_counts": {
+          "background": 8249,
+          "precursor": 3486,
+          "onset_episode": 1335,
+          "recovery": 4071
+        },
+        "segment_all_counts": {
+          "background": 8266,
+          "precursor": 3486,
+          "onset_episode": 1335,
+          "recovery": 4071
+        },
+        "segment_weight_mean": {
+          "background": 0.9350767731666565,
+          "precursor": 1.4751290082931519,
+          "onset_episode": 1.9259549379348755,
+          "recovery": 0.42105138301849365
+        },
+        "segment_mass_fractions": {
+          "background": 0.45,
+          "precursor": 0.3,
+          "onset_episode": 0.15,
+          "recovery": 0.1
+        },
+        "weight_summary": {
+          "min": 0.42105135321617126,
+          "mean": 1.0,
+          "median": 0.9350769519805908,
+          "p99": 2.5130348205566406,
+          "max": 2.5130348205566406
+        }
+      },
+      "student_control": {
+        "student_control_fraction": 0.998426,
+        "student_ticks": 17131,
+        "fallback_ticks": 27,
+        "clamp_count": 7756,
+        "latency_ms": {
+          "n": 17158,
+          "p50": 15.0,
+          "p99": 18.0,
+          "max": 197.0
+        },
+        "wave_reached": 17,
+        "result": "defeat"
+      },
+      "triple_reconciliation": {
+        "connection_act_count": 96059,
+        "student_ticks": 17131,
+        "student_matched": 17131,
+        "student_missing_act": 0,
+        "join_coverage": 1.0,
+        "ok": {
+          "ticks": 9375,
+          "matched": 9375,
+          "max_abs_delta": 0.0,
+          "violations": 0,
+          "tol": 0.0001
+        },
+        "clamped": {
+          "ticks": 7756,
+          "matched": 7756,
+          "max_dir_diff": 1.0450015716090277e-06,
+          "max_mag_err": 7.197042589668357e-07,
+          "violations": 0,
+          "dir_tol": 0.001,
+          "mag_tol": 0.001
+        },
+        "timeout_ticks": 27,
+        "timeout_with_act": 27,
+        "not_connected_ticks": 0,
+        "other_ticks": 0,
+        "referenced_seqs": 17131,
+        "timeout_seqs": 27,
+        "reconciliation_ok": true
+      }
+    },
+    {
+      "run_id": "run_1784877573_54783",
+      "smoke_run": false,
+      "connection": 1,
+      "shard_file": "run_1784877573_54783.npz",
+      "shard_sha256": "CB9D59F247717364FD8BC3A0C89C4D9FECC2A6888D53464820B28766807CD875",
+      "aux_sha256": "9824E666E928ECF8038292FC7191731113946A5E2DFF0A3555D4D1FCCF47ECA1",
+      "weights_sha256": "9A1A5879484F3C8F402FBD1CFBEA7D0CEAA681B9ADF07DB2FA953903DEA1D91B",
+      "counts": {
+        "total": 20585,
+        "valid": 20585,
+        "temporal_valid": 20565,
+        "valid_and_temporal_valid": 20565
+      },
+      "corrective_stats": {
+        "rows": 20585,
+        "eligible_rows": 20565,
+        "episodes": 699,
+        "onset_cap_value": 8.82618025751073,
+        "aux": {
+          "horizon_valid_rows": 20385,
+          "aux_damage_base_rate": 0.012264,
+          "aux_margin_mean": 0.694257
+        },
+        "segment_eligible_counts": {
+          "background": 8566,
+          "precursor": 4922,
+          "onset_episode": 2065,
+          "recovery": 5012
+        },
+        "segment_all_counts": {
+          "background": 8586,
+          "precursor": 4922,
+          "onset_episode": 2065,
+          "recovery": 5012
+        },
+        "segment_weight_mean": {
+          "background": 1.080346703529358,
+          "precursor": 1.2534539699554443,
+          "onset_episode": 1.4938257932662964,
+          "recovery": 0.41031524538993835
+        },
+        "segment_mass_fractions": {
+          "background": 0.45,
+          "precursor": 0.3,
+          "onset_episode": 0.15,
+          "recovery": 0.1
+        },
+        "weight_summary": {
+          "min": 0.41031524538993835,
+          "mean": 1.0,
+          "median": 1.080346703529358,
+          "p99": 2.04005765914917,
+          "max": 2.04005765914917
+        }
+      },
+      "student_control": {
+        "student_control_fraction": 0.998105,
+        "student_ticks": 20546,
+        "fallback_ticks": 39,
+        "clamp_count": 8013,
+        "latency_ms": {
+          "n": 20585,
+          "p50": 15.0,
+          "p99": 19.0,
+          "max": 163.0
+        },
+        "wave_reached": 20,
+        "result": "defeat"
+      },
+      "triple_reconciliation": {
+        "connection_act_count": 96059,
+        "student_ticks": 20546,
+        "student_matched": 20546,
+        "student_missing_act": 0,
+        "join_coverage": 1.0,
+        "ok": {
+          "ticks": 12533,
+          "matched": 12533,
+          "max_abs_delta": 0.0,
+          "violations": 0,
+          "tol": 0.0001
+        },
+        "clamped": {
+          "ticks": 8013,
+          "matched": 8013,
+          "max_dir_diff": 9.59376461939776e-07,
+          "max_mag_err": 7.020197536622419e-07,
+          "violations": 0,
+          "dir_tol": 0.001,
+          "mag_tol": 0.001
+        },
+        "timeout_ticks": 39,
+        "timeout_with_act": 39,
+        "not_connected_ticks": 0,
+        "other_ticks": 0,
+        "referenced_seqs": 20546,
+        "timeout_seqs": 39,
+        "reconciliation_ok": true
+      }
+    },
+    {
+      "run_id": "run_1784872256_15901",
+      "smoke_run": true,
+      "connection": 0,
+      "shard_file": "run_1784872256_15901.npz",
+      "shard_sha256": "7A05BBE871528EED5CA3345E03C4CF74E18C41074B789BBEAD4562BE5A39501E",
+      "aux_sha256": "B601F904D2B74DF5F0B81A80B17F0E77588A176560730C790652D1FAA2D43F1A",
+      "weights_sha256": "10E93EFAB62ADD3109BD3E38CB818D0CF2E0C22D55729D61831E53849B25635B",
+      "counts": {
+        "total": 20326,
+        "valid": 20326,
+        "temporal_valid": 20305,
+        "valid_and_temporal_valid": 20305
+      },
+      "corrective_stats": {
+        "rows": 20326,
+        "eligible_rows": 20305,
+        "episodes": 606,
+        "onset_cap_value": 10.051980198019802,
+        "aux": {
+          "horizon_valid_rows": 20116,
+          "aux_damage_base_rate": 0.007407,
+          "aux_margin_mean": 0.728384
+        },
+        "segment_eligible_counts": {
+          "background": 8765,
+          "precursor": 4710,
+          "onset_episode": 1690,
+          "recovery": 5140
+        },
+        "segment_all_counts": {
+          "background": 8786,
+          "precursor": 4710,
+          "onset_episode": 1690,
+          "recovery": 5140
+        },
+        "segment_weight_mean": {
+          "background": 1.0424702167510986,
+          "precursor": 1.2933120727539062,
+          "onset_episode": 1.802219033241272,
+          "recovery": 0.3950388729572296
+        },
+        "segment_mass_fractions": {
+          "background": 0.45,
+          "precursor": 0.3,
+          "onset_episode": 0.15,
+          "recovery": 0.1
+        },
+        "weight_summary": {
+          "min": 0.395038902759552,
+          "mean": 1.0,
+          "median": 1.042470097541809,
+          "p99": 2.3142104148864746,
+          "max": 2.3142104148864746
+        }
+      },
+      "student_control": {
+        "student_control_fraction": 0.998081,
+        "student_ticks": 20287,
+        "fallback_ticks": 39,
+        "clamp_count": 9389,
+        "latency_ms": {
+          "n": 20326,
+          "p50": 14.0,
+          "p99": 20.0,
+          "max": 280.0
+        },
+        "wave_reached": 20,
+        "result": "defeat"
+      },
+      "triple_reconciliation": {
+        "connection_act_count": 20325,
+        "student_ticks": 20287,
+        "student_matched": 20287,
+        "student_missing_act": 0,
+        "join_coverage": 1.0,
+        "ok": {
+          "ticks": 10898,
+          "matched": 10898,
+          "max_abs_delta": 0.0,
+          "violations": 0,
+          "tol": 0.0001
+        },
+        "clamped": {
+          "ticks": 9389,
+          "matched": 9389,
+          "max_dir_diff": 1.0499211026693267e-06,
+          "max_mag_err": 7.066437501812572e-07,
+          "violations": 0,
+          "dir_tol": 0.001,
+          "mag_tol": 0.001
+        },
+        "timeout_ticks": 38,
+        "timeout_with_act": 38,
+        "not_connected_ticks": 1,
+        "other_ticks": 0,
+        "referenced_seqs": 20287,
+        "timeout_seqs": 38,
+        "reconciliation_ok": true
+      }
+    }
+  ]
+}

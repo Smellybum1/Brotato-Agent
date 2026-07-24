@@ -54,6 +54,7 @@ datasets/**/*.npz
 # under models/registry/ stay tracked)
 models/bc_v1/
 models/bc_v2/
+models/bc_v3/
 
 # Deploy markers
 .deploy_stamp

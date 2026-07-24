@@ -1,0 +1,534 @@
+{
+  "stage": "A",
+  "round": 2,
+  "smoke": false,
+  "student_policy": "bc_v2_f_s1",
+  "expected_capture_schema_hash": "95B6444796A21FD44E94113B75BA2097BC381D5F72ED784F9B9A4A99DD46D951",
+  "expected_model_sha256": "1AD517B04843B69966841C7B795B927AE86B2727789456224321FC091F29F331",
+  "student_control_gate": 0.95,
+  "campaign": {
+    "policy_version": "teacher_v1-0.1.125-gun-wp1",
+    "mod_version": "0.2.34-wp2-capture",
+    "started_at": "2026-07-24T06:10:54.057605+00:00",
+    "stop_reason": "target reached",
+    "collector_state_file": "C:\\Codex\\Brotato Agent\\.tmp\\dagger_r2_collector_state.json",
+    "sidecar_log": "C:\\Codex\\Brotato Agent\\.tmp\\student_sidecar_dagger_r2.jsonl",
+    "smoke_run_id": "run_1784872256_15901",
+    "campaign_run_ids": [
+      "run_1784873462_1600",
+      "run_1784874327_52508",
+      "run_1784875463_98163",
+      "run_1784876633_43940",
+      "run_1784877573_54783"
+    ]
+  },
+  "sidecar_identity": {
+    "log_present": true,
+    "registry_present": true,
+    "identity_ok": true,
+    "checks": {
+      "model_sha256": true,
+      "normalization_sha256": true,
+      "observation_schema_hash": true,
+      "registry_run_name": true
+    },
+    "backend": "torch-cpu",
+    "model_sha256": "1AD517B04843B69966841C7B795B927AE86B2727789456224321FC091F29F331",
+    "registry_run_name": "bc_v2_f_s1",
+    "handshake_run_ids": [
+      "run_1784872256_15901",
+      "run_1784873462_1600"
+    ],
+    "serving": {
+      "stats_events": 211,
+      "errors_total": 0,
+      "served_max": 115928,
+      "model_ms_p99_max": 4.4651,
+      "total_acts": 116384
+    }
+  },
+  "connections": [
+    {
+      "connection": 0,
+      "handshake_run": "run_1784872256_15901",
+      "acts_total": 20325,
+      "acts_applied_to_student_tick": 20287,
+      "acts_timeout_not_applied": 38,
+      "acts_orphan_no_tick": 0
+    },
+    {
+      "connection": 1,
+      "handshake_run": "run_1784873462_1600",
+      "acts_total": 96059,
+      "acts_applied_to_student_tick": 95895,
+      "acts_timeout_not_applied": 164,
+      "acts_orphan_no_tick": 0
+    }
+  ],
+  "runs": [
+    {
+      "run_id": "run_1784873462_1600",
+      "verdict": "include",
+      "reasons": [],
+      "capture_count": 15982,
+      "student_control_fraction": 0.998248,
+      "student_ticks": 15954,
+      "fallback_ticks": 28,
+      "clamp_count": 6307,
+      "source_counts": {
+        "teacher_fallback": 28,
+        "student": 15954
+      },
+      "cause_counts": {
+        "not_connected": 1,
+        "ok": 9647,
+        "clamped": 6307,
+        "timeout": 27
+      },
+      "fallback_cause_counts": {
+        "not_connected": 1,
+        "timeout": 27
+      },
+      "latency_ms": {
+        "n": 15982,
+        "p50": 15.0,
+        "p99": 19.0,
+        "max": 239.0
+      },
+      "telemetry": {
+        "summary_present": true,
+        "errors": 0,
+        "hangs": 0,
+        "illegal_actions": 0,
+        "capture_schema_hash_mismatches": 0,
+        "captures_missing_teacher_action": 0,
+        "integrity_ok": true
+      },
+      "wave_reached": 16,
+      "summary_last_wave": 16,
+      "waves_completed": 16,
+      "recoveries": 10,
+      "result": "defeat",
+      "smoke_truncated": false,
+      "smoke_run": false,
+      "connection": 1,
+      "reconciliation": {
+        "connection_act_count": 96059,
+        "student_ticks": 15954,
+        "student_matched": 15954,
+        "student_missing_act": 0,
+        "join_coverage": 1.0,
+        "ok": {
+          "ticks": 9647,
+          "matched": 9647,
+          "max_abs_delta": 0.0,
+          "violations": 0,
+          "tol": 0.0001
+        },
+        "clamped": {
+          "ticks": 6307,
+          "matched": 6307,
+          "max_dir_diff": 1.0127907431045635e-06,
+          "max_mag_err": 6.845497343421769e-07,
+          "violations": 0,
+          "dir_tol": 0.001,
+          "mag_tol": 0.001
+        },
+        "timeout_ticks": 27,
+        "timeout_with_act": 27,
+        "not_connected_ticks": 1,
+        "other_ticks": 0,
+        "referenced_seqs": 15954,
+        "timeout_seqs": 27,
+        "reconciliation_ok": true
+      }
+    },
+    {
+      "run_id": "run_1784874327_52508",
+      "verdict": "include",
+      "reasons": [],
+      "capture_count": 20838,
+      "student_control_fraction": 0.998032,
+      "student_ticks": 20797,
+      "fallback_ticks": 41,
+      "clamp_count": 8524,
+      "source_counts": {
+        "teacher_fallback": 41,
+        "student": 20797
+      },
+      "cause_counts": {
+        "timeout": 41,
+        "ok": 12273,
+        "clamped": 8524
+      },
+      "fallback_cause_counts": {
+        "timeout": 41
+      },
+      "latency_ms": {
+        "n": 20838,
+        "p50": 15.0,
+        "p99": 17.0,
+        "max": 179.0
+      },
+      "telemetry": {
+        "summary_present": true,
+        "errors": 0,
+        "hangs": 0,
+        "illegal_actions": 0,
+        "capture_schema_hash_mismatches": 0,
+        "captures_missing_teacher_action": 0,
+        "integrity_ok": true
+      },
+      "wave_reached": 20,
+      "summary_last_wave": 20,
+      "waves_completed": 20,
+      "recoveries": 14,
+      "result": "defeat",
+      "smoke_truncated": false,
+      "smoke_run": false,
+      "connection": 1,
+      "reconciliation": {
+        "connection_act_count": 96059,
+        "student_ticks": 20797,
+        "student_matched": 20797,
+        "student_missing_act": 0,
+        "join_coverage": 1.0,
+        "ok": {
+          "ticks": 12273,
+          "matched": 12273,
+          "max_abs_delta": 0.0,
+          "violations": 0,
+          "tol": 0.0001
+        },
+        "clamped": {
+          "ticks": 8524,
+          "matched": 8524,
+          "max_dir_diff": 1.0324445929854598e-06,
+          "max_mag_err": 7.162482436040563e-07,
+          "violations": 0,
+          "dir_tol": 0.001,
+          "mag_tol": 0.001
+        },
+        "timeout_ticks": 41,
+        "timeout_with_act": 41,
+        "not_connected_ticks": 0,
+        "other_ticks": 0,
+        "referenced_seqs": 20797,
+        "timeout_seqs": 41,
+        "reconciliation_ok": true
+      }
+    },
+    {
+      "run_id": "run_1784875463_98163",
+      "verdict": "include",
+      "reasons": [],
+      "capture_count": 21497,
+      "student_control_fraction": 0.998604,
+      "student_ticks": 21467,
+      "fallback_ticks": 30,
+      "clamp_count": 8219,
+      "source_counts": {
+        "teacher_fallback": 30,
+        "student": 21467
+      },
+      "cause_counts": {
+        "timeout": 30,
+        "clamped": 8219,
+        "ok": 13248
+      },
+      "fallback_cause_counts": {
+        "timeout": 30
+      },
+      "latency_ms": {
+        "n": 21497,
+        "p50": 15.0,
+        "p99": 18.0,
+        "max": 211.0
+      },
+      "telemetry": {
+        "summary_present": true,
+        "errors": 0,
+        "hangs": 0,
+        "illegal_actions": 0,
+        "capture_schema_hash_mismatches": 0,
+        "captures_missing_teacher_action": 0,
+        "integrity_ok": true
+      },
+      "wave_reached": 20,
+      "summary_last_wave": 20,
+      "waves_completed": 20,
+      "recoveries": 14,
+      "result": "victory",
+      "smoke_truncated": false,
+      "smoke_run": false,
+      "connection": 1,
+      "reconciliation": {
+        "connection_act_count": 96059,
+        "student_ticks": 21467,
+        "student_matched": 21467,
+        "student_missing_act": 0,
+        "join_coverage": 1.0,
+        "ok": {
+          "ticks": 13248,
+          "matched": 13248,
+          "max_abs_delta": 0.0,
+          "violations": 0,
+          "tol": 0.0001
+        },
+        "clamped": {
+          "ticks": 8219,
+          "matched": 8219,
+          "max_dir_diff": 1.0450243014270555e-06,
+          "max_mag_err": 7.029237469868832e-07,
+          "violations": 0,
+          "dir_tol": 0.001,
+          "mag_tol": 0.001
+        },
+        "timeout_ticks": 30,
+        "timeout_with_act": 30,
+        "not_connected_ticks": 0,
+        "other_ticks": 0,
+        "referenced_seqs": 21467,
+        "timeout_seqs": 30,
+        "reconciliation_ok": true
+      }
+    },
+    {
+      "run_id": "run_1784876633_43940",
+      "verdict": "include",
+      "reasons": [],
+      "capture_count": 17158,
+      "student_control_fraction": 0.998426,
+      "student_ticks": 17131,
+      "fallback_ticks": 27,
+      "clamp_count": 7756,
+      "source_counts": {
+        "teacher_fallback": 27,
+        "student": 17131
+      },
+      "cause_counts": {
+        "timeout": 27,
+        "clamped": 7756,
+        "ok": 9375
+      },
+      "fallback_cause_counts": {
+        "timeout": 27
+      },
+      "latency_ms": {
+        "n": 17158,
+        "p50": 15.0,
+        "p99": 18.0,
+        "max": 197.0
+      },
+      "telemetry": {
+        "summary_present": true,
+        "errors": 0,
+        "hangs": 0,
+        "illegal_actions": 0,
+        "capture_schema_hash_mismatches": 0,
+        "captures_missing_teacher_action": 0,
+        "integrity_ok": true
+      },
+      "wave_reached": 17,
+      "summary_last_wave": 17,
+      "waves_completed": 17,
+      "recoveries": 11,
+      "result": "defeat",
+      "smoke_truncated": false,
+      "smoke_run": false,
+      "connection": 1,
+      "reconciliation": {
+        "connection_act_count": 96059,
+        "student_ticks": 17131,
+        "student_matched": 17131,
+        "student_missing_act": 0,
+        "join_coverage": 1.0,
+        "ok": {
+          "ticks": 9375,
+          "matched": 9375,
+          "max_abs_delta": 0.0,
+          "violations": 0,
+          "tol": 0.0001
+        },
+        "clamped": {
+          "ticks": 7756,
+          "matched": 7756,
+          "max_dir_diff": 1.0450015716090277e-06,
+          "max_mag_err": 7.197042589668357e-07,
+          "violations": 0,
+          "dir_tol": 0.001,
+          "mag_tol": 0.001
+        },
+        "timeout_ticks": 27,
+        "timeout_with_act": 27,
+        "not_connected_ticks": 0,
+        "other_ticks": 0,
+        "referenced_seqs": 17131,
+        "timeout_seqs": 27,
+        "reconciliation_ok": true
+      }
+    },
+    {
+      "run_id": "run_1784877573_54783",
+      "verdict": "include",
+      "reasons": [],
+      "capture_count": 20585,
+      "student_control_fraction": 0.998105,
+      "student_ticks": 20546,
+      "fallback_ticks": 39,
+      "clamp_count": 8013,
+      "source_counts": {
+        "teacher_fallback": 39,
+        "student": 20546
+      },
+      "cause_counts": {
+        "timeout": 39,
+        "ok": 12533,
+        "clamped": 8013
+      },
+      "fallback_cause_counts": {
+        "timeout": 39
+      },
+      "latency_ms": {
+        "n": 20585,
+        "p50": 15.0,
+        "p99": 19.0,
+        "max": 163.0
+      },
+      "telemetry": {
+        "summary_present": true,
+        "errors": 0,
+        "hangs": 0,
+        "illegal_actions": 0,
+        "capture_schema_hash_mismatches": 0,
+        "captures_missing_teacher_action": 0,
+        "integrity_ok": true
+      },
+      "wave_reached": 20,
+      "summary_last_wave": 20,
+      "waves_completed": 20,
+      "recoveries": 14,
+      "result": "defeat",
+      "smoke_truncated": false,
+      "smoke_run": false,
+      "connection": 1,
+      "reconciliation": {
+        "connection_act_count": 96059,
+        "student_ticks": 20546,
+        "student_matched": 20546,
+        "student_missing_act": 0,
+        "join_coverage": 1.0,
+        "ok": {
+          "ticks": 12533,
+          "matched": 12533,
+          "max_abs_delta": 0.0,
+          "violations": 0,
+          "tol": 0.0001
+        },
+        "clamped": {
+          "ticks": 8013,
+          "matched": 8013,
+          "max_dir_diff": 9.59376461939776e-07,
+          "max_mag_err": 7.020197536622419e-07,
+          "violations": 0,
+          "dir_tol": 0.001,
+          "mag_tol": 0.001
+        },
+        "timeout_ticks": 39,
+        "timeout_with_act": 39,
+        "not_connected_ticks": 0,
+        "other_ticks": 0,
+        "referenced_seqs": 20546,
+        "timeout_seqs": 39,
+        "reconciliation_ok": true
+      }
+    },
+    {
+      "run_id": "run_1784872256_15901",
+      "verdict": "include",
+      "reasons": [],
+      "capture_count": 20326,
+      "student_control_fraction": 0.998081,
+      "student_ticks": 20287,
+      "fallback_ticks": 39,
+      "clamp_count": 9389,
+      "source_counts": {
+        "teacher_fallback": 39,
+        "student": 20287
+      },
+      "cause_counts": {
+        "not_connected": 1,
+        "ok": 10898,
+        "clamped": 9389,
+        "timeout": 38
+      },
+      "fallback_cause_counts": {
+        "not_connected": 1,
+        "timeout": 38
+      },
+      "latency_ms": {
+        "n": 20326,
+        "p50": 14.0,
+        "p99": 20.0,
+        "max": 280.0
+      },
+      "telemetry": {
+        "summary_present": true,
+        "errors": 0,
+        "hangs": 0,
+        "illegal_actions": 0,
+        "capture_schema_hash_mismatches": 0,
+        "captures_missing_teacher_action": 0,
+        "integrity_ok": true
+      },
+      "wave_reached": 20,
+      "summary_last_wave": 20,
+      "waves_completed": 20,
+      "recoveries": 14,
+      "result": "defeat",
+      "smoke_truncated": false,
+      "smoke_run": true,
+      "connection": 0,
+      "reconciliation": {
+        "connection_act_count": 20325,
+        "student_ticks": 20287,
+        "student_matched": 20287,
+        "student_missing_act": 0,
+        "join_coverage": 1.0,
+        "ok": {
+          "ticks": 10898,
+          "matched": 10898,
+          "max_abs_delta": 0.0,
+          "violations": 0,
+          "tol": 0.0001
+        },
+        "clamped": {
+          "ticks": 9389,
+          "matched": 9389,
+          "max_dir_diff": 1.0499211026693267e-06,
+          "max_mag_err": 7.066437501812572e-07,
+          "violations": 0,
+          "dir_tol": 0.001,
+          "mag_tol": 0.001
+        },
+        "timeout_ticks": 38,
+        "timeout_with_act": 38,
+        "not_connected_ticks": 1,
+        "other_ticks": 0,
+        "referenced_seqs": 20287,
+        "timeout_seqs": 38,
+        "reconciliation_ok": true
+      }
+    }
+  ],
+  "included_runs": [
+    "run_1784873462_1600",
+    "run_1784874327_52508",
+    "run_1784875463_98163",
+    "run_1784876633_43940",
+    "run_1784877573_54783",
+    "run_1784872256_15901"
+  ],
+  "excluded_runs": [],
+  "overall_status": "PASS"
+}

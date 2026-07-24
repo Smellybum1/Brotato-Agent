@@ -1,0 +1,150 @@
+{
+  "candidates": {
+    "bc_v3_a_s1": {
+      "base_manifest_hash": "6E7FAB14DD0614FDC85BC92438239FED4FFBB2DD53CA7B17077D5089EDEE09AA",
+      "best_epoch": 7,
+      "checkpoint_sha256": "2979C36A4A6D833C85BE128A1599C379E236B69EDA45F0563369780BEBDD409E",
+      "composite_train_size": 481534,
+      "dagger_manifest_hashes": [
+        "7AF8403FD4C39CAFCEA19CAF9CAEFB05AF7DD5418DDF5A4AEDF01CBBCD35EE84",
+        "9B2C1E9184926716C361DB752237AC7F83AF4082CDF1DED03EDA6E2C65332A0B"
+      ],
+      "environment": {
+        "cuda": "NVIDIA GeForce RTX 4090",
+        "numpy": "2.5.1",
+        "python": "3.12.5",
+        "torch": "2.13.0+cu126"
+      },
+      "epochs_run": 13,
+      "git_commit": "5682ba38a47b9045ce2f0acb8b80d5d3f4606356",
+      "n_base_train": 305905,
+      "n_dagger_holdout_excluded": 19514,
+      "n_dagger_train": 175629,
+      "normalization_manifest_hash": "B3CBDBF6007E4AE48CB7ED33E040381EE2FAAAFB9A66C64EF2D62391D91ECED3",
+      "per_set": {
+        "dirs": [
+          "combat_dagger_r1",
+          "combat_dagger_r2"
+        ],
+        "event_weight_sums": [
+          71005.781,
+          104704.594
+        ],
+        "mass_share": [
+          0.404187,
+          0.595813
+        ],
+        "n_holdout": [
+          7887,
+          11627
+        ],
+        "n_train": [
+          70987,
+          104642
+        ],
+        "rowcount_share": [
+          0.404187,
+          0.595813
+        ],
+        "s_scalars": [
+          0.30729,
+          0.307187
+        ],
+        "weight_sums": [
+          21819.332,
+          32163.902
+        ]
+      },
+      "teacher_val_best": {
+        "mean_abs_magnitude_error": 0.0756,
+        "mean_angular_error_deg": 18.7782,
+        "mean_cosine": 0.8705,
+        "median_angular_error_deg": 8.6988,
+        "n": 81790,
+        "saturation_fraction": 0.00017117007519118488,
+        "val_loss": 0.13706
+      },
+      "total_corrective_mass_fraction": 0.15,
+      "total_mass_ratio_used": 0.17647058823529413,
+      "wall_time_sec": 40.35
+    },
+    "bc_v3_b_s1": {
+      "base_manifest_hash": "6E7FAB14DD0614FDC85BC92438239FED4FFBB2DD53CA7B17077D5089EDEE09AA",
+      "best_epoch": 5,
+      "checkpoint_sha256": "8AD4656D7E3393B7BB20F1D98D617CFA4DB2E4FAC3A6D4AB9C37EBAB9471894B",
+      "composite_train_size": 481534,
+      "dagger_manifest_hashes": [
+        "7AF8403FD4C39CAFCEA19CAF9CAEFB05AF7DD5418DDF5A4AEDF01CBBCD35EE84",
+        "9B2C1E9184926716C361DB752237AC7F83AF4082CDF1DED03EDA6E2C65332A0B"
+      ],
+      "environment": {
+        "cuda": "NVIDIA GeForce RTX 4090",
+        "numpy": "2.5.1",
+        "python": "3.12.5",
+        "torch": "2.13.0+cu126"
+      },
+      "epochs_run": 11,
+      "git_commit": "5682ba38a47b9045ce2f0acb8b80d5d3f4606356",
+      "n_base_train": 305905,
+      "n_dagger_holdout_excluded": 19514,
+      "n_dagger_train": 175629,
+      "normalization_manifest_hash": "B3CBDBF6007E4AE48CB7ED33E040381EE2FAAAFB9A66C64EF2D62391D91ECED3",
+      "per_set": {
+        "dirs": [
+          "combat_dagger_r1",
+          "combat_dagger_r2"
+        ],
+        "event_weight_sums": [
+          71005.781,
+          104704.594
+        ],
+        "mass_share": [
+          0.404187,
+          0.595813
+        ],
+        "n_holdout": [
+          7887,
+          11627
+        ],
+        "n_train": [
+          70987,
+          104642
+        ],
+        "rowcount_share": [
+          0.404187,
+          0.595813
+        ],
+        "s_scalars": [
+          0.435327,
+          0.435182
+        ],
+        "weight_sums": [
+          30910.723,
+          45565.523
+        ]
+      },
+      "teacher_val_best": {
+        "mean_abs_magnitude_error": 0.0809,
+        "mean_angular_error_deg": 19.877,
+        "mean_cosine": 0.8601,
+        "median_angular_error_deg": 9.2519,
+        "n": 81790,
+        "saturation_fraction": 9.78114694589749e-05,
+        "val_loss": 0.14802
+      },
+      "total_corrective_mass_fraction": 0.2,
+      "total_mass_ratio_used": 0.25,
+      "wall_time_sec": 35.57
+    }
+  },
+  "generated": "2026-07-24 18:07:38",
+  "recipe": {
+    "architecture": "BCPolicyV1 (no aux head; candidate A)",
+    "base_hyperparams": "bc_v2_a defaults (lr 3e-4, batch 4096, weight_decay 1e-4, huber_delta 0.5, mag_eps 0.01, early_stopping_patience 5, max_epochs 50, cosine schedule)",
+    "corrective_pooling": "combat_dagger_r1 + combat_dagger_r2, each keeping its own build-time event weights, pooled proportional to TRAIN row counts within a single total corrective mass; r1 and r2 each carve their own deterministic 10% holdout (seed 20260724) excluded from ALL training",
+    "lambda_mag": 1.0,
+    "previous_action_dropout_p": 0.4,
+    "seed": 1
+  },
+  "report": "wp2_bc_v3_training_report"
+}

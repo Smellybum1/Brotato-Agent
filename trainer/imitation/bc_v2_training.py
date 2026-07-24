@@ -39,7 +39,11 @@ import torch
 import torch.nn.functional as F
 from torch import Tensor
 
-from trainer.data.bc_v2_dataset import CompositeBCDataset, load_composite_dataset
+from trainer.data.bc_v2_dataset import (
+    CompositeBCDataset,
+    load_composite_dataset,
+    load_multi_composite_dataset,
+)
 from trainer.imitation.bc_training import (
     REPO_ROOT,
     RISK_BIN_LABELS,
@@ -534,6 +538,7 @@ def run_bc_v2_training(
     candidate: str,
     run_name: str,
     dagger_dataset_dir: str | Path = DEFAULT_DAGGER_DIR,
+    dagger_dataset_dirs: list[str | Path] | tuple[str | Path, ...] | None = None,
     lambda_aux: float = DEFAULT_LAMBDA_AUX,
     target_mass_ratio: float | None = None,
     init_checkpoint: str | Path | None = None,
@@ -596,16 +601,43 @@ def run_bc_v2_training(
     composite_kwargs: dict[str, Any] = {}
     if target_mass_ratio is not None:
         composite_kwargs["target_mass_ratio"] = float(target_mass_ratio)
-    log(
-        f"[bcv2] loading composite dataset (base={config.dataset_dir}, "
-        f"dagger={dagger_dataset_dir}, target_mass_ratio="
-        f"{target_mass_ratio if target_mass_ratio is not None else 'default'}) ..."
-    )
-    dataset = load_composite_dataset(
-        config.dataset_dir, dagger_dataset_dir,
-        config.split_config, config.input_config, config.schema,
-        **composite_kwargs,
-    )
+    if dagger_dataset_dirs is not None:
+        dir_list = list(dagger_dataset_dirs)
+        log(
+            f"[bcv2] loading MULTI composite dataset (base={config.dataset_dir}, "
+            f"dagger_dirs={[str(d) for d in dir_list]}, target_mass_ratio="
+            f"{target_mass_ratio if target_mass_ratio is not None else 'default'}) ..."
+        )
+        dataset = load_multi_composite_dataset(
+            config.dataset_dir, dir_list,
+            config.split_config, config.input_config, config.schema,
+            **composite_kwargs,
+        )
+        log(
+            "[bcv2] per-set corrective breakdown: "
+            + ", ".join(
+                f"{Path(d).name}(n_train={nt} n_hold={nh} s={s:.6f} wsum={ws:.1f})"
+                for d, nt, nh, s, ws in zip(
+                    dataset.dagger_dataset_dirs,
+                    dataset.per_set_n_train,
+                    dataset.per_set_n_holdout,
+                    dataset.per_set_s_scalars,
+                    dataset.per_set_weight_sums,
+                )
+            )
+        )
+        dagger_dataset_dir = dir_list
+    else:
+        log(
+            f"[bcv2] loading composite dataset (base={config.dataset_dir}, "
+            f"dagger={dagger_dataset_dir}, target_mass_ratio="
+            f"{target_mass_ratio if target_mass_ratio is not None else 'default'}) ..."
+        )
+        dataset = load_composite_dataset(
+            config.dataset_dir, dagger_dataset_dir,
+            config.split_config, config.input_config, config.schema,
+            **composite_kwargs,
+        )
     log(
         f"[bcv2] composite train={dataset.train.size} "
         f"(base={dataset.n_base_train} dagger_train={dataset.n_dagger_train} "
@@ -791,6 +823,20 @@ def run_bc_v2_training(
             "model_parameters": n_params,
             "model_base_parameters": n_base_params,
             "serving_export": "base_state_dict (BCPolicyV1 strict-load verified)",
+            "multi_corrective": (
+                {
+                    "total_mass_ratio": dataset.total_mass_ratio,
+                    "dagger_dataset_dirs": list(dataset.dagger_dataset_dirs),
+                    "dagger_manifest_hashes": list(dataset.dagger_manifest_hashes),
+                    "per_set_s_scalars": list(dataset.per_set_s_scalars),
+                    "per_set_n_train": list(dataset.per_set_n_train),
+                    "per_set_n_holdout": list(dataset.per_set_n_holdout),
+                    "per_set_event_weight_sums": list(dataset.per_set_event_weight_sums),
+                    "per_set_weight_sums": list(dataset.per_set_weight_sums),
+                }
+                if dataset.dagger_dataset_dirs
+                else None
+            ),
         },
         "baselines": baselines,
         "best_val_metrics": best_val_metrics,

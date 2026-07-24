@@ -24,6 +24,7 @@ from trainer.data.bc_dataset import ENTITY_GROUPS
 from trainer.data.bc_v2_dataset import (
     DEFAULT_TARGET_MASS_RATIO,
     load_composite_dataset,
+    load_multi_composite_dataset,
     solve_mass_scalar,
 )
 from trainer.imitation.bc_v2_training import (
@@ -253,18 +254,29 @@ def _write_weights(path: Path, n: int, seed: int):
     np.savez(path, weight=w, segment=seg)
 
 
-def _build_dagger(tmp_path: Path, schema_hash: str):
-    ds = tmp_path / "dagger"
+def _build_dagger(
+    tmp_path: Path,
+    schema_hash: str,
+    *,
+    dir_name: str = "dagger",
+    dataset_id: str = "combat_dagger_r1",
+    runs=(("dag_1", "dag_1.npz", 50), ("dag_2", "dag_2.npz", 30)),
+    action_x: float = 0.2,
+    action_y: float = 0.2,
+):
+    ds = tmp_path / dir_name
     (ds / "aux_labels").mkdir(parents=True)
     (ds / "sample_weights").mkdir(parents=True)
 
-    runs = [("dag_1", "dag_1.npz", 50), ("dag_2", "dag_2.npz", 30)]
     entries = []
     for rid, sf, n in runs:
         # one temporal-invalid row to exercise the keep filter
         temporal = np.ones(n, dtype=bool)
         temporal[0] = False
-        _write_obs_shard(ds / sf, n, action_x=0.2, action_y=0.2, seed=hash(rid) % 1000, temporal=temporal)
+        _write_obs_shard(
+            ds / sf, n, action_x=action_x, action_y=action_y,
+            seed=hash(rid) % 1000, temporal=temporal,
+        )
         _write_aux(ds / "aux_labels" / sf, n, seed=n)
         _write_weights(ds / "sample_weights" / sf, n, seed=n + 1)
         entries.append({
@@ -277,7 +289,7 @@ def _build_dagger(tmp_path: Path, schema_hash: str):
             "weights_sha256": _sha(ds / "sample_weights" / sf),
         })
     (ds / "manifest.json").write_text(json.dumps({
-        "dataset_id": "combat_dagger_r1",
+        "dataset_id": dataset_id,
         "observation_schema_hash": schema_hash,
         "runs": entries,
     }, indent=2), encoding="utf-8")
@@ -361,3 +373,99 @@ def test_composite_loader_holdout_deterministic(tmp_path):
     b = load_composite_dataset(base_ds, dagger_ds, split_path, input_path, schema_path, holdout_seed=7)
     assert a.n_dagger_holdout == b.n_dagger_holdout
     assert np.allclose(a.holdout_aux_margin, b.holdout_aux_margin)
+
+
+# ===========================================================================
+# Multi-corrective composite loader (r1 + r2, single total mass)
+# ===========================================================================
+def test_multi_composite_single_dir_equals_single_loader(tmp_path):
+    """One-dir multi loader must be numerically identical to the single loader."""
+    base_ds, schema_path, input_path, split_path, schema_hash = _build_base(tmp_path)
+    dagger_ds = _build_dagger(tmp_path, schema_hash)
+
+    single = load_composite_dataset(base_ds, dagger_ds, split_path, input_path, schema_path)
+    multi = load_multi_composite_dataset(base_ds, [dagger_ds], split_path, input_path, schema_path)
+
+    assert multi.n_base_train == single.n_base_train
+    assert multi.n_dagger_train == single.n_dagger_train
+    assert multi.n_dagger_holdout == single.n_dagger_holdout
+    assert multi.train.size == single.train.size
+    assert np.allclose(multi.train_weight, single.train_weight)
+    assert np.array_equal(multi.train_is_dagger, single.train_is_dagger)
+    assert np.allclose(multi.train.globals, single.train.globals)
+    assert abs(multi.achieved_mass_fraction - single.achieved_mass_fraction) < 1e-9
+    # single-dir aggregate scalar == the single loader's s_scalar
+    assert abs(multi.s_scalar - single.s_scalar) < 1e-6
+    assert multi.per_set_s_scalars[0] == pytest.approx(single.s_scalar, abs=1e-6)
+    # holdout rows identical
+    assert np.allclose(multi.holdout_aux_margin, single.holdout_aux_margin)
+    assert np.allclose(multi.aux_holdout.globals, single.aux_holdout.globals)
+
+
+def test_multi_composite_two_dirs_mass_and_proportional_split(tmp_path):
+    base_ds, schema_path, input_path, split_path, schema_hash = _build_base(tmp_path)
+    r1 = _build_dagger(
+        tmp_path, schema_hash, dir_name="r1", dataset_id="combat_dagger_r1",
+        runs=(("r1a", "r1a.npz", 50), ("r1b", "r1b.npz", 30)),
+    )
+    r2 = _build_dagger(
+        tmp_path, schema_hash, dir_name="r2", dataset_id="combat_dagger_r2",
+        runs=(("r2a", "r2a.npz", 70), ("r2b", "r2b.npz", 40), ("r2c", "r2c.npz", 20)),
+    )
+    M = 0.20
+    ratio = M / (1.0 - M)
+    multi = load_multi_composite_dataset(
+        base_ds, [r1, r2], split_path, input_path, schema_path, target_mass_ratio=ratio,
+    )
+
+    # Total achieved corrective mass == M exactly.
+    assert abs(multi.achieved_mass_fraction - M) < 1e-6
+
+    # Two sets recorded, in dir order.
+    assert len(multi.per_set_n_train) == 2
+    assert len(multi.per_set_n_holdout) == 2
+    n1_train, n2_train = multi.per_set_n_train
+    assert n1_train + n2_train == multi.n_dagger_train
+
+    # Mass split proportional to TRAIN row counts.
+    w1, w2 = multi.per_set_weight_sums
+    total_w = w1 + w2
+    assert w1 / total_w == pytest.approx(n1_train / (n1_train + n2_train), abs=1e-6)
+    assert w2 / total_w == pytest.approx(n2_train / (n1_train + n2_train), abs=1e-6)
+
+    # Base rows weight 1.0; all corrective rows positive.
+    assert np.allclose(multi.train_weight[: multi.n_base_train], 1.0)
+    assert np.all(multi.train_weight[multi.n_base_train :] > 0)
+    assert multi.train.size == multi.n_base_train + multi.n_dagger_train
+
+
+def test_multi_composite_holdouts_reproduce_single_loader(tmp_path):
+    """Each set's carved holdout must equal that dir's single-loader holdout."""
+    base_ds, schema_path, input_path, split_path, schema_hash = _build_base(tmp_path)
+    r1 = _build_dagger(
+        tmp_path, schema_hash, dir_name="r1", dataset_id="combat_dagger_r1",
+        runs=(("r1a", "r1a.npz", 50), ("r1b", "r1b.npz", 30)),
+    )
+    r2 = _build_dagger(
+        tmp_path, schema_hash, dir_name="r2", dataset_id="combat_dagger_r2",
+        runs=(("r2a", "r2a.npz", 70), ("r2b", "r2b.npz", 40), ("r2c", "r2c.npz", 20)),
+    )
+    multi = load_multi_composite_dataset(base_ds, [r1, r2], split_path, input_path, schema_path)
+
+    single_r1 = load_composite_dataset(base_ds, r1, split_path, input_path, schema_path)
+    single_r2 = load_composite_dataset(base_ds, r2, split_path, input_path, schema_path)
+
+    # per_set_holdouts are in dir order [r1, r2] and reproduce the single loader.
+    ho1, ho2 = multi.per_set_holdouts
+    assert ho1.size == single_r1.n_dagger_holdout
+    assert ho2.size == single_r2.n_dagger_holdout
+    assert np.allclose(ho1.globals, single_r1.aux_holdout.globals)
+    assert np.allclose(ho2.globals, single_r2.aux_holdout.globals)
+    # combined holdout aux length == sum of the two.
+    assert multi.n_dagger_holdout == single_r1.n_dagger_holdout + single_r2.n_dagger_holdout
+
+
+def test_multi_composite_rejects_empty_dirs(tmp_path):
+    base_ds, schema_path, input_path, split_path, schema_hash = _build_base(tmp_path)
+    with pytest.raises(Exception):
+        load_multi_composite_dataset(base_ds, [], split_path, input_path, schema_path)

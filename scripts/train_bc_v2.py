@@ -40,7 +40,18 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--run-name", required=True, help="run name (also the registry stem)")
     parser.add_argument("--seed", type=int, default=None, help="override config seed")
     parser.add_argument("--max-epochs", type=int, default=None, help="override config max_epochs")
-    parser.add_argument("--dagger-dir", default=str(DEFAULT_DAGGER_DIR), help="dagger dataset dir")
+    parser.add_argument("--dagger-dir", default=str(DEFAULT_DAGGER_DIR), help="dagger dataset dir (single-set path)")
+    parser.add_argument(
+        "--dagger-dirs",
+        default=None,
+        help=(
+            "comma-separated list of TWO+ corrective dataset dirs; routes through "
+            "the multi-corrective loader (each set keeps its own event weights and "
+            "carves its own deterministic holdout; --corrective-mass sets the TOTAL "
+            "corrective mass split proportional to row counts). Omit for the "
+            "single-set path (--dagger-dir)."
+        ),
+    )
     parser.add_argument("--lambda-aux", type=float, default=DEFAULT_LAMBDA_AUX, help="aux head weight (candidate B)")
     parser.add_argument(
         "--corrective-mass",
@@ -95,6 +106,11 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
             "models/registry/<name>.json."
         ),
     )
+    parser.add_argument(
+        "--output-root",
+        default=None,
+        help="checkpoint output root (default models/bc_v2). Registry still writes to models/registry.",
+    )
     parser.add_argument("--smoke", action="store_true", help="2-epoch pipeline check")
     return parser.parse_args(argv)
 
@@ -102,7 +118,10 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
     try:
-        config, config_hash = load_bc_v2_config(args.config)
+        if args.output_root is not None:
+            config, config_hash = load_bc_v2_config(args.config, output_root=args.output_root)
+        else:
+            config, config_hash = load_bc_v2_config(args.config)
         if args.seed is not None:
             config = replace(config, seed=args.seed)
         if args.max_epochs is not None:
@@ -141,12 +160,19 @@ def main(argv: list[str] | None = None) -> int:
                 )
             target_mass_ratio = m / (1.0 - m)
 
+        dagger_dataset_dirs = None
+        if args.dagger_dirs is not None:
+            dagger_dataset_dirs = [d.strip() for d in args.dagger_dirs.split(",") if d.strip()]
+            if not dagger_dataset_dirs:
+                raise BCV2TrainingError("--dagger-dirs was empty after parsing")
+
         summary = run_bc_v2_training(
             config,
             config_hash,
             candidate=args.candidate,
             run_name=args.run_name,
             dagger_dataset_dir=args.dagger_dir,
+            dagger_dataset_dirs=dagger_dataset_dirs,
             lambda_aux=args.lambda_aux,
             target_mass_ratio=target_mass_ratio,
             init_checkpoint=init_checkpoint,

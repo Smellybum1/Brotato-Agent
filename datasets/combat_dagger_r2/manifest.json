@@ -1,0 +1,1441 @@
+{
+  "dataset_id": "combat_dagger_r2",
+  "schema_id": "combat_obs_v1",
+  "observation_schema_hash": "C653D836F3EBC821A51AFC70482D3772FC7B7B927D393A6B9BBADC2718BB9B2A",
+  "source_capture_schema_hash": "95B6444796A21FD44E94113B75BA2097BC381D5F72ED784F9B9A4A99DD46D951",
+  "encoder_path": "trainer/observation/encoder_v1.py",
+  "builder_script": "scripts/wp2_build_combat_dagger_r2.py",
+  "reused_pipeline": "scripts/wp2_build_combat_obs_v1.py::build_run",
+  "reused_r1_helpers": "scripts/wp2_build_combat_dagger_r1.py::compute_aux_and_weights",
+  "repo_head_commit": "5682ba38a47b9045ce2f0acb8b80d5d3f4606356",
+  "runs_root": "C:\\Users\\moxhe\\AppData\\Roaming\\Brotato\\brotato_agent\\runs",
+  "run_count": 6,
+  "student_policy": "bc_v2_f_s1",
+  "student_model_sha256": "1AD517B04843B69966841C7B795B927AE86B2727789456224321FC091F29F331",
+  "source_campaign": {
+    "policy_version": "teacher_v1-0.1.125-gun-wp1",
+    "mod_version": "0.2.34-wp2-capture",
+    "started_at": "2026-07-24T06:10:54.057605+00:00",
+    "stop_reason": "target reached",
+    "collector_state_file": "C:\\Codex\\Brotato Agent\\.tmp\\dagger_r2_collector_state.json",
+    "sidecar_log": "C:\\Codex\\Brotato Agent\\.tmp\\student_sidecar_dagger_r2.jsonl",
+    "audit_report": "C:\\Codex\\Brotato Agent\\reports\\wp2\\dagger_r2_collection_audit.json"
+  },
+  "corrective_config": {
+    "control_hz": 20,
+    "aux_horizon_ticks": 10,
+    "risk_threshold": 0.5,
+    "risk_groups": [
+      "enemies",
+      "bosses",
+      "projectiles"
+    ],
+    "precursor_ticks": [
+      10,
+      20
+    ],
+    "recovery_ticks": 20,
+    "segment_target_mass": {
+      "background": 0.45,
+      "precursor": 0.3,
+      "onset_episode": 0.15,
+      "recovery": 0.1
+    },
+    "onset_cap": "2x mean episode mass (2 * 0.15*M / E)",
+    "gap_mask": "temporal_valid (control_dt_ms in (0,250]) over the full horizon",
+    "weight_normalization": "mean weight over eligible rows == 1.0",
+    "contact_risk_feature_index": 11,
+    "hp_ratio_global_index": 8
+  },
+  "aggregate": {
+    "total": 116386,
+    "valid": 116386,
+    "temporal_valid": 116269,
+    "valid_and_temporal_valid": 116269,
+    "fault_count": 0,
+    "episodes": 3614,
+    "dataset_bytes": 137902727
+  },
+  "segment_eligible_counts": {
+    "background": 50563,
+    "precursor": 26727,
+    "onset_episode": 10284,
+    "recovery": 28695
+  },
+  "segment_eligible_fractions": {
+    "background": 0.4349,
+    "precursor": 0.2299,
+    "onset_episode": 0.0885,
+    "recovery": 0.2468
+  },
+  "segment_mass_fractions": {
+    "background": 0.45,
+    "precursor": 0.3,
+    "onset_episode": 0.15,
+    "recovery": 0.1
+  },
+  "aux_base_rates": {
+    "horizon_valid_rows": 115216,
+    "aux_damage_base_rate": 0.010346,
+    "aux_margin_mean": 0.719785
+  },
+  "triple_reconciliation_aggregate": {
+    "student_ticks": 116182,
+    "student_matched": 116182,
+    "student_missing_act": 0,
+    "ok_ticks": 67974,
+    "ok_violations": 0,
+    "ok_max_abs_delta": 0.0,
+    "clamped_ticks": 48208,
+    "clamped_violations": 0,
+    "clamped_max_dir_diff": 1.0499211026693267e-06,
+    "clamped_max_mag_err": 7.197042589668357e-07,
+    "timeout_ticks": 202,
+    "timeout_with_act": 202,
+    "not_connected_ticks": 2,
+    "all_reconciliation_ok": true,
+    "join_coverage": 1.0
+  },
+  "gates": [
+    {
+      "name": "all_shards_written",
+      "status": "PASS",
+      "value": 6,
+      "threshold": 6,
+      "detail": "6/6 shards + aux + weights written"
+    },
+    {
+      "name": "zero_encoding_faults",
+      "status": "PASS",
+      "value": 0,
+      "threshold": 0,
+      "detail": "0 ObservationError faults"
+    },
+    {
+      "name": "valid_and_temporal_positive",
+      "status": "PASS",
+      "value": 116269,
+      "threshold": 1,
+      "detail": "116269 training-eligible rows"
+    },
+    {
+      "name": "aux_weights_aligned",
+      "status": "PASS",
+      "value": 6,
+      "threshold": 6,
+      "detail": "aux/weight arrays length == shard rows for every run"
+    },
+    {
+      "name": "triple_reconciliation_ok",
+      "status": "PASS",
+      "value": 1.0,
+      "threshold": 1.0,
+      "detail": "join_cov=1.0, ok_viol=0, clamp_viol=0, missing_act=0"
+    }
+  ],
+  "overall_status": "PASS",
+  "runs": [
+    {
+      "run_id": "run_1784873462_1600",
+      "shard_file": "run_1784873462_1600.npz",
+      "shard_sha256": "D0EAE91BE5F35B83B4D2E59A55C230F1C9EA92179736F6ABD5BE23E0F43D2D95",
+      "shard_bytes": 20149989,
+      "capture_seq_monotonic": true,
+      "counts": {
+        "total": 15982,
+        "valid": 15982,
+        "temporal_valid": 15963,
+        "valid_and_temporal_valid": 15963
+      },
+      "per_wave_total": {
+        "1": 440,
+        "2": 551,
+        "3": 640,
+        "4": 740,
+        "5": 846,
+        "6": 946,
+        "7": 1046,
+        "8": 1140,
+        "9": 1251,
+        "10": 1246,
+        "11": 1240,
+        "12": 1241,
+        "13": 1246,
+        "14": 1240,
+        "15": 1240,
+        "16": 929
+      },
+      "per_wave_valid": {
+        "1": 440,
+        "2": 551,
+        "3": 640,
+        "4": 740,
+        "5": 846,
+        "6": 946,
+        "7": 1046,
+        "8": 1140,
+        "9": 1251,
+        "10": 1246,
+        "11": 1240,
+        "12": 1241,
+        "13": 1246,
+        "14": 1240,
+        "15": 1240,
+        "16": 929
+      },
+      "overflow": {
+        "enemies": {
+          "overflow_samples": 9,
+          "max_raw": 67,
+          "capacity": 64
+        },
+        "bosses": {
+          "overflow_samples": 0,
+          "max_raw": 0,
+          "capacity": 2
+        },
+        "projectiles": {
+          "overflow_samples": 3,
+          "max_raw": 33,
+          "capacity": 32
+        },
+        "materials": {
+          "overflow_samples": 0,
+          "max_raw": 50,
+          "capacity": 64
+        },
+        "consumables": {
+          "overflow_samples": 0,
+          "max_raw": 10,
+          "capacity": 24
+        },
+        "crates": {
+          "overflow_samples": 0,
+          "max_raw": 1,
+          "capacity": 2
+        },
+        "obstacles": {
+          "overflow_samples": 0,
+          "max_raw": 4,
+          "capacity": 8
+        }
+      },
+      "fault_count": 0,
+      "faults": [],
+      "determinism_spot_check": [
+        {
+          "position": 0,
+          "capture_seq": 1,
+          "digest": "2D34E87C19AC802314394261BFBB05278B1F167E442A27AA7CEEA50D1A392298"
+        },
+        {
+          "position": 5000,
+          "capture_seq": 5001,
+          "digest": "D53687523A5CE01FC5819B7BB248FF71B890E87740832C8D011FB5C6159089E4"
+        },
+        {
+          "position": 10000,
+          "capture_seq": 10001,
+          "digest": "D2CB9277F7EA0957A817E2F66C993238E845567ABC586D1A0CE93FD4286EEBE1"
+        },
+        {
+          "position": 15000,
+          "capture_seq": 15001,
+          "digest": "C6770CC6FBB7F92D7B98B6F2E44EA54C98823C13BCD85C9EAB6198146B3952A0"
+        },
+        {
+          "position": 15981,
+          "capture_seq": 15982,
+          "digest": "A1C7F79A39E3A9918C3C576F6AFA059050177F40661B781E8A5ABEDF92AC7679"
+        }
+      ],
+      "build_seconds": 14.12,
+      "aux_file": "aux_labels/run_1784873462_1600.npz",
+      "aux_sha256": "1740904A9A049924A2D885D931D23BBD3FBAF00E0AD1104D0F333CF4767C3D16",
+      "weights_file": "sample_weights/run_1784873462_1600.npz",
+      "weights_sha256": "44F31C0B0E500F16175CC9AB3BD497C274945289FF70D19B4480158BCDB3AE85",
+      "corrective_stats": {
+        "rows": 15982,
+        "eligible_rows": 15963,
+        "episodes": 537,
+        "onset_cap_value": 8.917877094972066,
+        "aux": {
+          "horizon_valid_rows": 15792,
+          "aux_damage_base_rate": 0.01811,
+          "aux_margin_mean": 0.709194
+        },
+        "segment_eligible_counts": {
+          "background": 6519,
+          "precursor": 3745,
+          "onset_episode": 1816,
+          "recovery": 3883
+        },
+        "segment_all_counts": {
+          "background": 6537,
+          "precursor": 3746,
+          "onset_episode": 1816,
+          "recovery": 3883
+        },
+        "segment_weight_mean": {
+          "background": 1.1019096374511719,
+          "precursor": 1.2787449359893799,
+          "onset_episode": 1.3185298442840576,
+          "recovery": 0.4110996127128601
+        },
+        "segment_mass_fractions": {
+          "background": 0.45,
+          "precursor": 0.3,
+          "onset_episode": 0.15,
+          "recovery": 0.1
+        },
+        "weight_summary": {
+          "min": 0.31849560141563416,
+          "mean": 0.9999998807907104,
+          "median": 1.1019097566604614,
+          "p99": 1.7610108852386475,
+          "max": 1.7610108852386475
+        }
+      },
+      "smoke_run": false,
+      "student_control": {
+        "student_control_fraction": 0.998248,
+        "student_ticks": 15954,
+        "fallback_ticks": 28,
+        "clamp_count": 6307,
+        "latency_ms": {
+          "n": 15982,
+          "p50": 15.0,
+          "p99": 19.0,
+          "max": 239.0
+        },
+        "wave_reached": 16,
+        "result": "defeat"
+      },
+      "triple_reconciliation": {
+        "connection_act_count": 96059,
+        "student_ticks": 15954,
+        "student_matched": 15954,
+        "student_missing_act": 0,
+        "join_coverage": 1.0,
+        "ok": {
+          "ticks": 9647,
+          "matched": 9647,
+          "max_abs_delta": 0.0,
+          "violations": 0,
+          "tol": 0.0001
+        },
+        "clamped": {
+          "ticks": 6307,
+          "matched": 6307,
+          "max_dir_diff": 1.0127907431045635e-06,
+          "max_mag_err": 6.845497343421769e-07,
+          "violations": 0,
+          "dir_tol": 0.001,
+          "mag_tol": 0.001
+        },
+        "timeout_ticks": 27,
+        "timeout_with_act": 27,
+        "not_connected_ticks": 1,
+        "other_ticks": 0,
+        "referenced_seqs": 15954,
+        "timeout_seqs": 27,
+        "reconciliation_ok": true
+      },
+      "connection": 1
+    },
+    {
+      "run_id": "run_1784874327_52508",
+      "shard_file": "run_1784874327_52508.npz",
+      "shard_sha256": "F96B289AD42B1739E07CFDCCAC5E7E48561F1CF191B43E73ADEB6993B658BCB6",
+      "shard_bytes": 21913483,
+      "capture_seq_monotonic": true,
+      "counts": {
+        "total": 20838,
+        "valid": 20838,
+        "temporal_valid": 20818,
+        "valid_and_temporal_valid": 20818
+      },
+      "per_wave_total": {
+        "1": 440,
+        "2": 545,
+        "3": 641,
+        "4": 740,
+        "5": 851,
+        "6": 940,
+        "7": 1040,
+        "8": 1151,
+        "9": 1246,
+        "10": 1246,
+        "11": 1246,
+        "12": 1240,
+        "13": 1240,
+        "14": 1246,
+        "15": 1251,
+        "16": 1246,
+        "17": 1251,
+        "18": 1251,
+        "19": 1240,
+        "20": 787
+      },
+      "per_wave_valid": {
+        "1": 440,
+        "2": 545,
+        "3": 641,
+        "4": 740,
+        "5": 851,
+        "6": 940,
+        "7": 1040,
+        "8": 1151,
+        "9": 1246,
+        "10": 1246,
+        "11": 1246,
+        "12": 1240,
+        "13": 1240,
+        "14": 1246,
+        "15": 1251,
+        "16": 1246,
+        "17": 1251,
+        "18": 1251,
+        "19": 1240,
+        "20": 787
+      },
+      "overflow": {
+        "enemies": {
+          "overflow_samples": 0,
+          "max_raw": 38,
+          "capacity": 64
+        },
+        "bosses": {
+          "overflow_samples": 0,
+          "max_raw": 1,
+          "capacity": 2
+        },
+        "projectiles": {
+          "overflow_samples": 0,
+          "max_raw": 30,
+          "capacity": 32
+        },
+        "materials": {
+          "overflow_samples": 0,
+          "max_raw": 50,
+          "capacity": 64
+        },
+        "consumables": {
+          "overflow_samples": 0,
+          "max_raw": 6,
+          "capacity": 24
+        },
+        "crates": {
+          "overflow_samples": 0,
+          "max_raw": 2,
+          "capacity": 2
+        },
+        "obstacles": {
+          "overflow_samples": 0,
+          "max_raw": 2,
+          "capacity": 8
+        }
+      },
+      "fault_count": 0,
+      "faults": [],
+      "determinism_spot_check": [
+        {
+          "position": 0,
+          "capture_seq": 1,
+          "digest": "69E9309951677038DC0910ED46CB94C654EDB326B9F6429D37D5B7A1F771FD1F"
+        },
+        {
+          "position": 5000,
+          "capture_seq": 5001,
+          "digest": "D699E7D8E767BC3608EEFF6D8CEF0270917DB8F5B2E5480C8019C54BCBE890FE"
+        },
+        {
+          "position": 10000,
+          "capture_seq": 10001,
+          "digest": "4176BAB551CD69E7C4222E127D17F2B3240E4149D5C67787B4D64BCEFACD035C"
+        },
+        {
+          "position": 15000,
+          "capture_seq": 15001,
+          "digest": "D0F8431D977F1C4473F084E8F68626E1BB9F885E94341AD6A62F66B33F4A4C72"
+        },
+        {
+          "position": 20000,
+          "capture_seq": 20001,
+          "digest": "A434F3E7DEC415874764029E77E66C8652096FD80C93192ED3027DE3C28EA116"
+        },
+        {
+          "position": 20837,
+          "capture_seq": 20838,
+          "digest": "E40AD28A0FF71EF4CE8FD622DC8615026B3FF9D97319522ADF1893F2EDDC4805"
+        }
+      ],
+      "build_seconds": 17.06,
+      "aux_file": "aux_labels/run_1784874327_52508.npz",
+      "aux_sha256": "697408F155CA3547FC4780F6541AA20AF75076ED03F935F9D1C4003535716750",
+      "weights_file": "sample_weights/run_1784874327_52508.npz",
+      "weights_sha256": "1767207A2B91A8D760D422BFE75452FC96B22D806D0324CD676B1AE818DDD44D",
+      "corrective_stats": {
+        "rows": 20838,
+        "eligible_rows": 20818,
+        "episodes": 611,
+        "onset_cap_value": 10.221603927986907,
+        "aux": {
+          "horizon_valid_rows": 20638,
+          "aux_damage_base_rate": 0.007753,
+          "aux_margin_mean": 0.713789
+        },
+        "segment_eligible_counts": {
+          "background": 9333,
+          "precursor": 4582,
+          "onset_episode": 1688,
+          "recovery": 5215
+        },
+        "segment_all_counts": {
+          "background": 9353,
+          "precursor": 4582,
+          "onset_episode": 1688,
+          "recovery": 5215
+        },
+        "segment_weight_mean": {
+          "background": 1.0037609338760376,
+          "precursor": 1.3630294799804688,
+          "onset_episode": 1.849940538406372,
+          "recovery": 0.3991946876049042
+        },
+        "segment_mass_fractions": {
+          "background": 0.45,
+          "precursor": 0.3,
+          "onset_episode": 0.15,
+          "recovery": 0.1
+        },
+        "weight_summary": {
+          "min": 0.3991946280002594,
+          "mean": 1.0,
+          "median": 1.003760814666748,
+          "p99": 2.4755446910858154,
+          "max": 2.4755446910858154
+        }
+      },
+      "smoke_run": false,
+      "student_control": {
+        "student_control_fraction": 0.998032,
+        "student_ticks": 20797,
+        "fallback_ticks": 41,
+        "clamp_count": 8524,
+        "latency_ms": {
+          "n": 20838,
+          "p50": 15.0,
+          "p99": 17.0,
+          "max": 179.0
+        },
+        "wave_reached": 20,
+        "result": "defeat"
+      },
+      "triple_reconciliation": {
+        "connection_act_count": 96059,
+        "student_ticks": 20797,
+        "student_matched": 20797,
+        "student_missing_act": 0,
+        "join_coverage": 1.0,
+        "ok": {
+          "ticks": 12273,
+          "matched": 12273,
+          "max_abs_delta": 0.0,
+          "violations": 0,
+          "tol": 0.0001
+        },
+        "clamped": {
+          "ticks": 8524,
+          "matched": 8524,
+          "max_dir_diff": 1.0324445929854598e-06,
+          "max_mag_err": 7.162482436040563e-07,
+          "violations": 0,
+          "dir_tol": 0.001,
+          "mag_tol": 0.001
+        },
+        "timeout_ticks": 41,
+        "timeout_with_act": 41,
+        "not_connected_ticks": 0,
+        "other_ticks": 0,
+        "referenced_seqs": 20797,
+        "timeout_seqs": 41,
+        "reconciliation_ok": true
+      },
+      "connection": 1
+    },
+    {
+      "run_id": "run_1784875463_98163",
+      "shard_file": "run_1784875463_98163.npz",
+      "shard_sha256": "1C3322114DB0458A082862446AA8594DC2C88B7A2B1791DDF7430DD510342EBC",
+      "shard_bytes": 22686644,
+      "capture_seq_monotonic": true,
+      "counts": {
+        "total": 21497,
+        "valid": 21497,
+        "temporal_valid": 21477,
+        "valid_and_temporal_valid": 21477
+      },
+      "per_wave_total": {
+        "1": 440,
+        "2": 546,
+        "3": 640,
+        "4": 751,
+        "5": 846,
+        "6": 940,
+        "7": 1041,
+        "8": 1145,
+        "9": 1246,
+        "10": 1246,
+        "11": 1246,
+        "12": 1245,
+        "13": 1240,
+        "14": 1241,
+        "15": 1251,
+        "16": 1245,
+        "17": 1246,
+        "18": 1240,
+        "19": 1246,
+        "20": 1456
+      },
+      "per_wave_valid": {
+        "1": 440,
+        "2": 546,
+        "3": 640,
+        "4": 751,
+        "5": 846,
+        "6": 940,
+        "7": 1041,
+        "8": 1145,
+        "9": 1246,
+        "10": 1246,
+        "11": 1246,
+        "12": 1245,
+        "13": 1240,
+        "14": 1241,
+        "15": 1251,
+        "16": 1245,
+        "17": 1246,
+        "18": 1240,
+        "19": 1246,
+        "20": 1456
+      },
+      "overflow": {
+        "enemies": {
+          "overflow_samples": 0,
+          "max_raw": 52,
+          "capacity": 64
+        },
+        "bosses": {
+          "overflow_samples": 0,
+          "max_raw": 1,
+          "capacity": 2
+        },
+        "projectiles": {
+          "overflow_samples": 0,
+          "max_raw": 30,
+          "capacity": 32
+        },
+        "materials": {
+          "overflow_samples": 0,
+          "max_raw": 50,
+          "capacity": 64
+        },
+        "consumables": {
+          "overflow_samples": 0,
+          "max_raw": 8,
+          "capacity": 24
+        },
+        "crates": {
+          "overflow_samples": 0,
+          "max_raw": 2,
+          "capacity": 2
+        },
+        "obstacles": {
+          "overflow_samples": 0,
+          "max_raw": 2,
+          "capacity": 8
+        }
+      },
+      "fault_count": 0,
+      "faults": [],
+      "determinism_spot_check": [
+        {
+          "position": 0,
+          "capture_seq": 1,
+          "digest": "5A930E5D21010D31507CCC4D3A1614AFA6EAAEDBA545080DDB51545C3DA61F88"
+        },
+        {
+          "position": 5000,
+          "capture_seq": 5001,
+          "digest": "B9056DCD3E7C35C728B36E18452FC998AC9CEE1AFF110785CFA043DAC0FA302A"
+        },
+        {
+          "position": 10000,
+          "capture_seq": 10001,
+          "digest": "AF0890219A84176B42A203B28075FEF8DF7A46776AC61ADCB444613105719FA7"
+        },
+        {
+          "position": 15000,
+          "capture_seq": 15001,
+          "digest": "D4787361E4A16E3DFDF6C10F99A42A81DC363EF59A68749DD62427FCEE36A45E"
+        },
+        {
+          "position": 20000,
+          "capture_seq": 20001,
+          "digest": "82BB6D23A51E67259451C6895EC9B87B5E86EFCCABF9EAC5B5972700CEC74250"
+        },
+        {
+          "position": 21496,
+          "capture_seq": 21497,
+          "digest": "6BA497B2D46FF2C4DAB607F26BF5BDCB7F69AB31FFCFA7D9EBB3B38742854FFD"
+        }
+      ],
+      "build_seconds": 17.76,
+      "aux_file": "aux_labels/run_1784875463_98163.npz",
+      "aux_sha256": "F506AD1F284D2F7EF1CB0F7A1517F99C20045290A3BEC52FBD5F4A2AB9F6A6D0",
+      "weights_file": "sample_weights/run_1784875463_98163.npz",
+      "weights_sha256": "5A85FEFC7BF4D97C7C5DF1FE5132DCF7B0436104618074212EA2EE76E1B92355",
+      "corrective_stats": {
+        "rows": 21497,
+        "eligible_rows": 21477,
+        "episodes": 734,
+        "onset_cap_value": 8.778065395095368,
+        "aux": {
+          "horizon_valid_rows": 21297,
+          "aux_damage_base_rate": 0.010706,
+          "aux_margin_mean": 0.715647
+        },
+        "segment_eligible_counts": {
+          "background": 9131,
+          "precursor": 5282,
+          "onset_episode": 1690,
+          "recovery": 5374
+        },
+        "segment_all_counts": {
+          "background": 9151,
+          "precursor": 5282,
+          "onset_episode": 1690,
+          "recovery": 5374
+        },
+        "segment_weight_mean": {
+          "background": 1.0584440231323242,
+          "precursor": 1.2198219299316406,
+          "onset_episode": 1.9062427282333374,
+          "recovery": 0.39964649081230164
+        },
+        "segment_mass_fractions": {
+          "background": 0.45,
+          "precursor": 0.3,
+          "onset_episode": 0.15,
+          "recovery": 0.1
+        },
+        "weight_summary": {
+          "min": 0.39964643120765686,
+          "mean": 1.0,
+          "median": 1.0584437847137451,
+          "p99": 2.4222254753112793,
+          "max": 2.4222254753112793
+        }
+      },
+      "smoke_run": false,
+      "student_control": {
+        "student_control_fraction": 0.998604,
+        "student_ticks": 21467,
+        "fallback_ticks": 30,
+        "clamp_count": 8219,
+        "latency_ms": {
+          "n": 21497,
+          "p50": 15.0,
+          "p99": 18.0,
+          "max": 211.0
+        },
+        "wave_reached": 20,
+        "result": "victory"
+      },
+      "triple_reconciliation": {
+        "connection_act_count": 96059,
+        "student_ticks": 21467,
+        "student_matched": 21467,
+        "student_missing_act": 0,
+        "join_coverage": 1.0,
+        "ok": {
+          "ticks": 13248,
+          "matched": 13248,
+          "max_abs_delta": 0.0,
+          "violations": 0,
+          "tol": 0.0001
+        },
+        "clamped": {
+          "ticks": 8219,
+          "matched": 8219,
+          "max_dir_diff": 1.0450243014270555e-06,
+          "max_mag_err": 7.029237469868832e-07,
+          "violations": 0,
+          "dir_tol": 0.001,
+          "mag_tol": 0.001
+        },
+        "timeout_ticks": 30,
+        "timeout_with_act": 30,
+        "not_connected_ticks": 0,
+        "other_ticks": 0,
+        "referenced_seqs": 21467,
+        "timeout_seqs": 30,
+        "reconciliation_ok": true
+      },
+      "connection": 1
+    },
+    {
+      "run_id": "run_1784876633_43940",
+      "shard_file": "run_1784876633_43940.npz",
+      "shard_sha256": "220D4E152E850E901EB76A206720521642B3CE6F8F3ED4D4118FD104E63ABF70",
+      "shard_bytes": 18365462,
+      "capture_seq_monotonic": true,
+      "counts": {
+        "total": 17158,
+        "valid": 17158,
+        "temporal_valid": 17141,
+        "valid_and_temporal_valid": 17141
+      },
+      "per_wave_total": {
+        "1": 440,
+        "2": 545,
+        "3": 641,
+        "4": 740,
+        "5": 845,
+        "6": 946,
+        "7": 1040,
+        "8": 1146,
+        "9": 1251,
+        "10": 1251,
+        "11": 1241,
+        "12": 1240,
+        "13": 1246,
+        "14": 1245,
+        "15": 1240,
+        "16": 1241,
+        "17": 860
+      },
+      "per_wave_valid": {
+        "1": 440,
+        "2": 545,
+        "3": 641,
+        "4": 740,
+        "5": 845,
+        "6": 946,
+        "7": 1040,
+        "8": 1146,
+        "9": 1251,
+        "10": 1251,
+        "11": 1241,
+        "12": 1240,
+        "13": 1246,
+        "14": 1245,
+        "15": 1240,
+        "16": 1241,
+        "17": 860
+      },
+      "overflow": {
+        "enemies": {
+          "overflow_samples": 0,
+          "max_raw": 46,
+          "capacity": 64
+        },
+        "bosses": {
+          "overflow_samples": 0,
+          "max_raw": 0,
+          "capacity": 2
+        },
+        "projectiles": {
+          "overflow_samples": 0,
+          "max_raw": 25,
+          "capacity": 32
+        },
+        "materials": {
+          "overflow_samples": 0,
+          "max_raw": 50,
+          "capacity": 64
+        },
+        "consumables": {
+          "overflow_samples": 0,
+          "max_raw": 7,
+          "capacity": 24
+        },
+        "crates": {
+          "overflow_samples": 0,
+          "max_raw": 2,
+          "capacity": 2
+        },
+        "obstacles": {
+          "overflow_samples": 0,
+          "max_raw": 3,
+          "capacity": 8
+        }
+      },
+      "fault_count": 0,
+      "faults": [],
+      "determinism_spot_check": [
+        {
+          "position": 0,
+          "capture_seq": 1,
+          "digest": "F2EE642D725AEF154C5A716A7E2EC657D724771F00B5F0EC347B7A1EFCACC237"
+        },
+        {
+          "position": 5000,
+          "capture_seq": 5001,
+          "digest": "54080ABBD7C05C497CB930AF32D97EBDB3D76B9FE17AAD40964F853593874A7F"
+        },
+        {
+          "position": 10000,
+          "capture_seq": 10001,
+          "digest": "C60083A8F4EA62C59243E24299F03CF799CF2BDBB1E74C991E473E94E8131031"
+        },
+        {
+          "position": 15000,
+          "capture_seq": 15001,
+          "digest": "B96526F98A6867CA7F1EF863953A74D8F521F1AFC7EA915D4F9A300F1A946A1B"
+        },
+        {
+          "position": 17157,
+          "capture_seq": 17158,
+          "digest": "4A20037890F1DCDFB9D900655DB52B632026E7387B486B3E9901F0C9F4E80255"
+        }
+      ],
+      "build_seconds": 14.04,
+      "aux_file": "aux_labels/run_1784876633_43940.npz",
+      "aux_sha256": "90CDC9563C6E4FFDC8B719816426821A8FC037AA7FC829AD050ABC2D6F174DCF",
+      "weights_file": "sample_weights/run_1784876633_43940.npz",
+      "weights_sha256": "3CDF8CE564708DF448D621A97DC0A389A18677C6B6E7389217E10C4CE83D8472",
+      "corrective_stats": {
+        "rows": 17158,
+        "eligible_rows": 17141,
+        "episodes": 427,
+        "onset_cap_value": 12.042857142857143,
+        "aux": {
+          "horizon_valid_rows": 16988,
+          "aux_damage_base_rate": 0.007005,
+          "aux_margin_mean": 0.762556
+        },
+        "segment_eligible_counts": {
+          "background": 8249,
+          "precursor": 3486,
+          "onset_episode": 1335,
+          "recovery": 4071
+        },
+        "segment_all_counts": {
+          "background": 8266,
+          "precursor": 3486,
+          "onset_episode": 1335,
+          "recovery": 4071
+        },
+        "segment_weight_mean": {
+          "background": 0.9350767731666565,
+          "precursor": 1.4751290082931519,
+          "onset_episode": 1.9259549379348755,
+          "recovery": 0.42105138301849365
+        },
+        "segment_mass_fractions": {
+          "background": 0.45,
+          "precursor": 0.3,
+          "onset_episode": 0.15,
+          "recovery": 0.1
+        },
+        "weight_summary": {
+          "min": 0.42105135321617126,
+          "mean": 1.0,
+          "median": 0.9350769519805908,
+          "p99": 2.5130348205566406,
+          "max": 2.5130348205566406
+        }
+      },
+      "smoke_run": false,
+      "student_control": {
+        "student_control_fraction": 0.998426,
+        "student_ticks": 17131,
+        "fallback_ticks": 27,
+        "clamp_count": 7756,
+        "latency_ms": {
+          "n": 17158,
+          "p50": 15.0,
+          "p99": 18.0,
+          "max": 197.0
+        },
+        "wave_reached": 17,
+        "result": "defeat"
+      },
+      "triple_reconciliation": {
+        "connection_act_count": 96059,
+        "student_ticks": 17131,
+        "student_matched": 17131,
+        "student_missing_act": 0,
+        "join_coverage": 1.0,
+        "ok": {
+          "ticks": 9375,
+          "matched": 9375,
+          "max_abs_delta": 0.0,
+          "violations": 0,
+          "tol": 0.0001
+        },
+        "clamped": {
+          "ticks": 7756,
+          "matched": 7756,
+          "max_dir_diff": 1.0450015716090277e-06,
+          "max_mag_err": 7.197042589668357e-07,
+          "violations": 0,
+          "dir_tol": 0.001,
+          "mag_tol": 0.001
+        },
+        "timeout_ticks": 27,
+        "timeout_with_act": 27,
+        "not_connected_ticks": 0,
+        "other_ticks": 0,
+        "referenced_seqs": 17131,
+        "timeout_seqs": 27,
+        "reconciliation_ok": true
+      },
+      "connection": 1
+    },
+    {
+      "run_id": "run_1784877573_54783",
+      "shard_file": "run_1784877573_54783.npz",
+      "shard_sha256": "CB9D59F247717364FD8BC3A0C89C4D9FECC2A6888D53464820B28766807CD875",
+      "shard_bytes": 28421432,
+      "capture_seq_monotonic": true,
+      "counts": {
+        "total": 20585,
+        "valid": 20585,
+        "temporal_valid": 20565,
+        "valid_and_temporal_valid": 20565
+      },
+      "per_wave_total": {
+        "1": 440,
+        "2": 540,
+        "3": 651,
+        "4": 746,
+        "5": 851,
+        "6": 940,
+        "7": 1046,
+        "8": 1145,
+        "9": 1257,
+        "10": 1246,
+        "11": 1250,
+        "12": 1251,
+        "13": 1251,
+        "14": 1240,
+        "15": 1246,
+        "16": 1246,
+        "17": 1246,
+        "18": 1251,
+        "19": 1246,
+        "20": 496
+      },
+      "per_wave_valid": {
+        "1": 440,
+        "2": 540,
+        "3": 651,
+        "4": 746,
+        "5": 851,
+        "6": 940,
+        "7": 1046,
+        "8": 1145,
+        "9": 1257,
+        "10": 1246,
+        "11": 1250,
+        "12": 1251,
+        "13": 1251,
+        "14": 1240,
+        "15": 1246,
+        "16": 1246,
+        "17": 1246,
+        "18": 1251,
+        "19": 1246,
+        "20": 496
+      },
+      "overflow": {
+        "enemies": {
+          "overflow_samples": 0,
+          "max_raw": 56,
+          "capacity": 64
+        },
+        "bosses": {
+          "overflow_samples": 0,
+          "max_raw": 1,
+          "capacity": 2
+        },
+        "projectiles": {
+          "overflow_samples": 0,
+          "max_raw": 30,
+          "capacity": 32
+        },
+        "materials": {
+          "overflow_samples": 0,
+          "max_raw": 51,
+          "capacity": 64
+        },
+        "consumables": {
+          "overflow_samples": 0,
+          "max_raw": 10,
+          "capacity": 24
+        },
+        "crates": {
+          "overflow_samples": 211,
+          "max_raw": 3,
+          "capacity": 2
+        },
+        "obstacles": {
+          "overflow_samples": 0,
+          "max_raw": 4,
+          "capacity": 8
+        }
+      },
+      "fault_count": 0,
+      "faults": [],
+      "determinism_spot_check": [
+        {
+          "position": 0,
+          "capture_seq": 1,
+          "digest": "3AE28B3EB34536F01AF1E28F813B7C7B5A4127D317481AFCDA8615E69EA1CA7E"
+        },
+        {
+          "position": 5000,
+          "capture_seq": 5001,
+          "digest": "BF5DB4F73CE068B4E846E560ABC520B5FFE8E0B7E144567972CA17ABD6BA2806"
+        },
+        {
+          "position": 10000,
+          "capture_seq": 10001,
+          "digest": "49262D9DCDDC12B3A9EBDAE189E99326D748CC3CC2D97745ADF6D764C6E54077"
+        },
+        {
+          "position": 15000,
+          "capture_seq": 15001,
+          "digest": "ED65D0C9D7602533CEA7E46F5FC291C9CED6EB550A2DA713F5B42C7946E540FE"
+        },
+        {
+          "position": 20000,
+          "capture_seq": 20001,
+          "digest": "ADC83653B9C48112CEB2A6EEE68DC12E993BDC58E76AADEB405562EDA1C1161C"
+        },
+        {
+          "position": 20584,
+          "capture_seq": 20585,
+          "digest": "03D76C862B0AD070769F7CAEFA472F560EE2FC9004766098ED1E8670BA49C7E9"
+        }
+      ],
+      "build_seconds": 19.94,
+      "aux_file": "aux_labels/run_1784877573_54783.npz",
+      "aux_sha256": "9824E666E928ECF8038292FC7191731113946A5E2DFF0A3555D4D1FCCF47ECA1",
+      "weights_file": "sample_weights/run_1784877573_54783.npz",
+      "weights_sha256": "9A1A5879484F3C8F402FBD1CFBEA7D0CEAA681B9ADF07DB2FA953903DEA1D91B",
+      "corrective_stats": {
+        "rows": 20585,
+        "eligible_rows": 20565,
+        "episodes": 699,
+        "onset_cap_value": 8.82618025751073,
+        "aux": {
+          "horizon_valid_rows": 20385,
+          "aux_damage_base_rate": 0.012264,
+          "aux_margin_mean": 0.694257
+        },
+        "segment_eligible_counts": {
+          "background": 8566,
+          "precursor": 4922,
+          "onset_episode": 2065,
+          "recovery": 5012
+        },
+        "segment_all_counts": {
+          "background": 8586,
+          "precursor": 4922,
+          "onset_episode": 2065,
+          "recovery": 5012
+        },
+        "segment_weight_mean": {
+          "background": 1.080346703529358,
+          "precursor": 1.2534539699554443,
+          "onset_episode": 1.4938257932662964,
+          "recovery": 0.41031524538993835
+        },
+        "segment_mass_fractions": {
+          "background": 0.45,
+          "precursor": 0.3,
+          "onset_episode": 0.15,
+          "recovery": 0.1
+        },
+        "weight_summary": {
+          "min": 0.41031524538993835,
+          "mean": 1.0,
+          "median": 1.080346703529358,
+          "p99": 2.04005765914917,
+          "max": 2.04005765914917
+        }
+      },
+      "smoke_run": false,
+      "student_control": {
+        "student_control_fraction": 0.998105,
+        "student_ticks": 20546,
+        "fallback_ticks": 39,
+        "clamp_count": 8013,
+        "latency_ms": {
+          "n": 20585,
+          "p50": 15.0,
+          "p99": 19.0,
+          "max": 163.0
+        },
+        "wave_reached": 20,
+        "result": "defeat"
+      },
+      "triple_reconciliation": {
+        "connection_act_count": 96059,
+        "student_ticks": 20546,
+        "student_matched": 20546,
+        "student_missing_act": 0,
+        "join_coverage": 1.0,
+        "ok": {
+          "ticks": 12533,
+          "matched": 12533,
+          "max_abs_delta": 0.0,
+          "violations": 0,
+          "tol": 0.0001
+        },
+        "clamped": {
+          "ticks": 8013,
+          "matched": 8013,
+          "max_dir_diff": 9.59376461939776e-07,
+          "max_mag_err": 7.020197536622419e-07,
+          "violations": 0,
+          "dir_tol": 0.001,
+          "mag_tol": 0.001
+        },
+        "timeout_ticks": 39,
+        "timeout_with_act": 39,
+        "not_connected_ticks": 0,
+        "other_ticks": 0,
+        "referenced_seqs": 20546,
+        "timeout_seqs": 39,
+        "reconciliation_ok": true
+      },
+      "connection": 1
+    },
+    {
+      "run_id": "run_1784872256_15901",
+      "shard_file": "run_1784872256_15901.npz",
+      "shard_sha256": "7A05BBE871528EED5CA3345E03C4CF74E18C41074B789BBEAD4562BE5A39501E",
+      "shard_bytes": 26365717,
+      "capture_seq_monotonic": true,
+      "counts": {
+        "total": 20326,
+        "valid": 20326,
+        "temporal_valid": 20305,
+        "valid_and_temporal_valid": 20305
+      },
+      "per_wave_total": {
+        "1": 440,
+        "2": 546,
+        "3": 646,
+        "4": 740,
+        "5": 845,
+        "6": 941,
+        "7": 1050,
+        "8": 1141,
+        "9": 1251,
+        "10": 1240,
+        "11": 1256,
+        "12": 1246,
+        "13": 1240,
+        "14": 1240,
+        "15": 1246,
+        "16": 1240,
+        "17": 1246,
+        "18": 1240,
+        "19": 1246,
+        "20": 286
+      },
+      "per_wave_valid": {
+        "1": 440,
+        "2": 546,
+        "3": 646,
+        "4": 740,
+        "5": 845,
+        "6": 941,
+        "7": 1050,
+        "8": 1141,
+        "9": 1251,
+        "10": 1240,
+        "11": 1256,
+        "12": 1246,
+        "13": 1240,
+        "14": 1240,
+        "15": 1246,
+        "16": 1240,
+        "17": 1246,
+        "18": 1240,
+        "19": 1246,
+        "20": 286
+      },
+      "overflow": {
+        "enemies": {
+          "overflow_samples": 0,
+          "max_raw": 49,
+          "capacity": 64
+        },
+        "bosses": {
+          "overflow_samples": 0,
+          "max_raw": 1,
+          "capacity": 2
+        },
+        "projectiles": {
+          "overflow_samples": 0,
+          "max_raw": 30,
+          "capacity": 32
+        },
+        "materials": {
+          "overflow_samples": 0,
+          "max_raw": 51,
+          "capacity": 64
+        },
+        "consumables": {
+          "overflow_samples": 0,
+          "max_raw": 9,
+          "capacity": 24
+        },
+        "crates": {
+          "overflow_samples": 0,
+          "max_raw": 2,
+          "capacity": 2
+        },
+        "obstacles": {
+          "overflow_samples": 0,
+          "max_raw": 4,
+          "capacity": 8
+        }
+      },
+      "fault_count": 0,
+      "faults": [],
+      "determinism_spot_check": [
+        {
+          "position": 0,
+          "capture_seq": 1,
+          "digest": "2D34E87C19AC802314394261BFBB05278B1F167E442A27AA7CEEA50D1A392298"
+        },
+        {
+          "position": 5000,
+          "capture_seq": 5001,
+          "digest": "DC2276BBAD69635D3B76E36C795B036C1675C6AB4B6815B85AAB1C09A9B9DD96"
+        },
+        {
+          "position": 10000,
+          "capture_seq": 10001,
+          "digest": "4615D8ABC5F51097FD1F5CFB75D78D0B46DE0E4FE48B7088C68205BD1E5DAC59"
+        },
+        {
+          "position": 15000,
+          "capture_seq": 15001,
+          "digest": "0CC15D82C9B6AAF8805FB997A0579EC7F308D0CB5693A148FD0A6054F920629C"
+        },
+        {
+          "position": 20000,
+          "capture_seq": 20001,
+          "digest": "D55948DC440C5739E0B808633F5E15FF13AE4382A0AB084CE58E65A7727DAC1F"
+        },
+        {
+          "position": 20325,
+          "capture_seq": 20326,
+          "digest": "6BB4D8324C42A1FF274776A500CA3DC27F14E4A52C3BCDF06559A7A415980CBA"
+        }
+      ],
+      "build_seconds": 19.27,
+      "aux_file": "aux_labels/run_1784872256_15901.npz",
+      "aux_sha256": "B601F904D2B74DF5F0B81A80B17F0E77588A176560730C790652D1FAA2D43F1A",
+      "weights_file": "sample_weights/run_1784872256_15901.npz",
+      "weights_sha256": "10E93EFAB62ADD3109BD3E38CB818D0CF2E0C22D55729D61831E53849B25635B",
+      "corrective_stats": {
+        "rows": 20326,
+        "eligible_rows": 20305,
+        "episodes": 606,
+        "onset_cap_value": 10.051980198019802,
+        "aux": {
+          "horizon_valid_rows": 20116,
+          "aux_damage_base_rate": 0.007407,
+          "aux_margin_mean": 0.728384
+        },
+        "segment_eligible_counts": {
+          "background": 8765,
+          "precursor": 4710,
+          "onset_episode": 1690,
+          "recovery": 5140
+        },
+        "segment_all_counts": {
+          "background": 8786,
+          "precursor": 4710,
+          "onset_episode": 1690,
+          "recovery": 5140
+        },
+        "segment_weight_mean": {
+          "background": 1.0424702167510986,
+          "precursor": 1.2933120727539062,
+          "onset_episode": 1.802219033241272,
+          "recovery": 0.3950388729572296
+        },
+        "segment_mass_fractions": {
+          "background": 0.45,
+          "precursor": 0.3,
+          "onset_episode": 0.15,
+          "recovery": 0.1
+        },
+        "weight_summary": {
+          "min": 0.395038902759552,
+          "mean": 1.0,
+          "median": 1.042470097541809,
+          "p99": 2.3142104148864746,
+          "max": 2.3142104148864746
+        }
+      },
+      "smoke_run": true,
+      "student_control": {
+        "student_control_fraction": 0.998081,
+        "student_ticks": 20287,
+        "fallback_ticks": 39,
+        "clamp_count": 9389,
+        "latency_ms": {
+          "n": 20326,
+          "p50": 14.0,
+          "p99": 20.0,
+          "max": 280.0
+        },
+        "wave_reached": 20,
+        "result": "defeat"
+      },
+      "triple_reconciliation": {
+        "connection_act_count": 20325,
+        "student_ticks": 20287,
+        "student_matched": 20287,
+        "student_missing_act": 0,
+        "join_coverage": 1.0,
+        "ok": {
+          "ticks": 10898,
+          "matched": 10898,
+          "max_abs_delta": 0.0,
+          "violations": 0,
+          "tol": 0.0001
+        },
+        "clamped": {
+          "ticks": 9389,
+          "matched": 9389,
+          "max_dir_diff": 1.0499211026693267e-06,
+          "max_mag_err": 7.066437501812572e-07,
+          "violations": 0,
+          "dir_tol": 0.001,
+          "mag_tol": 0.001
+        },
+        "timeout_ticks": 38,
+        "timeout_with_act": 38,
+        "not_connected_ticks": 1,
+        "other_ticks": 0,
+        "referenced_seqs": 20287,
+        "timeout_seqs": 38,
+        "reconciliation_ok": true
+      },
+      "connection": 0
+    }
+  ]
+}
