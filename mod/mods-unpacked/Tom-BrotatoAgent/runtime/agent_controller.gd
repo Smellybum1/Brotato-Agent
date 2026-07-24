@@ -49,6 +49,9 @@ const _ADAPTER_SCRIPT = preload("res://mods-unpacked/Tom-BrotatoAgent/adapter/ga
 const _ORCH_SCRIPT = preload("res://mods-unpacked/Tom-BrotatoAgent/orchestrator/run_orchestrator.gd")
 const _TELEM_SCRIPT = preload("res://mods-unpacked/Tom-BrotatoAgent/telemetry/telemetry_writer.gd")
 const _HUD_SCRIPT = preload("res://mods-unpacked/Tom-BrotatoAgent/ui/agent_hud.gd")
+# WP2 M3 student-inference path (loaded always, instantiated only when enabled).
+const _COMBAT_BRIDGE_SCRIPT = preload("res://mods-unpacked/Tom-BrotatoAgent/learned/combat_bridge.gd")
+const _LEARNED_SCRIPT = preload("res://mods-unpacked/Tom-BrotatoAgent/learned/learned_combat_controller.gd")
 var _profiles
 var _shop
 var _field
@@ -56,6 +59,13 @@ var _adapter
 var _orch
 var _telem
 var _hud
+# Student-inference nodes: null (and inert) unless student_enabled is set in
+# agent_config.json. When null the combat path is byte-identical to teacher-only.
+var _bridge = null
+var _learned = null
+var student_enabled: bool = false
+var student_port: int = 51888
+var student_model_sha256: String = ""
 
 # Action throttle (the game UI doesn't react well to back-to-back inputs).
 var _last_shop_action_at: float = 0.0
@@ -97,13 +107,36 @@ func _ready() -> void:
 	_hud = _HUD_SCRIPT.new()
 	add_child(_hud)
 	_load_auto_config()
+	if student_enabled:
+		_bridge = _COMBAT_BRIDGE_SCRIPT.new()
+		_bridge.name = "CombatBridge"
+		add_child(_bridge)
+		_learned = _LEARNED_SCRIPT.new()
+		_learned.name = "LearnedCombat"
+		add_child(_learned)
+		_learned.setup(_bridge, _telem, {
+			"port": student_port,
+			"capture_schema_id": _WP2_CAPTURE_SCHEMA_ID,
+			"capture_schema_hash": _WP2_CAPTURE_SCHEMA_HASH,
+			"control_hz": 20,
+			"expected_model_sha256": student_model_sha256,
+		})
+		ModLoaderLog.info("Student-inference path enabled (port %d)" % student_port, LOG_NAME)
 	_load_batch_stats()
 	_refresh_batch_hud()
 	ModLoaderLog.info("AgentController ready", LOG_NAME)
 
 
+func _student_active() -> bool:
+	# Student mode engages only with the flag on, the agent active, and the
+	# learned controller instantiated. Never engages while active is false.
+	return student_enabled and active and _learned != null
+
+
 func _physics_process(_delta: float) -> void:
 	_check_emergency_stop()
+	if _learned != null:
+		_learned.poll()
 	var scene = get_tree().current_scene
 	var detected = _adapter.detect_phase(scene) if _adapter != null else "BOOT"
 	if _orch != null:
@@ -193,7 +226,19 @@ func _handle_combat(main) -> void:
 	var emit_capture := _combat_tick_counter % _WP2_CAPTURE_DIVISOR == 0
 	if wave >= _CONFIG_SCRIPT.BOSS_FINALE_WAVE:
 		emit_capture = recompute_move
-	if emit_capture:
+	if _student_active():
+		# Prev-action is the resolved applied vector of the finished period
+		# (note §2.4); set it before emit so the payload picks it up. Then send
+		# the fresh teacher vector + payload to the learned controller and apply
+		# its override (held → student → teacher) to current_move_vector.
+		if emit_capture:
+			_wp2_previous_action = _learned.get_resolved_applied_vector()
+			var _student_payload = _emit_wp2_combat_capture(main, state, recompute_move)
+			if _student_payload != null:
+				_learned.on_capture(_student_payload, current_move_vector, wave)
+		if _learned.has_override():
+			current_move_vector = _learned.get_override_vector()
+	elif emit_capture:
 		_emit_wp2_combat_capture(main, state, recompute_move)
 	if _combat_tick_counter % 30 == 0:
 		_record_density_sample(int(state.get("wave", 0)), state.get("enemies", []).size())
@@ -412,12 +457,14 @@ func _collision_radius(node, fallback: float) -> float:
 	return fallback
 
 
-func _emit_wp2_combat_capture(main, state: Dictionary, teacher_action_fresh: bool) -> void:
+func _emit_wp2_combat_capture(main, state: Dictionary, teacher_action_fresh: bool):
+	# Returns the emitted capture payload dict (or null on early-out) so the
+	# student path can forward it over the wire without rebuilding it.
 	if _telem == null or not _telem.has_method("emit_versioned"):
-		return
+		return null
 	var player: Dictionary = state.get("player", {})
 	if player.empty():
-		return
+		return null
 	var now_ms := OS.get_ticks_msec()
 	var player_pos := Vector2(float(player.get("x", 0.0)), float(player.get("y", 0.0)))
 	var measured_velocity := Vector2(float(player.get("vx", 0.0)), float(player.get("vy", 0.0)))
@@ -473,9 +520,14 @@ func _emit_wp2_combat_capture(main, state: Dictionary, teacher_action_fresh: boo
 	payload["player"]["measured_vx"] = measured_velocity.x
 	payload["player"]["measured_vy"] = measured_velocity.y
 	_telem.emit_versioned("combat_capture", payload, _WP2_CAPTURE_SCHEMA_VERSION)
-	_wp2_previous_action = current_move_vector
+	# Flag-off path unchanged: prev-action tracks current_move_vector. In student
+	# mode the learned controller owns prev-action (resolved applied vector), so
+	# skip this overwrite (it is set from get_resolved_applied_vector() at emit).
+	if not _student_active():
+		_wp2_previous_action = current_move_vector
 	_wp2_last_capture_player_pos = player_pos
 	_wp2_last_capture_ts_ms = now_ms
+	return payload
 
 
 func _wave_timer_snapshot(main) -> Dictionary:
@@ -1603,6 +1655,8 @@ func on_manual_override() -> void:
 	_restore_pre_combine_mouse_mode()
 	_manual_override = true
 	active = false
+	if _learned != null:
+		_learned.shutdown()
 	if _telem != null and _run_started:
 		_telem.emit("error", {"kind": "manual_override"})
 	if _hud != null:
@@ -1638,7 +1692,7 @@ func _start_run() -> void:
 		"endless": false,
 		"wave_retry": false,
 		"game_version": "1.1.15.4",
-		"mod_version": "0.2.33-wp2-capture",
+		"mod_version": "0.2.34-wp2-capture",
 		"config_id": "well_rounded_d0_anyranged",
 		"policy_version": policy_version,
 	}
@@ -1846,6 +1900,8 @@ func _check_emergency_stop() -> void:
 			_manual_override = true
 			if _telem != null and _run_started:
 				_telem.emit("error", {"kind": "emergency_stop"})
+			if _learned != null:
+				_learned.shutdown()
 			if _hud != null:
 				_hud.set_status("enabled", "EMERGENCY STOP")
 			ModLoaderLog.info("Emergency stop engaged", LOG_NAME)
@@ -1868,6 +1924,12 @@ func _load_auto_config() -> void:
 		_orch.target_character_id = str(cfg["character"])
 	if cfg.has("danger") and _orch != null:
 		_orch.target_danger = int(cfg["danger"])
+	if cfg.has("student_enabled"):
+		student_enabled = bool(cfg["student_enabled"])
+	if cfg.has("student_port"):
+		student_port = int(cfg["student_port"])
+	if cfg.has("student_model_sha256"):
+		student_model_sha256 = str(cfg["student_model_sha256"])
 
 func _update_hud_phase(detected: String) -> void:
 	if _hud == null:

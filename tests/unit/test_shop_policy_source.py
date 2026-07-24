@@ -129,14 +129,15 @@ def test_wp2_capture_build_versions_the_v122_crossing_tier_policy():
     controller = CONTROLLER.read_text(encoding="utf-8")
     telemetry = TELEMETRY.read_text(encoding="utf-8")
 
-    # v125 (hard reroll gate) bumps policy and the deploy surface together:
-    # mod 0.2.33 across manifest, controller meta, and telemetry default.
-    assert '"version_number": "0.2.33"' in manifest
+    # Teacher policy is still v125; mod 0.2.34 adds the M3 student-inference
+    # path (learned/ bridge, default-off) — deploy surface bumps together:
+    # manifest, controller meta, and telemetry default.
+    assert '"version_number": "0.2.34"' in manifest
     assert "v125 deterministic teacher" in manifest
     assert controller.count("teacher_v1-0.1.125-gun-wp1") == 1
-    assert controller.count("0.2.33-wp2-capture") == 1
+    assert controller.count("0.2.34-wp2-capture") == 1
     assert telemetry.count("teacher_v1-0.1.125-gun-wp1") == 1
-    assert telemetry.count("0.2.33-wp2-capture") == 1
+    assert telemetry.count("0.2.34-wp2-capture") == 1
 
 
 def test_v123_strength_signal_is_plumbed_through_controller_and_field():

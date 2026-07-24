@@ -34,7 +34,7 @@ func begin_run(meta: Dictionary) -> void:
 		"endless": meta.get("endless", false),
 		"wave_retry": meta.get("wave_retry", false),
 		"game_version": meta.get("game_version", ""),
-		"mod_version": meta.get("mod_version", "0.2.33-wp2-capture"),
+		"mod_version": meta.get("mod_version", "0.2.34-wp2-capture"),
 		"config_id": meta.get("config_id", "well_rounded_d0_smg"),
 		"result": "incomplete",
 		"last_wave": 0,

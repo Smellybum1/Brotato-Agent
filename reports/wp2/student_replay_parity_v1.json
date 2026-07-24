@@ -1,0 +1,131 @@
+{
+  "aggregate": {
+    "max_abs_delta": 0.0,
+    "nonfinite_count": 0,
+    "rows_compared": 81790,
+    "rows_selected": 81790,
+    "rows_unmatched": 0,
+    "sidecar_error_count": 0
+  },
+  "environment": {
+    "numpy": "2.5.1",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD",
+    "python": "3.12.5",
+    "torch": "2.13.0+cu126",
+    "torch_num_threads": 1
+  },
+  "gates": {
+    "coverage": {
+      "rows_compared": 81790,
+      "rows_selected": 81790,
+      "rows_unmatched": 0,
+      "status": "PASS"
+    },
+    "finite": {
+      "nonfinite_count": 0,
+      "status": "PASS"
+    },
+    "max_abs_delta": {
+      "status": "PASS",
+      "threshold": 1e-06,
+      "value": 0.0
+    },
+    "no_sidecar_error": {
+      "error_count": 0,
+      "status": "PASS"
+    }
+  },
+  "generated": "2026-07-24 11:42:33",
+  "mode": "full",
+  "overall": "PASS",
+  "registry": "C:\\Codex\\Brotato Agent\\models\\registry\\bc_v1_s1_full.json",
+  "report": "student_replay_parity_v1",
+  "rung": 2,
+  "runs": [
+    {
+      "last_wave": 20,
+      "max_abs_delta": 0.0,
+      "mean_abs_delta": 0.0,
+      "nonfinite_count": 0,
+      "outcome": "victory",
+      "rows_compared": 21775,
+      "rows_selected": 21775,
+      "rows_unmatched": 0,
+      "run_id": "run_1784787688_32406",
+      "sidecar_error_count": 0,
+      "sidecar_errors": [],
+      "unmatched": [],
+      "worst_tick": null
+    },
+    {
+      "last_wave": 17,
+      "max_abs_delta": 0.0,
+      "mean_abs_delta": 0.0,
+      "nonfinite_count": 0,
+      "outcome": "defeat",
+      "rows_compared": 17399,
+      "rows_selected": 17399,
+      "rows_unmatched": 0,
+      "run_id": "run_1784793833_32034",
+      "sidecar_error_count": 0,
+      "sidecar_errors": [],
+      "unmatched": [],
+      "worst_tick": null
+    },
+    {
+      "last_wave": 20,
+      "max_abs_delta": 0.0,
+      "mean_abs_delta": 0.0,
+      "nonfinite_count": 0,
+      "outcome": "defeat",
+      "rows_compared": 20906,
+      "rows_selected": 20906,
+      "rows_unmatched": 0,
+      "run_id": "run_1784799404_80018",
+      "sidecar_error_count": 0,
+      "sidecar_errors": [],
+      "unmatched": [],
+      "worst_tick": null
+    },
+    {
+      "last_wave": 20,
+      "max_abs_delta": 0.0,
+      "mean_abs_delta": 0.0,
+      "nonfinite_count": 0,
+      "outcome": "victory",
+      "rows_compared": 21710,
+      "rows_selected": 21710,
+      "rows_unmatched": 0,
+      "run_id": "run_1784804435_39794",
+      "sidecar_error_count": 0,
+      "sidecar_errors": [],
+      "unmatched": [],
+      "worst_tick": null
+    }
+  ],
+  "runtime_sec": 246.07,
+  "service_identity": {
+    "backend": "torch-cpu",
+    "input_config_sha256": "CF87A0F8D6AB623A99C9FB4A9CB2131677D61F85855DAF0B4F8D0E8CD9505893",
+    "model_sha256": "BE7E82326EC8A424A1EDF33134E65A26E06EDA68DA7F22D37705F3C26D6A9F0F",
+    "normalization_sha256": "FD3C55F62F210A6588B67787323CCE1E64311C57AF6A2FBFB136C86B6D27D166",
+    "observation_schema_hash": "C653D836F3EBC821A51AFC70482D3772FC7B7B927D393A6B9BBADC2718BB9B2A",
+    "registry_run_name": "bc_v1_s1_full",
+    "schema_id": "combat_obs_v1",
+    "source_capture_schema_hash": "95B6444796A21FD44E94113B75BA2097BC381D5F72ED784F9B9A4A99DD46D951"
+  },
+  "sidecar_identity": {
+    "backend": "torch-cpu",
+    "input_config_sha256": "CF87A0F8D6AB623A99C9FB4A9CB2131677D61F85855DAF0B4F8D0E8CD9505893",
+    "model_sha256": "BE7E82326EC8A424A1EDF33134E65A26E06EDA68DA7F22D37705F3C26D6A9F0F",
+    "normalization_sha256": "FD3C55F62F210A6588B67787323CCE1E64311C57AF6A2FBFB136C86B6D27D166",
+    "observation_schema_hash": "C653D836F3EBC821A51AFC70482D3772FC7B7B927D393A6B9BBADC2718BB9B2A",
+    "pid": 19208,
+    "protocol": 1,
+    "registry_run_name": "bc_v1_s1_full",
+    "schema_id": "combat_obs_v1",
+    "type": "hello_ack",
+    "v": 1
+  }
+}
