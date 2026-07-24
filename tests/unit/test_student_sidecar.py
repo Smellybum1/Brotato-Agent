@@ -25,8 +25,10 @@ import pytest
 from trainer.bridge import protocol
 from trainer.bridge.protocol import ConnectionClosed, frame_type, pack_frame, read_frame
 from trainer.bridge.sidecar import (
+    BACKEND_ONNX_CPU,
     LatencyStats,
     ModelService,
+    OnnxModelService,
     ServiceIdentity,
     SidecarConfig,
     SidecarStartupError,
@@ -36,6 +38,7 @@ from trainer.bridge.sidecar import (
 
 ROOT = Path(__file__).resolve().parents[2]
 REGISTRY_PATH = ROOT / "models" / "registry" / "bc_v1_s1_full.json"
+ONNX_REGISTRY_PATH = ROOT / "models" / "registry" / "bc_v1_s1_full_onnx.json"
 
 CAP_HASH = "95B6444796A21FD44E94113B75BA2097BC381D5F72ED784F9B9A4A99DD46D951"
 MODEL_SHA = "BE7E82326EC8A424A1EDF33134E65A26E06EDA68DA7F22D37705F3C26D6A9F0F"
@@ -464,6 +467,95 @@ def test_entry_script_returns_exit_code_2_on_bad_artifacts(tmp_path):
     ckpt.write_bytes(b"nope")
     registry = _write_registry(tmp_path, ckpt, ckpt_sha="B" * 64)
     assert main(["--registry", str(registry)]) == 2
+
+
+# ---------------------------------------------------------------------------
+# OnnxModelService fake-manifest rejection (no ORT / torch load required)
+# ---------------------------------------------------------------------------
+def _write_onnx_manifest(tmp_path, **over):
+    manifest = {
+        "onnx_path": str(Path(tmp_path) / "model.onnx"),
+        "onnx_sha256": "A" * 64,
+        "parent_registry": "bc_v1_s1_full.json",
+        "parent_model_sha256": "B" * 64,
+        "input_names": ["globals"],
+        "output_name": "action",
+    }
+    manifest.update(over)
+    path = Path(tmp_path) / "onnx_registry.json"
+    path.write_text(json.dumps(manifest), encoding="utf-8")
+    return path
+
+
+def test_onnx_service_rejects_missing_required_key(tmp_path):
+    # Drop parent_model_sha256; the loader must refuse before touching ORT.
+    manifest = {
+        "onnx_path": str(Path(tmp_path) / "model.onnx"),
+        "onnx_sha256": "A" * 64,
+        "parent_registry": "bc_v1_s1_full.json",
+    }
+    path = Path(tmp_path) / "onnx_registry.json"
+    path.write_text(json.dumps(manifest), encoding="utf-8")
+    with pytest.raises(SidecarStartupError):
+        OnnxModelService.from_registry(path)
+
+
+def test_onnx_service_rejects_missing_onnx_file(tmp_path):
+    manifest = _write_onnx_manifest(tmp_path)  # onnx_path points at an absent file
+    with pytest.raises(SidecarStartupError):
+        OnnxModelService.from_registry(manifest)
+
+
+def test_onnx_service_rejects_bad_onnx_sha(tmp_path):
+    onnx_file = Path(tmp_path) / "model.onnx"
+    onnx_file.write_bytes(b"not a real onnx graph")  # sha will not match the manifest
+    manifest = _write_onnx_manifest(tmp_path, onnx_sha256="C" * 64)
+    with pytest.raises(SidecarStartupError):
+        OnnxModelService.from_registry(manifest)
+
+
+def test_onnx_service_rejects_unreadable_manifest(tmp_path):
+    path = Path(tmp_path) / "onnx_registry.json"
+    path.write_text("{not valid json", encoding="utf-8")
+    with pytest.raises(SidecarStartupError):
+        OnnxModelService.from_registry(path)
+
+
+@pytest.mark.smoke
+def test_onnx_service_identity_block_real(tmp_path):
+    if not ONNX_REGISTRY_PATH.is_file() or not REGISTRY_PATH.is_file():
+        pytest.skip("onnx or parent registry not present")
+    try:
+        onnx_service = OnnxModelService.from_registry(ONNX_REGISTRY_PATH)
+        torch_service = TorchModelService.from_registry(REGISTRY_PATH)
+    except SidecarStartupError as exc:
+        pytest.skip(f"artifact chain unavailable: {exc}")
+
+    oid = onnx_service.identity
+    tid = torch_service.identity
+    # Backend + model hash differ; the rest of the identity block is shared.
+    assert oid.backend == BACKEND_ONNX_CPU
+    assert oid.model_sha256 != tid.model_sha256  # onnx file hash vs best.pt hash
+    assert oid.schema_id == tid.schema_id
+    assert oid.observation_schema_hash == tid.observation_schema_hash
+    assert oid.normalization_sha256 == tid.normalization_sha256
+    assert oid.source_capture_schema_hash == tid.source_capture_schema_hash
+    assert oid.registry_run_name == tid.registry_run_name
+
+    # hello_ack carries the onnx backend string + onnx model hash.
+    ack = oid.hello_ack(pid=123)
+    assert ack["backend"] == BACKEND_ONNX_CPU
+    assert ack["model_sha256"] == oid.model_sha256
+
+    # A real payload predicts a finite action in [-1, 1]^2 close to torch.
+    payload = _find_real_payload(oid.source_capture_schema_hash)
+    if payload is None:
+        pytest.skip("no matching combat_capture payload accessible")
+    oax, oay, oms = onnx_service.predict(payload)
+    tax, tay, _ = torch_service.predict(payload)
+    assert -1.0 <= oax <= 1.0 and -1.0 <= oay <= 1.0
+    assert oms >= 0.0
+    assert abs(oax - tax) <= 1e-4 and abs(oay - tay) <= 1e-4
 
 
 # ---------------------------------------------------------------------------

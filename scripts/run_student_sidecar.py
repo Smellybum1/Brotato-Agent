@@ -28,6 +28,7 @@ from trainer.bridge.sidecar import (  # noqa: E402
     DEFAULT_IDLE_EXIT_SEC,
     DEFAULT_LOG_PATH,
     DEFAULT_PORT,
+    OnnxModelService,
     SidecarConfig,
     SidecarStartupError,
     StudentSidecar,
@@ -35,6 +36,7 @@ from trainer.bridge.sidecar import (  # noqa: E402
 )
 
 DEFAULT_REGISTRY = REPO_ROOT / "models" / "registry" / "bc_v1_s1_full.json"
+DEFAULT_ONNX_REGISTRY = REPO_ROOT / "models" / "registry" / "bc_v1_s1_full_onnx.json"
 
 
 def _parse_args(argv: list[str] | None) -> argparse.Namespace:
@@ -45,6 +47,17 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         help="registry manifest path (default: models/registry/bc_v1_s1_full.json)",
     )
     parser.add_argument("--checkpoint", choices=("best", "last"), default="best")
+    parser.add_argument(
+        "--backend",
+        choices=("torch", "onnx"),
+        default="torch",
+        help="inference backend (default torch — the qualified live path)",
+    )
+    parser.add_argument(
+        "--onnx-registry",
+        default=str(DEFAULT_ONNX_REGISTRY),
+        help="ONNX registry manifest (used only with --backend onnx)",
+    )
     parser.add_argument("--host", default="127.0.0.1", help="bind host (loopback only)")
     parser.add_argument("--port", type=int, default=DEFAULT_PORT, help=f"bind port (default {DEFAULT_PORT})")
     parser.add_argument(
@@ -64,7 +77,10 @@ def main(argv: list[str] | None = None) -> int:
         return 1
 
     try:
-        service = TorchModelService.from_registry(args.registry, checkpoint=args.checkpoint)
+        if args.backend == "onnx":
+            service = OnnxModelService.from_registry(args.onnx_registry, checkpoint=args.checkpoint)
+        else:
+            service = TorchModelService.from_registry(args.registry, checkpoint=args.checkpoint)
     except SidecarStartupError as exc:
         print(f"startup error: {exc}", file=sys.stderr)
         return 2

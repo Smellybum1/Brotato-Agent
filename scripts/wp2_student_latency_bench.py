@@ -47,10 +47,10 @@ from scripts.wp2_student_replay_parity import (  # noqa: E402
     find_free_port,
     kill_sidecar,
     load_validation_runs,
-    spawn_sidecar,
 )
 
 DEFAULT_REGISTRY = REPO_ROOT / "models" / "registry" / "bc_v1_s1_full.json"
+DEFAULT_ONNX_REGISTRY = REPO_ROOT / "models" / "registry" / "bc_v1_s1_full_onnx.json"
 DEFAULT_SPLIT_CONFIG = REPO_ROOT / "configs" / "wp2" / "dataset_split_v1.yaml"
 DEFAULT_SCHEMA = REPO_ROOT / "configs" / "wp2" / "observation_v1.yaml"
 RUNS_ROOT = Path("C:/Users/moxhe/AppData/Roaming/Brotato/brotato_agent/runs")
@@ -58,6 +58,51 @@ RUNS_ROOT = Path("C:/Users/moxhe/AppData/Roaming/Brotato/brotato_agent/runs")
 REPORT_JSON = REPO_ROOT / "reports" / "wp2" / "student_latency_bench_v1.json"
 REPORT_MD = REPO_ROOT / "reports" / "wp2" / "student_latency_bench_v1.md"
 SIDECAR_LOG = REPO_ROOT / ".tmp" / "latency_sidecar_log.jsonl"
+
+
+def _report_paths(backend: str) -> tuple[Path, Path]:
+    """Backend-aware report paths so the qualified torch report is never overwritten."""
+    if backend == "onnx":
+        return (
+            REPO_ROOT / "reports" / "wp2" / "student_latency_bench_onnx_v1.json",
+            REPO_ROOT / "reports" / "wp2" / "student_latency_bench_onnx_v1.md",
+        )
+    return REPORT_JSON, REPORT_MD
+
+
+def _spawn_sidecar_with_backend(
+    registry: Path,
+    port: int,
+    log_path: Path,
+    *,
+    backend: str,
+    onnx_registry: Path,
+    idle_exit_sec: float = 3600.0,
+):
+    """Spawn ``run_student_sidecar.py`` with an explicit ``--backend`` (torch|onnx).
+
+    A local spawn (rather than the imported torch-only ``spawn_sidecar``) keeps
+    ``wp2_student_replay_parity.py`` unmodified while threading the backend
+    selection through.
+    """
+    import subprocess
+
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+    cmd = [
+        sys.executable,
+        str(REPO_ROOT / "scripts" / "run_student_sidecar.py"),
+        "--registry", str(registry),
+        "--host", "127.0.0.1",
+        "--port", str(port),
+        "--idle-exit-sec", str(idle_exit_sec),
+        "--log-path", str(log_path),
+        "--backend", backend,
+    ]
+    if backend == "onnx":
+        cmd += ["--onnx-registry", str(onnx_registry)]
+    return subprocess.Popen(
+        cmd, cwd=str(REPO_ROOT), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True
+    )
 
 # Bands: name -> inclusive wave range (peak is derived, not wave-gated).
 WAVE_BANDS: dict[str, tuple[int, int]] = {
@@ -318,6 +363,8 @@ def run_benchmark(
     runs_root: Path,
     smoke: bool,
     port: int | None,
+    backend: str = "torch",
+    onnx_registry: Path | None = None,
     log: Any = print,
 ) -> dict[str, Any]:
     import yaml
@@ -343,8 +390,14 @@ def run_benchmark(
         log(f"[bench]   band {name}: {len(payloads)} payloads")
 
     chosen_port = port or find_free_port()
-    log(f"[bench] spawning sidecar on 127.0.0.1:{chosen_port} ...")
-    proc = spawn_sidecar(registry, chosen_port, SIDECAR_LOG)
+    log(f"[bench] spawning sidecar on 127.0.0.1:{chosen_port} (backend={backend}) ...")
+    proc = _spawn_sidecar_with_backend(
+        registry,
+        chosen_port,
+        SIDECAR_LOG,
+        backend=backend,
+        onnx_registry=onnx_registry or DEFAULT_ONNX_REGISTRY,
+    )
     client = SidecarClient(chosen_port)
 
     started = time.perf_counter()
@@ -405,6 +458,7 @@ def run_benchmark(
         "rung": 3,
         "generated": time.strftime("%Y-%m-%d %H:%M:%S"),
         "mode": "smoke" if smoke else "full",
+        "backend": backend,
         "runtime_sec": round(runtime_sec, 2),
         "gate_cadence_hz": GATE_CADENCE_HZ,
         "cadences_hz": list(cadences),
@@ -540,10 +594,12 @@ def _cpu_count() -> int:
 # ---------------------------------------------------------------------------
 # Reports
 # ---------------------------------------------------------------------------
-def write_reports(payload: dict[str, Any]) -> None:
-    REPORT_JSON.parent.mkdir(parents=True, exist_ok=True)
-    REPORT_JSON.write_text(json.dumps(payload, indent=2, sort_keys=True), encoding="utf-8")
-    REPORT_MD.write_text(_render_md(payload), encoding="utf-8")
+def write_reports(payload: dict[str, Any]) -> tuple[Path, Path]:
+    report_json, report_md = _report_paths(payload.get("backend", "torch"))
+    report_json.parent.mkdir(parents=True, exist_ok=True)
+    report_json.write_text(json.dumps(payload, indent=2, sort_keys=True), encoding="utf-8")
+    report_md.write_text(_render_md(payload), encoding="utf-8")
+    return report_json, report_md
 
 
 def _render_md(p: dict[str, Any]) -> str:
@@ -551,8 +607,8 @@ def _render_md(p: dict[str, Any]) -> str:
     lines.append("# Student latency benchmark — rung 3")
     lines.append("")
     lines.append(
-        f"Generated {p['generated']} · mode **{p['mode']}** · runtime {p['runtime_sec']}s · "
-        f"gate cadence {p['gate_cadence_hz']} Hz · overall **{p['overall']}**."
+        f"Generated {p['generated']} · mode **{p['mode']}** · backend **{p.get('backend', 'torch')}** · "
+        f"runtime {p['runtime_sec']}s · gate cadence {p['gate_cadence_hz']} Hz · overall **{p['overall']}**."
     )
     lines.append("")
     lines.append(f"> {p['client_note']}")
@@ -646,6 +702,13 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--runs-root", default=str(RUNS_ROOT))
     parser.add_argument("--port", type=int, default=None, help="sidecar port (default: OS-assigned free port)")
     parser.add_argument("--smoke", action="store_true", help="quick subset: 20 Hz only, ~150/band, 2 runs")
+    parser.add_argument(
+        "--backend",
+        choices=("torch", "onnx"),
+        default="torch",
+        help="sidecar inference backend (default torch); onnx writes a separate report",
+    )
+    parser.add_argument("--onnx-registry", default=str(DEFAULT_ONNX_REGISTRY))
     return parser.parse_args(argv)
 
 
@@ -659,6 +722,8 @@ def main(argv: list[str] | None = None) -> int:
             runs_root=Path(args.runs_root),
             smoke=args.smoke,
             port=args.port,
+            backend=args.backend,
+            onnx_registry=Path(args.onnx_registry),
         )
     except ParitySetupError as exc:
         print(f"setup error: {exc}", file=sys.stderr)
@@ -667,14 +732,14 @@ def main(argv: list[str] | None = None) -> int:
         print(f"unexpected setup error: {exc}", file=sys.stderr)
         return 2
 
-    write_reports(payload)
+    report_json, report_md = write_reports(payload)
     g = payload["gates"]
-    print(f"[bench] overall={payload['overall']} "
+    print(f"[bench] backend={payload.get('backend')} overall={payload['overall']} "
           f"model_p99={g['model_p99'].get('value_ms', float('nan')):.2f}ms "
           f"e2e_p99={g['e2e_p99'].get('value_ms', float('nan')):.2f}ms "
           f"within50={g['within_50ms'].get('value_fraction', 0.0) * 100:.3f}% "
           f"maxconsec={g['consec_miss'].get('value', '-')}")
-    print(f"[bench] reports: {REPORT_JSON} | {REPORT_MD}")
+    print(f"[bench] reports: {report_json} | {report_md}")
     return 0 if payload["overall"] == "PASS" else 1
 
 

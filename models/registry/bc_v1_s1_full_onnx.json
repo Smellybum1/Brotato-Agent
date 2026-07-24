@@ -1,0 +1,37 @@
+{
+  "export_timestamp": "2026-07-24T13:03:07",
+  "exporter": "classic",
+  "git_commit_at_export": "541e8ff4153521297fa5db39951ba2777922f350",
+  "input_names": [
+    "globals",
+    "ent_enemies",
+    "mask_enemies",
+    "ent_bosses",
+    "mask_bosses",
+    "ent_projectiles",
+    "mask_projectiles",
+    "ent_materials",
+    "mask_materials",
+    "ent_consumables",
+    "mask_consumables",
+    "ent_crates",
+    "mask_crates",
+    "ent_obstacles",
+    "mask_obstacles"
+  ],
+  "onnx_path": "C:\\Codex\\Brotato Agent\\models\\bc_v1\\bc_v1_s1_full\\bc_v1_s1_full.onnx",
+  "onnx_sha256": "1DF7E70A1483D152B3AE0ABFD63F2CD17C1F270B4766D87E34D95C1AC0673940",
+  "onnx_version": "1.22.0",
+  "onnxruntime_version": "1.27.0",
+  "opset": 18,
+  "output_name": "action",
+  "parent_model_sha256": "BE7E82326EC8A424A1EDF33134E65A26E06EDA68DA7F22D37705F3C26D6A9F0F",
+  "parent_registry": "bc_v1_s1_full.json",
+  "parity": {
+    "max_abs_diff": 1.1324882507324219e-06,
+    "n_fixtures": 10000,
+    "report": "reports/wp2/onnx_parity_v1.json",
+    "verdict": "PASS"
+  },
+  "torch_version": "2.13.0+cu126"
+}

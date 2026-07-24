@@ -1,0 +1,206 @@
+{
+  "backend": "onnx",
+  "bands": {
+    "boss": {
+      "20": {
+        "deadline_ms": 40.0,
+        "e2e_ms": {
+          "max": 2.6068999995914055,
+          "mean": 1.6098999999667285,
+          "p50": 1.5466999993805075,
+          "p95": 2.1858749993043594,
+          "p99": 2.4064129999896977
+        },
+        "errors": 0,
+        "hz": 20,
+        "max_consecutive_misses": 0,
+        "miss_count": 0,
+        "model_ms": {
+          "max": 1.261999999769614,
+          "mean": 0.6949920000139779,
+          "p50": 0.6538500001624925,
+          "p95": 0.9402850001606565,
+          "p99": 1.0695930004658294
+        },
+        "n": 150,
+        "within_50ms": 150,
+        "within_50ms_fraction": 1.0
+      }
+    },
+    "early": {
+      "20": {
+        "deadline_ms": 40.0,
+        "e2e_ms": {
+          "max": 2.585100000942475,
+          "mean": 1.599763333312391,
+          "p50": 1.5489500010517077,
+          "p95": 2.146675000312825,
+          "p99": 2.4520230002235612
+        },
+        "errors": 0,
+        "hz": 20,
+        "max_consecutive_misses": 0,
+        "miss_count": 0,
+        "model_ms": {
+          "max": 1.4172999999573221,
+          "mean": 0.723769999955645,
+          "p50": 0.6774499988750904,
+          "p95": 1.0015650002060283,
+          "p99": 1.294088999602536
+        },
+        "n": 150,
+        "within_50ms": 150,
+        "within_50ms_fraction": 1.0
+      }
+    },
+    "late": {
+      "20": {
+        "deadline_ms": 40.0,
+        "e2e_ms": {
+          "max": 2.8823000011470867,
+          "mean": 1.7435206666899223,
+          "p50": 1.6732499998397543,
+          "p95": 2.1855750009308395,
+          "p99": 2.6628739994885082
+        },
+        "errors": 0,
+        "hz": 20,
+        "max_consecutive_misses": 0,
+        "miss_count": 0,
+        "model_ms": {
+          "max": 1.1232999986532377,
+          "mean": 0.6972933332751078,
+          "p50": 0.6739500004186993,
+          "p95": 0.9167999996861905,
+          "p99": 1.0169320007844362
+        },
+        "n": 150,
+        "within_50ms": 150,
+        "within_50ms_fraction": 1.0
+      }
+    },
+    "peak": {
+      "20": {
+        "deadline_ms": 40.0,
+        "e2e_ms": {
+          "max": 2.5110000005952315,
+          "mean": 1.6679757576860015,
+          "p50": 1.650699998208438,
+          "p95": 2.3551400008727796,
+          "p99": 2.480920000889455
+        },
+        "errors": 0,
+        "hz": 20,
+        "max_consecutive_misses": 0,
+        "miss_count": 0,
+        "model_ms": {
+          "max": 1.029999999445863,
+          "mean": 0.642396969576084,
+          "p50": 0.632499999483116,
+          "p95": 0.9774000001925742,
+          "p99": 1.0159519995795563
+        },
+        "n": 33,
+        "within_50ms": 33,
+        "within_50ms_fraction": 1.0
+      }
+    }
+  },
+  "cadences_hz": [
+    20
+  ],
+  "client_note": "Latency is Python-client -> loopback -> sidecar. Godot-side JSON serialization is NOT included here; it is measured live via the mod's student_tick latency_ms telemetry during the isolated smoke.",
+  "corpus": {
+    "counts": {
+      "boss": 150,
+      "early": 150,
+      "late": 150,
+      "peak": 33
+    },
+    "peak_entity_load_max": 12,
+    "peak_entity_load_min": 9,
+    "per_band_contributing_runs": {
+      "boss": 1,
+      "early": 2,
+      "late": 2
+    },
+    "per_band_intake_cap": {
+      "boss": 226,
+      "early": 113,
+      "late": 113
+    },
+    "per_band_target": 150,
+    "per_run_band_counts": {
+      "run_1784787688_32406": {
+        "boss": 226,
+        "early": 113,
+        "late": 113
+      },
+      "run_1784793833_32034": {
+        "boss": 0,
+        "early": 113,
+        "late": 113
+      }
+    }
+  },
+  "environment": {
+    "numpy": "2.5.1",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.5",
+    "torch": "2.13.0+cu126"
+  },
+  "gate_cadence_hz": 20,
+  "gates": {
+    "consec_miss": {
+      "status": "PASS",
+      "threshold": 2,
+      "value": 0,
+      "worst_band": "early"
+    },
+    "e2e_p99": {
+      "status": "PASS",
+      "threshold_ms": 25.0,
+      "value_ms": 2.6628739994885082,
+      "worst_band": "late"
+    },
+    "model_p99": {
+      "status": "PASS",
+      "threshold_ms": 10.0,
+      "value_ms": 1.294088999602536,
+      "worst_band": "early"
+    },
+    "within_50ms": {
+      "status": "PASS",
+      "threshold_fraction": 0.999,
+      "value_fraction": 1.0,
+      "worst_band": "early"
+    }
+  },
+  "generated": "2026-07-24 13:11:35",
+  "machine": {
+    "cpu": "AMD Ryzen 7 9800X3D 8-Core Processor",
+    "logical_cores": 16,
+    "platform": "Windows-11-10.0.26200-SP0",
+    "plugged_in": "unknown"
+  },
+  "mode": "smoke",
+  "overall": "PASS",
+  "registry": "C:\\Codex\\Brotato Agent\\models\\registry\\bc_v1_s1_full.json",
+  "report": "student_latency_bench_v1",
+  "rung": 3,
+  "runtime_sec": 26.82,
+  "sidecar_identity": {
+    "backend": "onnxruntime-cpu",
+    "input_config_sha256": "CF87A0F8D6AB623A99C9FB4A9CB2131677D61F85855DAF0B4F8D0E8CD9505893",
+    "model_sha256": "1DF7E70A1483D152B3AE0ABFD63F2CD17C1F270B4766D87E34D95C1AC0673940",
+    "normalization_sha256": "FD3C55F62F210A6588B67787323CCE1E64311C57AF6A2FBFB136C86B6D27D166",
+    "observation_schema_hash": "C653D836F3EBC821A51AFC70482D3772FC7B7B927D393A6B9BBADC2718BB9B2A",
+    "pid": 11780,
+    "protocol": 1,
+    "registry_run_name": "bc_v1_s1_full",
+    "schema_id": "combat_obs_v1",
+    "type": "hello_ack",
+    "v": 1
+  },
+  "warmup_requests_discarded": 55
+}

@@ -30,7 +30,7 @@ import socket
 import threading
 import time
 from collections import deque
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Any, Mapping
 
@@ -43,6 +43,8 @@ from trainer.bridge.protocol import (
 )
 
 LOOPBACK_HOSTS = frozenset({"127.0.0.1"})
+#: Backend identity string for the ONNX Runtime CPU serving path (packet §14.2).
+BACKEND_ONNX_CPU = "onnxruntime-cpu"
 DEFAULT_PORT = 51888
 DEFAULT_IDLE_EXIT_SEC = 120.0
 DEFAULT_LOG_PATH = Path(".tmp") / "student_sidecar_log.jsonl"
@@ -116,6 +118,48 @@ class ModelService(abc.ABC):
     @abc.abstractmethod
     def predict(self, payload: Mapping[str, Any]) -> tuple[float, float, float]:
         """Return ``(ax, ay, model_ms)`` for one raw capture payload."""
+
+
+# ---------------------------------------------------------------------------
+# Shared preprocessing (encode -> kept-40 -> standardize -> entity/mask arrays)
+# ---------------------------------------------------------------------------
+def _encode_inputs(
+    payload: Mapping[str, Any],
+    schema: dict[str, Any],
+    kept_indices: Any,
+    mean: Any,
+    std: Any,
+    group_names: tuple[str, ...],
+) -> tuple[Any, dict[str, Any], dict[str, Any]]:
+    """Encode one raw capture payload into model-ready numpy inputs.
+
+    Reproduces the ``bc_offline`` inference preprocessing exactly and is the
+    SINGLE source of that math for both serving backends:
+
+        encode_capture -> 48 globals -> select kept-40 by index -> (x-mean)/std
+        (globals only) -> per-group entity ``[cap, 15]`` + mask ``[cap]`` f32.
+
+    Returns ``(standardized_globals [40] f32, entities{name->[cap,15] f32},
+    masks{name->[cap] f32})``. Entities/masks pass through unnormalized — they
+    are bounded by construction and standardizing padded rows would break their
+    provable inertness.
+    """
+    import numpy as np
+
+    from trainer.observation import encoder_v1
+
+    obs = encoder_v1.encode_capture(dict(payload), schema)
+
+    globals48 = np.asarray(obs.global_features, dtype=np.float32)
+    globals40 = globals48[kept_indices]
+    standardized = ((globals40 - mean) / std).astype(np.float32)
+    entities = {
+        name: np.asarray(obs.entities[name], dtype=np.float32) for name in group_names
+    }
+    masks = {
+        name: np.asarray(obs.masks[name], dtype=np.float32) for name in group_names
+    }
+    return standardized, entities, masks
 
 
 # ---------------------------------------------------------------------------
@@ -243,24 +287,19 @@ class TorchModelService(ModelService):
         )
 
     def predict(self, payload: Mapping[str, Any]) -> tuple[float, float, float]:
-        import numpy as np
         import torch
 
-        from trainer.observation import encoder_v1
-
-        obs = encoder_v1.encode_capture(dict(payload), self._schema)
-
-        globals48 = np.asarray(obs.global_features, dtype=np.float32)
-        globals40 = globals48[self._kept_indices]
-        standardized = ((globals40 - self._mean) / self._std).astype(np.float32)
+        standardized, ent_arrays, mask_arrays = _encode_inputs(
+            payload, self._schema, self._kept_indices, self._mean, self._std, self._group_names
+        )
 
         globals_t = torch.from_numpy(standardized).unsqueeze(0)  # [1, 40]
         entities = {
-            name: torch.tensor([obs.entities[name]], dtype=torch.float32)
+            name: torch.from_numpy(ent_arrays[name]).unsqueeze(0)
             for name in self._group_names
         }
         masks = {
-            name: torch.tensor([obs.masks[name]], dtype=torch.float32)
+            name: torch.from_numpy(mask_arrays[name]).unsqueeze(0)
             for name in self._group_names
         }
 
@@ -269,6 +308,157 @@ class TorchModelService(ModelService):
             out = self._model(globals_t, entities, masks)
         model_ms = (time.perf_counter() - start) * 1000.0
         return float(out[0, 0].item()), float(out[0, 1].item()), model_ms
+
+
+# ---------------------------------------------------------------------------
+# ONNX Runtime CPU service (verified onnx manifest + parent linkage)
+# ---------------------------------------------------------------------------
+class OnnxModelService(ModelService):
+    """Serves the exported ONNX graph via ONNX Runtime (CPU), sharing the exact
+    ``_encode_inputs`` preprocessing with :class:`TorchModelService`.
+
+    The parent torch artifact chain is loaded + verified to obtain the identical
+    schema / kept-index / normalization / group-order preprocessing and to prove
+    the ONNX manifest's ``parent_model_sha256`` matches the parent registry's
+    verified ``best.pt`` sha256 (the ONNX graph was exported from that exact
+    checkpoint). ``identity.model_sha256`` is the ONNX file hash and the backend
+    string is ``onnxruntime-cpu``.
+    """
+
+    def __init__(
+        self,
+        *,
+        session: Any,
+        schema: dict[str, Any],
+        kept_indices: Any,
+        mean: Any,
+        std: Any,
+        group_names: tuple[str, ...],
+        input_names: list[str],
+        output_name: str,
+        identity: ServiceIdentity,
+    ) -> None:
+        self._session = session
+        self._schema = schema
+        self._kept_indices = kept_indices
+        self._mean = mean
+        self._std = std
+        self._group_names = group_names
+        self._input_names = input_names
+        self._output_name = output_name
+        self._identity = identity
+
+    @property
+    def identity(self) -> ServiceIdentity:
+        return self._identity
+
+    @classmethod
+    def from_registry(
+        cls, onnx_registry_path: str | Path, *, checkpoint: str = "best"
+    ) -> "OnnxModelService":
+        """Load + verify the ONNX manifest, parent linkage, and build an ORT session."""
+        import numpy as np
+        import onnxruntime as ort
+
+        from trainer.export.onnx_export import input_names_for
+        from trainer.imitation.bc_training import _sha256_file
+
+        onnx_registry_path = Path(onnx_registry_path)
+        try:
+            manifest = json.loads(onnx_registry_path.read_text(encoding="utf-8"))
+        except (OSError, ValueError) as exc:
+            raise SidecarStartupError(f"onnx registry unreadable: {exc}") from exc
+        if not isinstance(manifest, dict):
+            raise SidecarStartupError("onnx registry is not a JSON object")
+
+        for key in ("onnx_path", "onnx_sha256", "parent_registry", "parent_model_sha256"):
+            if key not in manifest:
+                raise SidecarStartupError(f"onnx registry missing required key {key!r}")
+
+        onnx_path = Path(manifest["onnx_path"])
+        if not onnx_path.is_file():
+            raise SidecarStartupError(f"onnx file missing: {onnx_path}")
+        onnx_sha = _sha256_file(onnx_path)
+        if onnx_sha != str(manifest["onnx_sha256"]).upper():
+            raise SidecarStartupError(
+                f"onnx sha256 mismatch: file {onnx_sha} != manifest {manifest['onnx_sha256']}"
+            )
+
+        # Parent linkage: load + verify the parent torch chain (verifies best.pt
+        # sha256) and require the manifest's parent_model_sha256 to equal it.
+        parent_registry = Path(manifest["parent_registry"])
+        if not parent_registry.is_absolute() and not parent_registry.is_file():
+            parent_registry = onnx_registry_path.parent / manifest["parent_registry"]
+        parent = TorchModelService.from_registry(parent_registry, checkpoint=checkpoint)
+        parent_sha = parent.identity.model_sha256
+        if str(manifest["parent_model_sha256"]).upper() != str(parent_sha).upper():
+            raise SidecarStartupError(
+                f"onnx parent_model_sha256 {manifest['parent_model_sha256']} != "
+                f"parent registry best.pt sha {parent_sha}"
+            )
+
+        group_names = parent._group_names
+        expected_inputs = input_names_for(group_names)
+        input_names = [str(n) for n in manifest.get("input_names", expected_inputs)]
+        output_name = str(manifest.get("output_name", "action"))
+
+        try:
+            so = ort.SessionOptions()
+            so.intra_op_num_threads = 1
+            so.inter_op_num_threads = 1
+            session = ort.InferenceSession(
+                str(onnx_path), sess_options=so, providers=["CPUExecutionProvider"]
+            )
+        except Exception as exc:
+            raise SidecarStartupError(f"onnxruntime could not load {onnx_path}: {exc}") from exc
+
+        session_inputs = [i.name for i in session.get_inputs()]
+        if session_inputs != input_names or input_names != expected_inputs:
+            raise SidecarStartupError(
+                f"onnx input names {session_inputs} disagree with manifest {input_names} "
+                f"or expected {expected_inputs}"
+            )
+        session_outputs = [o.name for o in session.get_outputs()]
+        if session_outputs != [output_name]:
+            raise SidecarStartupError(
+                f"onnx output names {session_outputs} != expected [{output_name!r}]"
+            )
+
+        identity = replace(parent.identity, model_sha256=onnx_sha, backend=BACKEND_ONNX_CPU)
+        return cls(
+            session=session,
+            schema=parent._schema,
+            kept_indices=np.asarray(parent._kept_indices, dtype=np.intp),
+            mean=np.asarray(parent._mean, dtype=np.float32),
+            std=np.asarray(parent._std, dtype=np.float32),
+            group_names=group_names,
+            input_names=input_names,
+            output_name=output_name,
+            identity=identity,
+        )
+
+    def predict(self, payload: Mapping[str, Any]) -> tuple[float, float, float]:
+        import numpy as np
+
+        standardized, ent_arrays, mask_arrays = _encode_inputs(
+            payload, self._schema, self._kept_indices, self._mean, self._std, self._group_names
+        )
+
+        ort_inputs: dict[str, Any] = {
+            "globals": np.ascontiguousarray(standardized[None, :], dtype=np.float32)
+        }
+        for name in self._group_names:
+            ort_inputs[f"ent_{name}"] = np.ascontiguousarray(
+                ent_arrays[name][None, ...], dtype=np.float32
+            )
+            ort_inputs[f"mask_{name}"] = np.ascontiguousarray(
+                mask_arrays[name][None, ...], dtype=np.float32
+            )
+
+        start = time.perf_counter()
+        out = self._session.run([self._output_name], ort_inputs)[0]  # [1, 2]
+        model_ms = (time.perf_counter() - start) * 1000.0
+        return float(out[0, 0]), float(out[0, 1]), model_ms
 
 
 # ---------------------------------------------------------------------------
