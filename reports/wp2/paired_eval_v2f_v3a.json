@@ -1,0 +1,1813 @@
+{
+  "stage": "M4 paired evaluation - final analysis",
+  "arms": {
+    "v2f": "bc_v2_f_s1",
+    "v3a": "bc_v3_a_s1"
+  },
+  "verdict": {
+    "predeclared_rule": "Promote bc_v3_a iff median(last_wave) strictly exceeds bc_v2_f's, OR equals it with at least as many victories. Otherwise retain bc_v2_f as the validated live policy; bc_v3_a's runs still enter the round-3 corrective pool. No re-rolls, no post-hoc metric substitution. n=6 is small; the rule is deliberately simple ordering, not significance claims. Primary metric: median last_wave (victory ordered as 21). Secondary: victory count.",
+    "v2f": {
+      "waves_ordered_victory_as_21": [
+        16,
+        17,
+        20,
+        20,
+        20,
+        21
+      ],
+      "raw_last_waves": [
+        20,
+        16,
+        20,
+        20,
+        17,
+        20
+      ],
+      "median": 20.0,
+      "victories": 1,
+      "results": [
+        "defeat",
+        "defeat",
+        "defeat",
+        "victory",
+        "defeat",
+        "defeat"
+      ]
+    },
+    "v3a": {
+      "waves_ordered_victory_as_21": [
+        10,
+        11,
+        13,
+        20,
+        20,
+        20
+      ],
+      "raw_last_waves": [
+        13,
+        20,
+        10,
+        11,
+        20,
+        20
+      ],
+      "median": 16.5,
+      "victories": 0,
+      "results": [
+        "defeat",
+        "defeat",
+        "defeat",
+        "defeat",
+        "defeat",
+        "defeat"
+      ]
+    },
+    "verdict": "RETAIN bc_v2_f",
+    "promote_bc_v3_a": false,
+    "rationale": "v3a median 16.5 vs v2f median 20.0; v3a victories 0 vs v2f 1. v3a neither exceeds nor ties-with-at-least-as-many-victories -> rule retains bc_v2_f."
+  },
+  "infra": {
+    "v2f": [
+      {
+        "run_id": "run_1784872256_15901",
+        "smoke_run": true,
+        "sidecar": "r2:0",
+        "student_control_fraction": 0.998081,
+        "control_gate_ok": true,
+        "student_ticks": 20287,
+        "fallback_ticks": 39,
+        "clamp_count": 9389,
+        "latency_ms": {
+          "n": 20326,
+          "p50": 14.0,
+          "p99": 20.0,
+          "max": 280.0
+        },
+        "errors": 0,
+        "hangs": 0,
+        "illegal_actions": 0,
+        "schema_mismatches": 0,
+        "missing_teacher_action": 0,
+        "faults_ok": true,
+        "join_coverage": 1.0,
+        "reconciliation_ok": true,
+        "last_wave": 20,
+        "result": "defeat",
+        "infra_pass": true
+      },
+      {
+        "run_id": "run_1784873462_1600",
+        "smoke_run": false,
+        "sidecar": "r2:1",
+        "student_control_fraction": 0.998248,
+        "control_gate_ok": true,
+        "student_ticks": 15954,
+        "fallback_ticks": 28,
+        "clamp_count": 6307,
+        "latency_ms": {
+          "n": 15982,
+          "p50": 15.0,
+          "p99": 19.0,
+          "max": 239.0
+        },
+        "errors": 0,
+        "hangs": 0,
+        "illegal_actions": 0,
+        "schema_mismatches": 0,
+        "missing_teacher_action": 0,
+        "faults_ok": true,
+        "join_coverage": 1.0,
+        "reconciliation_ok": true,
+        "last_wave": 16,
+        "result": "defeat",
+        "infra_pass": true
+      },
+      {
+        "run_id": "run_1784874327_52508",
+        "smoke_run": false,
+        "sidecar": "r2:1",
+        "student_control_fraction": 0.998032,
+        "control_gate_ok": true,
+        "student_ticks": 20797,
+        "fallback_ticks": 41,
+        "clamp_count": 8524,
+        "latency_ms": {
+          "n": 20838,
+          "p50": 15.0,
+          "p99": 17.0,
+          "max": 179.0
+        },
+        "errors": 0,
+        "hangs": 0,
+        "illegal_actions": 0,
+        "schema_mismatches": 0,
+        "missing_teacher_action": 0,
+        "faults_ok": true,
+        "join_coverage": 1.0,
+        "reconciliation_ok": true,
+        "last_wave": 20,
+        "result": "defeat",
+        "infra_pass": true
+      },
+      {
+        "run_id": "run_1784875463_98163",
+        "smoke_run": false,
+        "sidecar": "r2:1",
+        "student_control_fraction": 0.998604,
+        "control_gate_ok": true,
+        "student_ticks": 21467,
+        "fallback_ticks": 30,
+        "clamp_count": 8219,
+        "latency_ms": {
+          "n": 21497,
+          "p50": 15.0,
+          "p99": 18.0,
+          "max": 211.0
+        },
+        "errors": 0,
+        "hangs": 0,
+        "illegal_actions": 0,
+        "schema_mismatches": 0,
+        "missing_teacher_action": 0,
+        "faults_ok": true,
+        "join_coverage": 1.0,
+        "reconciliation_ok": true,
+        "last_wave": 20,
+        "result": "victory",
+        "infra_pass": true
+      },
+      {
+        "run_id": "run_1784876633_43940",
+        "smoke_run": false,
+        "sidecar": "r2:1",
+        "student_control_fraction": 0.998426,
+        "control_gate_ok": true,
+        "student_ticks": 17131,
+        "fallback_ticks": 27,
+        "clamp_count": 7756,
+        "latency_ms": {
+          "n": 17158,
+          "p50": 15.0,
+          "p99": 18.0,
+          "max": 197.0
+        },
+        "errors": 0,
+        "hangs": 0,
+        "illegal_actions": 0,
+        "schema_mismatches": 0,
+        "missing_teacher_action": 0,
+        "faults_ok": true,
+        "join_coverage": 1.0,
+        "reconciliation_ok": true,
+        "last_wave": 17,
+        "result": "defeat",
+        "infra_pass": true
+      },
+      {
+        "run_id": "run_1784877573_54783",
+        "smoke_run": false,
+        "sidecar": "r2:1",
+        "student_control_fraction": 0.998105,
+        "control_gate_ok": true,
+        "student_ticks": 20546,
+        "fallback_ticks": 39,
+        "clamp_count": 8013,
+        "latency_ms": {
+          "n": 20585,
+          "p50": 15.0,
+          "p99": 19.0,
+          "max": 163.0
+        },
+        "errors": 0,
+        "hangs": 0,
+        "illegal_actions": 0,
+        "schema_mismatches": 0,
+        "missing_teacher_action": 0,
+        "faults_ok": true,
+        "join_coverage": 1.0,
+        "reconciliation_ok": true,
+        "last_wave": 20,
+        "result": "defeat",
+        "infra_pass": true
+      }
+    ],
+    "v3a": [
+      {
+        "run_id": "run_1784880640_76087",
+        "smoke_run": true,
+        "sidecar": "r3:0",
+        "student_control_fraction": 0.998067,
+        "control_gate_ok": true,
+        "student_ticks": 12392,
+        "fallback_ticks": 24,
+        "clamp_count": 3923,
+        "latency_ms": {
+          "n": 12416,
+          "p50": 15.0,
+          "p99": 17.0,
+          "max": 155.0
+        },
+        "errors": 0,
+        "hangs": 0,
+        "illegal_actions": 0,
+        "schema_mismatches": 0,
+        "missing_teacher_action": 0,
+        "faults_ok": true,
+        "join_coverage": 1.0,
+        "reconciliation_ok": true,
+        "last_wave": 13,
+        "result": "defeat",
+        "infra_pass": true
+      },
+      {
+        "run_id": "run_1784882794_20877",
+        "smoke_run": false,
+        "sidecar": "paired:0",
+        "student_control_fraction": 0.997923,
+        "control_gate_ok": true,
+        "student_ticks": 20659,
+        "fallback_ticks": 43,
+        "clamp_count": 6571,
+        "latency_ms": {
+          "n": 20702,
+          "p50": 15.0,
+          "p99": 19.0,
+          "max": 204.0
+        },
+        "errors": 0,
+        "hangs": 0,
+        "illegal_actions": 0,
+        "schema_mismatches": 0,
+        "missing_teacher_action": 0,
+        "faults_ok": true,
+        "join_coverage": 1.0,
+        "reconciliation_ok": true,
+        "last_wave": 20,
+        "result": "defeat",
+        "infra_pass": true
+      },
+      {
+        "run_id": "run_1784883926_57395",
+        "smoke_run": false,
+        "sidecar": "paired:0",
+        "student_control_fraction": 0.998052,
+        "control_gate_ok": true,
+        "student_ticks": 8710,
+        "fallback_ticks": 17,
+        "clamp_count": 2994,
+        "latency_ms": {
+          "n": 8727,
+          "p50": 15.0,
+          "p99": 20.0,
+          "max": 213.0
+        },
+        "errors": 0,
+        "hangs": 0,
+        "illegal_actions": 0,
+        "schema_mismatches": 0,
+        "missing_teacher_action": 0,
+        "faults_ok": true,
+        "join_coverage": 1.0,
+        "reconciliation_ok": true,
+        "last_wave": 10,
+        "result": "defeat",
+        "infra_pass": true
+      },
+      {
+        "run_id": "run_1784884408_98596",
+        "smoke_run": false,
+        "sidecar": "paired:0",
+        "student_control_fraction": 0.997882,
+        "control_gate_ok": true,
+        "student_ticks": 9892,
+        "fallback_ticks": 21,
+        "clamp_count": 2980,
+        "latency_ms": {
+          "n": 9913,
+          "p50": 14.0,
+          "p99": 19.0,
+          "max": 284.0
+        },
+        "errors": 0,
+        "hangs": 0,
+        "illegal_actions": 0,
+        "schema_mismatches": 0,
+        "missing_teacher_action": 0,
+        "faults_ok": true,
+        "join_coverage": 1.0,
+        "reconciliation_ok": true,
+        "last_wave": 11,
+        "result": "defeat",
+        "infra_pass": true
+      },
+      {
+        "run_id": "run_1784884958_1046",
+        "smoke_run": false,
+        "sidecar": "paired:0",
+        "student_control_fraction": 0.998246,
+        "control_gate_ok": true,
+        "student_ticks": 21057,
+        "fallback_ticks": 37,
+        "clamp_count": 7397,
+        "latency_ms": {
+          "n": 21094,
+          "p50": 14.0,
+          "p99": 20.0,
+          "max": 294.0
+        },
+        "errors": 0,
+        "hangs": 0,
+        "illegal_actions": 0,
+        "schema_mismatches": 0,
+        "missing_teacher_action": 0,
+        "faults_ok": true,
+        "join_coverage": 1.0,
+        "reconciliation_ok": true,
+        "last_wave": 20,
+        "result": "defeat",
+        "infra_pass": true
+      },
+      {
+        "run_id": "run_1784886119_60496",
+        "smoke_run": false,
+        "sidecar": "paired:0",
+        "student_control_fraction": 0.998337,
+        "control_gate_ok": true,
+        "student_ticks": 20413,
+        "fallback_ticks": 34,
+        "clamp_count": 7238,
+        "latency_ms": {
+          "n": 20447,
+          "p50": 15.0,
+          "p99": 19.0,
+          "max": 218.0
+        },
+        "errors": 0,
+        "hangs": 0,
+        "illegal_actions": 0,
+        "schema_mismatches": 0,
+        "missing_teacher_action": 0,
+        "faults_ok": true,
+        "join_coverage": 1.0,
+        "reconciliation_ok": true,
+        "last_wave": 20,
+        "result": "defeat",
+        "infra_pass": true
+      }
+    ],
+    "all_pass": true
+  },
+  "caveats": [
+    "v2f arm runs are REUSED from the round-2 collection campaign (5 runs + 1 smoke); design sect. 9 records this openly - collection and eval runs are procedurally identical (no interventions, same config).",
+    "n=6 per arm. The verdict rule is a deliberately simple ordering, NOT a significance claim; one bad seed is within campaign variance (bc_v1's own campaign contained a w10).",
+    "Brotato RNG is not seed-controllable, so 'matched' means identical conditions, not identical scenarios - shop/enemy draws differ per run.",
+    "contact_risk is an encoder-derived feature; risk exposure is read from the frozen shards (combat_dagger_r2 for v2f, combat_dagger_r3 for v3a), which encode exactly what the policy saw.",
+    "cos(student,teacher) uses the RAW pre-clamp proposal vs teacher.action; on clamped ticks (~35-40%) renormalization preserves proposal direction, so the cosine is unaffected by clamping.",
+    "Data-integrity cross-check: teacher action mismatches between the capture and student_tick streams across all 12 runs = 0 (expected 0)."
+  ],
+  "mechanism": {
+    "wave_bands": [
+      "1-5",
+      "6-10",
+      "11-15",
+      "16-20"
+    ],
+    "band_stats": {
+      "v2f": {
+        "1-5": {
+          "ticks": 19313,
+          "student_ticks": 19242,
+          "hp_mean": 0.9994,
+          "hp_p10": 1.0,
+          "hp_frac_below_0.5": 0.0,
+          "hp_frac_below_0.25": 0.0,
+          "prop_mag_mean": 0.9998,
+          "clamp_fraction": 0.4693,
+          "dither_student_deg": 6.806,
+          "dither_teacher_deg": 8.687,
+          "risk_mean": 0.0621,
+          "risk_p90": 0.2783,
+          "risk_frac_ge_0.5": 0.0318,
+          "cos_student_teacher_mean": 0.5247,
+          "angle_student_teacher_median_deg": 27.201,
+          "n_direction_pairs": 19238
+        },
+        "6-10": {
+          "ticks": 33761,
+          "student_ticks": 33721,
+          "hp_mean": 0.9888,
+          "hp_p10": 1.0,
+          "hp_frac_below_0.5": 0.001,
+          "hp_frac_below_0.25": 0.0,
+          "prop_mag_mean": 0.9918,
+          "clamp_fraction": 0.4366,
+          "dither_student_deg": 8.831,
+          "dither_teacher_deg": 10.153,
+          "risk_mean": 0.1158,
+          "risk_p90": 0.4646,
+          "risk_frac_ge_0.5": 0.0844,
+          "cos_student_teacher_mean": 0.3202,
+          "angle_student_teacher_median_deg": 51.964,
+          "n_direction_pairs": 33721
+        },
+        "11-15": {
+          "ticks": 37331,
+          "student_ticks": 37270,
+          "hp_mean": 0.9497,
+          "hp_p10": 0.7955,
+          "hp_frac_below_0.5": 0.0246,
+          "hp_frac_below_0.25": 0.0097,
+          "prop_mag_mean": 0.9783,
+          "clamp_fraction": 0.4045,
+          "dither_student_deg": 17.565,
+          "dither_teacher_deg": 11.323,
+          "risk_mean": 0.1476,
+          "risk_p90": 0.5218,
+          "risk_frac_ge_0.5": 0.1123,
+          "cos_student_teacher_mean": 0.1871,
+          "angle_student_teacher_median_deg": 65.924,
+          "n_direction_pairs": 37270
+        },
+        "16-20": {
+          "ticks": 25981,
+          "student_ticks": 25949,
+          "hp_mean": 0.9345,
+          "hp_p10": 0.7143,
+          "hp_frac_below_0.5": 0.0354,
+          "hp_frac_below_0.25": 0.0149,
+          "prop_mag_mean": 0.9486,
+          "clamp_fraction": 0.3615,
+          "dither_student_deg": 29.758,
+          "dither_teacher_deg": 13.637,
+          "risk_mean": 0.1439,
+          "risk_p90": 0.503,
+          "risk_frac_ge_0.5": 0.1013,
+          "cos_student_teacher_mean": 0.1353,
+          "angle_student_teacher_median_deg": 73.275,
+          "n_direction_pairs": 25949
+        }
+      },
+      "v3a_all": {
+        "1-5": {
+          "ticks": 19293,
+          "student_ticks": 19233,
+          "hp_mean": 0.9992,
+          "hp_p10": 1.0,
+          "hp_frac_below_0.5": 0.0,
+          "hp_frac_below_0.25": 0.0,
+          "prop_mag_mean": 0.981,
+          "clamp_fraction": 0.3562,
+          "dither_student_deg": 6.514,
+          "dither_teacher_deg": 9.286,
+          "risk_mean": 0.0732,
+          "risk_p90": 0.3343,
+          "risk_frac_ge_0.5": 0.0468,
+          "cos_student_teacher_mean": 0.5526,
+          "angle_student_teacher_median_deg": 28.457,
+          "n_direction_pairs": 19229
+        },
+        "6-10": {
+          "ticks": 33681,
+          "student_ticks": 33626,
+          "hp_mean": 0.9627,
+          "hp_p10": 0.8889,
+          "hp_frac_below_0.5": 0.0231,
+          "hp_frac_below_0.25": 0.0044,
+          "prop_mag_mean": 0.9698,
+          "clamp_fraction": 0.2953,
+          "dither_student_deg": 6.933,
+          "dither_teacher_deg": 11.473,
+          "risk_mean": 0.1342,
+          "risk_p90": 0.5189,
+          "risk_frac_ge_0.5": 0.1098,
+          "cos_student_teacher_mean": 0.3698,
+          "angle_student_teacher_median_deg": 44.807,
+          "n_direction_pairs": 33626
+        },
+        "11-15": {
+          "ticks": 23289,
+          "student_ticks": 23258,
+          "hp_mean": 0.9417,
+          "hp_p10": 0.75,
+          "hp_frac_below_0.5": 0.0393,
+          "hp_frac_below_0.25": 0.0067,
+          "prop_mag_mean": 0.9662,
+          "clamp_fraction": 0.3276,
+          "dither_student_deg": 12.396,
+          "dither_teacher_deg": 11.482,
+          "risk_mean": 0.1348,
+          "risk_p90": 0.5082,
+          "risk_frac_ge_0.5": 0.1032,
+          "cos_student_teacher_mean": 0.3166,
+          "angle_student_teacher_median_deg": 52.296,
+          "n_direction_pairs": 23258
+        },
+        "16-20": {
+          "ticks": 17036,
+          "student_ticks": 17006,
+          "hp_mean": 0.9264,
+          "hp_p10": 0.6667,
+          "hp_frac_below_0.5": 0.0629,
+          "hp_frac_below_0.25": 0.016,
+          "prop_mag_mean": 0.9748,
+          "clamp_fraction": 0.3941,
+          "dither_student_deg": 25.74,
+          "dither_teacher_deg": 14.513,
+          "risk_mean": 0.1389,
+          "risk_p90": 0.5129,
+          "risk_frac_ge_0.5": 0.1074,
+          "cos_student_teacher_mean": 0.161,
+          "angle_student_teacher_median_deg": 70.551,
+          "n_direction_pairs": 17006
+        }
+      },
+      "v3a_good": {
+        "1-5": {
+          "ticks": 9631,
+          "student_ticks": 9598,
+          "hp_mean": 0.9988,
+          "hp_p10": 1.0,
+          "hp_frac_below_0.5": 0.0,
+          "hp_frac_below_0.25": 0.0,
+          "prop_mag_mean": 0.981,
+          "clamp_fraction": 0.3431,
+          "dither_student_deg": 6.466,
+          "dither_teacher_deg": 9.268,
+          "risk_mean": 0.0733,
+          "risk_p90": 0.3321,
+          "risk_frac_ge_0.5": 0.0445,
+          "cos_student_teacher_mean": 0.5428,
+          "angle_student_teacher_median_deg": 28.685,
+          "n_direction_pairs": 9596
+        },
+        "6-10": {
+          "ticks": 16901,
+          "student_ticks": 16876,
+          "hp_mean": 0.9821,
+          "hp_p10": 0.9375,
+          "hp_frac_below_0.5": 0.0005,
+          "hp_frac_below_0.25": 0.0,
+          "prop_mag_mean": 0.9744,
+          "clamp_fraction": 0.3019,
+          "dither_student_deg": 6.557,
+          "dither_teacher_deg": 11.026,
+          "risk_mean": 0.1229,
+          "risk_p90": 0.4925,
+          "risk_frac_ge_0.5": 0.0972,
+          "cos_student_teacher_mean": 0.3829,
+          "angle_student_teacher_median_deg": 44.411,
+          "n_direction_pairs": 16876
+        },
+        "11-15": {
+          "ticks": 18675,
+          "student_ticks": 18649,
+          "hp_mean": 0.9482,
+          "hp_p10": 0.7561,
+          "hp_frac_below_0.5": 0.0296,
+          "hp_frac_below_0.25": 0.0,
+          "prop_mag_mean": 0.966,
+          "clamp_fraction": 0.328,
+          "dither_student_deg": 13.566,
+          "dither_teacher_deg": 11.518,
+          "risk_mean": 0.1316,
+          "risk_p90": 0.4886,
+          "risk_frac_ge_0.5": 0.0947,
+          "cos_student_teacher_mean": 0.3048,
+          "angle_student_teacher_median_deg": 53.685,
+          "n_direction_pairs": 18649
+        },
+        "16-20": {
+          "ticks": 17036,
+          "student_ticks": 17006,
+          "hp_mean": 0.9264,
+          "hp_p10": 0.6667,
+          "hp_frac_below_0.5": 0.0629,
+          "hp_frac_below_0.25": 0.016,
+          "prop_mag_mean": 0.9748,
+          "clamp_fraction": 0.3941,
+          "dither_student_deg": 25.74,
+          "dither_teacher_deg": 14.513,
+          "risk_mean": 0.1389,
+          "risk_p90": 0.5129,
+          "risk_frac_ge_0.5": 0.1074,
+          "cos_student_teacher_mean": 0.161,
+          "angle_student_teacher_median_deg": 70.551,
+          "n_direction_pairs": 17006
+        }
+      },
+      "v3a_bad": {
+        "1-5": {
+          "ticks": 9662,
+          "student_ticks": 9635,
+          "hp_mean": 0.9996,
+          "hp_p10": 1.0,
+          "hp_frac_below_0.5": 0.0,
+          "hp_frac_below_0.25": 0.0,
+          "prop_mag_mean": 0.981,
+          "clamp_fraction": 0.3693,
+          "dither_student_deg": 6.562,
+          "dither_teacher_deg": 9.304,
+          "risk_mean": 0.0731,
+          "risk_p90": 0.3367,
+          "risk_frac_ge_0.5": 0.049,
+          "cos_student_teacher_mean": 0.5624,
+          "angle_student_teacher_median_deg": 28.157,
+          "n_direction_pairs": 9633
+        },
+        "6-10": {
+          "ticks": 16780,
+          "student_ticks": 16750,
+          "hp_mean": 0.9432,
+          "hp_p10": 0.7778,
+          "hp_frac_below_0.5": 0.0459,
+          "hp_frac_below_0.25": 0.0088,
+          "prop_mag_mean": 0.9651,
+          "clamp_fraction": 0.2887,
+          "dither_student_deg": 7.312,
+          "dither_teacher_deg": 11.923,
+          "risk_mean": 0.1455,
+          "risk_p90": 0.5417,
+          "risk_frac_ge_0.5": 0.1225,
+          "cos_student_teacher_mean": 0.3566,
+          "angle_student_teacher_median_deg": 45.189,
+          "n_direction_pairs": 16750
+        },
+        "11-15": {
+          "ticks": 4614,
+          "student_ticks": 4609,
+          "hp_mean": 0.9155,
+          "hp_p10": 0.6905,
+          "hp_frac_below_0.5": 0.0787,
+          "hp_frac_below_0.25": 0.034,
+          "prop_mag_mean": 0.9672,
+          "clamp_fraction": 0.3261,
+          "dither_student_deg": 7.663,
+          "dither_teacher_deg": 11.334,
+          "risk_mean": 0.1477,
+          "risk_p90": 0.5675,
+          "risk_frac_ge_0.5": 0.1374,
+          "cos_student_teacher_mean": 0.3642,
+          "angle_student_teacher_median_deg": 48.084,
+          "n_direction_pairs": 4609
+        },
+        "16-20": {
+          "ticks": 0,
+          "student_ticks": 0,
+          "hp_mean": null,
+          "hp_p10": null,
+          "hp_frac_below_0.5": null,
+          "hp_frac_below_0.25": null,
+          "prop_mag_mean": null,
+          "clamp_fraction": null,
+          "dither_student_deg": null,
+          "dither_teacher_deg": null,
+          "risk_mean": null,
+          "risk_p90": null,
+          "risk_frac_ge_0.5": null,
+          "cos_student_teacher_mean": null,
+          "angle_student_teacher_median_deg": null,
+          "n_direction_pairs": 0
+        }
+      }
+    },
+    "per_wave_hp": {
+      "v2f": {
+        "1": {
+          "mean_hp": 1.0,
+          "mean_of_run_min_hp": 1.0,
+          "worst_run_min_hp": 1.0
+        },
+        "2": {
+          "mean_hp": 1.0,
+          "mean_of_run_min_hp": 1.0,
+          "worst_run_min_hp": 1.0
+        },
+        "3": {
+          "mean_hp": 1.0,
+          "mean_of_run_min_hp": 1.0,
+          "worst_run_min_hp": 1.0
+        },
+        "4": {
+          "mean_hp": 0.9974,
+          "mean_of_run_min_hp": 0.975,
+          "worst_run_min_hp": 0.85
+        },
+        "5": {
+          "mean_hp": 1.0,
+          "mean_of_run_min_hp": 1.0,
+          "worst_run_min_hp": 1.0
+        },
+        "6": {
+          "mean_hp": 1.0,
+          "mean_of_run_min_hp": 1.0,
+          "worst_run_min_hp": 1.0
+        },
+        "7": {
+          "mean_hp": 0.995,
+          "mean_of_run_min_hp": 0.9792,
+          "worst_run_min_hp": 0.875
+        },
+        "8": {
+          "mean_hp": 0.9871,
+          "mean_of_run_min_hp": 0.8984,
+          "worst_run_min_hp": 0.5952
+        },
+        "9": {
+          "mean_hp": 0.9888,
+          "mean_of_run_min_hp": 0.8493,
+          "worst_run_min_hp": 0.7073
+        },
+        "10": {
+          "mean_hp": 0.9764,
+          "mean_of_run_min_hp": 0.8065,
+          "worst_run_min_hp": 0.4667
+        },
+        "11": {
+          "mean_hp": 0.984,
+          "mean_of_run_min_hp": 0.7993,
+          "worst_run_min_hp": 0.5
+        },
+        "12": {
+          "mean_hp": 0.9975,
+          "mean_of_run_min_hp": 0.9322,
+          "worst_run_min_hp": 0.7632
+        },
+        "13": {
+          "mean_hp": 0.9732,
+          "mean_of_run_min_hp": 0.7143,
+          "worst_run_min_hp": 0.4783
+        },
+        "14": {
+          "mean_hp": 0.9198,
+          "mean_of_run_min_hp": 0.6028,
+          "worst_run_min_hp": 0.0278
+        },
+        "15": {
+          "mean_hp": 0.8738,
+          "mean_of_run_min_hp": 0.4192,
+          "worst_run_min_hp": 0.0652
+        },
+        "16": {
+          "mean_hp": 0.9548,
+          "mean_of_run_min_hp": 0.6668,
+          "worst_run_min_hp": 0.0851
+        },
+        "17": {
+          "mean_hp": 0.9529,
+          "mean_of_run_min_hp": 0.6411,
+          "worst_run_min_hp": 0.1333
+        },
+        "18": {
+          "mean_hp": 0.9718,
+          "mean_of_run_min_hp": 0.7241,
+          "worst_run_min_hp": 0.4808
+        },
+        "19": {
+          "mean_hp": 0.9933,
+          "mean_of_run_min_hp": 0.9273,
+          "worst_run_min_hp": 0.7091
+        },
+        "20": {
+          "mean_hp": 0.6928,
+          "mean_of_run_min_hp": 0.1303,
+          "worst_run_min_hp": 0.0172
+        }
+      },
+      "v3a_all": {
+        "1": {
+          "mean_hp": 1.0,
+          "mean_of_run_min_hp": 1.0,
+          "worst_run_min_hp": 1.0
+        },
+        "2": {
+          "mean_hp": 1.0,
+          "mean_of_run_min_hp": 1.0,
+          "worst_run_min_hp": 1.0
+        },
+        "3": {
+          "mean_hp": 1.0,
+          "mean_of_run_min_hp": 1.0,
+          "worst_run_min_hp": 1.0
+        },
+        "4": {
+          "mean_hp": 0.997,
+          "mean_of_run_min_hp": 0.9545,
+          "worst_run_min_hp": 0.8636
+        },
+        "5": {
+          "mean_hp": 0.9995,
+          "mean_of_run_min_hp": 0.98,
+          "worst_run_min_hp": 0.88
+        },
+        "6": {
+          "mean_hp": 1.0,
+          "mean_of_run_min_hp": 1.0,
+          "worst_run_min_hp": 1.0
+        },
+        "7": {
+          "mean_hp": 0.9877,
+          "mean_of_run_min_hp": 0.8672,
+          "worst_run_min_hp": 0.7692
+        },
+        "8": {
+          "mean_hp": 0.9786,
+          "mean_of_run_min_hp": 0.8005,
+          "worst_run_min_hp": 0.6296
+        },
+        "9": {
+          "mean_hp": 0.9598,
+          "mean_of_run_min_hp": 0.7622,
+          "worst_run_min_hp": 0.2759
+        },
+        "10": {
+          "mean_hp": 0.9009,
+          "mean_of_run_min_hp": 0.4158,
+          "worst_run_min_hp": 0.0625
+        },
+        "11": {
+          "mean_hp": 0.9306,
+          "mean_of_run_min_hp": 0.5724,
+          "worst_run_min_hp": 0.1905
+        },
+        "12": {
+          "mean_hp": 0.9931,
+          "mean_of_run_min_hp": 0.9167,
+          "worst_run_min_hp": 0.6667
+        },
+        "13": {
+          "mean_hp": 0.9115,
+          "mean_of_run_min_hp": 0.6146,
+          "worst_run_min_hp": 0.0833
+        },
+        "14": {
+          "mean_hp": 0.9489,
+          "mean_of_run_min_hp": 0.6296,
+          "worst_run_min_hp": 0.2927
+        },
+        "15": {
+          "mean_hp": 0.9232,
+          "mean_of_run_min_hp": 0.5923,
+          "worst_run_min_hp": 0.4146
+        },
+        "16": {
+          "mean_hp": 0.9815,
+          "mean_of_run_min_hp": 0.8667,
+          "worst_run_min_hp": 0.6
+        },
+        "17": {
+          "mean_hp": 0.9577,
+          "mean_of_run_min_hp": 0.726,
+          "worst_run_min_hp": 0.5366
+        },
+        "18": {
+          "mean_hp": 0.9524,
+          "mean_of_run_min_hp": 0.7368,
+          "worst_run_min_hp": 0.2105
+        },
+        "19": {
+          "mean_hp": 0.9705,
+          "mean_of_run_min_hp": 0.5703,
+          "worst_run_min_hp": 0.05
+        },
+        "20": {
+          "mean_hp": 0.6479,
+          "mean_of_run_min_hp": 0.1321,
+          "worst_run_min_hp": 0.0492
+        }
+      },
+      "v3a_good": {
+        "1": {
+          "mean_hp": 1.0,
+          "mean_of_run_min_hp": 1.0,
+          "worst_run_min_hp": 1.0
+        },
+        "2": {
+          "mean_hp": 1.0,
+          "mean_of_run_min_hp": 1.0,
+          "worst_run_min_hp": 1.0
+        },
+        "3": {
+          "mean_hp": 1.0,
+          "mean_of_run_min_hp": 1.0,
+          "worst_run_min_hp": 1.0
+        },
+        "4": {
+          "mean_hp": 0.9957,
+          "mean_of_run_min_hp": 0.9545,
+          "worst_run_min_hp": 0.8636
+        },
+        "5": {
+          "mean_hp": 0.9991,
+          "mean_of_run_min_hp": 0.96,
+          "worst_run_min_hp": 0.88
+        },
+        "6": {
+          "mean_hp": 1.0,
+          "mean_of_run_min_hp": 1.0,
+          "worst_run_min_hp": 1.0
+        },
+        "7": {
+          "mean_hp": 0.9851,
+          "mean_of_run_min_hp": 0.8827,
+          "worst_run_min_hp": 0.8148
+        },
+        "8": {
+          "mean_hp": 0.9936,
+          "mean_of_run_min_hp": 0.8667,
+          "worst_run_min_hp": 0.7778
+        },
+        "9": {
+          "mean_hp": 0.9846,
+          "mean_of_run_min_hp": 0.8195,
+          "worst_run_min_hp": 0.6809
+        },
+        "10": {
+          "mean_hp": 0.9527,
+          "mean_of_run_min_hp": 0.6065,
+          "worst_run_min_hp": 0.4848
+        },
+        "11": {
+          "mean_hp": 0.9373,
+          "mean_of_run_min_hp": 0.6837,
+          "worst_run_min_hp": 0.2632
+        },
+        "12": {
+          "mean_hp": 1.0,
+          "mean_of_run_min_hp": 1.0,
+          "worst_run_min_hp": 1.0
+        },
+        "13": {
+          "mean_hp": 0.9319,
+          "mean_of_run_min_hp": 0.7917,
+          "worst_run_min_hp": 0.375
+        },
+        "14": {
+          "mean_hp": 0.9489,
+          "mean_of_run_min_hp": 0.6296,
+          "worst_run_min_hp": 0.2927
+        },
+        "15": {
+          "mean_hp": 0.9232,
+          "mean_of_run_min_hp": 0.5923,
+          "worst_run_min_hp": 0.4146
+        },
+        "16": {
+          "mean_hp": 0.9815,
+          "mean_of_run_min_hp": 0.8667,
+          "worst_run_min_hp": 0.6
+        },
+        "17": {
+          "mean_hp": 0.9577,
+          "mean_of_run_min_hp": 0.726,
+          "worst_run_min_hp": 0.5366
+        },
+        "18": {
+          "mean_hp": 0.9524,
+          "mean_of_run_min_hp": 0.7368,
+          "worst_run_min_hp": 0.2105
+        },
+        "19": {
+          "mean_hp": 0.9705,
+          "mean_of_run_min_hp": 0.5703,
+          "worst_run_min_hp": 0.05
+        },
+        "20": {
+          "mean_hp": 0.6479,
+          "mean_of_run_min_hp": 0.1321,
+          "worst_run_min_hp": 0.0492
+        }
+      },
+      "v3a_bad": {
+        "1": {
+          "mean_hp": 1.0,
+          "mean_of_run_min_hp": 1.0,
+          "worst_run_min_hp": 1.0
+        },
+        "2": {
+          "mean_hp": 1.0,
+          "mean_of_run_min_hp": 1.0,
+          "worst_run_min_hp": 1.0
+        },
+        "3": {
+          "mean_hp": 1.0,
+          "mean_of_run_min_hp": 1.0,
+          "worst_run_min_hp": 1.0
+        },
+        "4": {
+          "mean_hp": 0.9982,
+          "mean_of_run_min_hp": 0.9545,
+          "worst_run_min_hp": 0.8636
+        },
+        "5": {
+          "mean_hp": 1.0,
+          "mean_of_run_min_hp": 1.0,
+          "worst_run_min_hp": 1.0
+        },
+        "6": {
+          "mean_hp": 1.0,
+          "mean_of_run_min_hp": 1.0,
+          "worst_run_min_hp": 1.0
+        },
+        "7": {
+          "mean_hp": 0.9903,
+          "mean_of_run_min_hp": 0.8516,
+          "worst_run_min_hp": 0.7692
+        },
+        "8": {
+          "mean_hp": 0.9635,
+          "mean_of_run_min_hp": 0.7344,
+          "worst_run_min_hp": 0.6296
+        },
+        "9": {
+          "mean_hp": 0.9348,
+          "mean_of_run_min_hp": 0.7049,
+          "worst_run_min_hp": 0.2759
+        },
+        "10": {
+          "mean_hp": 0.8476,
+          "mean_of_run_min_hp": 0.2251,
+          "worst_run_min_hp": 0.0625
+        },
+        "11": {
+          "mean_hp": 0.9196,
+          "mean_of_run_min_hp": 0.4056,
+          "worst_run_min_hp": 0.1905
+        },
+        "12": {
+          "mean_hp": 0.9726,
+          "mean_of_run_min_hp": 0.6667,
+          "worst_run_min_hp": 0.6667
+        },
+        "13": {
+          "mean_hp": 0.8416,
+          "mean_of_run_min_hp": 0.0833,
+          "worst_run_min_hp": 0.0833
+        }
+      }
+    },
+    "early_build": [
+      {
+        "run_id": "run_1784872256_15901",
+        "arm": "v2f",
+        "subgroup": "v2f",
+        "first_wave_weapon_count": 1,
+        "first_wave_weapons": [
+          {
+            "type": "ranged",
+            "max_range": 400,
+            "damage": 3,
+            "cooldown": 4
+          }
+        ],
+        "purchases_first_6": [
+          {
+            "wave": 1,
+            "type": "shop_reroll",
+            "item_id": null,
+            "slot": null,
+            "gold_before": 66
+          },
+          {
+            "wave": 1,
+            "type": "shop_buy",
+            "item_id": "weapon_revolver_1",
+            "slot": 0,
+            "gold_before": 65
+          },
+          {
+            "wave": 1,
+            "type": "shop_go",
+            "item_id": null,
+            "slot": null,
+            "gold_before": 42
+          },
+          {
+            "wave": 2,
+            "type": "shop_buy",
+            "item_id": "weapon_smg_1",
+            "slot": 0,
+            "gold_before": 91
+          },
+          {
+            "wave": 2,
+            "type": "shop_reroll",
+            "item_id": null,
+            "slot": null,
+            "gold_before": 65
+          },
+          {
+            "wave": 2,
+            "type": "shop_buy",
+            "item_id": "weapon_revolver_1",
+            "slot": 0,
+            "gold_before": 63
+          }
+        ],
+        "purchase_count": 123
+      },
+      {
+        "run_id": "run_1784873462_1600",
+        "arm": "v2f",
+        "subgroup": "v2f",
+        "first_wave_weapon_count": 1,
+        "first_wave_weapons": [
+          {
+            "type": "ranged",
+            "max_range": 400,
+            "damage": 3,
+            "cooldown": 4
+          }
+        ],
+        "purchases_first_6": [
+          {
+            "wave": 1,
+            "type": "shop_reroll",
+            "item_id": null,
+            "slot": null,
+            "gold_before": 63
+          },
+          {
+            "wave": 1,
+            "type": "shop_buy",
+            "item_id": "weapon_pistol_1",
+            "slot": 1,
+            "gold_before": 62
+          },
+          {
+            "wave": 1,
+            "type": "shop_buy",
+            "item_id": "weapon_shredder_1",
+            "slot": 0,
+            "gold_before": 50
+          },
+          {
+            "wave": 1,
+            "type": "shop_buy",
+            "item_id": "item_propeller_hat",
+            "slot": 3,
+            "gold_before": 33
+          },
+          {
+            "wave": 1,
+            "type": "shop_go",
+            "item_id": null,
+            "slot": null,
+            "gold_before": 2
+          },
+          {
+            "wave": 2,
+            "type": "shop_buy",
+            "item_id": "weapon_pistol_1",
+            "slot": 0,
+            "gold_before": 51
+          }
+        ],
+        "purchase_count": 86
+      },
+      {
+        "run_id": "run_1784874327_52508",
+        "arm": "v2f",
+        "subgroup": "v2f",
+        "first_wave_weapon_count": 1,
+        "first_wave_weapons": [
+          {
+            "type": "ranged",
+            "max_range": 400,
+            "damage": 3,
+            "cooldown": 4
+          }
+        ],
+        "purchases_first_6": [
+          {
+            "wave": 1,
+            "type": "shop_reroll",
+            "item_id": null,
+            "slot": null,
+            "gold_before": 67
+          },
+          {
+            "wave": 1,
+            "type": "shop_buy",
+            "item_id": "weapon_smg_1",
+            "slot": 0,
+            "gold_before": 66
+          },
+          {
+            "wave": 1,
+            "type": "shop_buy",
+            "item_id": "weapon_pistol_1",
+            "slot": 1,
+            "gold_before": 43
+          },
+          {
+            "wave": 1,
+            "type": "shop_buy",
+            "item_id": "item_insanity",
+            "slot": 2,
+            "gold_before": 31
+          },
+          {
+            "wave": 1,
+            "type": "shop_lock",
+            "item_id": "item_hedgehog",
+            "slot": 3,
+            "gold_before": 8
+          },
+          {
+            "wave": 1,
+            "type": "shop_go",
+            "item_id": null,
+            "slot": null,
+            "gold_before": 8
+          }
+        ],
+        "purchase_count": 133
+      },
+      {
+        "run_id": "run_1784875463_98163",
+        "arm": "v2f",
+        "subgroup": "v2f",
+        "first_wave_weapon_count": 1,
+        "first_wave_weapons": [
+          {
+            "type": "ranged",
+            "max_range": 400,
+            "damage": 3,
+            "cooldown": 4
+          }
+        ],
+        "purchases_first_6": [
+          {
+            "wave": 1,
+            "type": "shop_buy",
+            "item_id": "weapon_revolver_1",
+            "slot": 0,
+            "gold_before": 65
+          },
+          {
+            "wave": 1,
+            "type": "shop_buy",
+            "item_id": "item_helmet",
+            "slot": 2,
+            "gold_before": 42
+          },
+          {
+            "wave": 1,
+            "type": "shop_go",
+            "item_id": null,
+            "slot": null,
+            "gold_before": 25
+          },
+          {
+            "wave": 2,
+            "type": "shop_buy",
+            "item_id": "weapon_laser_gun_1",
+            "slot": 1,
+            "gold_before": 74
+          },
+          {
+            "wave": 2,
+            "type": "shop_buy",
+            "item_id": "weapon_shredder_1",
+            "slot": 0,
+            "gold_before": 54
+          },
+          {
+            "wave": 2,
+            "type": "shop_go",
+            "item_id": null,
+            "slot": null,
+            "gold_before": 34
+          }
+        ],
+        "purchase_count": 131
+      },
+      {
+        "run_id": "run_1784876633_43940",
+        "arm": "v2f",
+        "subgroup": "v2f",
+        "first_wave_weapon_count": 1,
+        "first_wave_weapons": [
+          {
+            "type": "ranged",
+            "max_range": 400,
+            "damage": 3,
+            "cooldown": 4
+          }
+        ],
+        "purchases_first_6": [
+          {
+            "wave": 1,
+            "type": "shop_buy",
+            "item_id": "weapon_smg_1",
+            "slot": 1,
+            "gold_before": 64
+          },
+          {
+            "wave": 1,
+            "type": "shop_buy",
+            "item_id": "item_coffee",
+            "slot": 3,
+            "gold_before": 41
+          },
+          {
+            "wave": 1,
+            "type": "shop_go",
+            "item_id": null,
+            "slot": null,
+            "gold_before": 18
+          },
+          {
+            "wave": 2,
+            "type": "shop_buy",
+            "item_id": "weapon_smg_1",
+            "slot": 0,
+            "gold_before": 62
+          },
+          {
+            "wave": 2,
+            "type": "shop_buy",
+            "item_id": "weapon_revolver_1",
+            "slot": 1,
+            "gold_before": 36
+          },
+          {
+            "wave": 2,
+            "type": "shop_lock",
+            "item_id": "item_lootworm",
+            "slot": 2,
+            "gold_before": 10
+          }
+        ],
+        "purchase_count": 115
+      },
+      {
+        "run_id": "run_1784877573_54783",
+        "arm": "v2f",
+        "subgroup": "v2f",
+        "first_wave_weapon_count": 1,
+        "first_wave_weapons": [
+          {
+            "type": "ranged",
+            "max_range": 400,
+            "damage": 3,
+            "cooldown": 4
+          }
+        ],
+        "purchases_first_6": [
+          {
+            "wave": 1,
+            "type": "shop_reroll",
+            "item_id": null,
+            "slot": null,
+            "gold_before": 60
+          },
+          {
+            "wave": 1,
+            "type": "shop_buy",
+            "item_id": "weapon_smg_1",
+            "slot": 1,
+            "gold_before": 59
+          },
+          {
+            "wave": 1,
+            "type": "shop_buy",
+            "item_id": "item_mushroom",
+            "slot": 3,
+            "gold_before": 36
+          },
+          {
+            "wave": 1,
+            "type": "shop_go",
+            "item_id": null,
+            "slot": null,
+            "gold_before": 8
+          },
+          {
+            "wave": 2,
+            "type": "shop_buy",
+            "item_id": "weapon_smg_1",
+            "slot": 1,
+            "gold_before": 46
+          },
+          {
+            "wave": 2,
+            "type": "shop_buy",
+            "item_id": "weapon_laser_gun_1",
+            "slot": 0,
+            "gold_before": 20
+          }
+        ],
+        "purchase_count": 116
+      },
+      {
+        "run_id": "run_1784880640_76087",
+        "arm": "v3a",
+        "subgroup": "bad",
+        "first_wave_weapon_count": 1,
+        "first_wave_weapons": [
+          {
+            "type": "ranged",
+            "max_range": 400,
+            "damage": 3,
+            "cooldown": 4
+          }
+        ],
+        "purchases_first_6": [
+          {
+            "wave": 1,
+            "type": "shop_buy",
+            "item_id": "weapon_smg_1",
+            "slot": 1,
+            "gold_before": 66
+          },
+          {
+            "wave": 1,
+            "type": "shop_buy",
+            "item_id": "item_mutation",
+            "slot": 3,
+            "gold_before": 43
+          },
+          {
+            "wave": 1,
+            "type": "shop_go",
+            "item_id": null,
+            "slot": null,
+            "gold_before": 15
+          },
+          {
+            "wave": 2,
+            "type": "shop_buy",
+            "item_id": "weapon_smg_1",
+            "slot": 1,
+            "gold_before": 62
+          },
+          {
+            "wave": 2,
+            "type": "shop_buy",
+            "item_id": "item_glasses",
+            "slot": 2,
+            "gold_before": 36
+          },
+          {
+            "wave": 2,
+            "type": "shop_lock",
+            "item_id": "item_lootworm",
+            "slot": 3,
+            "gold_before": 10
+          }
+        ],
+        "purchase_count": 77
+      },
+      {
+        "run_id": "run_1784882794_20877",
+        "arm": "v3a",
+        "subgroup": "good",
+        "first_wave_weapon_count": 1,
+        "first_wave_weapons": [
+          {
+            "type": "ranged",
+            "max_range": 400,
+            "damage": 3,
+            "cooldown": 4
+          }
+        ],
+        "purchases_first_6": [
+          {
+            "wave": 1,
+            "type": "shop_buy",
+            "item_id": "weapon_smg_1",
+            "slot": 0,
+            "gold_before": 66
+          },
+          {
+            "wave": 1,
+            "type": "shop_go",
+            "item_id": null,
+            "slot": null,
+            "gold_before": 43
+          },
+          {
+            "wave": 2,
+            "type": "shop_reroll",
+            "item_id": null,
+            "slot": null,
+            "gold_before": 88
+          },
+          {
+            "wave": 2,
+            "type": "shop_buy",
+            "item_id": "weapon_smg_1",
+            "slot": 1,
+            "gold_before": 86
+          },
+          {
+            "wave": 2,
+            "type": "shop_reroll",
+            "item_id": null,
+            "slot": null,
+            "gold_before": 60
+          },
+          {
+            "wave": 2,
+            "type": "shop_buy",
+            "item_id": "item_coupon",
+            "slot": 2,
+            "gold_before": 57
+          }
+        ],
+        "purchase_count": 136
+      },
+      {
+        "run_id": "run_1784883926_57395",
+        "arm": "v3a",
+        "subgroup": "bad",
+        "first_wave_weapon_count": 1,
+        "first_wave_weapons": [
+          {
+            "type": "ranged",
+            "max_range": 400,
+            "damage": 3,
+            "cooldown": 4
+          }
+        ],
+        "purchases_first_6": [
+          {
+            "wave": 1,
+            "type": "shop_buy",
+            "item_id": "weapon_shredder_1",
+            "slot": 1,
+            "gold_before": 62
+          },
+          {
+            "wave": 1,
+            "type": "shop_reroll",
+            "item_id": null,
+            "slot": null,
+            "gold_before": 45
+          },
+          {
+            "wave": 1,
+            "type": "shop_buy",
+            "item_id": "weapon_pistol_1",
+            "slot": 1,
+            "gold_before": 44
+          },
+          {
+            "wave": 1,
+            "type": "shop_lock",
+            "item_id": "item_gentle_alien",
+            "slot": 3,
+            "gold_before": 32
+          },
+          {
+            "wave": 1,
+            "type": "shop_go",
+            "item_id": null,
+            "slot": null,
+            "gold_before": 32
+          },
+          {
+            "wave": 2,
+            "type": "shop_buy",
+            "item_id": "weapon_revolver_1",
+            "slot": 1,
+            "gold_before": 89
+          }
+        ],
+        "purchase_count": 61
+      },
+      {
+        "run_id": "run_1784884408_98596",
+        "arm": "v3a",
+        "subgroup": "bad",
+        "first_wave_weapon_count": 1,
+        "first_wave_weapons": [
+          {
+            "type": "ranged",
+            "max_range": 400,
+            "damage": 3,
+            "cooldown": 4
+          }
+        ],
+        "purchases_first_6": [
+          {
+            "wave": 1,
+            "type": "shop_reroll",
+            "item_id": null,
+            "slot": null,
+            "gold_before": 61
+          },
+          {
+            "wave": 1,
+            "type": "shop_buy",
+            "item_id": "weapon_smg_1",
+            "slot": 1,
+            "gold_before": 60
+          },
+          {
+            "wave": 1,
+            "type": "shop_go",
+            "item_id": null,
+            "slot": null,
+            "gold_before": 37
+          },
+          {
+            "wave": 2,
+            "type": "shop_buy",
+            "item_id": "weapon_smg_1",
+            "slot": 0,
+            "gold_before": 86
+          },
+          {
+            "wave": 2,
+            "type": "shop_reroll",
+            "item_id": null,
+            "slot": null,
+            "gold_before": 60
+          },
+          {
+            "wave": 2,
+            "type": "shop_reroll",
+            "item_id": null,
+            "slot": null,
+            "gold_before": 58
+          }
+        ],
+        "purchase_count": 68
+      },
+      {
+        "run_id": "run_1784884958_1046",
+        "arm": "v3a",
+        "subgroup": "good",
+        "first_wave_weapon_count": 1,
+        "first_wave_weapons": [
+          {
+            "type": "ranged",
+            "max_range": 400,
+            "damage": 3,
+            "cooldown": 4
+          }
+        ],
+        "purchases_first_6": [
+          {
+            "wave": 1,
+            "type": "shop_buy",
+            "item_id": "weapon_smg_1",
+            "slot": 0,
+            "gold_before": 62
+          },
+          {
+            "wave": 1,
+            "type": "shop_buy",
+            "item_id": "weapon_revolver_1",
+            "slot": 1,
+            "gold_before": 39
+          },
+          {
+            "wave": 1,
+            "type": "shop_lock",
+            "item_id": "item_lens",
+            "slot": 2,
+            "gold_before": 16
+          },
+          {
+            "wave": 1,
+            "type": "shop_lock",
+            "item_id": "item_alien_worm",
+            "slot": 3,
+            "gold_before": 16
+          },
+          {
+            "wave": 1,
+            "type": "shop_go",
+            "item_id": null,
+            "slot": null,
+            "gold_before": 16
+          },
+          {
+            "wave": 2,
+            "type": "shop_buy",
+            "item_id": "weapon_shredder_1",
+            "slot": 2,
+            "gold_before": 62
+          }
+        ],
+        "purchase_count": 146
+      },
+      {
+        "run_id": "run_1784886119_60496",
+        "arm": "v3a",
+        "subgroup": "good",
+        "first_wave_weapon_count": 1,
+        "first_wave_weapons": [
+          {
+            "type": "ranged",
+            "max_range": 400,
+            "damage": 3,
+            "cooldown": 4
+          }
+        ],
+        "purchases_first_6": [
+          {
+            "wave": 1,
+            "type": "shop_buy",
+            "item_id": "weapon_double_barrel_shotgun_1",
+            "slot": 1,
+            "gold_before": 64
+          },
+          {
+            "wave": 1,
+            "type": "shop_buy",
+            "item_id": "item_mutation",
+            "slot": 2,
+            "gold_before": 41
+          },
+          {
+            "wave": 1,
+            "type": "shop_go",
+            "item_id": null,
+            "slot": null,
+            "gold_before": 13
+          },
+          {
+            "wave": 2,
+            "type": "shop_reroll",
+            "item_id": null,
+            "slot": null,
+            "gold_before": 57
+          },
+          {
+            "wave": 2,
+            "type": "shop_reroll",
+            "item_id": null,
+            "slot": null,
+            "gold_before": 55
+          },
+          {
+            "wave": 2,
+            "type": "shop_buy",
+            "item_id": "weapon_pistol_1",
+            "slot": 1,
+            "gold_before": 52
+          }
+        ],
+        "purchase_count": 145
+      }
+    ],
+    "synthesis": [
+      "(d) Early-game teacher disagreement: v3a_all cos(student,teacher) 0.5526/0.3698 (bands 1-5/6-10) vs v2f 0.5247/0.3202; disagreement angle median v3a_all 28.457/44.807 deg vs v2f 27.201/51.964 deg.",
+      "(d) Within v3a, bad vs good early cos: bad 0.5624/0.3566 vs good 0.5428/0.3829 (bands 1-5/6-10).",
+      "(c) Risk exposure early (frac ticks contact_risk>=0.5): v3a_bad 0.049/0.1225 vs v3a_good 0.0445/0.0972 vs v2f 0.0318/0.0844 (bands 1-5/6-10).",
+      "(a) Early hp (frac ticks hp<0.5): v3a_bad 0.0/0.0459 vs v3a_good 0.0/0.0005 vs v2f 0.0/0.001.",
+      "(b) Dither (applied-direction change deg, band 6-10): v3a_bad 7.312 vs v3a_good 6.557 vs v2f 8.831; teacher baseline 11.473. Clamp fraction band 6-10: v3a_bad 0.2887 vs v3a_good 0.3019 vs v2f 0.4366.",
+      "",
+      "CONCLUSION - which hypotheses the data supports:",
+      "SUPPORTED (risk-exposure -> early HP attrition): the fragility signal is spatial. In band 6-10 v3a_bad sits at contact_risk>=0.5 for 0.1225 of ticks (p90 risk 0.5417) vs v3a_good 0.0972 and v2f 0.0844, and this converts to damage: v3a_bad spends 0.0459 of band-6-10 ticks below half hp (0.0088 below quarter) vs v3a_good 0.0005 and v2f 0.001 - a ~45x higher low-hp rate in the SAME band, well before the w10-13 deaths (per-wave hp shows the divergence opening at wave ~8, a compounding attrition spiral, not one catastrophic tick).",
+      "CONTRADICTED (teacher-disagreement): v3a does NOT disagree more with the teacher early - v3a_all cos 0.3698 vs v2f 0.3202 in band 6-10, and v3a AGREES more than v2f in bands 11-15 (0.3166 vs 0.1871) and 16-20. The WINNING arm (v2f) has larger teacher-imitation error - consistent with the design's negative result that offline teacher-error does not predict live outcome.",
+      "CONTRADICTED (hesitation/dither): v3a is SMOOTHER, not more hesitant - lower applied-direction change than v2f in every band (e.g. band 11-15 12.396 vs 17.565 deg) and v3a_bad dithers the LEAST (7.663 deg). Combined with lower raw |proposal| magnitude and lower clamp fraction, v3a moves more sluggishly/committally and less evasively - the plausible driver of the sustained contact-risk exposure above.",
+      "WEAK/INCONCLUSIVE (RNG build confound): early weapon+item draws overlap between v3a good and bad runs (both get standard smg/revolver/pistol/shredder starts and rerolls); the data does not volunteer a build-quality split that would explain the bimodality. At n=3/3 a shop-RNG contribution cannot be fully excluded, but the movement/risk-exposure axis is the consistent signal."
+    ],
+    "teacher_stream_mismatch_total": 0
+  }
+}

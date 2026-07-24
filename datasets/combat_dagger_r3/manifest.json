@@ -1,0 +1,1461 @@
+{
+  "dataset_id": "combat_dagger_r3",
+  "schema_id": "combat_obs_v1",
+  "observation_schema_hash": "C653D836F3EBC821A51AFC70482D3772FC7B7B927D393A6B9BBADC2718BB9B2A",
+  "source_capture_schema_hash": "95B6444796A21FD44E94113B75BA2097BC381D5F72ED784F9B9A4A99DD46D951",
+  "encoder_path": "trainer/observation/encoder_v1.py",
+  "builder_script": "scripts/wp2_build_combat_dagger_r3.py",
+  "reused_pipeline": "scripts/wp2_build_combat_obs_v1.py::build_run",
+  "reused_r1_helpers": "scripts/wp2_build_combat_dagger_r1.py::compute_aux_and_weights",
+  "reused_audit_helpers": "scripts/wp2_dagger_r2_run_audit.py::{load_sidecar,reconcile_run}",
+  "repo_head_commit": "3eab510927bd246db2aef17174cf3788c6a70dad",
+  "runs_root": "C:\\Users\\moxhe\\AppData\\Roaming\\Brotato\\brotato_agent\\runs",
+  "run_count": 6,
+  "student_policy": "bc_v3_a_s1",
+  "student_model_sha256": "2979C36A4A6D833C85BE128A1599C379E236B69EDA45F0563369780BEBDD409E",
+  "source_campaign": {
+    "policy_version": "teacher_v1-0.1.125-gun-wp1",
+    "mod_version": "0.2.34-wp2-capture",
+    "source_stage": "M4 paired evaluation (design sect. 9) - v3a arm",
+    "sidecar_log_smoke": "C:\\Codex\\Brotato Agent\\.tmp\\student_sidecar_dagger_r3.jsonl",
+    "sidecar_log_paired": "C:\\Codex\\Brotato Agent\\.tmp\\student_sidecar_paired_eval.jsonl",
+    "note": "Eval runs, not a collection campaign: Stage-A audit computed inline by the builder (no dedicated audit JSON). Per design sect. 9 these 6 runs enter the round-3 corrective pool as valid DAgger data under bc_v3_a regardless of the retain-bc_v2_f promotion verdict."
+  },
+  "corrective_config": {
+    "control_hz": 20,
+    "aux_horizon_ticks": 10,
+    "risk_threshold": 0.5,
+    "risk_groups": [
+      "enemies",
+      "bosses",
+      "projectiles"
+    ],
+    "precursor_ticks": [
+      10,
+      20
+    ],
+    "recovery_ticks": 20,
+    "segment_target_mass": {
+      "background": 0.45,
+      "precursor": 0.3,
+      "onset_episode": 0.15,
+      "recovery": 0.1
+    },
+    "onset_cap": "2x mean episode mass (2 * 0.15*M / E)",
+    "gap_mask": "temporal_valid (control_dt_ms in (0,250]) over the full horizon",
+    "weight_normalization": "mean weight over eligible rows == 1.0",
+    "contact_risk_feature_index": 11,
+    "hp_ratio_global_index": 8
+  },
+  "aggregate": {
+    "total": 93299,
+    "valid": 93299,
+    "temporal_valid": 93203,
+    "valid_and_temporal_valid": 93203,
+    "fault_count": 0,
+    "episodes": 2833,
+    "dataset_bytes": 86211685
+  },
+  "segment_eligible_counts": {
+    "background": 38476,
+    "precursor": 21935,
+    "onset_episode": 8832,
+    "recovery": 23960
+  },
+  "segment_eligible_fractions": {
+    "background": 0.4128,
+    "precursor": 0.2353,
+    "onset_episode": 0.0948,
+    "recovery": 0.2571
+  },
+  "segment_mass_fractions": {
+    "background": 0.45,
+    "precursor": 0.3,
+    "onset_episode": 0.15,
+    "recovery": 0.1
+  },
+  "aux_base_rates": {
+    "horizon_valid_rows": 92339,
+    "aux_damage_base_rate": 0.012378,
+    "aux_margin_mean": 0.715869
+  },
+  "triple_reconciliation_aggregate": {
+    "student_ticks": 93123,
+    "student_matched": 93123,
+    "student_missing_act": 0,
+    "ok_ticks": 62020,
+    "ok_violations": 0,
+    "ok_max_abs_delta": 0.0,
+    "clamped_ticks": 31103,
+    "clamped_violations": 0,
+    "clamped_max_dir_diff": 1.035470367616309e-06,
+    "clamped_max_mag_err": 7.139977548087373e-07,
+    "timeout_ticks": 174,
+    "timeout_with_act": 174,
+    "not_connected_ticks": 2,
+    "all_reconciliation_ok": true,
+    "join_coverage": 1.0
+  },
+  "triple_reconciliation_by_log": {
+    "dagger_r3": {
+      "student_ticks": 12392,
+      "student_matched": 12392,
+      "student_missing_act": 0,
+      "ok_ticks": 8469,
+      "ok_violations": 0,
+      "ok_max_abs_delta": 0.0,
+      "clamped_ticks": 3923,
+      "clamped_violations": 0,
+      "clamped_max_dir_diff": 1.0025430922100398e-06,
+      "clamped_max_mag_err": 7.108647472886531e-07,
+      "timeout_ticks": 23,
+      "timeout_with_act": 23,
+      "not_connected_ticks": 1,
+      "all_reconciliation_ok": true,
+      "join_coverage": 1.0
+    },
+    "paired_eval": {
+      "student_ticks": 80731,
+      "student_matched": 80731,
+      "student_missing_act": 0,
+      "ok_ticks": 53551,
+      "ok_violations": 0,
+      "ok_max_abs_delta": 0.0,
+      "clamped_ticks": 27180,
+      "clamped_violations": 0,
+      "clamped_max_dir_diff": 1.035470367616309e-06,
+      "clamped_max_mag_err": 7.139977548087373e-07,
+      "timeout_ticks": 151,
+      "timeout_with_act": 151,
+      "not_connected_ticks": 1,
+      "all_reconciliation_ok": true,
+      "join_coverage": 1.0
+    }
+  },
+  "sidecar_identity": {
+    "smoke": {
+      "log": "dagger_r3",
+      "identity_ok": true,
+      "checks": {
+        "model_sha256": true,
+        "normalization_sha256": true,
+        "observation_schema_hash": true,
+        "registry_run_name": true
+      },
+      "backend": "torch-cpu",
+      "model_sha256": "2979C36A4A6D833C85BE128A1599C379E236B69EDA45F0563369780BEBDD409E",
+      "registry_run_name": "bc_v3_a_s1",
+      "handshake_run_ids": [
+        "run_1784880640_76087"
+      ],
+      "serving": {
+        "stats_events": 23,
+        "errors_total": 0,
+        "served_max": 12095,
+        "model_ms_p99_max": 1.6045,
+        "total_acts": 12415
+      }
+    },
+    "paired": {
+      "log": "paired_eval",
+      "identity_ok": true,
+      "checks": {
+        "model_sha256": true,
+        "normalization_sha256": true,
+        "observation_schema_hash": true,
+        "registry_run_name": true
+      },
+      "backend": "torch-cpu",
+      "model_sha256": "2979C36A4A6D833C85BE128A1599C379E236B69EDA45F0563369780BEBDD409E",
+      "registry_run_name": "bc_v3_a_s1",
+      "handshake_run_ids": [
+        "run_1784882794_20877"
+      ],
+      "serving": {
+        "stats_events": 148,
+        "errors_total": 0,
+        "served_max": 80449,
+        "model_ms_p99_max": 5.2609,
+        "total_acts": 80882
+      }
+    }
+  },
+  "sidecar_act_counts": {
+    "dagger_r3": 12415,
+    "paired_eval": 80882
+  },
+  "gates": [
+    {
+      "name": "all_shards_written",
+      "status": "PASS",
+      "value": 6,
+      "threshold": 6,
+      "detail": "6/6 shards + aux + weights written"
+    },
+    {
+      "name": "zero_encoding_faults",
+      "status": "PASS",
+      "value": 0,
+      "threshold": 0,
+      "detail": "0 ObservationError faults"
+    },
+    {
+      "name": "valid_and_temporal_positive",
+      "status": "PASS",
+      "value": 93203,
+      "threshold": 1,
+      "detail": "93203 training-eligible rows"
+    },
+    {
+      "name": "aux_weights_aligned",
+      "status": "PASS",
+      "value": 6,
+      "threshold": 6,
+      "detail": "aux/weight arrays length == shard rows for every run"
+    },
+    {
+      "name": "triple_reconciliation_ok",
+      "status": "PASS",
+      "value": 1.0,
+      "threshold": 1.0,
+      "detail": "join_cov=1.0, ok_viol=0, clamp_viol=0, missing_act=0"
+    }
+  ],
+  "overall_status": "PASS",
+  "runs": [
+    {
+      "run_id": "run_1784880640_76087",
+      "shard_file": "run_1784880640_76087.npz",
+      "shard_sha256": "F9408385CD085CAE8CCA8D1EE7734760486BABF28ADDFD82060CAAE60D56FA43",
+      "shard_bytes": 9448156,
+      "capture_seq_monotonic": true,
+      "counts": {
+        "total": 12416,
+        "valid": 12416,
+        "temporal_valid": 12403,
+        "valid_and_temporal_valid": 12403
+      },
+      "per_wave_total": {
+        "1": 440,
+        "2": 546,
+        "3": 640,
+        "4": 740,
+        "5": 851,
+        "6": 940,
+        "7": 1046,
+        "8": 1146,
+        "9": 1251,
+        "10": 1240,
+        "11": 1240,
+        "12": 1246,
+        "13": 1090
+      },
+      "per_wave_valid": {
+        "1": 440,
+        "2": 546,
+        "3": 640,
+        "4": 740,
+        "5": 851,
+        "6": 940,
+        "7": 1046,
+        "8": 1146,
+        "9": 1251,
+        "10": 1240,
+        "11": 1240,
+        "12": 1246,
+        "13": 1090
+      },
+      "overflow": {
+        "enemies": {
+          "overflow_samples": 0,
+          "max_raw": 32,
+          "capacity": 64
+        },
+        "bosses": {
+          "overflow_samples": 0,
+          "max_raw": 0,
+          "capacity": 2
+        },
+        "projectiles": {
+          "overflow_samples": 0,
+          "max_raw": 4,
+          "capacity": 32
+        },
+        "materials": {
+          "overflow_samples": 0,
+          "max_raw": 50,
+          "capacity": 64
+        },
+        "consumables": {
+          "overflow_samples": 0,
+          "max_raw": 8,
+          "capacity": 24
+        },
+        "crates": {
+          "overflow_samples": 0,
+          "max_raw": 1,
+          "capacity": 2
+        },
+        "obstacles": {
+          "overflow_samples": 0,
+          "max_raw": 2,
+          "capacity": 8
+        }
+      },
+      "fault_count": 0,
+      "faults": [],
+      "determinism_spot_check": [
+        {
+          "position": 0,
+          "capture_seq": 1,
+          "digest": "2D34E87C19AC802314394261BFBB05278B1F167E442A27AA7CEEA50D1A392298"
+        },
+        {
+          "position": 5000,
+          "capture_seq": 5001,
+          "digest": "1D6B12CA9B1D7E380681ADEF2B5B59F68E077FB8BB71DAD2707051842739BB53"
+        },
+        {
+          "position": 10000,
+          "capture_seq": 10001,
+          "digest": "9037361343EC5B762E63857088C0FF1D1D40A9854AFE6E6077B0F0A578706F19"
+        },
+        {
+          "position": 12415,
+          "capture_seq": 12416,
+          "digest": "8386FE6B0F8BFE7472505C39C449A2EC8B8D0B530B9D4BD304B926DA2A413A49"
+        }
+      ],
+      "build_seconds": 5.47,
+      "aux_file": "aux_labels/run_1784880640_76087.npz",
+      "aux_sha256": "E43A7829C83409A0414E49DCAF5AF9EEE3BC7EF4087A2EA5B3032EDAEA59AAD8",
+      "weights_file": "sample_weights/run_1784880640_76087.npz",
+      "weights_sha256": "92ACF791E0119717AA7CBBCFBF4B2AFB14A60F122462462C35A03D765EE848BD",
+      "corrective_stats": {
+        "rows": 12416,
+        "eligible_rows": 12403,
+        "episodes": 357,
+        "onset_cap_value": 10.42268907563025,
+        "aux": {
+          "horizon_valid_rows": 12286,
+          "aux_damage_base_rate": 0.011314,
+          "aux_margin_mean": 0.731305
+        },
+        "segment_eligible_counts": {
+          "background": 5057,
+          "precursor": 2848,
+          "onset_episode": 1233,
+          "recovery": 3265
+        },
+        "segment_all_counts": {
+          "background": 5070,
+          "precursor": 2848,
+          "onset_episode": 1233,
+          "recovery": 3265
+        },
+        "segment_weight_mean": {
+          "background": 1.10368812084198,
+          "precursor": 1.3064957857131958,
+          "onset_episode": 1.5088807344436646,
+          "recovery": 0.3798775374889374
+        },
+        "segment_mass_fractions": {
+          "background": 0.45,
+          "precursor": 0.3,
+          "onset_episode": 0.15,
+          "recovery": 0.1
+        },
+        "weight_summary": {
+          "min": 0.3798774778842926,
+          "mean": 1.0,
+          "median": 1.1036880016326904,
+          "p99": 1.8447989225387573,
+          "max": 1.8447989225387573
+        }
+      },
+      "smoke_run": true,
+      "sidecar_log": "dagger_r3",
+      "student_control": {
+        "student_control_fraction": 0.998067,
+        "student_ticks": 12392,
+        "fallback_ticks": 24,
+        "clamp_count": 3923,
+        "latency_ms": {
+          "n": 12416,
+          "p50": 15.0,
+          "p99": 17.0,
+          "max": 155.0
+        },
+        "wave_reached": 13,
+        "result": "defeat"
+      },
+      "triple_reconciliation": {
+        "connection_act_count": 12415,
+        "student_ticks": 12392,
+        "student_matched": 12392,
+        "student_missing_act": 0,
+        "join_coverage": 1.0,
+        "ok": {
+          "ticks": 8469,
+          "matched": 8469,
+          "max_abs_delta": 0.0,
+          "violations": 0,
+          "tol": 0.0001
+        },
+        "clamped": {
+          "ticks": 3923,
+          "matched": 3923,
+          "max_dir_diff": 1.0025430922100398e-06,
+          "max_mag_err": 7.108647472886531e-07,
+          "violations": 0,
+          "dir_tol": 0.001,
+          "mag_tol": 0.001
+        },
+        "timeout_ticks": 23,
+        "timeout_with_act": 23,
+        "not_connected_ticks": 1,
+        "other_ticks": 0,
+        "referenced_seqs": 12392,
+        "timeout_seqs": 23,
+        "reconciliation_ok": true
+      }
+    },
+    {
+      "run_id": "run_1784882794_20877",
+      "shard_file": "run_1784882794_20877.npz",
+      "shard_sha256": "EEE83865B2FC47B568E934941A51E63E1EB147D98BB098D805976267ACC5ABE4",
+      "shard_bytes": 21523488,
+      "capture_seq_monotonic": true,
+      "counts": {
+        "total": 20702,
+        "valid": 20702,
+        "temporal_valid": 20680,
+        "valid_and_temporal_valid": 20680
+      },
+      "per_wave_total": {
+        "1": 440,
+        "2": 546,
+        "3": 640,
+        "4": 740,
+        "5": 841,
+        "6": 945,
+        "7": 1046,
+        "8": 1140,
+        "9": 1251,
+        "10": 1246,
+        "11": 1246,
+        "12": 1240,
+        "13": 1257,
+        "14": 1240,
+        "15": 1256,
+        "16": 1240,
+        "17": 1252,
+        "18": 1240,
+        "19": 1246,
+        "20": 650
+      },
+      "per_wave_valid": {
+        "1": 440,
+        "2": 546,
+        "3": 640,
+        "4": 740,
+        "5": 841,
+        "6": 945,
+        "7": 1046,
+        "8": 1140,
+        "9": 1251,
+        "10": 1246,
+        "11": 1246,
+        "12": 1240,
+        "13": 1257,
+        "14": 1240,
+        "15": 1256,
+        "16": 1240,
+        "17": 1252,
+        "18": 1240,
+        "19": 1246,
+        "20": 650
+      },
+      "overflow": {
+        "enemies": {
+          "overflow_samples": 0,
+          "max_raw": 55,
+          "capacity": 64
+        },
+        "bosses": {
+          "overflow_samples": 0,
+          "max_raw": 1,
+          "capacity": 2
+        },
+        "projectiles": {
+          "overflow_samples": 0,
+          "max_raw": 9,
+          "capacity": 32
+        },
+        "materials": {
+          "overflow_samples": 0,
+          "max_raw": 51,
+          "capacity": 64
+        },
+        "consumables": {
+          "overflow_samples": 0,
+          "max_raw": 8,
+          "capacity": 24
+        },
+        "crates": {
+          "overflow_samples": 0,
+          "max_raw": 2,
+          "capacity": 2
+        },
+        "obstacles": {
+          "overflow_samples": 0,
+          "max_raw": 2,
+          "capacity": 8
+        }
+      },
+      "fault_count": 0,
+      "faults": [],
+      "determinism_spot_check": [
+        {
+          "position": 0,
+          "capture_seq": 1,
+          "digest": "7D699394065663A330B8759C6702E937986B45A20D4A776F4C4B99DF83E0D216"
+        },
+        {
+          "position": 5000,
+          "capture_seq": 5001,
+          "digest": "0C77C264AAD4A871547EA04A632348929A88D5AFA771C04DA1A1576556B4402F"
+        },
+        {
+          "position": 10000,
+          "capture_seq": 10001,
+          "digest": "38CFD15EF9A79D743AE738B5078887E74AB37A5DAE049FE87782BA744668B1AB"
+        },
+        {
+          "position": 15000,
+          "capture_seq": 15001,
+          "digest": "44EAAD96E0397D457C2DFB65C037C0D791ACA83451A33F50E28FBCEFF6983932"
+        },
+        {
+          "position": 20000,
+          "capture_seq": 20001,
+          "digest": "40B32667643F1A54A725B430EB0F4019145049C673979227EC2780A1C1B906E5"
+        },
+        {
+          "position": 20701,
+          "capture_seq": 20702,
+          "digest": "B822041B2D44BC60B693D1F8BF0EB7A5D7CA22FC76BE777A49BC3FB8A4EF5050"
+        }
+      ],
+      "build_seconds": 10.59,
+      "aux_file": "aux_labels/run_1784882794_20877.npz",
+      "aux_sha256": "900B5CA8297F64DEB1C743946A7F5CBB2EDED8BC4EC7870D6E8A9564362E720B",
+      "weights_file": "sample_weights/run_1784882794_20877.npz",
+      "weights_sha256": "2C3611AD0046877A6B5734912BEA4B798AA2A502AF2716FBEC950363B9A3922D",
+      "corrective_stats": {
+        "rows": 20702,
+        "eligible_rows": 20680,
+        "episodes": 589,
+        "onset_cap_value": 10.533106960950764,
+        "aux": {
+          "horizon_valid_rows": 20482,
+          "aux_damage_base_rate": 0.011571,
+          "aux_margin_mean": 0.723118
+        },
+        "segment_eligible_counts": {
+          "background": 8855,
+          "precursor": 4734,
+          "onset_episode": 1855,
+          "recovery": 5236
+        },
+        "segment_all_counts": {
+          "background": 8876,
+          "precursor": 4734,
+          "onset_episode": 1855,
+          "recovery": 5237
+        },
+        "segment_weight_mean": {
+          "background": 1.0509318113327026,
+          "precursor": 1.3105196952819824,
+          "onset_episode": 1.6722371578216553,
+          "recovery": 0.3949579894542694
+        },
+        "segment_mass_fractions": {
+          "background": 0.45,
+          "precursor": 0.3,
+          "onset_episode": 0.15,
+          "recovery": 0.1
+        },
+        "weight_summary": {
+          "min": 0.13859350979328156,
+          "mean": 1.0,
+          "median": 1.050931692123413,
+          "p99": 2.31261944770813,
+          "max": 2.31261944770813
+        }
+      },
+      "smoke_run": false,
+      "sidecar_log": "paired_eval",
+      "student_control": {
+        "student_control_fraction": 0.997923,
+        "student_ticks": 20659,
+        "fallback_ticks": 43,
+        "clamp_count": 6571,
+        "latency_ms": {
+          "n": 20702,
+          "p50": 15.0,
+          "p99": 19.0,
+          "max": 204.0
+        },
+        "wave_reached": 20,
+        "result": "defeat"
+      },
+      "triple_reconciliation": {
+        "connection_act_count": 80882,
+        "student_ticks": 20659,
+        "student_matched": 20659,
+        "student_missing_act": 0,
+        "join_coverage": 1.0,
+        "ok": {
+          "ticks": 14088,
+          "matched": 14088,
+          "max_abs_delta": 0.0,
+          "violations": 0,
+          "tol": 0.0001
+        },
+        "clamped": {
+          "ticks": 6571,
+          "matched": 6571,
+          "max_dir_diff": 9.997217420565363e-07,
+          "max_mag_err": 7.113057469698703e-07,
+          "violations": 0,
+          "dir_tol": 0.001,
+          "mag_tol": 0.001
+        },
+        "timeout_ticks": 42,
+        "timeout_with_act": 42,
+        "not_connected_ticks": 1,
+        "other_ticks": 0,
+        "referenced_seqs": 20659,
+        "timeout_seqs": 42,
+        "reconciliation_ok": true
+      }
+    },
+    {
+      "run_id": "run_1784883926_57395",
+      "shard_file": "run_1784883926_57395.npz",
+      "shard_sha256": "EC282A3832E90B2207F1C69646FE926795040086A4F034131340B8EB65EA9667",
+      "shard_bytes": 6626838,
+      "capture_seq_monotonic": true,
+      "counts": {
+        "total": 8727,
+        "valid": 8727,
+        "temporal_valid": 8717,
+        "valid_and_temporal_valid": 8717
+      },
+      "per_wave_total": {
+        "1": 440,
+        "2": 551,
+        "3": 640,
+        "4": 746,
+        "5": 840,
+        "6": 941,
+        "7": 1046,
+        "8": 1146,
+        "9": 1246,
+        "10": 1131
+      },
+      "per_wave_valid": {
+        "1": 440,
+        "2": 551,
+        "3": 640,
+        "4": 746,
+        "5": 840,
+        "6": 941,
+        "7": 1046,
+        "8": 1146,
+        "9": 1246,
+        "10": 1131
+      },
+      "overflow": {
+        "enemies": {
+          "overflow_samples": 0,
+          "max_raw": 40,
+          "capacity": 64
+        },
+        "bosses": {
+          "overflow_samples": 0,
+          "max_raw": 0,
+          "capacity": 2
+        },
+        "projectiles": {
+          "overflow_samples": 0,
+          "max_raw": 2,
+          "capacity": 32
+        },
+        "materials": {
+          "overflow_samples": 0,
+          "max_raw": 42,
+          "capacity": 64
+        },
+        "consumables": {
+          "overflow_samples": 0,
+          "max_raw": 8,
+          "capacity": 24
+        },
+        "crates": {
+          "overflow_samples": 0,
+          "max_raw": 1,
+          "capacity": 2
+        },
+        "obstacles": {
+          "overflow_samples": 0,
+          "max_raw": 2,
+          "capacity": 8
+        }
+      },
+      "fault_count": 0,
+      "faults": [],
+      "determinism_spot_check": [
+        {
+          "position": 0,
+          "capture_seq": 1,
+          "digest": "A75FEAE0B6A00D76CD0EEF28F573E34545F28DFD060C70F56F3CF45A0D89C9E1"
+        },
+        {
+          "position": 5000,
+          "capture_seq": 5001,
+          "digest": "E6741ACF4F9B3762CE2B2C059355B5E880986E80290942998BA85AC527BEE86B"
+        },
+        {
+          "position": 8726,
+          "capture_seq": 8727,
+          "digest": "BAAEDBF410924F284725B6B9CAFD2DEE32FB48A13ABDD9EEF93C447F3CFC0E8F"
+        }
+      ],
+      "build_seconds": 3.64,
+      "aux_file": "aux_labels/run_1784883926_57395.npz",
+      "aux_sha256": "B7EA044801DCDB8D94EBD8E9CB313E6C826FBC0DE1BAA8C6B5452610BE029A59",
+      "weights_file": "sample_weights/run_1784883926_57395.npz",
+      "weights_sha256": "DCC03BF467E78B0BECC118A1A0592E68E67E42D7BF7857928C9844C8ACD87A57",
+      "corrective_stats": {
+        "rows": 8727,
+        "eligible_rows": 8717,
+        "episodes": 243,
+        "onset_cap_value": 10.761728395061729,
+        "aux": {
+          "horizon_valid_rows": 8627,
+          "aux_damage_base_rate": 0.01391,
+          "aux_margin_mean": 0.717805
+        },
+        "segment_eligible_counts": {
+          "background": 3681,
+          "precursor": 1901,
+          "onset_episode": 894,
+          "recovery": 2241
+        },
+        "segment_all_counts": {
+          "background": 3691,
+          "precursor": 1901,
+          "onset_episode": 894,
+          "recovery": 2241
+        },
+        "segment_weight_mean": {
+          "background": 1.065648078918457,
+          "precursor": 1.3756444454193115,
+          "onset_episode": 1.4625838994979858,
+          "recovery": 0.38897812366485596
+        },
+        "segment_mass_fractions": {
+          "background": 0.45,
+          "precursor": 0.3,
+          "onset_episode": 0.15,
+          "recovery": 0.1
+        },
+        "weight_summary": {
+          "min": 0.38897812366485596,
+          "mean": 1.0,
+          "median": 1.0656479597091675,
+          "p99": 1.918861746788025,
+          "max": 1.918861746788025
+        }
+      },
+      "smoke_run": false,
+      "sidecar_log": "paired_eval",
+      "student_control": {
+        "student_control_fraction": 0.998052,
+        "student_ticks": 8710,
+        "fallback_ticks": 17,
+        "clamp_count": 2994,
+        "latency_ms": {
+          "n": 8727,
+          "p50": 15.0,
+          "p99": 20.0,
+          "max": 213.0
+        },
+        "wave_reached": 10,
+        "result": "defeat"
+      },
+      "triple_reconciliation": {
+        "connection_act_count": 80882,
+        "student_ticks": 8710,
+        "student_matched": 8710,
+        "student_missing_act": 0,
+        "join_coverage": 1.0,
+        "ok": {
+          "ticks": 5716,
+          "matched": 5716,
+          "max_abs_delta": 0.0,
+          "violations": 0,
+          "tol": 0.0001
+        },
+        "clamped": {
+          "ticks": 2994,
+          "matched": 2994,
+          "max_dir_diff": 9.939353488030989e-07,
+          "max_mag_err": 7.094432517007476e-07,
+          "violations": 0,
+          "dir_tol": 0.001,
+          "mag_tol": 0.001
+        },
+        "timeout_ticks": 17,
+        "timeout_with_act": 17,
+        "not_connected_ticks": 0,
+        "other_ticks": 0,
+        "referenced_seqs": 8710,
+        "timeout_seqs": 17,
+        "reconciliation_ok": true
+      }
+    },
+    {
+      "run_id": "run_1784884408_98596",
+      "shard_file": "run_1784884408_98596.npz",
+      "shard_sha256": "0F3261F66D96F7EE817064D1E8CFADCF22E55BEA9812F78D6F0F36B39DD40653",
+      "shard_bytes": 6106106,
+      "capture_seq_monotonic": true,
+      "counts": {
+        "total": 9913,
+        "valid": 9913,
+        "temporal_valid": 9902,
+        "valid_and_temporal_valid": 9902
+      },
+      "per_wave_total": {
+        "1": 440,
+        "2": 546,
+        "3": 646,
+        "4": 756,
+        "5": 840,
+        "6": 947,
+        "7": 1046,
+        "8": 1146,
+        "9": 1247,
+        "10": 1261,
+        "11": 1038
+      },
+      "per_wave_valid": {
+        "1": 440,
+        "2": 546,
+        "3": 646,
+        "4": 756,
+        "5": 840,
+        "6": 947,
+        "7": 1046,
+        "8": 1146,
+        "9": 1247,
+        "10": 1261,
+        "11": 1038
+      },
+      "overflow": {
+        "enemies": {
+          "overflow_samples": 0,
+          "max_raw": 37,
+          "capacity": 64
+        },
+        "bosses": {
+          "overflow_samples": 0,
+          "max_raw": 0,
+          "capacity": 2
+        },
+        "projectiles": {
+          "overflow_samples": 0,
+          "max_raw": 4,
+          "capacity": 32
+        },
+        "materials": {
+          "overflow_samples": 0,
+          "max_raw": 28,
+          "capacity": 64
+        },
+        "consumables": {
+          "overflow_samples": 0,
+          "max_raw": 5,
+          "capacity": 24
+        },
+        "crates": {
+          "overflow_samples": 0,
+          "max_raw": 2,
+          "capacity": 2
+        },
+        "obstacles": {
+          "overflow_samples": 0,
+          "max_raw": 2,
+          "capacity": 8
+        }
+      },
+      "fault_count": 0,
+      "faults": [],
+      "determinism_spot_check": [
+        {
+          "position": 0,
+          "capture_seq": 1,
+          "digest": "2BA6A9BBA47094B04DA3E20450D4F8374B85FF0DE479D47C3C9B4A3C4AAA0E6D"
+        },
+        {
+          "position": 5000,
+          "capture_seq": 5001,
+          "digest": "AD53B88E5E7CB9006C7816B463967819079EDBA703918F11751C5DBF4DBEFE8B"
+        },
+        {
+          "position": 9912,
+          "capture_seq": 9913,
+          "digest": "1F739EBBE187DB4998B7A5943E671650C4BD98DA5A82328CA123C34EAB64F6A6"
+        }
+      ],
+      "build_seconds": 3.66,
+      "aux_file": "aux_labels/run_1784884408_98596.npz",
+      "aux_sha256": "8AF362E91CE224B417147B70A45FE1469A4DBF29C1D83C1F634AB73021571748",
+      "weights_file": "sample_weights/run_1784884408_98596.npz",
+      "weights_sha256": "31D22D8592E7C4B29402CD2E333D5D8914D1332C644436E1D2DCC0EB4C22C03B",
+      "corrective_stats": {
+        "rows": 9913,
+        "eligible_rows": 9902,
+        "episodes": 334,
+        "onset_cap_value": 8.894011976047905,
+        "aux": {
+          "horizon_valid_rows": 9803,
+          "aux_damage_base_rate": 0.019076,
+          "aux_margin_mean": 0.697509
+        },
+        "segment_eligible_counts": {
+          "background": 3599,
+          "precursor": 2597,
+          "onset_episode": 1036,
+          "recovery": 2670
+        },
+        "segment_all_counts": {
+          "background": 3610,
+          "precursor": 2597,
+          "onset_episode": 1036,
+          "recovery": 2670
+        },
+        "segment_weight_mean": {
+          "background": 1.2380939722061157,
+          "precursor": 1.1438581943511963,
+          "onset_episode": 1.4336872100830078,
+          "recovery": 0.3708614408969879
+        },
+        "segment_mass_fractions": {
+          "background": 0.45,
+          "precursor": 0.3,
+          "onset_episode": 0.15,
+          "recovery": 0.1
+        },
+        "weight_summary": {
+          "min": 0.3708614110946655,
+          "mean": 1.0,
+          "median": 1.1438583135604858,
+          "p99": 1.8657499551773071,
+          "max": 1.8657499551773071
+        }
+      },
+      "smoke_run": false,
+      "sidecar_log": "paired_eval",
+      "student_control": {
+        "student_control_fraction": 0.997882,
+        "student_ticks": 9892,
+        "fallback_ticks": 21,
+        "clamp_count": 2980,
+        "latency_ms": {
+          "n": 9913,
+          "p50": 14.0,
+          "p99": 19.0,
+          "max": 284.0
+        },
+        "wave_reached": 11,
+        "result": "defeat"
+      },
+      "triple_reconciliation": {
+        "connection_act_count": 80882,
+        "student_ticks": 9892,
+        "student_matched": 9892,
+        "student_missing_act": 0,
+        "join_coverage": 1.0,
+        "ok": {
+          "ticks": 6912,
+          "matched": 6912,
+          "max_abs_delta": 0.0,
+          "violations": 0,
+          "tol": 0.0001
+        },
+        "clamped": {
+          "ticks": 2980,
+          "matched": 2980,
+          "max_dir_diff": 1.0336259199661413e-06,
+          "max_mag_err": 7.021537464790839e-07,
+          "violations": 0,
+          "dir_tol": 0.001,
+          "mag_tol": 0.001
+        },
+        "timeout_ticks": 21,
+        "timeout_with_act": 21,
+        "not_connected_ticks": 0,
+        "other_ticks": 0,
+        "referenced_seqs": 9892,
+        "timeout_seqs": 21,
+        "reconciliation_ok": true
+      }
+    },
+    {
+      "run_id": "run_1784884958_1046",
+      "shard_file": "run_1784884958_1046.npz",
+      "shard_sha256": "F8C2AA086EE23AF6099C3CC392C1E8F4BEE469DDC42603634998F2C846FBC2DC",
+      "shard_bytes": 21407831,
+      "capture_seq_monotonic": true,
+      "counts": {
+        "total": 21094,
+        "valid": 21094,
+        "temporal_valid": 21074,
+        "valid_and_temporal_valid": 21074
+      },
+      "per_wave_total": {
+        "1": 440,
+        "2": 546,
+        "3": 640,
+        "4": 746,
+        "5": 846,
+        "6": 940,
+        "7": 1046,
+        "8": 1140,
+        "9": 1257,
+        "10": 1240,
+        "11": 1240,
+        "12": 1246,
+        "13": 1246,
+        "14": 1241,
+        "15": 1246,
+        "16": 1245,
+        "17": 1241,
+        "18": 1245,
+        "19": 1246,
+        "20": 1057
+      },
+      "per_wave_valid": {
+        "1": 440,
+        "2": 546,
+        "3": 640,
+        "4": 746,
+        "5": 846,
+        "6": 940,
+        "7": 1046,
+        "8": 1140,
+        "9": 1257,
+        "10": 1240,
+        "11": 1240,
+        "12": 1246,
+        "13": 1246,
+        "14": 1241,
+        "15": 1246,
+        "16": 1245,
+        "17": 1241,
+        "18": 1245,
+        "19": 1246,
+        "20": 1057
+      },
+      "overflow": {
+        "enemies": {
+          "overflow_samples": 0,
+          "max_raw": 64,
+          "capacity": 64
+        },
+        "bosses": {
+          "overflow_samples": 0,
+          "max_raw": 1,
+          "capacity": 2
+        },
+        "projectiles": {
+          "overflow_samples": 0,
+          "max_raw": 26,
+          "capacity": 32
+        },
+        "materials": {
+          "overflow_samples": 0,
+          "max_raw": 50,
+          "capacity": 64
+        },
+        "consumables": {
+          "overflow_samples": 0,
+          "max_raw": 8,
+          "capacity": 24
+        },
+        "crates": {
+          "overflow_samples": 0,
+          "max_raw": 2,
+          "capacity": 2
+        },
+        "obstacles": {
+          "overflow_samples": 0,
+          "max_raw": 2,
+          "capacity": 8
+        }
+      },
+      "fault_count": 0,
+      "faults": [],
+      "determinism_spot_check": [
+        {
+          "position": 0,
+          "capture_seq": 1,
+          "digest": "FF64227E962B4F066394663BD264A13722443E260225075F93758E17102AA6A3"
+        },
+        {
+          "position": 5000,
+          "capture_seq": 5001,
+          "digest": "D8FF52FA8522731956EEC60CAFDD6E5AC1AEA547C04EA23937928039DAC26054"
+        },
+        {
+          "position": 10000,
+          "capture_seq": 10001,
+          "digest": "E875C2E1D5307CD9AAED72D84E18858B0F418FF606E80C22D6D75F1095E0E4F3"
+        },
+        {
+          "position": 15000,
+          "capture_seq": 15001,
+          "digest": "1C8A51F2AAC4D039B5A69C8D56EE67BD9E7982C9C2DCD11C480A10577F97C8EF"
+        },
+        {
+          "position": 20000,
+          "capture_seq": 20001,
+          "digest": "C63CC890DFF0C7CE3564F4B629D3498ECC046153D8C00664E6A067360830B9B3"
+        },
+        {
+          "position": 21093,
+          "capture_seq": 21094,
+          "digest": "FBAF0DB97C9AB5DB997A834962825FDCA9C85AFCCC57BC1E554B94033C59A82B"
+        }
+      ],
+      "build_seconds": 10.95,
+      "aux_file": "aux_labels/run_1784884958_1046.npz",
+      "aux_sha256": "DADC7A77B442B472EE44600ABCC33C07F52930D882A735C1855CA15296CD2363",
+      "weights_file": "sample_weights/run_1784884958_1046.npz",
+      "weights_sha256": "66B856E8266412183483F1057F70AB43D6AB9A2B3DD98940B77617B221956C8A",
+      "corrective_stats": {
+        "rows": 21094,
+        "eligible_rows": 21074,
+        "episodes": 636,
+        "onset_cap_value": 9.940566037735849,
+        "aux": {
+          "horizon_valid_rows": 20894,
+          "aux_damage_base_rate": 0.01723,
+          "aux_margin_mean": 0.715971
+        },
+        "segment_eligible_counts": {
+          "background": 9642,
+          "precursor": 4638,
+          "onset_episode": 1784,
+          "recovery": 5010
+        },
+        "segment_all_counts": {
+          "background": 9662,
+          "precursor": 4638,
+          "onset_episode": 1784,
+          "recovery": 5010
+        },
+        "segment_weight_mean": {
+          "background": 0.9835406541824341,
+          "precursor": 1.3631306886672974,
+          "onset_episode": 1.7719168663024902,
+          "recovery": 0.4206387400627136
+        },
+        "segment_mass_fractions": {
+          "background": 0.45,
+          "precursor": 0.3,
+          "onset_episode": 0.15,
+          "recovery": 0.1
+        },
+        "weight_summary": {
+          "min": 0.42063871026039124,
+          "mean": 1.0,
+          "median": 0.9835407733917236,
+          "p99": 2.3814704418182373,
+          "max": 2.3814704418182373
+        }
+      },
+      "smoke_run": false,
+      "sidecar_log": "paired_eval",
+      "student_control": {
+        "student_control_fraction": 0.998246,
+        "student_ticks": 21057,
+        "fallback_ticks": 37,
+        "clamp_count": 7397,
+        "latency_ms": {
+          "n": 21094,
+          "p50": 14.0,
+          "p99": 20.0,
+          "max": 294.0
+        },
+        "wave_reached": 20,
+        "result": "defeat"
+      },
+      "triple_reconciliation": {
+        "connection_act_count": 80882,
+        "student_ticks": 21057,
+        "student_matched": 21057,
+        "student_missing_act": 0,
+        "join_coverage": 1.0,
+        "ok": {
+          "ticks": 13660,
+          "matched": 13660,
+          "max_abs_delta": 0.0,
+          "violations": 0,
+          "tol": 0.0001
+        },
+        "clamped": {
+          "ticks": 7397,
+          "matched": 7397,
+          "max_dir_diff": 1.0297566521710877e-06,
+          "max_mag_err": 6.948912414372899e-07,
+          "violations": 0,
+          "dir_tol": 0.001,
+          "mag_tol": 0.001
+        },
+        "timeout_ticks": 37,
+        "timeout_with_act": 37,
+        "not_connected_ticks": 0,
+        "other_ticks": 0,
+        "referenced_seqs": 21057,
+        "timeout_seqs": 37,
+        "reconciliation_ok": true
+      }
+    },
+    {
+      "run_id": "run_1784886119_60496",
+      "shard_file": "run_1784886119_60496.npz",
+      "shard_sha256": "FD638955C49A31DE59302A462D1B0197380F13BB8180A3656E92FC5823A37C58",
+      "shard_bytes": 21099266,
+      "capture_seq_monotonic": true,
+      "counts": {
+        "total": 20447,
+        "valid": 20447,
+        "temporal_valid": 20427,
+        "valid_and_temporal_valid": 20427
+      },
+      "per_wave_total": {
+        "1": 440,
+        "2": 545,
+        "3": 641,
+        "4": 740,
+        "5": 840,
+        "6": 946,
+        "7": 1046,
+        "8": 1151,
+        "9": 1256,
+        "10": 1251,
+        "11": 1245,
+        "12": 1246,
+        "13": 1245,
+        "14": 1241,
+        "15": 1240,
+        "16": 1246,
+        "17": 1251,
+        "18": 1240,
+        "19": 1245,
+        "20": 392
+      },
+      "per_wave_valid": {
+        "1": 440,
+        "2": 545,
+        "3": 641,
+        "4": 740,
+        "5": 840,
+        "6": 946,
+        "7": 1046,
+        "8": 1151,
+        "9": 1256,
+        "10": 1251,
+        "11": 1245,
+        "12": 1246,
+        "13": 1245,
+        "14": 1241,
+        "15": 1240,
+        "16": 1246,
+        "17": 1251,
+        "18": 1240,
+        "19": 1245,
+        "20": 392
+      },
+      "overflow": {
+        "enemies": {
+          "overflow_samples": 0,
+          "max_raw": 41,
+          "capacity": 64
+        },
+        "bosses": {
+          "overflow_samples": 0,
+          "max_raw": 1,
+          "capacity": 2
+        },
+        "projectiles": {
+          "overflow_samples": 0,
+          "max_raw": 11,
+          "capacity": 32
+        },
+        "materials": {
+          "overflow_samples": 0,
+          "max_raw": 50,
+          "capacity": 64
+        },
+        "consumables": {
+          "overflow_samples": 0,
+          "max_raw": 10,
+          "capacity": 24
+        },
+        "crates": {
+          "overflow_samples": 0,
+          "max_raw": 2,
+          "capacity": 2
+        },
+        "obstacles": {
+          "overflow_samples": 0,
+          "max_raw": 2,
+          "capacity": 8
+        }
+      },
+      "fault_count": 0,
+      "faults": [],
+      "determinism_spot_check": [
+        {
+          "position": 0,
+          "capture_seq": 1,
+          "digest": "4E58763E772ADEC48D5AC72BC313A0CD45CCE336441E844B58B3D6A53E2CC2F4"
+        },
+        {
+          "position": 5000,
+          "capture_seq": 5001,
+          "digest": "FF0473941A71E14A117449BF2EF9882090F9A991D0A0E0945111C9BD97485DB4"
+        },
+        {
+          "position": 10000,
+          "capture_seq": 10001,
+          "digest": "AE33301F34BB9FDC87CFD9D28A244E5E453A414868A5A11A4EA19D6D891A2FFC"
+        },
+        {
+          "position": 15000,
+          "capture_seq": 15001,
+          "digest": "07050CCBBE05AC2734247F5EFBE9757779EAB969140046F02062656E1EE486CA"
+        },
+        {
+          "position": 20000,
+          "capture_seq": 20001,
+          "digest": "CBD337FB84472F50492796BC3453F619C8BE55403453A3FCF5FF180DA8E185F8"
+        },
+        {
+          "position": 20446,
+          "capture_seq": 20447,
+          "digest": "156190F9C93BAC1938AC7AAF2FEEF168323BF5E87CCD4C846E1EABBFE623722A"
+        }
+      ],
+      "build_seconds": 10.4,
+      "aux_file": "aux_labels/run_1784886119_60496.npz",
+      "aux_sha256": "B2335D1CDD3CDA0FDE92B11FFC2A69A52C4866B3E2551EF4F8141DF2DD3B1670",
+      "weights_file": "sample_weights/run_1784886119_60496.npz",
+      "weights_sha256": "A356A00B19B383062ED448A5F1DAE95C5D5D5B6F70E60E48E3E68DA5DB0C5EE4",
+      "corrective_stats": {
+        "rows": 20447,
+        "eligible_rows": 20427,
+        "episodes": 674,
+        "onset_cap_value": 9.09213649851632,
+        "aux": {
+          "horizon_valid_rows": 20247,
+          "aux_damage_base_rate": 0.004939,
+          "aux_margin_mean": 0.707129
+        },
+        "segment_eligible_counts": {
+          "background": 7642,
+          "precursor": 5217,
+          "onset_episode": 2030,
+          "recovery": 5538
+        },
+        "segment_all_counts": {
+          "background": 7662,
+          "precursor": 5217,
+          "onset_episode": 2030,
+          "recovery": 5538
+        },
+        "segment_weight_mean": {
+          "background": 1.2028462886810303,
+          "precursor": 1.1746406555175781,
+          "onset_episode": 1.509384274482727,
+          "recovery": 0.3688516318798065
+        },
+        "segment_mass_fractions": {
+          "background": 0.45,
+          "precursor": 0.3,
+          "onset_episode": 0.15,
+          "recovery": 0.1
+        },
+        "weight_summary": {
+          "min": 0.2674157917499542,
+          "mean": 1.0000001192092896,
+          "median": 1.1746406555175781,
+          "p99": 1.9365572929382324,
+          "max": 1.9365572929382324
+        }
+      },
+      "smoke_run": false,
+      "sidecar_log": "paired_eval",
+      "student_control": {
+        "student_control_fraction": 0.998337,
+        "student_ticks": 20413,
+        "fallback_ticks": 34,
+        "clamp_count": 7238,
+        "latency_ms": {
+          "n": 20447,
+          "p50": 15.0,
+          "p99": 19.0,
+          "max": 218.0
+        },
+        "wave_reached": 20,
+        "result": "defeat"
+      },
+      "triple_reconciliation": {
+        "connection_act_count": 80882,
+        "student_ticks": 20413,
+        "student_matched": 20413,
+        "student_missing_act": 0,
+        "join_coverage": 1.0,
+        "ok": {
+          "ticks": 13175,
+          "matched": 13175,
+          "max_abs_delta": 0.0,
+          "violations": 0,
+          "tol": 0.0001
+        },
+        "clamped": {
+          "ticks": 7238,
+          "matched": 7238,
+          "max_dir_diff": 1.035470367616309e-06,
+          "max_mag_err": 7.139977548087373e-07,
+          "violations": 0,
+          "dir_tol": 0.001,
+          "mag_tol": 0.001
+        },
+        "timeout_ticks": 34,
+        "timeout_with_act": 34,
+        "not_connected_ticks": 0,
+        "other_ticks": 0,
+        "referenced_seqs": 20413,
+        "timeout_seqs": 34,
+        "reconciliation_ok": true
+      }
+    }
+  ]
+}
