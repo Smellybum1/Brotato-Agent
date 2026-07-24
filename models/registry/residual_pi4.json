@@ -1,0 +1,25 @@
+{
+  "actor_checkpoint": ".tmp\\residual_pi4.pt",
+  "actor_sha256": "16414822D39D1344DA24AC9BF3A9522A8DFB2CE1ED536E13DA628B4F5AA497A4",
+  "explore_sigma": 0.3,
+  "extra": {
+    "gates": {
+      "finite_losses": true,
+      "overall_pass": true,
+      "p99_abs_z": 0.1719553917646408,
+      "p99_abs_z_ok": true,
+      "serving_determinism_max_delta_diff": 0.0,
+      "serving_determinism_ok": true
+    }
+  },
+  "format": "residual_actor_v1",
+  "iteration": 4,
+  "kind": "residual_actor",
+  "parent_model_sha256": "1AD517B04843B69966841C7B795B927AE86B2727789456224321FC091F29F331",
+  "parent_registry": "C:\\Codex\\Brotato Agent\\models\\registry\\bc_v2_f_s1.json",
+  "reward_id": "reward_v2",
+  "run_name": "residual_pi4",
+  "schema_hash": "C653D836F3EBC821A51AFC70482D3772FC7B7B927D393A6B9BBADC2718BB9B2A",
+  "source_capture_schema_hash": "95B6444796A21FD44E94113B75BA2097BC381D5F72ED784F9B9A4A99DD46D951",
+  "theta_max_deg": 5.0
+}
