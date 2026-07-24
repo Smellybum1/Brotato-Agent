@@ -10,6 +10,9 @@ live handshake echoes its hashes. This file documents the convention.
 
 `bc_v<gen>_<variant>_s<seed>[_<suffix>]`
 
+(Applies to BC/DAgger student checkpoints only. Stage F residual actors use
+`residual_pi<n>` with a different manifest kind — see their section below.)
+
 - `gen` — generation / training aggregate:
   - **v1** = M2 behavior-cloning baseline, teacher-only (`combat_obs_v1`,
     387,695 samples).
@@ -77,11 +80,11 @@ version pins (`torch_version`, `onnx_version`, `onnxruntime_version`), and
 `parity` = `{max_abs_diff, n_fixtures, report, verdict}` — the §14.1 10k-fixture
 gate (threshold 1e-04).
 
-## Current status (2026-07-24)
+## Current status (2026-07-25)
 
 | run_name | role |
 |---|---|
-| **`bc_v2_f_s1`** | **PRODUCTION student** — behaviorally validated (M4 paired eval: 6 runs, waves 16–20, one victory). Config pin points here. |
+| **`bc_v2_f_s1`** | **PRODUCTION student** — behaviorally validated (M4 paired eval: 6 runs, waves 16–20, one victory). Config pin points here; **unchanged by Stage F**. |
 | `bc_v1_s1_full` | M2 BC baseline; the model served in the M3 live smoke and exported in Stage G. Archived (superseded live; still the copy-through reference). |
 | `bc_v1_s1_full_onnx` | ONNX export of `bc_v1_s1_full`, 10k-parity PASS (max Δ 1.13e-06). Byte-parity-verified, **not** live-qualified (torch is the sole live backend). |
 | `bc_v3_a_s1` | Offline-selected / dominant on the unbiased r2 holdout, but **behaviorally unconfirmed** (lost the paired eval). Archived candidate; folded into the next aggregate. |
@@ -94,3 +97,27 @@ Production/archived status is not a manifest field — a checkpoint is productio
 only by the config pin and the change-record verdicts
 (`reports/wp2/m4_change_record.md`). The registry keeps every candidate for
 audit and for re-aggregation.
+
+## Stage F residual actors (`residual_pi*.json`) — a different manifest kind
+
+Stage F Phase 2 checkpoints are **not** BC checkpoints and do **not** follow the
+`bc_v*` naming or torch-manifest schema above. Each is a `kind: "residual_actor"`
+/ `format: "residual_actor_v1"` manifest describing a bounded **angular residual**
+learned on top of the frozen `bc_v2_f_s1` trunk — `executed_dir =
+rotate(teacher_dir, θ_max·tanh(z))`, `theta_max_deg = 5.0`, `parent_model_sha256`
+= `bc_v2_f_s1` best.pt (`1AD517B0…F29F331`). They serve by rotating the teacher's
+movement action; **every residual run is residual-teacher-base control (§14.3),
+not an independent student**. They are **NOT production candidates** — the config
+pin never left `bc_v2_f_s1`. See `reports/wp2/stage_f_phase2_change_record.md`.
+
+| run_name | role |
+|---|---|
+| `residual_pi3` | Stage F Phase 2 iteration 3, arm A (`λ₀ = 0.001`; actor sha `689C1C64…AD26F`). **Arm-selection ruling** (`reports/wp2/residual_pi3_arm_selection.md`): chosen over arm B (`λ₀ = 0.0003`) on stratified \|δ\| — concentrates residual mass 7.0× in wave 20 / 7.5× in risk ≥ 0.75 (the critic-advantaged strata). Offline gates PASS (p99 \|z\| 0.139, serving determinism exact, no θ saturation). Live: smoke PASS (defeat w17); batch-1 runs w19 / w13 (w13 tripped the wave-15 bar → aborted → investigation cleared the mechanism, training-valid) / w20-victory → **1/4 victories**. Residual-teacher-base control; archived. |
+| `residual_pi4` | Stage F Phase 2 iteration 4 (`λ₀ = 0.001`, seed 4; actor sha `16414822…497A4`). Retrained on the 14-run / **247,510-state** pool (incl. the first pi3 victory). Offline gates PASS (p99 \|z\| 0.172, serving determinism exact). Live: batch-2 **3/3 victories** (damage 107 / 135 / **22** — cleanest 20-wave run in the project). Residual-teacher-base control; archived. |
+
+**Stage F Phase 2 verdict (§6 checkpoint, 2026-07-25): NULL.** Learned residual
+(7 runs, pi3+pi4) vs matched Phase-1 random control (6 runs): every predeclared-
+surface CI straddles zero (victory +0.238, overall damage +0.00004, wave-20
+damage −0.00039). Not shown to beat random perturbation; growing-batch iteration
+stopped per the predeclared rule. `bc_v2_f_s1` remains production
+(`reports/wp2/residual_checkpoint_verdict.md`).

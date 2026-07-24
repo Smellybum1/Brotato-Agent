@@ -6,7 +6,7 @@ See also the director master roadmap. Work Package status:
 |-----------|--------|
 | M0 Environment audit | Complete (WP1) |
 | M1 Deterministic teacher + telemetry | **Complete** — v72 certified 18W/2L; v92 promoted; repository/safeguard closeout passed |
-| M2 Learned combat (WP2) | **In progress** — teacher qualified through v125 (buy-before-reroll gate); `combat_obs_v1` shipped (387,695 samples); BC baseline `bc_v1_s1_full` qualified (4.80° teacher-val median); live student-inference path qualified (M3 smoke PASS) + Stage G ONNX byte-parity; DAgger arc complete, production student **`bc_v2_f_s1`**; residual-RL (Stage F) Phase 1 designed. See Step 4. |
+| M2 Learned combat (WP2) | **In progress** — teacher qualified through v125 (buy-before-reroll gate); `combat_obs_v1` shipped (387,695 samples); BC baseline `bc_v1_s1_full` qualified (4.80° teacher-val median); live student-inference path qualified (M3 smoke PASS) + Stage G ONNX byte-parity; DAgger arc complete, production student **`bc_v2_f_s1`**; residual-RL (Stage F) Phase 1 GO, Phase 2 concluded **NULL** (learned residual not shown to beat random control; iteration stopped per predeclared rule, operator fork pending). See Step 4. |
 | M3 Economy planner | Reframe pending (see note 3 below) |
 | M4 Robust D0 agent | Not started |
 | M5–M7 Danger curriculum / expert / characters | Not started |
@@ -355,5 +355,95 @@ measure local effect estimability, validate the angular geometry live, and
 produce the matched random-residual control required by later comparisons. A
 go/no-go gate (250–300k live steps) precedes any Phase 2 critic/actor training.
 
-**Next:** operator decision on the Stage F Phase 1 campaign; `bc_v2_f_s1` remains
-the live student in the interim.
+**Stage F — Phase 1 complete, GO (`3ac0dc4` probe sidecar, `e459623` verdict).**
+The residual-probe sidecar mode applied the Amendment F-1 bounded-angular geometry
+(`executed_dir = rotate(teacher_dir, θ_max·tanh(z))`, θ_max = 5°) as a symmetric
+uniform random perturbation under the teacher shield — no learning. Six probe runs
+produced the residual-support dataset and, critically, the **matched random-residual
+control** every later comparison is scored against. The go/no-go gate returned **GO**:
+the angular geometry was validated live (magnitude preserved, bounded, no saturation
+pathology), local effect was estimable, and the ±5° dose-response was monotone —
+evidence that headroom exists at the bound. `bc_v2_f_s1` continued as the live student
+throughout (probe rotates the teacher's action; it is not an independent policy).
+
+**Stage F — Phase 2 (bounded residual actor-critic; CONCLUDED NULL 2026-07-25;
+`reports/wp2/stage_f_phase2_change_record.md`).** An off-policy TD3-style residual
+actor-critic (F-2 learner) trained on a growing replay pool assembled from the
+telemetry joins, learning a state-conditional residual `δ = 5°·tanh(z)` on top of the
+frozen `bc_v2_f_s1` trunk (zero-init: the untrained actor reproduces the teacher
+exactly). The predeclared design fixed a single decision surface: at ~250–300k
+cumulative residual ticks the learned residual must **beat the matched Phase-1 random
+control** on damage-taken and wave outcomes, else stop and report.
+
+- **Infra + rungs 1–3 (`b644be2`).** Twin-critic TD3, `reward_v2`, replay assembly
+  (n-step-5, recovery exclusion, teacher-`δ`=0 mixing for the actor regularizer),
+  actor serving mode. Critic converged on 107,340 probe transitions but the
+  state-averaged Q dose-response was ~0 (−0.0019) — no constant directional bias,
+  consistent with teacher cancellation; value is state-conditional, decided live.
+  Zero-init serving reproduced the teacher exactly over 1,200 payloads. 425 tests.
+- **Iterations 1–2 + null diagnostics (`c6dee5e`).** pi1 (smoke w19 + batch
+  w20 / w20-victory / w19) and pi2 trained on the 183k-transition pool were gate-clean
+  but their residuals **collapsed toward zero**. Diagnostics implicated the regularizer,
+  not a value null: the `λ₀ = 0.01` L2-to-zero drove the collapse (`λ`→0 restores ~2°
+  residuals), while the critic's small state-conditional advantage (p99 0.018 vs |Q|
+  0.075) was concentrated precisely in `bc_v2`'s weak strata (wave 20: 37 % of states
+  advantaged; risk ≥ 0.75: 38 %) — coherent with the M4 mechanism finding. Offline
+  cannot separate real improvement from critic error; the live control decides.
+- **pi3 two-arm selection (`67d1d29`).** A backward-compatible `--actor-l2` knob
+  retrained two arms differing only in `λ₀`. Both passed all offline gates; **stratified
+  |δ| decided**: arm A (`λ₀ = 0.001`, sha `689C1C64…`) concentrates residual mass **7.0×
+  in wave 20 / 7.5× in risk ≥ 0.75** (the critic-advantaged strata) with near-zero
+  residual on the low-risk early manifold, while arm B's extra magnitude is off-target
+  baseline drift. **pi3 = arm A**, state-selective where the advantage lives.
+- **Checkpoint tooling (`770e5d8`).** Comparison tool with **full capture-stream damage
+  accounting** as primary (every hp-drop between consecutive captures, heal-clamped,
+  wave/risk-stratified, 10k bootstrap CIs) after the RL-usability filter was shown to
+  zero the damage of a recovery-heavy 18-damage victory run; the filtered view is
+  retained only as a labeled `rl_usable_view` diagnostic. Full-stream matches the mod's
+  `player_damage` ground truth on all 10 pool runs; a 3v3 control-vs-control validation
+  straddled zero on every readable stratum. Plus an auditable `wp2_set_student_pin.py`.
+- **Live evidence (`24a0027`).** pi3 **smoke PASS** (defeat w17, ≥15 bar, serving clean).
+  Batch-1: r1 w19 (operator-observed rich shop exits w10/w17/w18 → teacher-owned v126
+  evidence, `v126_evidence_rich_exit_w10.json`); r2 w13 **tripped the predeclared
+  wave-15 bar → campaign aborted**. The abort investigation
+  (`residual_pi3_wave13_abort_investigation.json`) cleared the pi3 mechanism (serving
+  clean at |δ| p50 1.01°, economy fully converted, and the corner pattern present in the
+  random control too), ruling the run training-valid and **not** disqualifying on n=1;
+  it also set the escalation rule: **any further sub-wave-15 run stops iteration**. A
+  machine-load covariate was recorded (STS2 12→8 workers;
+  `residual_checkpoint_load_covariate.json`) — the learned arm was collected loaded, the
+  control unloaded.
+- **pi4 iteration 4 (`f92b514`).** Batch-1 finished w20-victory (damage 76, cleanest
+  student-path win to that point). pi4 (`λ₀ = 0.001`, seed 4, sha `16414822…`) retrained
+  on the 14-run / **247,510-state** pool; all offline gates pass. Batch-2 served pi4 and
+  went **3/3 victories** (damage 107 / 135 / **22** — the cleanest 20-wave run ever
+  recorded in this project).
+- **§6 checkpoint — NULL verdict (`e9b358a`; `reports/wp2/residual_checkpoint_verdict.md`,
+  `residual_checkpoint_compare_v1.md`).** Learned (7 runs) vs matched random control
+  (6 runs) on the predeclared full-stream surface: **every CI straddles zero** — victory
+  rate +0.238 [−0.262, +0.714], final wave +0.26 [−2.41, +2.76], overall damage rate
+  +0.00004 [−0.00002, +0.00010], wave-20 damage −0.00039 [−0.00171, +0.00076],
+  risk ≥ 0.5 damage +0.00024 [−0.00135, +0.00187]. **The learned residual is not shown to
+  beat random perturbation.** Per the predeclared rule, growing-batch iteration **stops at
+  this checkpoint**. Honestly recorded but not adjudicated: point estimates favor the
+  learned arm (4/7 vs 2/6 victories) and the within-arm pi4 3/3 trend and the load
+  confound both argue the test was underpowered — none resolved at this n.
+
+All 13 checkpoint runs are **residual-teacher-base control (§14.3)** — the teacher policy
+with bounded angular rotation of its combat-movement action, shop/economy fully
+teacher-owned; **no independent-policy claims**, and **no production change**:
+`bc_v2_f_s1` remains the qualified live student, machine restored idle.
+
+**Fork pending (operator decision; iteration halted meanwhile).** Four options recorded
+in the verdict doc: (1) extend n under a new predeclared, load-matched design with
+victory-rate as the primary endpoint (the pi4 trend + load confound argue underpower);
+(2) a larger θ (Amendment F-1 revision — 5° may bound the effect below detectability,
+and the dose-response was monotone); (3) temporally-extended / state-dependent sustained
+residuals (single-tick rotation is capped by the ~10–20-tick teacher-cancellation decay
+the probe measured); or (4) redirect effort to the **shop layer**, where this session's
+live observations (rich exits w10/w17/w18, ~1,200 g banked into a w19 death — the classic
+WP1-era offense-starved loss signature) show large, legible, deterministically-fixable
+headroom (v126 candidate).
+
+**Next:** operator selects among the four Stage F forks (or redirects to the shop layer);
+`bc_v2_f_s1` remains the live student in the interim.
