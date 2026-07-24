@@ -55,6 +55,10 @@ PROBE_RUN_CONN: dict[str, int] = {
 }
 EARLY_WAVE_HI = 10  # early+mid bands (w1-10) where the pilot dose-response is +
 
+# Default actor L2-to-zero regularizer; mirrors TD3Config.lambda_zero (kept as a
+# literal so CLI parsing stays torch-free — trainer.rl.td3_residual imports torch).
+DEFAULT_ACTOR_L2 = 0.01
+
 
 # ---------------------------------------------------------------------------
 # Shared replay build
@@ -296,9 +300,11 @@ def run_iterate(args) -> int:
     actor = ResidualActor(parent._model, )
     trainer = ResidualTD3(
         actor, embedding_dim,
-        TD3Config(theta_max_deg=args.theta_max_deg, critic_lr=args.critic_lr, actor_lr=args.actor_lr),
+        TD3Config(theta_max_deg=args.theta_max_deg, critic_lr=args.critic_lr,
+                  actor_lr=args.actor_lr, lambda_zero=args.actor_l2),
         device=device,
     )
+    print(f"actor L2-to-zero lambda_0={args.actor_l2}", flush=True)
 
     n = len(pool)
     rng = np.random.default_rng(args.seed)
@@ -413,6 +419,9 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     p.add_argument("--theta-max-deg", type=float, default=5.0)
     p.add_argument("--critic-lr", type=float, default=3e-4)
     p.add_argument("--actor-lr", type=float, default=3e-4)
+    p.add_argument("--actor-l2", type=float, default=DEFAULT_ACTOR_L2,
+                   help="iterate: actor L2-to-zero regularizer lambda_0 "
+                        "(overrides TD3Config.lambda_zero; default 0.01)")
     p.add_argument("--steps", type=int, default=4000)
     p.add_argument("--batch-size", type=int, default=512)
     p.add_argument("--seed", type=int, default=0)

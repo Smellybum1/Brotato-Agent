@@ -1,0 +1,21 @@
+{
+  "iteration": 3,
+  "device": "cuda",
+  "n_transitions": 183343,
+  "teacher_mix": true,
+  "final_losses": {
+    "critic_loss": 0.0002546546747907996,
+    "actor_loss": 0.037383563816547394
+  },
+  "gates": {
+    "p99_abs_z": 0.13900065422058105,
+    "p99_abs_z_ok": true,
+    "serving_determinism_max_delta_diff": 0.0,
+    "serving_determinism_ok": true,
+    "finite_losses": true,
+    "overall_pass": true
+  },
+  "actor_checkpoint": ".tmp\\residual_pi3_l2_0p001.pt",
+  "actor_sha256": "689C1C64706AD212FB5117E0C913A23EB378B7C2234F9C73BC81C4E186CAD26F",
+  "registry_manifest": "C:\\Codex\\Brotato Agent\\models\\registry\\residual_pi3.json"
+}
