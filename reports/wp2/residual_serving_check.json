@@ -1,0 +1,19 @@
+{
+  "check": "residual_serving_zero_init",
+  "design_ref": "6.3",
+  "parent_registry_run_name": "bc_v2_f_s1",
+  "parent_model_sha256": "1AD517B04843B69966841C7B795B927AE86B2727789456224321FC091F29F331",
+  "actor_sha256": "2F9EF2A76CC81AA12943FF33E8B8B10C6715B74AAEFFDBD97C5AFBA7F15DBECF",
+  "serving_backend": "residual-actor",
+  "explore_sigma": 0.0,
+  "probe_run": "run_1784891038_60320",
+  "n_payloads_checked": 1200,
+  "n_nonzero_teacher": 1159,
+  "max_abs_delta_deg": 0.0,
+  "max_reply_error": 0.0,
+  "reply_tol": 1e-06,
+  "delta_tol": 1e-09,
+  "reply_reproduces_teacher": true,
+  "delta_is_zero": true,
+  "overall_pass": true
+}

@@ -29,6 +29,7 @@ from trainer.bridge.sidecar import (  # noqa: E402
     DEFAULT_LOG_PATH,
     DEFAULT_PORT,
     OnnxModelService,
+    ResidualActorService,
     ResidualProbeService,
     SidecarConfig,
     SidecarStartupError,
@@ -39,6 +40,8 @@ from trainer.bridge.sidecar import (  # noqa: E402
 DEFAULT_REGISTRY = REPO_ROOT / "models" / "registry" / "bc_v1_s1_full.json"
 DEFAULT_ONNX_REGISTRY = REPO_ROOT / "models" / "registry" / "bc_v1_s1_full_onnx.json"
 DEFAULT_SCHEMA = REPO_ROOT / "configs" / "wp2" / "observation_v1.yaml"
+#: Frozen trunk parent for the residual actor (Phase 2, design §3).
+DEFAULT_ACTOR_PARENT_REGISTRY = REPO_ROOT / "models" / "registry" / "bc_v2_f_s1.json"
 DEFAULT_THETA_MAX_DEG = 5.0
 
 
@@ -46,10 +49,35 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Serve the bc_v1 student policy over loopback TCP.")
     parser.add_argument(
         "--mode",
-        choices=("student", "residual-probe"),
+        choices=("student", "residual-probe", "residual-actor"),
         default="student",
-        help="serving mode: 'student' (verified bc_v1 model) or 'residual-probe' "
-        "(torch-free bounded angular perturbation of the teacher action; design §2)",
+        help="serving mode: 'student' (verified bc_v1 model), 'residual-probe' "
+        "(torch-free bounded angular perturbation of the teacher action; design §2), "
+        "or 'residual-actor' (trained z-head on the frozen bc_v2_f trunk; design §4)",
+    )
+    parser.add_argument(
+        "--actor-checkpoint",
+        default=None,
+        help="residual-actor: REQUIRED path to the trained actor checkpoint (.pt)",
+    )
+    parser.add_argument(
+        "--actor-parent-registry",
+        default=str(DEFAULT_ACTOR_PARENT_REGISTRY),
+        help="residual-actor: frozen trunk parent registry "
+        "(default: models/registry/bc_v2_f_s1.json)",
+    )
+    parser.add_argument(
+        "--explore-sigma",
+        type=float,
+        default=0.0,
+        help="residual-actor: Gaussian exploration std on z (0 => deterministic "
+        "serving; sigma 0.3 is the Phase-2 collection default, design §3)",
+    )
+    parser.add_argument(
+        "--actor-seed",
+        type=int,
+        default=0,
+        help="residual-actor: seed for the exploration noise stream",
     )
     parser.add_argument(
         "--theta-max-deg",
@@ -134,6 +162,21 @@ def main(argv: list[str] | None = None) -> int:
                 seed=args.probe_seed,
                 capture_schema_hash=str(schema["source_capture_schema_hash"]),
                 schema_id=str(schema.get("schema_id", "combat_obs_v1")),
+            )
+        except SidecarStartupError as exc:
+            print(f"startup error: {exc}", file=sys.stderr)
+            return 2
+    elif args.mode == "residual-actor":
+        if not args.actor_checkpoint:
+            print("error: --actor-checkpoint is required in residual-actor mode", file=sys.stderr)
+            return 1
+        try:
+            service = ResidualActorService.from_registry(
+                args.actor_parent_registry,
+                args.actor_checkpoint,
+                checkpoint=args.checkpoint,
+                explore_sigma=args.explore_sigma,
+                actor_seed=args.actor_seed,
             )
         except SidecarStartupError as exc:
             print(f"startup error: {exc}", file=sys.stderr)

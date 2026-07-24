@@ -1,0 +1,40 @@
+{
+  "rung": 2,
+  "design_ref": "6.2",
+  "device": "cuda",
+  "parent_model_sha256": "1AD517B04843B69966841C7B795B927AE86B2727789456224321FC091F29F331",
+  "reward": {
+    "w_damage": 1.0,
+    "w_wave": 1.0,
+    "w_victory": 5.0,
+    "w_intervention": 0.1,
+    "tau_sec": 15.0
+  },
+  "nstep": 5,
+  "n_transitions": 107340,
+  "n_states": 107390,
+  "critic_fit": {
+    "steps": 4000,
+    "batch_size": 512,
+    "td_loss_early_mean": 0.024417694134172052,
+    "td_loss_late_mean": 0.0012335292987700087,
+    "td_loss_final": 0.002357231918722391,
+    "converged": true
+  },
+  "dose_response_early_w1_10": {
+    "delta_mag_deg": 5.0,
+    "mean_q_pos": -0.09649908542633057,
+    "mean_q_neg": -0.09458120167255402,
+    "mean_diff": -0.0019178749062120914,
+    "sign": -1,
+    "n": 50830
+  },
+  "dose_response_all_waves": {
+    "delta_mag_deg": 5.0,
+    "mean_q_pos": -0.09664787352085114,
+    "mean_q_neg": -0.09480507671833038,
+    "mean_diff": -0.0018428016919642687,
+    "sign": -1,
+    "n": 107390
+  }
+}

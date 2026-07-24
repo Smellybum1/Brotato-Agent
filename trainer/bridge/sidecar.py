@@ -47,6 +47,8 @@ LOOPBACK_HOSTS = frozenset({"127.0.0.1"})
 BACKEND_ONNX_CPU = "onnxruntime-cpu"
 #: Backend identity string for the torch-free residual probe (design §2, F-1).
 BACKEND_RESIDUAL_PROBE = "residual-probe"
+#: Backend identity string for the trained residual actor (Phase 2, design §4).
+BACKEND_RESIDUAL_ACTOR = "residual-actor"
 #: Stable, deterministic model identity for the residual probe. The probe has no
 #: model weights, so the value the mod pins as ``expected_model_sha256`` must be a
 #: fixed literal it can match case-insensitively at handshake. theta_max/seed are
@@ -485,6 +487,24 @@ class OnnxModelService(ModelService):
 # ---------------------------------------------------------------------------
 # Residual probe service (torch-free; design §2 / Amendment F-1)
 # ---------------------------------------------------------------------------
+def rotate_action(tx: float, ty: float, delta_deg: float) -> tuple[float, float]:
+    """Rotate the teacher vector ``(tx, ty)`` by ``delta_deg`` degrees (F-1 geometry).
+
+    The single canonical residual-rotation math shared by every residual serving
+    path (the torch-free probe and the trained residual actor). A rotation is
+    norm-preserving by construction, so the executed action keeps the teacher's
+    magnitude and only its direction moves by ``delta_deg``:
+
+        R(d) = [[cos d, -sin d], [sin d, cos d]]  applied to (tx, ty).
+
+    Torch-free (stdlib ``math`` only) so importing it never pulls torch.
+    """
+    theta = math.radians(delta_deg)
+    cos_t = math.cos(theta)
+    sin_t = math.sin(theta)
+    return tx * cos_t - ty * sin_t, tx * sin_t + ty * cos_t
+
+
 def _teacher_action(payload: Mapping[str, Any]) -> tuple[float, float]:
     """Extract ``(x, y)`` from ``payload["teacher"]["action"]`` (design §2).
 
@@ -563,14 +583,176 @@ class ResidualProbeService(ModelService):
             return tx, ty, model_ms
 
         delta_deg = float(self._rng.uniform(-self._theta_max_deg, self._theta_max_deg))
-        theta = math.radians(delta_deg)
-        cos_t = math.cos(theta)
-        sin_t = math.sin(theta)
-        rx = tx * cos_t - ty * sin_t
-        ry = tx * sin_t + ty * cos_t
+        rx, ry = rotate_action(tx, ty, delta_deg)
         model_ms = (time.perf_counter() - start) * 1000.0
         self._last_extra = {
             "delta_deg": round(delta_deg, 6),
+            "teacher_x": round(tx, 6),
+            "teacher_y": round(ty, 6),
+        }
+        return rx, ry, model_ms
+
+    def act_log_extra(self) -> Mapping[str, Any]:
+        return self._last_extra
+
+
+# ---------------------------------------------------------------------------
+# Residual actor service (trained z-head on the frozen bc_v2_f trunk; design §4)
+# ---------------------------------------------------------------------------
+class ResidualActorService(ModelService):
+    """Serve the trained residual actor: encode -> frozen trunk -> z (+ optional
+    seeded Gaussian exploration) -> ``delta = theta_max * tanh(z)`` -> rotate the
+    teacher action by ``delta`` (design §4, F-1 geometry, magnitude preserved).
+
+    Preprocessing is the SHARED :func:`_encode_inputs` contract (byte-identical to
+    the torch/onnx student paths). The rotation is the SHARED :func:`rotate_action`
+    (byte-identical to the probe). Identity ``model_sha256`` is the actor
+    checkpoint's file sha256; backend is :data:`BACKEND_RESIDUAL_ACTOR`. A zero
+    teacher vector is passed through unchanged and consumes NO exploration draw
+    (delta logged ``None``) so the noise stream stays reproducible from the seed
+    against a frozen payload order — exactly the probe's convention.
+
+    At ``explore_sigma == 0`` the served ``delta`` is the actor's own
+    ``delta_deg_from_z`` forward (no sampling), so the serving path reproduces the
+    training forward bit-for-bit (the design §5 determinism / §6.3 zero-init
+    serving check).
+    """
+
+    def __init__(
+        self,
+        *,
+        actor: Any,
+        schema: dict[str, Any],
+        kept_indices: Any,
+        mean: Any,
+        std: Any,
+        group_names: tuple[str, ...],
+        identity: ServiceIdentity,
+        explore_sigma: float = 0.0,
+        actor_seed: int = 0,
+    ) -> None:
+        import numpy as np
+
+        self._actor = actor
+        self._schema = schema
+        self._kept_indices = kept_indices
+        self._mean = mean
+        self._std = std
+        self._group_names = group_names
+        self._identity = identity
+        self._theta_max_deg = float(actor.config.theta_max_deg)
+        self._sigma = float(explore_sigma)
+        self._seed = int(actor_seed)
+        self._rng = np.random.default_rng(self._seed)
+        self._last_extra: dict[str, Any] = {}
+
+    @property
+    def identity(self) -> ServiceIdentity:
+        return self._identity
+
+    @classmethod
+    def from_registry(
+        cls,
+        parent_registry_path: str | Path,
+        actor_checkpoint: str | Path,
+        *,
+        checkpoint: str = "best",
+        explore_sigma: float = 0.0,
+        actor_seed: int = 0,
+    ) -> "ResidualActorService":
+        """Load + verify the frozen trunk (parent ``bc_v2_f`` chain) and the actor
+        z-head, and build a serving service. Any mismatch => SidecarStartupError.
+        """
+        import numpy as np
+
+        from trainer.rl.residual_actor import _sha256_file, load_residual_actor
+
+        actor_checkpoint = Path(actor_checkpoint)
+        if not actor_checkpoint.is_file():
+            raise SidecarStartupError(f"actor checkpoint missing: {actor_checkpoint}")
+
+        # Parent trunk: reuse the verified torch student chain to obtain the
+        # exact schema / kept-index / normalization / group order and a loaded,
+        # sha256-verified BCPolicyV1 to serve as the frozen trunk.
+        parent = TorchModelService.from_registry(parent_registry_path, checkpoint=checkpoint)
+        try:
+            actor, meta = load_residual_actor(actor_checkpoint, parent._model)
+        except (ValueError, KeyError, OSError) as exc:
+            raise SidecarStartupError(f"residual actor load failed: {exc}") from exc
+
+        parent_sha = str(parent.identity.model_sha256).upper()
+        stored_parent = str(meta.get("parent_model_sha256", "")).upper()
+        if stored_parent and stored_parent != parent_sha:
+            raise SidecarStartupError(
+                f"actor parent_model_sha256 {stored_parent} != parent best.pt sha {parent_sha}"
+            )
+
+        actor_sha = _sha256_file(actor_checkpoint)
+        iteration = int(meta.get("iteration", 0))
+        identity = replace(
+            parent.identity,
+            model_sha256=actor_sha,
+            backend=BACKEND_RESIDUAL_ACTOR,
+            registry_run_name=(
+                f"residual_pi{iteration}_theta{actor.config.theta_max_deg:g}"
+                f"_sigma{float(explore_sigma):g}_seed{int(actor_seed)}"
+            ),
+        )
+        return cls(
+            actor=actor,
+            schema=parent._schema,
+            kept_indices=np.asarray(parent._kept_indices, dtype=np.intp),
+            mean=np.asarray(parent._mean, dtype=np.float32),
+            std=np.asarray(parent._std, dtype=np.float32),
+            group_names=parent._group_names,
+            identity=identity,
+            explore_sigma=explore_sigma,
+            actor_seed=actor_seed,
+        )
+
+    def predict(self, payload: Mapping[str, Any]) -> tuple[float, float, float]:
+        import torch
+
+        tx, ty = _teacher_action(payload)
+        standardized, ent_arrays, mask_arrays = _encode_inputs(
+            payload, self._schema, self._kept_indices, self._mean, self._std, self._group_names
+        )
+        globals_t = torch.from_numpy(standardized).unsqueeze(0)
+        entities = {
+            name: torch.from_numpy(ent_arrays[name]).unsqueeze(0) for name in self._group_names
+        }
+        masks = {
+            name: torch.from_numpy(mask_arrays[name]).unsqueeze(0) for name in self._group_names
+        }
+
+        start = time.perf_counter()
+        with torch.no_grad():
+            emb = self._actor.embedding(globals_t, entities, masks)
+            z_t = self._actor.z_from_embedding(emb)
+            z = float(z_t.reshape(-1)[0].item())
+
+            if math.hypot(tx, ty) == 0.0:
+                # Zero teacher vector: pass through, no perturbation, no draw.
+                self._last_extra = {
+                    "delta_deg": None, "z": round(z, 6), "sigma": self._sigma,
+                    "teacher_x": tx, "teacher_y": ty,
+                }
+                model_ms = (time.perf_counter() - start) * 1000.0
+                return tx, ty, model_ms
+
+            if self._sigma > 0.0:
+                z_eff = z + float(self._rng.normal(0.0, self._sigma))
+                delta_deg = self._theta_max_deg * math.tanh(z_eff)
+            else:
+                # sigma 0: use the actor's own forward so serving == training math.
+                delta_deg = float(self._actor.delta_deg_from_z(z_t).reshape(-1)[0].item())
+
+        rx, ry = rotate_action(tx, ty, delta_deg)
+        model_ms = (time.perf_counter() - start) * 1000.0
+        self._last_extra = {
+            "delta_deg": round(delta_deg, 6),
+            "z": round(z, 6),
+            "sigma": self._sigma,
             "teacher_x": round(tx, 6),
             "teacher_y": round(ty, 6),
         }

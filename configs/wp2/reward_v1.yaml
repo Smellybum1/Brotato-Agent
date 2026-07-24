@@ -79,3 +79,57 @@ components:
       cadence: terminal
       units: bool
       derivation: "run reached the victory terminal (last wave cleared)"
+
+# ===========================================================================
+# reward_v2 — Phase 2 WEIGHTS (design .tmp/wp2_stage_f_phase2_design.md §2)
+# ===========================================================================
+# Phase 2 assigns the scalar weights the Phase-1 header deliberately withheld.
+# The reward is now a scalar objective for the off-policy residual actor-critic
+# (TD3 flavor, RLPD teacher-mixing). Every weight below is taken VERBATIM from
+# design §2; the deliberate absences are recorded with their reason so the
+# objective can never silently regain a term the design excluded.
+reward_v2:
+  schema_version: 2
+  reward_id: reward_v2
+  phase: 2
+  status: weighted                    # scalar objective (contrast reward_v1)
+  # Same capture provenance as reward_v1 — no new mod telemetry in Phase 2.
+  source_capture_schema_id: combat_capture_v2
+  source_capture_schema_hash: 95B6444796A21FD44E94113B75BA2097BC381D5F72ED784F9B9A4A99DD46D951
+
+  # -- weighted components (design §2) -------------------------------------
+  weights:
+    # Dense cost: damage_taken / max_hp per tick. The real currency of
+    # survival; weight 1.0. Enters the reward NEGATED (a cost) — the sign is
+    # applied at assembly time, this magnitude is the design weight.
+    damage_taken_per_max_hp: 1.0
+    # Progress: +1.0 per wave_completed event (wave boundary reached alive).
+    wave_completed: 1.0
+    # Terminal victory bonus (last wave cleared).
+    victory_terminal: 5.0
+    # Intervention cost: 0.1 per infrastructure-fallback tick (ruling 11).
+    # Enters NEGATED (a cost) at assembly time.
+    intervention_fallback_tick: 0.1
+
+  # -- discount (design §2: gamma_step = exp(-dt/tau), tau 15 s) ------------
+  discount:
+    form: exp(-delta_t / tau)
+    tau_sec: 15.0
+    half_life_sec: 10.397             # ln(2) * tau_sec, informational
+    delta_t_source: control_dt_ms
+
+  # -- DELIBERATE ABSENCES (design §2) -------------------------------------
+  # These terms are intentionally UNWEIGHTED (absent from the objective). They
+  # remain LOGGED in reward_v1's component vector, never weighted here.
+  deliberately_absent:
+    risk_exposure:
+      weight: 0.0
+      reason: "v117 lesson — rewarding distance/exposure teaches
+        cowardice/starvation. Risk stays logged (reward_v1 per_tick), unweighted."
+    materials_delta:
+      weight: 0.0
+      reason: "economy is teacher-owned (packet §4.1); no materials term in the
+        movement-residual objective."
+    damage_dealt:
+      weight: 0.0
+      reason: "packet prohibition — no damage-dealt term."
