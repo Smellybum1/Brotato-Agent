@@ -1,0 +1,1740 @@
+{
+  "task": "wp2_stage_f_phase2_checkpoint_compare",
+  "labels": {
+    "learned": "residual-teacher-base control (14.3)",
+    "control": "Phase-1 uniform random probe (matched theta bound)"
+  },
+  "damage_accounting": "PRIMARY = full combat_capture stream, unfiltered (every hp drop between consecutive captures, heal-clamped, normalized by pre-drop max_hp, attributed to the pre-drop capture's wave band / risk stratum; tick denominator = all captures). SECONDARY 'rl_usable_view' = the replay-usability-filtered RL-training view (valid student tick, 2s recovery exclusion, contiguous seq); it undercounts damage in recovery-heavy runs and is a diagnostic only.",
+  "sign_convention": "learned - control; damage rates negative => learned better; final_wave/victory positive => learned better",
+  "seed": 0,
+  "bootstrap_n": 10000,
+  "ci_percentiles": [
+    2.5,
+    97.5
+  ],
+  "reward_config": {
+    "w_damage": 1.0,
+    "w_wave": 1.0,
+    "w_victory": 5.0,
+    "w_intervention": 0.1,
+    "tau_sec": 15.0
+  },
+  "wave_band_labels": [
+    "1-5",
+    "6-10",
+    "11-15",
+    "16-19",
+    "20"
+  ],
+  "risk_bin_labels": [
+    "0.00-0.25",
+    "0.25-0.50",
+    "0.50-0.75",
+    "0.75-inf"
+  ],
+  "learned_run_ids": [
+    "run_1784910686_39423",
+    "run_1784911798_60074",
+    "run_1784912900_14544",
+    "run_1784913937_22390",
+    "run_1784915512_76287",
+    "run_1784916694_13543",
+    "run_1784917880_11008"
+  ],
+  "control_run_ids": [
+    "run_1784890075_95641",
+    "run_1784891038_60320",
+    "run_1784892185_3194",
+    "run_1784893276_88958",
+    "run_1784894100_69759",
+    "run_1784895219_19972"
+  ],
+  "learned_arm": {
+    "n_runs": 7,
+    "runs": [
+      {
+        "run_id": "run_1784910686_39423",
+        "result": "defeat",
+        "final_wave": 17,
+        "victory": 0.0,
+        "n_capture_ticks": 17077,
+        "norm_damage_total": 3.5399531331465535,
+        "raw_damage_total": 156.0,
+        "damage_rate_overall": 0.00020729361908687437,
+        "damage_per_1k_overall": 0.20729361908687438,
+        "damage_rate_by_wave_band": {
+          "1-5": 0.0,
+          "6-10": 0.0,
+          "11-15": 0.00027215227748027433,
+          "16-19": 0.000913091309130913,
+          "20": NaN
+        },
+        "damage_rate_by_risk_stratum": {
+          "0.00-0.25": 0.0,
+          "0.25-0.50": 0.0,
+          "0.50-0.75": 0.0006349206349206349,
+          "0.75-inf": 0.02778719586855357
+        },
+        "damage_rate_wave20": NaN,
+        "damage_rate_risk_ge_0p5": 0.00476440529360236,
+        "n_ticks_wave20": 0,
+        "n_ticks_risk_ge_0p5": 743,
+        "n_ticks_risk_nan": 0,
+        "capture_drop_sum": 156.0,
+        "player_damage_sum": 157.0,
+        "player_damage_events": 11,
+        "damage_source_delta": -1.0,
+        "damage_source_mismatch": false,
+        "rl_usable_view": {
+          "n_ticks": 14934,
+          "norm_damage_total": 3.017225860419281,
+          "raw_damage_total": 133.0,
+          "damage_rate_overall": 0.00020203735505686896,
+          "damage_per_1k_overall": 0.20203735505686896,
+          "damage_rate_by_wave_band": {
+            "1-5": 0.0,
+            "6-10": 0.0,
+            "11-15": 0.00021303931262031542,
+            "16-19": 0.0009764131521675197,
+            "20": NaN
+          },
+          "damage_rate_by_risk_stratum": {
+            "0.00-0.25": 0.0,
+            "0.25-0.50": 0.0,
+            "0.50-0.75": 0.0006968641114982578,
+            "0.75-inf": 0.026436624852720008
+          },
+          "damage_rate_wave20": NaN,
+          "damage_rate_risk_ge_0p5": 0.004483247935244103,
+          "n_ticks_wave20": 0,
+          "n_ticks_risk_ge_0p5": 673,
+          "n_ticks_risk_nan": 0
+        }
+      },
+      {
+        "run_id": "run_1784911798_60074",
+        "result": "defeat",
+        "final_wave": 19,
+        "victory": 0.0,
+        "n_capture_ticks": 19937,
+        "norm_damage_total": 2.5111809923130677,
+        "raw_damage_total": 135.0,
+        "damage_rate_overall": 0.00012595581041847156,
+        "damage_per_1k_overall": 0.12595581041847156,
+        "damage_rate_by_wave_band": {
+          "1-5": 0.0,
+          "6-10": 0.0,
+          "11-15": 0.0,
+          "16-19": 0.0005185176527592541,
+          "20": NaN
+        },
+        "damage_rate_by_risk_stratum": {
+          "0.00-0.25": 0.0,
+          "0.25-0.50": 0.0,
+          "0.50-0.75": 0.0028217852435669486,
+          "0.75-inf": 0.008270599072485866
+        },
+        "damage_rate_wave20": NaN,
+        "damage_rate_risk_ge_0p5": 0.003487751378212594,
+        "n_ticks_wave20": 0,
+        "n_ticks_risk_ge_0p5": 720,
+        "n_ticks_risk_nan": 0,
+        "capture_drop_sum": 135.0,
+        "player_damage_sum": 136.0,
+        "player_damage_events": 9,
+        "damage_source_delta": -1.0,
+        "damage_source_mismatch": false,
+        "rl_usable_view": {
+          "n_ticks": 17995,
+          "norm_damage_total": 1.9371069182389937,
+          "raw_damage_total": 104.0,
+          "damage_rate_overall": 0.00010764695294465094,
+          "damage_per_1k_overall": 0.10764695294465094,
+          "damage_rate_by_wave_band": {
+            "1-5": 0.0,
+            "6-10": 0.0,
+            "11-15": 0.0,
+            "16-19": 0.0004455167705241476,
+            "20": NaN
+          },
+          "damage_rate_by_risk_stratum": {
+            "0.00-0.25": 0.0,
+            "0.25-0.50": 0.0,
+            "0.50-0.75": 0.0025495719776380153,
+            "0.75-inf": 0.006085109858694765
+          },
+          "damage_rate_wave20": NaN,
+          "damage_rate_risk_ge_0p5": 0.002966473075404278,
+          "n_ticks_wave20": 0,
+          "n_ticks_risk_ge_0p5": 653,
+          "n_ticks_risk_nan": 0
+        }
+      },
+      {
+        "run_id": "run_1784912900_14544",
+        "result": "defeat",
+        "final_wave": 13,
+        "victory": 0.0,
+        "n_capture_ticks": 12519,
+        "norm_damage_total": 2.5095518919871376,
+        "raw_damage_total": 114.0,
+        "damage_rate_overall": 0.00020045945299042555,
+        "damage_per_1k_overall": 0.20045945299042556,
+        "damage_rate_by_wave_band": {
+          "1-5": 3.1017369727047146e-05,
+          "6-10": 0.00010170321230229064,
+          "11-15": 0.0005025300761504554,
+          "16-19": NaN,
+          "20": NaN
+        },
+        "damage_rate_by_risk_stratum": {
+          "0.00-0.25": 1.9809013784341313e-05,
+          "0.25-0.50": 0.0,
+          "0.50-0.75": 0.001670233748793487,
+          "0.75-inf": 0.015162505460478981
+        },
+        "damage_rate_wave20": NaN,
+        "damage_rate_risk_ge_0p5": 0.003818257105877745,
+        "n_ticks_wave20": 0,
+        "n_ticks_risk_ge_0p5": 603,
+        "n_ticks_risk_nan": 0,
+        "capture_drop_sum": 114.0,
+        "player_damage_sum": 116.0,
+        "player_damage_events": 15,
+        "damage_source_delta": -2.0,
+        "damage_source_mismatch": false,
+        "rl_usable_view": {
+          "n_ticks": 11541,
+          "norm_damage_total": 2.191297923733169,
+          "raw_damage_total": 103.0,
+          "damage_rate_overall": 0.00018987071516620476,
+          "damage_per_1k_overall": 0.18987071516620477,
+          "damage_rate_by_wave_band": {
+            "1-5": 0.0,
+            "6-10": 6.922810661128417e-05,
+            "11-15": 0.0005272091809815088,
+            "16-19": NaN,
+            "20": NaN
+          },
+          "damage_rate_by_risk_stratum": {
+            "0.00-0.25": 0.0,
+            "0.25-0.50": 0.0,
+            "0.50-0.75": 0.0017072752230610844,
+            "0.75-inf": 0.014303078862711394
+          },
+          "damage_rate_wave20": NaN,
+          "damage_rate_risk_ge_0p5": 0.003714064277513846,
+          "n_ticks_wave20": 0,
+          "n_ticks_risk_ge_0p5": 590,
+          "n_ticks_risk_nan": 0
+        }
+      },
+      {
+        "run_id": "run_1784913937_22390",
+        "result": "victory",
+        "final_wave": 20,
+        "victory": 1.0,
+        "n_capture_ticks": 20825,
+        "norm_damage_total": 1.2398907103825136,
+        "raw_damage_total": 75.0,
+        "damage_rate_overall": 5.953856952617112e-05,
+        "damage_per_1k_overall": 0.05953856952617112,
+        "damage_rate_by_wave_band": {
+          "1-5": 0.0,
+          "6-10": 0.0,
+          "11-15": 0.0,
+          "16-19": 0.0,
+          "20": 0.0016123416259850633
+        },
+        "damage_rate_by_risk_stratum": {
+          "0.00-0.25": 6.78871392018459e-05,
+          "0.25-0.50": 0.0,
+          "0.50-0.75": 0.0,
+          "0.75-inf": 0.0
+        },
+        "damage_rate_wave20": 0.0016123416259850633,
+        "damage_rate_risk_ge_0p5": 0.0,
+        "n_ticks_wave20": 769,
+        "n_ticks_risk_ge_0p5": 416,
+        "n_ticks_risk_nan": 0,
+        "capture_drop_sum": 75.0,
+        "player_damage_sum": 76.0,
+        "player_damage_events": 4,
+        "damage_source_delta": -1.0,
+        "damage_source_mismatch": false,
+        "rl_usable_view": {
+          "n_ticks": 19486,
+          "norm_damage_total": 1.2398907103825136,
+          "raw_damage_total": 75.0,
+          "damage_rate_overall": 6.362982194306238e-05,
+          "damage_per_1k_overall": 0.06362982194306238,
+          "damage_rate_by_wave_band": {
+            "1-5": 0.0,
+            "6-10": 0.0,
+            "11-15": 0.0,
+            "16-19": 0.0,
+            "20": 0.001707838444053049
+          },
+          "damage_rate_by_risk_stratum": {
+            "0.00-0.25": 7.31024532977132e-05,
+            "0.25-0.50": 0.0,
+            "0.50-0.75": 0.0,
+            "0.75-inf": 0.0
+          },
+          "damage_rate_wave20": 0.001707838444053049,
+          "damage_rate_risk_ge_0p5": 0.0,
+          "n_ticks_wave20": 726,
+          "n_ticks_risk_ge_0p5": 407,
+          "n_ticks_risk_nan": 0
+        }
+      },
+      {
+        "run_id": "run_1784915512_76287",
+        "result": "victory",
+        "final_wave": 20,
+        "victory": 1.0,
+        "n_capture_ticks": 21855,
+        "norm_damage_total": 1.9149854022980637,
+        "raw_damage_total": 107.0,
+        "damage_rate_overall": 8.76223016379805e-05,
+        "damage_per_1k_overall": 0.0876223016379805,
+        "damage_rate_by_wave_band": {
+          "1-5": 0.0,
+          "6-10": 0.0,
+          "11-15": 3.149077320345139e-05,
+          "16-19": 0.0001681672278108831,
+          "20": 0.0004896421845574388
+        },
+        "damage_rate_by_risk_stratum": {
+          "0.00-0.25": 0.0,
+          "0.25-0.50": 0.0,
+          "0.50-0.75": 0.0005265725422607013,
+          "0.75-inf": 0.009250251943225653
+        },
+        "damage_rate_wave20": 0.0004896421845574388,
+        "damage_rate_risk_ge_0p5": 0.0012912915726891866,
+        "n_ticks_wave20": 1800,
+        "n_ticks_risk_ge_0p5": 1483,
+        "n_ticks_risk_nan": 0,
+        "capture_drop_sum": 107.0,
+        "player_damage_sum": 107.0,
+        "player_damage_events": 7,
+        "damage_source_delta": 0.0,
+        "damage_source_mismatch": false,
+        "rl_usable_view": {
+          "n_ticks": 20656,
+          "norm_damage_total": 1.9149854022980637,
+          "raw_damage_total": 107.0,
+          "damage_rate_overall": 9.270843349622695e-05,
+          "damage_per_1k_overall": 0.09270843349622694,
+          "damage_rate_by_wave_band": {
+            "1-5": 0.0,
+            "6-10": 0.0,
+            "11-15": 3.3319511906172254e-05,
+            "16-19": 0.00017428812316589654,
+            "20": 0.0005021971123666039
+          },
+          "damage_rate_by_risk_stratum": {
+            "0.00-0.25": 0.0,
+            "0.25-0.50": 0.0,
+            "0.50-0.75": 0.0005269620189931426,
+            "0.75-inf": 0.009250251943225653
+          },
+          "damage_rate_wave20": 0.0005021971123666039,
+          "damage_rate_risk_ge_0p5": 0.001292162889539854,
+          "n_ticks_wave20": 1755,
+          "n_ticks_risk_ge_0p5": 1482,
+          "n_ticks_risk_nan": 0
+        }
+      },
+      {
+        "run_id": "run_1784916694_13543",
+        "result": "victory",
+        "final_wave": 20,
+        "victory": 1.0,
+        "n_capture_ticks": 21417,
+        "norm_damage_total": 2.5266184717213847,
+        "raw_damage_total": 135.0,
+        "damage_rate_overall": 0.00011797256719995259,
+        "damage_per_1k_overall": 0.11797256719995258,
+        "damage_rate_by_wave_band": {
+          "1-5": 0.0,
+          "6-10": 3.8399157194551744e-05,
+          "11-15": 0.00019989301155701154,
+          "16-19": 9.243666726569106e-05,
+          "20": 0.0004501695151053807
+        },
+        "damage_rate_by_risk_stratum": {
+          "0.00-0.25": 6.013147364678821e-05,
+          "0.25-0.50": 0.0,
+          "0.50-0.75": 0.0007207115017697258,
+          "0.75-inf": 0.005135350885946031
+        },
+        "damage_rate_wave20": 0.0004501695151053807,
+        "damage_rate_risk_ge_0p5": 0.0011074925958516376,
+        "n_ticks_wave20": 1338,
+        "n_ticks_risk_ge_0p5": 1324,
+        "n_ticks_risk_nan": 0,
+        "capture_drop_sum": 135.0,
+        "player_damage_sum": 135.0,
+        "player_damage_events": 17,
+        "damage_source_delta": 0.0,
+        "damage_source_mismatch": false,
+        "rl_usable_view": {
+          "n_ticks": 20342,
+          "norm_damage_total": 1.4663201969075683,
+          "raw_damage_total": 77.0,
+          "damage_rate_overall": 7.208338397933185e-05,
+          "damage_per_1k_overall": 0.07208338397933184,
+          "damage_rate_by_wave_band": {
+            "1-5": 0.0,
+            "6-10": 0.0,
+            "11-15": 0.0001434013918168579,
+            "16-19": 0.0,
+            "20": 0.00046547667017851575
+          },
+          "damage_rate_by_risk_stratum": {
+            "0.00-0.25": 0.0,
+            "0.25-0.50": 0.0,
+            "0.50-0.75": 0.0007219067115570719,
+            "0.75-inf": 0.005135350885946031
+          },
+          "damage_rate_wave20": 0.00046547667017851575,
+          "damage_rate_risk_ge_0p5": 0.0011091680763294768,
+          "n_ticks_wave20": 1294,
+          "n_ticks_risk_ge_0p5": 1322,
+          "n_ticks_risk_nan": 0
+        }
+      },
+      {
+        "run_id": "run_1784917880_11008",
+        "result": "victory",
+        "final_wave": 20,
+        "victory": 1.0,
+        "n_capture_ticks": 21052,
+        "norm_damage_total": 0.41666666666666663,
+        "raw_damage_total": 22.0,
+        "damage_rate_overall": 1.97922604344797e-05,
+        "damage_per_1k_overall": 0.0197922604344797,
+        "damage_rate_by_wave_band": {
+          "1-5": 0.0,
+          "6-10": 0.0,
+          "11-15": 2.4123512383403023e-05,
+          "16-19": 0.0,
+          "20": 0.0002622091117666339
+        },
+        "damage_rate_by_risk_stratum": {
+          "0.00-0.25": 0.0,
+          "0.25-0.50": 0.0,
+          "0.50-0.75": 0.0,
+          "0.75-inf": 0.005787037037037037
+        },
+        "damage_rate_wave20": 0.0002622091117666339,
+        "damage_rate_risk_ge_0p5": 0.00045989698307579097,
+        "n_ticks_wave20": 1017,
+        "n_ticks_risk_ge_0p5": 906,
+        "n_ticks_risk_nan": 0,
+        "capture_drop_sum": 22.0,
+        "player_damage_sum": 22.0,
+        "player_damage_events": 2,
+        "damage_source_delta": 0.0,
+        "damage_source_mismatch": false,
+        "rl_usable_view": {
+          "n_ticks": 20035,
+          "norm_damage_total": 0.41666666666666663,
+          "raw_damage_total": 22.0,
+          "damage_rate_overall": 2.0796938690624737e-05,
+          "damage_per_1k_overall": 0.020796938690624735,
+          "damage_rate_by_wave_band": {
+            "1-5": 0.0,
+            "6-10": 0.0,
+            "11-15": 2.497918401332223e-05,
+            "16-19": 0.0,
+            "20": 0.0002737850787132101
+          },
+          "damage_rate_by_risk_stratum": {
+            "0.00-0.25": 0.0,
+            "0.25-0.50": 0.0,
+            "0.50-0.75": 0.0,
+            "0.75-inf": 0.005787037037037037
+          },
+          "damage_rate_wave20": 0.0002737850787132101,
+          "damage_rate_risk_ge_0p5": 0.0004604051565377532,
+          "n_ticks_wave20": 974,
+          "n_ticks_risk_ge_0p5": 905,
+          "n_ticks_risk_nan": 0
+        }
+      }
+    ],
+    "final_wave": {
+      "mean": {
+        "point": 18.428571428571427,
+        "lo": 16.428571428571427,
+        "hi": 19.857142857142858,
+        "n": 7,
+        "agg": "mean"
+      },
+      "median": {
+        "point": 20.0,
+        "lo": 17.0,
+        "hi": 20.0,
+        "n": 7,
+        "agg": "median"
+      }
+    },
+    "victory_rate": {
+      "point": 0.5714285714285714,
+      "lo": 0.14285714285714285,
+      "hi": 0.8571428571428571,
+      "n": 7,
+      "agg": "mean"
+    },
+    "damage_rate_overall": {
+      "mean": {
+        "point": 0.00011694779732776507,
+        "lo": 7.065991529942812e-05,
+        "hi": 0.0001648415699296362,
+        "n": 7,
+        "agg": "mean"
+      },
+      "median": {
+        "point": 0.00011797256719995259,
+        "lo": 5.953856952617112e-05,
+        "hi": 0.00020045945299042555,
+        "n": 7,
+        "agg": "median"
+      }
+    },
+    "damage_rate_wave20": {
+      "mean": {
+        "point": 0.0007035906093536291,
+        "lo": 0.0003190673799643351,
+        "hi": 0.0013217985982651426,
+        "n": 4,
+        "agg": "mean"
+      },
+      "median": {
+        "point": 0.00046990584983140973,
+        "lo": 0.0002622091117666339,
+        "hi": 0.0016123416259850633,
+        "n": 4,
+        "agg": "median"
+      }
+    },
+    "damage_rate_risk_ge_0p5": {
+      "mean": {
+        "point": 0.002132727847044188,
+        "lo": 0.0008803762218559516,
+        "hi": 0.0034282869333483205,
+        "n": 7,
+        "agg": "mean"
+      },
+      "median": {
+        "point": 0.0012912915726891866,
+        "lo": 0.00045989698307579097,
+        "hi": 0.003818257105877745,
+        "n": 7,
+        "agg": "median"
+      }
+    },
+    "damage_rate_by_wave_band": {
+      "1-5": {
+        "mean": {
+          "point": 4.431052818149592e-06,
+          "lo": 0.0,
+          "hi": 1.3293158454448777e-05,
+          "n": 7,
+          "agg": "mean"
+        },
+        "median": {
+          "point": 0.0,
+          "lo": 0.0,
+          "hi": 0.0,
+          "n": 7,
+          "agg": "median"
+        }
+      },
+      "6-10": {
+        "mean": {
+          "point": 2.0014624213834625e-05,
+          "lo": 0.0,
+          "hi": 4.9072684871631954e-05,
+          "n": 7,
+          "agg": "mean"
+        },
+        "median": {
+          "point": 0.0,
+          "lo": 0.0,
+          "hi": 3.8399157194551744e-05,
+          "n": 7,
+          "agg": "median"
+        }
+      },
+      "11-15": {
+        "mean": {
+          "point": 0.00014716995011065652,
+          "lo": 3.5448576617688225e-05,
+          "hi": 0.0002907499718679295,
+          "n": 7,
+          "agg": "mean"
+        },
+        "median": {
+          "point": 3.149077320345139e-05,
+          "lo": 0.0,
+          "hi": 0.00027215227748027433,
+          "n": 7,
+          "agg": "median"
+        }
+      },
+      "16-19": {
+        "mean": {
+          "point": 0.00028203547616112353,
+          "lo": 4.343398251276236e-05,
+          "hi": 0.0005709931346604794,
+          "n": 6,
+          "agg": "mean"
+        },
+        "median": {
+          "point": 0.00013030194753828708,
+          "lo": 0.0,
+          "hi": 0.0007158044809450836,
+          "n": 6,
+          "agg": "median"
+        }
+      },
+      "20": {
+        "mean": {
+          "point": 0.0007035906093536291,
+          "lo": 0.0003190673799643351,
+          "hi": 0.0013217985982651426,
+          "n": 4,
+          "agg": "mean"
+        },
+        "median": {
+          "point": 0.00046990584983140973,
+          "lo": 0.0002622091117666339,
+          "hi": 0.0016123416259850633,
+          "n": 4,
+          "agg": "median"
+        }
+      }
+    },
+    "damage_rate_by_risk_stratum": {
+      "0.00-0.25": {
+        "mean": {
+          "point": 2.1118232376139347e-05,
+          "lo": 2.829859112048759e-06,
+          "hi": 4.2951052604848716e-05,
+          "n": 7,
+          "agg": "mean"
+        },
+        "median": {
+          "point": 0.0,
+          "lo": 0.0,
+          "hi": 6.013147364678821e-05,
+          "n": 7,
+          "agg": "median"
+        }
+      },
+      "0.25-0.50": {
+        "mean": {
+          "point": 0.0,
+          "lo": 0.0,
+          "hi": 0.0,
+          "n": 7,
+          "agg": "mean"
+        },
+        "median": {
+          "point": 0.0,
+          "lo": 0.0,
+          "hi": 0.0,
+          "n": 7,
+          "agg": "median"
+        }
+      },
+      "0.50-0.75": {
+        "mean": {
+          "point": 0.0009106033816159283,
+          "lo": 0.00028436468165871364,
+          "hi": 0.0016416030880263847,
+          "n": 7,
+          "agg": "mean"
+        },
+        "median": {
+          "point": 0.0006349206349206349,
+          "lo": 0.0,
+          "hi": 0.001670233748793487,
+          "n": 7,
+          "agg": "median"
+        }
+      },
+      "0.75-inf": {
+        "mean": {
+          "point": 0.010198991466818162,
+          "lo": 0.004814829472122416,
+          "hi": 0.01695667613319263,
+          "n": 7,
+          "agg": "mean"
+        },
+        "median": {
+          "point": 0.008270599072485866,
+          "lo": 0.005135350885946031,
+          "hi": 0.015162505460478981,
+          "n": 7,
+          "agg": "median"
+        }
+      }
+    },
+    "rl_usable_view": {
+      "damage_rate_overall": {
+        "mean": {
+          "point": 0.00010696765732528151,
+          "lo": 6.407880608042359e-05,
+          "hi": 0.0001541048311675676,
+          "n": 7,
+          "agg": "mean"
+        },
+        "median": {
+          "point": 9.270843349622695e-05,
+          "lo": 6.362982194306238e-05,
+          "hi": 0.00018987071516620476,
+          "n": 7,
+          "agg": "median"
+        }
+      }
+    }
+  },
+  "control_arm": {
+    "n_runs": 6,
+    "runs": [
+      {
+        "run_id": "run_1784890075_95641",
+        "result": "defeat",
+        "final_wave": 15,
+        "victory": 0.0,
+        "n_capture_ticks": 14704,
+        "norm_damage_total": 2.134587776866284,
+        "raw_damage_total": 109.0,
+        "damage_rate_overall": 0.00014517055065739145,
+        "damage_per_1k_overall": 0.14517055065739146,
+        "damage_rate_by_wave_band": {
+          "1-5": 0.0,
+          "6-10": 8.114499451305276e-05,
+          "11-15": 0.00028626169186896094,
+          "16-19": NaN,
+          "20": NaN
+        },
+        "damage_rate_by_risk_stratum": {
+          "0.00-0.25": 0.0,
+          "0.25-0.50": 0.0,
+          "0.50-0.75": 0.0007795011192836585,
+          "0.75-inf": 0.019777846925593808
+        },
+        "damage_rate_wave20": NaN,
+        "damage_rate_risk_ge_0p5": 0.0034540255289098446,
+        "n_ticks_wave20": 0,
+        "n_ticks_risk_ge_0p5": 618,
+        "n_ticks_risk_nan": 0,
+        "capture_drop_sum": 109.0,
+        "player_damage_sum": 109.0,
+        "player_damage_events": 11,
+        "damage_source_delta": 0.0,
+        "damage_source_mismatch": false,
+        "rl_usable_view": {
+          "n_ticks": 14156,
+          "norm_damage_total": 2.134587776866284,
+          "raw_damage_total": 109.0,
+          "damage_rate_overall": 0.00015079032049069538,
+          "damage_per_1k_overall": 0.15079032049069538,
+          "damage_rate_by_wave_band": {
+            "1-5": 0.0,
+            "6-10": 8.359672937748303e-05,
+            "11-15": 0.00030148509481420216,
+            "16-19": NaN,
+            "20": NaN
+          },
+          "damage_rate_by_risk_stratum": {
+            "0.00-0.25": 0.0,
+            "0.25-0.50": 0.0,
+            "0.50-0.75": 0.0008068520357497517,
+            "0.75-inf": 0.020983813201544646
+          },
+          "damage_rate_wave20": NaN,
+          "damage_rate_risk_ge_0p5": 0.0035875424821282084,
+          "n_ticks_wave20": 0,
+          "n_ticks_risk_ge_0p5": 595,
+          "n_ticks_risk_nan": 0
+        }
+      },
+      {
+        "run_id": "run_1784891038_60320",
+        "result": "victory",
+        "final_wave": 20,
+        "victory": 1.0,
+        "n_capture_ticks": 20851,
+        "norm_damage_total": 0.35232142857142856,
+        "raw_damage_total": 18.0,
+        "damage_rate_overall": 1.6897099830772075e-05,
+        "damage_per_1k_overall": 0.016897099830772075,
+        "damage_rate_by_wave_band": {
+          "1-5": 0.0,
+          "6-10": 2.05349220433515e-05,
+          "11-15": 0.0,
+          "16-19": 4.757835167044899e-05,
+          "20": 0.0
+        },
+        "damage_rate_by_risk_stratum": {
+          "0.00-0.25": 1.9500826289446424e-05,
+          "0.25-0.50": 0.0,
+          "0.50-0.75": 0.0,
+          "0.75-inf": 0.0
+        },
+        "damage_rate_wave20": 0.0,
+        "damage_rate_risk_ge_0p5": 0.0,
+        "n_ticks_wave20": 819,
+        "n_ticks_risk_ge_0p5": 489,
+        "n_ticks_risk_nan": 0,
+        "capture_drop_sum": 18.0,
+        "player_damage_sum": 18.0,
+        "player_damage_events": 5,
+        "damage_source_delta": 0.0,
+        "damage_source_mismatch": false,
+        "rl_usable_view": {
+          "n_ticks": 20006,
+          "norm_damage_total": 0.0,
+          "raw_damage_total": 0.0,
+          "damage_rate_overall": 0.0,
+          "damage_per_1k_overall": 0.0,
+          "damage_rate_by_wave_band": {
+            "1-5": 0.0,
+            "6-10": 0.0,
+            "11-15": 0.0,
+            "16-19": 0.0,
+            "20": 0.0
+          },
+          "damage_rate_by_risk_stratum": {
+            "0.00-0.25": 0.0,
+            "0.25-0.50": 0.0,
+            "0.50-0.75": 0.0,
+            "0.75-inf": 0.0
+          },
+          "damage_rate_wave20": 0.0,
+          "damage_rate_risk_ge_0p5": 0.0,
+          "n_ticks_wave20": 778,
+          "n_ticks_risk_ge_0p5": 489,
+          "n_ticks_risk_nan": 0
+        }
+      },
+      {
+        "run_id": "run_1784892185_3194",
+        "result": "defeat",
+        "final_wave": 19,
+        "victory": 0.0,
+        "n_capture_ticks": 19751,
+        "norm_damage_total": 2.257383184513679,
+        "raw_damage_total": 131.0,
+        "damage_rate_overall": 0.00011429209581862584,
+        "damage_per_1k_overall": 0.11429209581862584,
+        "damage_rate_by_wave_band": {
+          "1-5": 0.0,
+          "6-10": 3.0662243127058203e-06,
+          "11-15": 1.3246694686496353e-05,
+          "16-19": 0.000460343107318359,
+          "20": NaN
+        },
+        "damage_rate_by_risk_stratum": {
+          "0.00-0.25": 8.021928191421665e-06,
+          "0.25-0.50": 0.0,
+          "0.50-0.75": 0.0009863293312164217,
+          "0.75-inf": 0.023965620617543995
+        },
+        "damage_rate_wave20": NaN,
+        "damage_rate_risk_ge_0p5": 0.00290127027174372,
+        "n_ticks_wave20": 0,
+        "n_ticks_risk_ge_0p5": 732,
+        "n_ticks_risk_nan": 0,
+        "capture_drop_sum": 131.0,
+        "player_damage_sum": 132.0,
+        "player_damage_events": 11,
+        "damage_source_delta": -1.0,
+        "damage_source_mismatch": false,
+        "rl_usable_view": {
+          "n_ticks": 19156,
+          "norm_damage_total": 1.5375229423646788,
+          "raw_damage_total": 89.0,
+          "damage_rate_overall": 8.026325654440795e-05,
+          "damage_per_1k_overall": 0.08026325654440795,
+          "damage_rate_by_wave_band": {
+            "1-5": 0.0,
+            "6-10": 0.0,
+            "11-15": 0.0,
+            "16-19": 0.0003342441179053649,
+            "20": NaN
+          },
+          "damage_rate_by_risk_stratum": {
+            "0.00-0.25": 0.0,
+            "0.25-0.50": 0.0,
+            "0.50-0.75": 0.0005947071067499256,
+            "0.75-inf": 0.023501184287428097
+          },
+          "damage_rate_wave20": NaN,
+          "damage_rate_risk_ge_0p5": 0.0022027549317545536,
+          "n_ticks_wave20": 0,
+          "n_ticks_risk_ge_0p5": 698,
+          "n_ticks_risk_nan": 0
+        }
+      },
+      {
+        "run_id": "run_1784893276_88958",
+        "result": "defeat",
+        "final_wave": 15,
+        "victory": 0.0,
+        "n_capture_ticks": 14803,
+        "norm_damage_total": 0.9393115942028986,
+        "raw_damage_total": 45.0,
+        "damage_rate_overall": 6.345413728317899e-05,
+        "damage_per_1k_overall": 0.06345413728317899,
+        "damage_rate_by_wave_band": {
+          "1-5": 0.0,
+          "6-10": 7.728094715528832e-06,
+          "11-15": 0.00015018161497625036,
+          "16-19": NaN,
+          "20": NaN
+        },
+        "damage_rate_by_risk_stratum": {
+          "0.00-0.25": 3.411397478977263e-06,
+          "0.25-0.50": 0.0,
+          "0.50-0.75": 0.0006426735218508997,
+          "0.75-inf": 0.016145833333333335
+        },
+        "damage_rate_wave20": NaN,
+        "damage_rate_risk_ge_0p5": 0.0020881895881895885,
+        "n_ticks_wave20": 0,
+        "n_ticks_risk_ge_0p5": 429,
+        "n_ticks_risk_nan": 0,
+        "capture_drop_sum": 45.0,
+        "player_damage_sum": 45.0,
+        "player_damage_events": 5,
+        "damage_source_delta": 0.0,
+        "damage_source_mismatch": false,
+        "rl_usable_view": {
+          "n_ticks": 14040,
+          "norm_damage_total": 0.8958333333333334,
+          "raw_damage_total": 43.0,
+          "damage_rate_overall": 6.380579297245964e-05,
+          "damage_per_1k_overall": 0.06380579297245964,
+          "damage_rate_by_wave_band": {
+            "1-5": 0.0,
+            "6-10": 0.0,
+            "11-15": 0.0001580231669312636,
+            "16-19": NaN,
+            "20": NaN
+          },
+          "damage_rate_by_risk_stratum": {
+            "0.00-0.25": 0.0,
+            "0.25-0.50": 0.0,
+            "0.50-0.75": 0.0006510416666666666,
+            "0.75-inf": 0.01699561403508772
+          },
+          "damage_rate_wave20": NaN,
+          "damage_rate_risk_ge_0p5": 0.002122827804107425,
+          "n_ticks_wave20": 0,
+          "n_ticks_risk_ge_0p5": 422,
+          "n_ticks_risk_nan": 0
+        }
+      },
+      {
+        "run_id": "run_1784894100_69759",
+        "result": "defeat",
+        "final_wave": 20,
+        "victory": 0.0,
+        "n_capture_ticks": 20633,
+        "norm_damage_total": 1.943136955976281,
+        "raw_damage_total": 87.0,
+        "damage_rate_overall": 9.417617195639418e-05,
+        "damage_per_1k_overall": 0.09417617195639418,
+        "damage_rate_by_wave_band": {
+          "1-5": 1.412070377587619e-05,
+          "6-10": 1.832564674261629e-05,
+          "11-15": 7.658257899493023e-06,
+          "16-19": 7.290223809870963e-05,
+          "20": 0.0024564453346434378
+        },
+        "damage_rate_by_risk_stratum": {
+          "0.00-0.25": 1.1288521393282901e-05,
+          "0.25-0.50": 0.0,
+          "0.50-0.75": 0.0009838404896348363,
+          "0.75-inf": 0.009170946441672781
+        },
+        "damage_rate_wave20": 0.0024564453346434378,
+        "damage_rate_risk_ge_0p5": 0.0021563149222723695,
+        "n_ticks_wave20": 563,
+        "n_ticks_risk_ge_0p5": 810,
+        "n_ticks_risk_nan": 0,
+        "capture_drop_sum": 87.0,
+        "player_damage_sum": 87.0,
+        "player_damage_events": 8,
+        "damage_source_delta": 0.0,
+        "damage_source_mismatch": false,
+        "rl_usable_view": {
+          "n_ticks": 20034,
+          "norm_damage_total": 1.746615087040619,
+          "raw_damage_total": 81.0,
+          "damage_rate_overall": 8.718254402718473e-05,
+          "damage_per_1k_overall": 0.08718254402718473,
+          "damage_rate_by_wave_band": {
+            "1-5": 0.0,
+            "6-10": 0.0,
+            "11-15": 0.0,
+            "16-19": 7.419636066850921e-05,
+            "20": 0.0024608162338154013
+          },
+          "damage_rate_by_risk_stratum": {
+            "0.00-0.25": 0.0,
+            "0.25-0.50": 0.0,
+            "0.50-0.75": 0.0009838404896348363,
+            "0.75-inf": 0.009250693802035153
+          },
+          "damage_rate_wave20": 0.0024608162338154013,
+          "damage_rate_risk_ge_0p5": 0.002158980330087292,
+          "n_ticks_wave20": 562,
+          "n_ticks_risk_ge_0p5": 809,
+          "n_ticks_risk_nan": 0
+        }
+      },
+      {
+        "run_id": "run_1784895219_19972",
+        "result": "victory",
+        "final_wave": 20,
+        "victory": 1.0,
+        "n_capture_ticks": 20579,
+        "norm_damage_total": 1.0338776940363628,
+        "raw_damage_total": 37.0,
+        "damage_rate_overall": 5.023945255048169e-05,
+        "damage_per_1k_overall": 0.05023945255048169,
+        "damage_rate_by_wave_band": {
+          "1-5": 0.0,
+          "6-10": 4.3348456403838136e-05,
+          "11-15": 5.0455243905235876e-05,
+          "16-19": 1.0830305360459638e-05,
+          "20": 0.0008387502621094568
+        },
+        "damage_rate_by_risk_stratum": {
+          "0.00-0.25": 3.1973550130577696e-05,
+          "0.25-0.50": 0.0,
+          "0.50-0.75": 0.0,
+          "0.75-inf": 0.012065018315018316
+        },
+        "damage_rate_wave20": 0.0008387502621094568,
+        "damage_rate_risk_ge_0p5": 0.000748069498069498,
+        "n_ticks_wave20": 502,
+        "n_ticks_risk_ge_0p5": 629,
+        "n_ticks_risk_nan": 0,
+        "capture_drop_sum": 37.0,
+        "player_damage_sum": 37.0,
+        "player_damage_events": 5,
+        "damage_source_delta": 0.0,
+        "damage_source_mismatch": false,
+        "rl_usable_view": {
+          "n_ticks": 19854,
+          "norm_damage_total": 0.8915883458646616,
+          "raw_damage_total": 32.0,
+          "damage_rate_overall": 4.490724014630108e-05,
+          "damage_per_1k_overall": 0.04490724014630108,
+          "damage_rate_by_wave_band": {
+            "1-5": 0.0,
+            "6-10": 2.9238398203592814e-05,
+            "11-15": 5.152224824355972e-05,
+            "16-19": 0.0,
+            "20": 0.0009133462724055256
+          },
+          "damage_rate_by_risk_stratum": {
+            "0.00-0.25": 2.4918780350295752e-05,
+            "0.25-0.50": 0.0,
+            "0.50-0.75": 0.0,
+            "0.75-inf": 0.012065018315018316
+          },
+          "damage_rate_wave20": 0.0009133462724055256,
+          "damage_rate_risk_ge_0p5": 0.0007492606915377616,
+          "n_ticks_wave20": 461,
+          "n_ticks_risk_ge_0p5": 628,
+          "n_ticks_risk_nan": 0
+        }
+      }
+    ],
+    "final_wave": {
+      "mean": {
+        "point": 18.166666666666668,
+        "lo": 16.5,
+        "hi": 19.833333333333332,
+        "n": 6,
+        "agg": "mean"
+      },
+      "median": {
+        "point": 19.5,
+        "lo": 15.0,
+        "hi": 20.0,
+        "n": 6,
+        "agg": "median"
+      }
+    },
+    "victory_rate": {
+      "point": 0.3333333333333333,
+      "lo": 0.0,
+      "hi": 0.6666666666666666,
+      "n": 6,
+      "agg": "mean"
+    },
+    "damage_rate_overall": {
+      "mean": {
+        "point": 8.07049180161407e-05,
+        "lo": 4.688484121931297e-05,
+        "hi": 0.00011452695216709854,
+        "n": 6,
+        "agg": "mean"
+      },
+      "median": {
+        "point": 7.881515461978658e-05,
+        "lo": 3.356827619062688e-05,
+        "hi": 0.00012973132323800863,
+        "n": 6,
+        "agg": "median"
+      }
+    },
+    "damage_rate_wave20": {
+      "mean": {
+        "point": 0.0010983985322509649,
+        "lo": 0.0,
+        "hi": 0.0024564453346434378,
+        "n": 3,
+        "agg": "mean"
+      },
+      "median": {
+        "point": 0.0008387502621094568,
+        "lo": 0.0,
+        "hi": 0.0024564453346434378,
+        "n": 3,
+        "agg": "median"
+      }
+    },
+    "damage_rate_risk_ge_0p5": {
+      "mean": {
+        "point": 0.0018913116348641698,
+        "lo": 0.0009497056705197231,
+        "hi": 0.0028054033481916857,
+        "n": 6,
+        "agg": "mean"
+      },
+      "median": {
+        "point": 0.002122252255230979,
+        "lo": 0.000374034749034749,
+        "hi": 0.0031776479003267823,
+        "n": 6,
+        "agg": "median"
+      }
+    },
+    "damage_rate_by_wave_band": {
+      "1-5": {
+        "mean": {
+          "point": 2.3534506293126983e-06,
+          "lo": 0.0,
+          "hi": 7.060351887938094e-06,
+          "n": 6,
+          "agg": "mean"
+        },
+        "median": {
+          "point": 0.0,
+          "lo": 0.0,
+          "hi": 7.060351887938095e-06,
+          "n": 6,
+          "agg": "median"
+        }
+      },
+      "6-10": {
+        "mean": {
+          "point": 2.9024723121848888e-05,
+          "lo": 1.0851846207543351e-05,
+          "hi": 5.2139530233523595e-05,
+          "n": 6,
+          "agg": "mean"
+        },
+        "median": {
+          "point": 1.9430284392983896e-05,
+          "lo": 5.397159514117326e-06,
+          "hi": 6.224672545844545e-05,
+          "n": 6,
+          "agg": "median"
+        }
+      },
+      "11-15": {
+        "mean": {
+          "point": 8.463391722273941e-05,
+          "lo": 1.3169742398453045e-05,
+          "hi": 0.00017271915389219488,
+          "n": 6,
+          "agg": "mean"
+        },
+        "median": {
+          "point": 3.1850969295866114e-05,
+          "lo": 3.8291289497465115e-06,
+          "hi": 0.00021822165342260565,
+          "n": 6,
+          "agg": "median"
+        }
+      },
+      "16-19": {
+        "mean": {
+          "point": 0.0001479135006119943,
+          "lo": 2.634828854502213e-05,
+          "hi": 0.0003571519184063815,
+          "n": 4,
+          "agg": "mean"
+        },
+        "median": {
+          "point": 6.024029488457931e-05,
+          "lo": 1.0830305360459638e-05,
+          "hi": 0.000460343107318359,
+          "n": 4,
+          "agg": "median"
+        }
+      },
+      "20": {
+        "mean": {
+          "point": 0.0010983985322509649,
+          "lo": 0.0,
+          "hi": 0.0024564453346434378,
+          "n": 3,
+          "agg": "mean"
+        },
+        "median": {
+          "point": 0.0008387502621094568,
+          "lo": 0.0,
+          "hi": 0.0024564453346434378,
+          "n": 3,
+          "agg": "median"
+        }
+      }
+    },
+    "damage_rate_by_risk_stratum": {
+      "0.00-0.25": {
+        "mean": {
+          "point": 1.2366037247284326e-05,
+          "lo": 4.555396296021038e-06,
+          "hi": 2.1686899258906616e-05,
+          "n": 6,
+          "agg": "mean"
+        },
+        "median": {
+          "point": 9.655224792352282e-06,
+          "lo": 1.7056987394886315e-06,
+          "hi": 2.573718821001206e-05,
+          "n": 6,
+          "agg": "median"
+        }
+      },
+      "0.25-0.50": {
+        "mean": {
+          "point": 0.0,
+          "lo": 0.0,
+          "hi": 0.0,
+          "n": 6,
+          "agg": "mean"
+        },
+        "median": {
+          "point": 0.0,
+          "lo": 0.0,
+          "hi": 0.0,
+          "n": 6,
+          "agg": "median"
+        }
+      },
+      "0.50-0.75": {
+        "mean": {
+          "point": 0.0005653907436643027,
+          "lo": 0.0002370291068557597,
+          "hi": 0.0008929227666123173,
+          "n": 6,
+          "agg": "mean"
+        },
+        "median": {
+          "point": 0.0007110873205672791,
+          "lo": 0.0,
+          "hi": 0.000985084910425629,
+          "n": 6,
+          "agg": "median"
+        }
+      },
+      "0.75-inf": {
+        "mean": {
+          "point": 0.013520877605527039,
+          "lo": 0.007078654918897032,
+          "hi": 0.019300790901377072,
+          "n": 6,
+          "agg": "mean"
+        },
+        "median": {
+          "point": 0.014105425824175826,
+          "lo": 0.0045854732208363905,
+          "hi": 0.021871733771568903,
+          "n": 6,
+          "agg": "median"
+        }
+      }
+    },
+    "rl_usable_view": {
+      "damage_rate_overall": {
+        "mean": {
+          "point": 7.115819236350812e-05,
+          "lo": 3.539217345298229e-05,
+          "hi": 0.00010804442310300528,
+          "n": 6,
+          "agg": "mean"
+        },
+        "median": {
+          "point": 7.203452475843379e-05,
+          "lo": 2.245362007315054e-05,
+          "hi": 0.00011898643225894006,
+          "n": 6,
+          "agg": "median"
+        }
+      }
+    }
+  },
+  "differences": {
+    "final_wave": {
+      "mean": {
+        "point": 0.2619047619047592,
+        "lo": -2.404761904761905,
+        "hi": 2.761904761904759,
+        "n_learned": 7,
+        "n_control": 6,
+        "agg": "mean",
+        "straddles_zero": true
+      },
+      "median": {
+        "point": 0.5,
+        "lo": -3.0,
+        "hi": 5.0,
+        "n_learned": 7,
+        "n_control": 6,
+        "agg": "median",
+        "straddles_zero": true
+      }
+    },
+    "victory_rate": {
+      "mean": {
+        "point": 0.23809523809523808,
+        "lo": -0.261904761904762,
+        "hi": 0.7142857142857143,
+        "n_learned": 7,
+        "n_control": 6,
+        "agg": "mean",
+        "straddles_zero": true
+      }
+    },
+    "damage_rate_overall": {
+      "mean": {
+        "point": 3.6242879311624364e-05,
+        "lo": -2.1702116935319392e-05,
+        "hi": 9.510689593710187e-05,
+        "n_learned": 7,
+        "n_control": 6,
+        "agg": "mean",
+        "straddles_zero": true
+      },
+      "median": {
+        "point": 3.915741258016601e-05,
+        "lo": -4.469556436133889e-05,
+        "hi": 0.00014361265807359523,
+        "n_learned": 7,
+        "n_control": 6,
+        "agg": "median",
+        "straddles_zero": true
+      }
+    },
+    "damage_rate_wave20": {
+      "mean": {
+        "point": -0.00039480792289733576,
+        "lo": -0.0017058646244551218,
+        "hi": 0.000761540317205084,
+        "n_learned": 4,
+        "n_control": 3,
+        "agg": "mean",
+        "straddles_zero": true
+      },
+      "median": {
+        "point": -0.0003688444122780471,
+        "lo": -0.0021002560212074303,
+        "hi": 0.001050991905271251,
+        "n_learned": 4,
+        "n_control": 3,
+        "agg": "median",
+        "straddles_zero": true
+      }
+    },
+    "damage_rate_risk_ge_0p5": {
+      "mean": {
+        "point": 0.00024141621218001807,
+        "lo": -0.00135145456562006,
+        "hi": 0.0018667282139207954,
+        "n_learned": 7,
+        "n_control": 6,
+        "agg": "mean",
+        "straddles_zero": true
+      },
+      "median": {
+        "point": -0.0008309606825417923,
+        "lo": -0.0020881895881895885,
+        "hi": 0.002739681880143096,
+        "n_learned": 7,
+        "n_control": 6,
+        "agg": "median",
+        "straddles_zero": true
+      }
+    },
+    "damage_rate_by_wave_band": {
+      "1-5": {
+        "mean": {
+          "point": 2.077602188836894e-06,
+          "lo": -4.7069012586253965e-06,
+          "hi": 1.3017310013972973e-05,
+          "n_learned": 7,
+          "n_control": 6,
+          "agg": "mean",
+          "straddles_zero": true
+        },
+        "median": {
+          "point": 0.0,
+          "lo": -7.060351887938095e-06,
+          "hi": 0.0,
+          "n_learned": 7,
+          "n_control": 6,
+          "agg": "median",
+          "straddles_zero": true
+        }
+      },
+      "6-10": {
+        "mean": {
+          "point": -9.010098908014263e-06,
+          "lo": -4.1421229183905085e-05,
+          "hi": 2.594338066538617e-05,
+          "n_learned": 7,
+          "n_control": 6,
+          "agg": "mean",
+          "straddles_zero": true
+        },
+        "median": {
+          "point": -1.9430284392983896e-05,
+          "lo": -6.224672545844545e-05,
+          "hi": 2.5372286465479183e-05,
+          "n_learned": 7,
+          "n_control": 6,
+          "agg": "median",
+          "straddles_zero": true
+        }
+      },
+      "11-15": {
+        "mean": {
+          "point": 6.25360328879171e-05,
+          "lo": -8.28315859858331e-05,
+          "hi": 0.00022074110387823782,
+          "n_learned": 7,
+          "n_control": 6,
+          "agg": "mean",
+          "straddles_zero": true
+        },
+        "median": {
+          "point": -3.6019609241472276e-07,
+          "lo": -0.00015018161497625036,
+          "hi": 0.00026169980118727966,
+          "n_learned": 7,
+          "n_control": 6,
+          "agg": "median",
+          "straddles_zero": true
+        }
+      },
+      "16-19": {
+        "mean": {
+          "point": 0.00013412197554912923,
+          "lo": -0.00017685848458931242,
+          "hi": 0.00046662548853486135,
+          "n_learned": 6,
+          "n_control": 4,
+          "agg": "mean",
+          "straddles_zero": true
+        },
+        "median": {
+          "point": 7.006165265370776e-05,
+          "lo": -0.0003300411597800719,
+          "hi": 0.000642902242846374,
+          "n_learned": 6,
+          "n_control": 4,
+          "agg": "median",
+          "straddles_zero": true
+        }
+      },
+      "20": {
+        "mean": {
+          "point": -0.00039480792289733576,
+          "lo": -0.0016959964570921074,
+          "hi": 0.000761540317205084,
+          "n_learned": 4,
+          "n_control": 3,
+          "agg": "mean",
+          "straddles_zero": true
+        },
+        "median": {
+          "point": -0.0003688444122780471,
+          "lo": -0.0021002560212074303,
+          "hi": 0.001050991905271251,
+          "n_learned": 4,
+          "n_control": 3,
+          "agg": "median",
+          "straddles_zero": true
+        }
+      }
+    },
+    "damage_rate_by_risk_stratum": {
+      "0.00-0.25": {
+        "mean": {
+          "point": 8.752195128855021e-06,
+          "lo": -1.1615108445854459e-05,
+          "hi": 3.223247971098677e-05,
+          "n_learned": 7,
+          "n_control": 6,
+          "agg": "mean",
+          "straddles_zero": true
+        },
+        "median": {
+          "point": -9.655224792352282e-06,
+          "lo": -2.16310357619303e-05,
+          "hi": 5.4414810811588745e-05,
+          "n_learned": 7,
+          "n_control": 6,
+          "agg": "median",
+          "straddles_zero": true
+        }
+      },
+      "0.25-0.50": {
+        "mean": {
+          "point": 0.0,
+          "lo": 0.0,
+          "hi": 0.0,
+          "n_learned": 7,
+          "n_control": 6,
+          "agg": "mean",
+          "straddles_zero": true
+        },
+        "median": {
+          "point": 0.0,
+          "lo": 0.0,
+          "hi": 0.0,
+          "n_learned": 7,
+          "n_control": 6,
+          "agg": "median",
+          "straddles_zero": true
+        }
+      },
+      "0.50-0.75": {
+        "mean": {
+          "point": 0.00034521263795162557,
+          "lo": -0.0003543839419351646,
+          "hi": 0.0011706613447624219,
+          "n_learned": 7,
+          "n_control": 6,
+          "agg": "mean",
+          "straddles_zero": true
+        },
+        "median": {
+          "point": -7.616668564664419e-05,
+          "lo": -0.0008132570057428679,
+          "hi": 0.0013488969878680372,
+          "n_learned": 7,
+          "n_control": 6,
+          "agg": "median",
+          "straddles_zero": true
+        }
+      },
+      "0.75-inf": {
+        "mean": {
+          "point": -0.0033218861387088773,
+          "lo": -0.011511466043462815,
+          "hi": 0.00586652430788775,
+          "n_learned": 7,
+          "n_control": 6,
+          "agg": "mean",
+          "straddles_zero": true
+        },
+        "median": {
+          "point": -0.00583482675168996,
+          "lo": -0.014642496039647776,
+          "hi": 0.0059915590188062,
+          "n_learned": 7,
+          "n_control": 6,
+          "agg": "median",
+          "straddles_zero": true
+        }
+      }
+    }
+  },
+  "damage_source_cross_check": {
+    "note": "Per-run capture hp-drop sum vs the mod's player_damage event sum; mismatch flagged if |delta| > 5 hp.",
+    "runs": [
+      {
+        "run_id": "run_1784910686_39423",
+        "capture_drop_sum": 156.0,
+        "player_damage_sum": 157.0,
+        "player_damage_events": 11,
+        "delta": -1.0,
+        "mismatch": false
+      },
+      {
+        "run_id": "run_1784911798_60074",
+        "capture_drop_sum": 135.0,
+        "player_damage_sum": 136.0,
+        "player_damage_events": 9,
+        "delta": -1.0,
+        "mismatch": false
+      },
+      {
+        "run_id": "run_1784912900_14544",
+        "capture_drop_sum": 114.0,
+        "player_damage_sum": 116.0,
+        "player_damage_events": 15,
+        "delta": -2.0,
+        "mismatch": false
+      },
+      {
+        "run_id": "run_1784913937_22390",
+        "capture_drop_sum": 75.0,
+        "player_damage_sum": 76.0,
+        "player_damage_events": 4,
+        "delta": -1.0,
+        "mismatch": false
+      },
+      {
+        "run_id": "run_1784915512_76287",
+        "capture_drop_sum": 107.0,
+        "player_damage_sum": 107.0,
+        "player_damage_events": 7,
+        "delta": 0.0,
+        "mismatch": false
+      },
+      {
+        "run_id": "run_1784916694_13543",
+        "capture_drop_sum": 135.0,
+        "player_damage_sum": 135.0,
+        "player_damage_events": 17,
+        "delta": 0.0,
+        "mismatch": false
+      },
+      {
+        "run_id": "run_1784917880_11008",
+        "capture_drop_sum": 22.0,
+        "player_damage_sum": 22.0,
+        "player_damage_events": 2,
+        "delta": 0.0,
+        "mismatch": false
+      },
+      {
+        "run_id": "run_1784890075_95641",
+        "capture_drop_sum": 109.0,
+        "player_damage_sum": 109.0,
+        "player_damage_events": 11,
+        "delta": 0.0,
+        "mismatch": false
+      },
+      {
+        "run_id": "run_1784891038_60320",
+        "capture_drop_sum": 18.0,
+        "player_damage_sum": 18.0,
+        "player_damage_events": 5,
+        "delta": 0.0,
+        "mismatch": false
+      },
+      {
+        "run_id": "run_1784892185_3194",
+        "capture_drop_sum": 131.0,
+        "player_damage_sum": 132.0,
+        "player_damage_events": 11,
+        "delta": -1.0,
+        "mismatch": false
+      },
+      {
+        "run_id": "run_1784893276_88958",
+        "capture_drop_sum": 45.0,
+        "player_damage_sum": 45.0,
+        "player_damage_events": 5,
+        "delta": 0.0,
+        "mismatch": false
+      },
+      {
+        "run_id": "run_1784894100_69759",
+        "capture_drop_sum": 87.0,
+        "player_damage_sum": 87.0,
+        "player_damage_events": 8,
+        "delta": 0.0,
+        "mismatch": false
+      },
+      {
+        "run_id": "run_1784895219_19972",
+        "capture_drop_sum": 37.0,
+        "player_damage_sum": 37.0,
+        "player_damage_events": 5,
+        "delta": 0.0,
+        "mismatch": false
+      }
+    ],
+    "any_mismatch": false,
+    "mismatch_run_ids": []
+  },
+  "checkpoint_summary": {
+    "note": "Predeclared surface (FULL capture-stream damage): overall + wave-20 + risk>=0.5 learned-minus-control differences (normalized damage rate). NEGATIVE damage diff => learned takes less damage. Emitted, not adjudicated.",
+    "damage_source": "full_capture_stream",
+    "final_wave_diff_mean": {
+      "point": 0.2619047619047592,
+      "lo": -2.404761904761905,
+      "hi": 2.761904761904759,
+      "n_learned": 7,
+      "n_control": 6,
+      "agg": "mean",
+      "straddles_zero": true
+    },
+    "victory_rate_diff": {
+      "point": 0.23809523809523808,
+      "lo": -0.261904761904762,
+      "hi": 0.7142857142857143,
+      "n_learned": 7,
+      "n_control": 6,
+      "agg": "mean",
+      "straddles_zero": true
+    },
+    "damage_rate_overall_diff_mean": {
+      "point": 3.6242879311624364e-05,
+      "lo": -2.1702116935319392e-05,
+      "hi": 9.510689593710187e-05,
+      "n_learned": 7,
+      "n_control": 6,
+      "agg": "mean",
+      "straddles_zero": true
+    },
+    "damage_rate_wave20_diff_mean": {
+      "point": -0.00039480792289733576,
+      "lo": -0.0017058646244551218,
+      "hi": 0.000761540317205084,
+      "n_learned": 4,
+      "n_control": 3,
+      "agg": "mean",
+      "straddles_zero": true
+    },
+    "damage_rate_risk_ge_0p5_diff_mean": {
+      "point": 0.00024141621218001807,
+      "lo": -0.00135145456562006,
+      "hi": 0.0018667282139207954,
+      "n_learned": 7,
+      "n_control": 6,
+      "agg": "mean",
+      "straddles_zero": true
+    }
+  }
+}
