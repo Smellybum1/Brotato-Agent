@@ -1,0 +1,14 @@
+{
+  "date": "2026-07-25",
+  "purpose": "machine-load covariate for Stage F Phase 2 checkpoint (learned arm vs Phase-1 random control)",
+  "control_arm": "Phase-1 probe runs collected 2026-07-24 (~11:00) on unloaded machine",
+  "sts2_load_start": "2026-07-25 00:54 local \u2014 STS2AgentLab builder_phase_v0 with 12 multiprocessing workers (~500MB each)",
+  "affected_runs_12_workers": [
+    "run_1784910686_39423 (pi3 smoke)",
+    "run_1784911798_60074 (batch1 r1)",
+    "run_1784912900_14544 (batch1 r2, partial)"
+  ],
+  "mitigation": "operator reduced STS2 to 8 workers during batch1 r2 wave ~9-10 (2026-07-25 ~03:3x local)",
+  "measured_impact_on_agent": "fallback 0.3-0.5%, latency p99 22-24ms (vs 19.3ms qualification baseline), wave-19 peak p99 32ms \u2014 within 40ms deadline; game-side frame drops observed by operator, unmeasured game-difficulty effect",
+  "handling": "report as covariate; call out next to any borderline checkpoint result"
+}

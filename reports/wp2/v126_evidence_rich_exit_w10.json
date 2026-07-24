@@ -1,0 +1,38 @@
+{
+  "date": "2026-07-25",
+  "context": "operator-observed during pi3 batch-1 run_1784911798_60074 (residual arc; shop = teacher v125)",
+  "observation": "wave-10 shop: entered 512g, single qualifying buy item_missile (95g), exited 417g without reroll (reroll 11g)",
+  "residual_board": [
+    "item_gambling_token 104g dodge+8/armor-1",
+    "item_bait 57g pctdmg+8 + extra_enemies_next_wave=1",
+    "weapon_crossbow_1 39g tier0"
+  ],
+  "assessment": "rule-consistent v125 behavior (reroll never encouraged when rich, only gated when qualifying offense affordable); gold deferred to w11 (entered 838g, spent ~460). Cost = one wave under-converted.",
+  "v126_relevance": "mid-game conversion pressure candidate: rich-exit-without-reroll on a non-qualifying board",
+  "additional_instances_same_run": [
+    {
+      "wave": 17,
+      "gold_at_exit": 565,
+      "behavior": "instant shop_go, zero buys, zero rerolls (reroll 18g)",
+      "board": [
+        "weapon_sharp_tooth_1 46g t0 melee",
+        "item_gentle_alien 93g t0 (+5 enemies)",
+        "item_potato 259g TIER3 maxhp+3/regen+2/lifesteal+1/pctdmg",
+        "weapon_pruner_1 54g t0"
+      ],
+      "note": "tier-3 potato affordable 2x over, passed without buy or reroll attempt"
+    },
+    {
+      "wave": 18,
+      "gold_at_exit": 971,
+      "behavior": "partial conversion (sold smg_1, bought laser_gun_2 + baby_gecko, 1 reroll) then exit",
+      "board_left": [
+        "item_glass_cannon 216g t2 pctdmg+25/armor-3 AFFORDABLE",
+        "item_piggy_bank 123g",
+        "weapon_pistol_2 75g"
+      ],
+      "note": "glass_cannon +25pct dmg left on board with 971g banked; baby_gecko is a collection-assist covariate"
+    }
+  ],
+  "pattern": "Three same-run instances of rich shop exits w10/w17/w18; all rule-consistent (no v125 gate violations) but late-game (w16-18) conversion pressure insufficient; ~1200g banked entering w19 = classic WP1-era loss signature (losers die offense-starved with gold banked). Strongest v126 evidence to date."
+}

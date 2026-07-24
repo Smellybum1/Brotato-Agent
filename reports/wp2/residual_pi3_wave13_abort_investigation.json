@@ -1,0 +1,36 @@
+{
+  "date": "2026-07-25",
+  "event": "wave-15 abort bar tripped: run_1784912900_14544 defeat wave 13 (pi3 batch-1 run 2)",
+  "action_taken": "campaign aborted mid-run-3 per predeclared bar; stack shut down cleanly; config restored idle",
+  "investigation": {
+    "serving": "clean \u2014 34,046 acts on batch connection, |delta| p50 1.01 / p99 3.28 / max 4.55 deg, frac>4deg 0.0006; fallbacks 2-5/wave; latency p99 20-26ms (40ms deadline)",
+    "economy": "full conversion every shop (exits <=84g) \u2014 NOT the run-1 banked-gold pattern",
+    "corner_hypothesis": "rejected as pi3-specific: run-2 w10 corner 39.8%/w12 14.6% correlate with damage, but probe CONTROL runs show same w10 spikes (11%, 22%) and other pi3 runs show none",
+    "read": "attrition under defense-light build vs w11-13 pressure (repeated 10-11 dmg hits at mid-HP, 15 hits/116 total); machine-load covariate active (12 STS2 workers, reduced to 8 mid-run)"
+  },
+  "outcome_context": {
+    "probe_control_runs": [
+      15,
+      15,
+      19,
+      20,
+      20,
+      20
+    ],
+    "pi1_runs": [
+      19,
+      19,
+      20,
+      20
+    ],
+    "pi3_runs_so_far": [
+      17,
+      19,
+      13
+    ],
+    "note": "pi3 min below historical pool min; n=3; no mechanism evidence"
+  },
+  "ruling": "pi3 NOT disqualified on n=1 sub-15 with clean mechanism scan; run-2 data remains training-valid (defeat, honestly labeled)",
+  "predeclared_escalation": "ANY further run ending < wave 15 in this arc => pi3 declared behaviorally degraded, iteration stops, checkpoint runs on existing data",
+  "resume_plan": "1 run to complete batch 1 -> iteration-4 retrain (lambda 0.001) -> batch 2 (3 runs) -> ~300k ticks -> stratified checkpoint"
+}
