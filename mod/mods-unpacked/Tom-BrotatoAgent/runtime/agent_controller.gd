@@ -14,6 +14,11 @@ var active: bool = false
 var auto_start_benchmark: bool = true
 var current_move_vector: Vector2 = Vector2.ZERO
 var policy_version: String = "teacher_v1-0.1.127-gun-wp1"
+# Single source of truth for the deployed mod identity: stamped into every run's
+# meta AND into the mod-ready sentinel, so the collector cannot accept a build
+# whose identity disagrees with what it asked for.
+const MOD_VERSION := "0.2.36-wp2-capture"
+const _MOD_READY_PATH := "user://brotato_agent/mod_ready.json"
 var last_move_debug: Dictionary = {}
 var last_meta_debug: Dictionary = {}
 var _manual_override: bool = false
@@ -153,7 +158,34 @@ func _ready() -> void:
 		ModLoaderLog.info("Student-inference path enabled (port %d)" % student_port, LOG_NAME)
 	_load_batch_stats()
 	_refresh_batch_hud()
+	_write_mod_ready()
 	ModLoaderLog.info("AgentController ready", LOG_NAME)
+
+
+func _write_mod_ready() -> void:
+	# Positive install signal. A GDScript parse error anywhere in the mod stops
+	# ModLoader from installing ANY of it, and the game then sits on the title
+	# screen — which, from outside, is indistinguishable from a slow start. The
+	# v127 deploy lost a build/launch cycle to exactly that, diagnosed only
+	# because a human noticed the title screen.
+	#
+	# The collector deletes this file before launching and requires it to appear,
+	# so absence is proof of non-installation and no timestamp trust is needed.
+	# Identity is included so a stale or wrong build fails loudly rather than
+	# silently collecting under the wrong version.
+	var d = Directory.new()
+	d.make_dir_recursive("user://brotato_agent")
+	var f = File.new()
+	if f.open(_MOD_READY_PATH, File.WRITE) != OK:
+		ModLoaderLog.info("Could not write mod-ready sentinel", LOG_NAME)
+		return
+	f.store_string(JSON.print({
+		"ready": true,
+		"policy_version": policy_version,
+		"mod_version": MOD_VERSION,
+		"capture_schema_hash": _WP2_CAPTURE_SCHEMA_HASH,
+	}))
+	f.close()
 
 
 func _student_active() -> bool:
@@ -1869,7 +1901,7 @@ func _start_run() -> void:
 		"endless": false,
 		"wave_retry": false,
 		"game_version": "1.1.15.4",
-		"mod_version": "0.2.36-wp2-capture",
+		"mod_version": MOD_VERSION,
 		"config_id": "well_rounded_d0_anyranged",
 		"policy_version": policy_version,
 	}

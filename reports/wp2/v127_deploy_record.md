@@ -229,6 +229,36 @@ path is not independently confirmed. This does not affect the deploy: `value` is
 populated and pile worth is recoverable by summing it, which is what the field
 was added for. Flagged so the materials campaign can check it deliberately.
 
+## Follow-up committed but NOT deployed: the mod-ready sentinel
+
+The incident above was diagnosed by a human noticing a title screen. That is now
+closed in code, but the change is **committed and undeployed**, deliberately:
+
+- `agent_controller.gd::_write_mod_ready()` writes
+  `user://brotato_agent/mod_ready.json` from `_ready()` — i.e. only once the mod
+  has actually installed — carrying policy version, mod version and capture hash.
+- `wp2_collect_teacher.py` deletes the sentinel *before* launching and then
+  requires it to appear, with matching identity, before it will wait on runs.
+  Deleting rather than timestamp-checking is deliberate: a stale sentinel would
+  otherwise be indistinguishable from a fresh one.
+- `tests/unit/test_mod_ready_sentinel.py` pins both halves, including the
+  never-appears case, all three identity mismatches, a torn partial read, and the
+  clear-before-launch ordering.
+
+**Why it is not deployed here:** it touches mod GDScript, so shipping it means a
+version bump (two different ZIPs must never both claim `0.2.36` — that is exactly
+the "silently collecting under the wrong build" failure the sentinel exists to
+prevent) and a fresh smoke to qualify. v127's qualification above stands on the
+exact artifact that was smoked, ZIP `24F1...FD3A`, and should not be quietly
+overwritten.
+
+**Carried risk, stated plainly:** the sentinel's own GDScript has never been
+parsed, which is the very gap it addresses. It is structurally identical to
+`_save_batch_stats` immediately below it (same `Directory`/`File`/`JSON.print`
+idiom) and passes the static hazard sweep, so the risk is low — but the next
+deploy is still its first real parse, and should check the ModLoader log before
+anything else.
+
 ## Summary
 
 Teacher v127 (`teacher_v1-0.1.127-gun-wp1`, mod `0.2.36-wp2-capture`) is deployed

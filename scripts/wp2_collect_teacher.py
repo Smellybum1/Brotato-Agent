@@ -208,11 +208,67 @@ def prepare_mod_environment(root: Path) -> None:
         profile_path.write_text(json.dumps(profile, indent="\t") + "\n", encoding="utf-8")
 
 
+def mod_ready_path() -> Path:
+    return Path(os.environ["APPDATA"]) / "Brotato" / "brotato_agent" / "mod_ready.json"
+
+
+def clear_mod_ready() -> None:
+    """Remove the sentinel BEFORE launching, so its later presence proves this launch.
+
+    Deleting rather than timestamp-checking is deliberate: a stale sentinel from a
+    previous launch would otherwise be indistinguishable from a fresh one, which is
+    the exact failure this guard exists to catch.
+    """
+    try:
+        mod_ready_path().unlink()
+    except FileNotFoundError:
+        pass
+
+
+def await_mod_ready(timeout_sec: float = 90.0, poll_sec: float = 1.0) -> str | None:
+    """Block until the mod reports a successful install. Returns a fault, or None.
+
+    A GDScript parse error prevents ModLoader from installing ANY of the mod, and
+    the game then sits on the title screen. To an outside observer that is
+    indistinguishable from a slow start, so a collector that only waits for a run
+    directory will wait forever. The v127 deploy lost a build/launch cycle to
+    precisely this, and it was caught by a human noticing the title screen rather
+    than by anything automated.
+
+    The sentinel is written by AgentController._ready(), i.e. only once the mod has
+    actually loaded and installed, so its absence is positive evidence of failure.
+    """
+    path = mod_ready_path()
+    deadline = time.time() + timeout_sec
+    while time.time() < deadline:
+        if path.exists():
+            try:
+                data = json.loads(path.read_text(encoding="utf-8"))
+            except (json.JSONDecodeError, OSError):
+                time.sleep(poll_sec)  # still being written
+                continue
+            if data.get("policy_version") != POLICY_VERSION:
+                return f"mod-ready policy mismatch: {data.get('policy_version')}"
+            if data.get("mod_version") != MOD_VERSION:
+                return f"mod-ready mod mismatch: {data.get('mod_version')}"
+            if data.get("capture_schema_hash") != CAPTURE_SCHEMA_HASH:
+                return f"mod-ready schema mismatch: {data.get('capture_schema_hash')}"
+            return None
+        time.sleep(poll_sec)
+    return (
+        f"mod never reported ready within {timeout_sec:.0f}s -- the mod almost "
+        "certainly failed to install. Check %APPDATA%/Brotato/logs/modloader*.log "
+        "for a GDScript parse error; a parse error anywhere takes the whole mod "
+        "down and leaves the game on the title screen."
+    )
+
+
 def launch_game(root: Path) -> None:
     # Use the proven Steam route so ModLoader can enumerate subscribed ZIPs.
     # Direct EXE launches may restart through Steam without an initialized UGC
     # interface, leaving the capture mod unloaded even though the ZIP is valid.
     prepare_mod_environment(root)
+    clear_mod_ready()
     subprocess.check_call([sys.executable, str(root / "scripts" / "launch_benchmark.py")])
 
 
@@ -281,6 +337,12 @@ def main() -> int:
             time.sleep(0.25)
         if not game_running():
             raise RuntimeError("Brotato did not start")
+        # "Game is running" is NOT "mod is installed". Require the mod's own
+        # positive ready signal before waiting on runs, or a mod that failed to
+        # load leaves this loop polling a title screen until the stale timeout.
+        ready_fault = await_mod_ready()
+        if ready_fault is not None:
+            raise RuntimeError(ready_fault)
         write_state(args.state_file, state, status="running")
         current_run: Path | None = None
         last_mtime = time.time()
