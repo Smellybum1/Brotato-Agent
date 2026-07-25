@@ -1,4 +1,23 @@
-# Shop-layer conversion: VERDICT — the offense-conversion mechanism is exhausted
+# Shop-layer conversion: PARTIAL verdict — gold conversion is exhausted, weapon selection is UNTESTED
+
+> **CORRECTION, same day, before acting on this.** The first version of this
+> document concluded the whole offense-conversion mechanism was exhausted. That
+> overclaimed, and the error is mine. The selection test below scores
+> `_direct_offense_gain`, which sums stat-item effects and feeds `stat_score`.
+> But `combat_model.gd::offense_rating` returns
+> `total = max(stat_score, weapon_score)`, and measured at shop exit across all
+> 20 runs the **weapon term is the max in ~90% of exits at every wave**, by a
+> widening margin (wave 19: weapon 273.8 vs stat 130.1; wave 10: 58.1 vs 40.8).
+>
+> So the quantity that discriminates winners from losers — `offense.total` — is
+> **weapon DPS**, and the selection test measured the component that is almost
+> never the max. The gold-side findings (banked gold, rich exits, economy) are
+> unaffected: they are about gold, not about which term dominates. The selection
+> finding is real but **narrow** — it establishes only that the buy loop does not
+> pass over stat items. **Weapon purchase and combine selection remains
+> untested**, and that is where the discriminating quantity actually lives.
+>
+> Corrected headline: gold conversion is exhausted. The shop layer is NOT closed.
 
 Date: 2026-07-26. Evidence: the 20 pure-teacher runs of the Stage F2 campaign
 (10 victories / 10 defeats), all on policy `0.1.125` / mod `0.2.34`, randomized,
@@ -87,34 +106,50 @@ different campaign.
 
 ## Verdict
 
-At waves 14-16, losing runs have **the same gold** as winning runs, **bank no more
-of it**, and **select optimally from what they are offered**. Every decision the
-shop policy actually controls is already being made correctly, and the losses
-happen anyway.
+**Established: gold conversion is exhausted.** At waves 14-16, losing runs have
+the same gold as winning runs, bank no more of it, and do not pass over stat-item
+offense. Nothing on the *gold* axis separates the outcomes, and three policy
+versions have now been spent on that axis. **Do not ship a v128 aimed at gold
+conversion.**
 
-**The offense-conversion mechanism is exhausted. Do not ship a v128 aimed at it.**
+**Not established: that the shop layer is done.** The discriminating quantity is
+weapon DPS (see the correction at the top), and no test here touches how weapons
+are bought, upgraded or combined.
 
-The surviving explanation is what the boards offer. A gate-clearing offense item
-is present on only **9.5%** of offense-deficient boards, and that rate is
-*identical* between defeats (9.4%) and victories (9.5%) — consistent with the v122
-strength-drivers conclusion that run strength is late multiplier-stat offer luck.
+## The actual open question
 
-## What is genuinely still open
+`offense.total = max(stat_score, weapon_score)`, and the weapon term is the max in
+~90% of shop exits. Winners reach above-target offense from wave 16 while losers
+never do, on equal gold and equal boards. Since the stat axis is clean, the
+divergence has to be arriving through **weapons** — which weapons get bought, which
+families get committed to, and whether tier upgrades (combines) land.
 
-One lever remains that the data supports and no version has tried. Of the 1,037
-offense-deficient buys, roughly 939 bought an item that does **not** clear the
-offense gate — legitimately, since no qualifying item was on the board. That gold
-is spent on defence and utility, and it is gold that could instead have funded
-**rerolls to draw more boards**. The existing gate blocks rerolling *past* a
-qualifying item; nothing governs the reverse allocation — spending down the purse
-on non-offense items while offense-deficient, leaving nothing to reroll with.
+That is squarely a shop-policy question, it is where `item_score` routes weapons
+through a completely separate scorer (`_weapon_score`, not the effects path the
+selection test exercised), and it is untested.
 
-This is a real, unexplored, evidence-grounded hypothesis. It is also the kind of
-change that the v117 "cowardice" lesson warns about: buying less defence to chase
-offense can trade a survivable run for a dead one, and defence purchases are not
-free to skip.
+**Next measurement** — the weapon analogue of the selection diagnostic:
 
-Two honest caveats on the whole analysis: n=20 on a single build and a single
-policy, and this measures the *teacher* only. Nothing here establishes that more
-board draws would convert into wins — only that draw count, not decision quality,
-is where the remaining variance lives.
+1. Reconstruct each run's equipped loadout at every shop (the v124 replay already
+   does this, with per-shop validation against the recorded `weapon_dps`,
+   `weapon_count` and `weapon_tier_sum`, so untrusted shops can be excluded).
+2. For each weapon buy, compute the marginal `total_effective_weapon_dps` gain of
+   what was bought versus every affordable weapon alternative on that board.
+3. Split by outcome, focusing on waves 12-16 where the divergence opens.
+4. Separately: count combines achieved per run by outcome, and how often a
+   combine-completing weapon was affordable and not bought.
+
+That distinguishes three live hypotheses which imply different work — bad weapon
+selection (fixable in `_weapon_score`), missed combines (fixable in the combine
+path), or weapon offer luck (not fixable, and would genuinely close the layer).
+
+## A caveat that stays live either way
+
+Of the 1,037 offense-deficient buys, ~939 bought a non-gate-clearing item, i.e.
+gold went to defence and utility rather than to rerolls that would draw more
+boards. That reroll-versus-buy allocation is still unexplored. It is ranked below
+the weapon question because it is a gold-axis idea and the gold axis is where three
+versions have already come back null — and because v117's cowardice lesson cuts
+directly against buying less defence.
+
+Honest limits on all of the above: n=20, one build, one policy, teacher only.
