@@ -1,0 +1,6618 @@
+{
+  "runs": [
+    {
+      "run_id": "run_1784945653_24977",
+      "result": "defeat",
+      "shops": 19,
+      "rich_exits": 3,
+      "rich_exit_waves": [
+        2,
+        3,
+        10
+      ],
+      "banked_mean": 76.7,
+      "banked_max": 250,
+      "banked_mid_mean": 94.3,
+      "items_bought": 60,
+      "rerolls": 34,
+      "offense_deficit_mean": 5.15,
+      "final_offense_deficit": -66.75
+    },
+    {
+      "run_id": "run_1784948107_34039",
+      "result": "victory",
+      "shops": 19,
+      "rich_exits": 5,
+      "rich_exit_waves": [
+        1,
+        2,
+        3,
+        5,
+        7
+      ],
+      "banked_mean": 65.6,
+      "banked_max": 216,
+      "banked_mid_mean": 81.6,
+      "items_bought": 72,
+      "rerolls": 42,
+      "offense_deficit_mean": -16.42,
+      "final_offense_deficit": -189.06
+    },
+    {
+      "run_id": "run_1784952010_30146",
+      "result": "defeat",
+      "shops": 12,
+      "rich_exits": 3,
+      "rich_exit_waves": [
+        1,
+        2,
+        12
+      ],
+      "banked_mean": 76.0,
+      "banked_max": 369,
+      "banked_mid_mean": 146.8,
+      "items_bought": 32,
+      "rerolls": 19,
+      "offense_deficit_mean": 50.26,
+      "final_offense_deficit": 97.0
+    },
+    {
+      "run_id": "run_1784952710_62975",
+      "result": "defeat",
+      "shops": 16,
+      "rich_exits": 1,
+      "rich_exit_waves": [
+        3
+      ],
+      "banked_mean": 75.4,
+      "banked_max": 441,
+      "banked_mid_mean": 112.9,
+      "items_bought": 50,
+      "rerolls": 21,
+      "offense_deficit_mean": 20.51,
+      "final_offense_deficit": 36.74
+    },
+    {
+      "run_id": "run_1784954925_96458",
+      "result": "victory",
+      "shops": 19,
+      "rich_exits": 2,
+      "rich_exit_waves": [
+        2,
+        6
+      ],
+      "banked_mean": 81.1,
+      "banked_max": 459,
+      "banked_mid_mean": 94.6,
+      "items_bought": 68,
+      "rerolls": 24,
+      "offense_deficit_mean": 17.83,
+      "final_offense_deficit": -50.57
+    },
+    {
+      "run_id": "run_1784959155_91786",
+      "result": "defeat",
+      "shops": 19,
+      "rich_exits": 4,
+      "rich_exit_waves": [
+        1,
+        2,
+        3,
+        15
+      ],
+      "banked_mean": 107.5,
+      "banked_max": 583,
+      "banked_mid_mean": 147.7,
+      "items_bought": 62,
+      "rerolls": 37,
+      "offense_deficit_mean": 40.08,
+      "final_offense_deficit": 123.0
+    },
+    {
+      "run_id": "run_1784960335_93344",
+      "result": "defeat",
+      "shops": 19,
+      "rich_exits": 0,
+      "rich_exit_waves": [],
+      "banked_mean": 55.0,
+      "banked_max": 379,
+      "banked_mid_mean": 97.7,
+      "items_bought": 66,
+      "rerolls": 35,
+      "offense_deficit_mean": 30.41,
+      "final_offense_deficit": -9.7
+    },
+    {
+      "run_id": "run_1784962766_94914",
+      "result": "victory",
+      "shops": 19,
+      "rich_exits": 3,
+      "rich_exit_waves": [
+        1,
+        3,
+        4
+      ],
+      "banked_mean": 62.5,
+      "banked_max": 279,
+      "banked_mid_mean": 104.7,
+      "items_bought": 67,
+      "rerolls": 34,
+      "offense_deficit_mean": 59.6,
+      "final_offense_deficit": 117.25
+    },
+    {
+      "run_id": "run_1784966179_70477",
+      "result": "defeat",
+      "shops": 16,
+      "rich_exits": 2,
+      "rich_exit_waves": [
+        1,
+        4
+      ],
+      "banked_mean": 28.5,
+      "banked_max": 75,
+      "banked_mid_mean": 42.7,
+      "items_bought": 59,
+      "rerolls": 36,
+      "offense_deficit_mean": 47.83,
+      "final_offense_deficit": 106.2
+    },
+    {
+      "run_id": "run_1784968385_22836",
+      "result": "victory",
+      "shops": 19,
+      "rich_exits": 2,
+      "rich_exit_waves": [
+        4,
+        10
+      ],
+      "banked_mean": 86.0,
+      "banked_max": 243,
+      "banked_mid_mean": 145.1,
+      "items_bought": 54,
+      "rerolls": 30,
+      "offense_deficit_mean": 49.0,
+      "final_offense_deficit": 102.49
+    },
+    {
+      "run_id": "run_1784969600_14272",
+      "result": "victory",
+      "shops": 19,
+      "rich_exits": 3,
+      "rich_exit_waves": [
+        2,
+        7,
+        12
+      ],
+      "banked_mean": 89.1,
+      "banked_max": 464,
+      "banked_mid_mean": 69.4,
+      "items_bought": 61,
+      "rerolls": 34,
+      "offense_deficit_mean": 55.38,
+      "final_offense_deficit": -20.2
+    },
+    {
+      "run_id": "run_1784972087_51182",
+      "result": "victory",
+      "shops": 19,
+      "rich_exits": 0,
+      "rich_exit_waves": [],
+      "banked_mean": 48.6,
+      "banked_max": 115,
+      "banked_mid_mean": 68.1,
+      "items_bought": 59,
+      "rerolls": 28,
+      "offense_deficit_mean": -24.77,
+      "final_offense_deficit": -214.86
+    },
+    {
+      "run_id": "run_1784975722_8937",
+      "result": "defeat",
+      "shops": 19,
+      "rich_exits": 1,
+      "rich_exit_waves": [
+        5
+      ],
+      "banked_mean": 102.8,
+      "banked_max": 417,
+      "banked_mid_mean": 128.7,
+      "items_bought": 58,
+      "rerolls": 34,
+      "offense_deficit_mean": 62.11,
+      "final_offense_deficit": 92.83
+    },
+    {
+      "run_id": "run_1784976889_60009",
+      "result": "victory",
+      "shops": 19,
+      "rich_exits": 3,
+      "rich_exit_waves": [
+        3,
+        4,
+        6
+      ],
+      "banked_mean": 97.8,
+      "banked_max": 486,
+      "banked_mid_mean": 68.7,
+      "items_bought": 62,
+      "rerolls": 32,
+      "offense_deficit_mean": 61.23,
+      "final_offense_deficit": 42.13
+    },
+    {
+      "run_id": "run_1784980475_23728",
+      "result": "victory",
+      "shops": 19,
+      "rich_exits": 3,
+      "rich_exit_waves": [
+        1,
+        2,
+        4
+      ],
+      "banked_mean": 93.6,
+      "banked_max": 382,
+      "banked_mid_mean": 138.9,
+      "items_bought": 59,
+      "rerolls": 37,
+      "offense_deficit_mean": -49.83,
+      "final_offense_deficit": -171.38
+    },
+    {
+      "run_id": "run_1784981684_28595",
+      "result": "defeat",
+      "shops": 16,
+      "rich_exits": 3,
+      "rich_exit_waves": [
+        2,
+        3,
+        16
+      ],
+      "banked_mean": 47.1,
+      "banked_max": 155,
+      "banked_mid_mean": 66.0,
+      "items_bought": 50,
+      "rerolls": 35,
+      "offense_deficit_mean": 25.49,
+      "final_offense_deficit": 129.45
+    },
+    {
+      "run_id": "run_1784983826_28269",
+      "result": "defeat",
+      "shops": 16,
+      "rich_exits": 2,
+      "rich_exit_waves": [
+        3,
+        16
+      ],
+      "banked_mean": 53.8,
+      "banked_max": 275,
+      "banked_mid_mean": 50.9,
+      "items_bought": 55,
+      "rerolls": 17,
+      "offense_deficit_mean": 39.29,
+      "final_offense_deficit": 61.52
+    },
+    {
+      "run_id": "run_1784986939_57689",
+      "result": "victory",
+      "shops": 19,
+      "rich_exits": 1,
+      "rich_exit_waves": [
+        3
+      ],
+      "banked_mean": 58.8,
+      "banked_max": 156,
+      "banked_mid_mean": 71.9,
+      "items_bought": 72,
+      "rerolls": 32,
+      "offense_deficit_mean": 34.42,
+      "final_offense_deficit": -17.29
+    },
+    {
+      "run_id": "run_1784988115_41438",
+      "result": "victory",
+      "shops": 19,
+      "rich_exits": 2,
+      "rich_exit_waves": [
+        2,
+        4
+      ],
+      "banked_mean": 120.4,
+      "banked_max": 712,
+      "banked_mid_mean": 129.1,
+      "items_bought": 66,
+      "rerolls": 23,
+      "offense_deficit_mean": 29.81,
+      "final_offense_deficit": 64.81
+    },
+    {
+      "run_id": "run_1784990448_88332",
+      "result": "defeat",
+      "shops": 12,
+      "rich_exits": 4,
+      "rich_exit_waves": [
+        1,
+        2,
+        3,
+        7
+      ],
+      "banked_mean": 44.8,
+      "banked_max": 114,
+      "banked_mid_mean": 60.0,
+      "items_bought": 34,
+      "rerolls": 13,
+      "offense_deficit_mean": 63.03,
+      "final_offense_deficit": 156.52
+    }
+  ],
+  "per_run_visits": {
+    "run_1784945653_24977": [
+      {
+        "wave": 1,
+        "gold_in": 64,
+        "gold_out": 13,
+        "bought": [
+          "weapon_smg_1",
+          "item_sharp_bullet"
+        ],
+        "rerolls": 0,
+        "offense_total": 5.7285,
+        "offense_target": 7.777778,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 3
+      },
+      {
+        "wave": 2,
+        "gold_in": 70,
+        "gold_out": 22,
+        "bought": [
+          "weapon_shredder_1",
+          "weapon_revolver_1"
+        ],
+        "rerolls": 1,
+        "offense_total": 10.691009,
+        "offense_target": 15.555556,
+        "exit_reason": "",
+        "affordable_at_exit": 1,
+        "cheapest_affordable_at_exit": 14,
+        "decisions": 5
+      },
+      {
+        "wave": 3,
+        "gold_in": 109,
+        "gold_out": 27,
+        "bought": [
+          "weapon_pistol_2",
+          "weapon_pistol_1",
+          "item_broken_mouth"
+        ],
+        "rerolls": 1,
+        "offense_total": 11.630991,
+        "offense_target": 23.333333,
+        "exit_reason": "",
+        "affordable_at_exit": 1,
+        "cheapest_affordable_at_exit": 22,
+        "decisions": 6
+      },
+      {
+        "wave": 4,
+        "gold_in": 126,
+        "gold_out": 72,
+        "bought": [
+          "weapon_double_barrel_shotgun_1"
+        ],
+        "rerolls": 4,
+        "offense_total": 13.893812,
+        "offense_target": 31.111111,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 6
+      },
+      {
+        "wave": 5,
+        "gold_in": 214,
+        "gold_out": 51,
+        "bought": [
+          "weapon_revolver_1",
+          "weapon_laser_gun_2",
+          "weapon_double_barrel_shotgun_1",
+          "item_baby_gecko"
+        ],
+        "rerolls": 3,
+        "offense_total": 20.908719,
+        "offense_target": 38.888889,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 11
+      },
+      {
+        "wave": 6,
+        "gold_in": 224,
+        "gold_out": 78,
+        "bought": [
+          "weapon_revolver_1",
+          "item_eyes_surgery"
+        ],
+        "rerolls": 1,
+        "offense_total": 26.342942,
+        "offense_target": 46.666667,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 5
+      },
+      {
+        "wave": 7,
+        "gold_in": 293,
+        "gold_out": 59,
+        "bought": [
+          "item_broken_mouth",
+          "weapon_double_barrel_shotgun_2",
+          "item_padding",
+          "item_plant"
+        ],
+        "rerolls": 1,
+        "offense_total": 22.783245,
+        "offense_target": 54.444444,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 8
+      },
+      {
+        "wave": 8,
+        "gold_in": 298,
+        "gold_out": 21,
+        "bought": [
+          "weapon_laser_gun_1",
+          "item_mutation",
+          "item_coffee",
+          "item_fertilizer",
+          "item_missile"
+        ],
+        "rerolls": 2,
+        "offense_total": 35,
+        "offense_target": 62.222222,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 8
+      },
+      {
+        "wave": 9,
+        "gold_in": 450,
+        "gold_out": 19,
+        "bought": [
+          "weapon_pistol_2",
+          "item_baby_gecko",
+          "item_metal_detector",
+          "weapon_revolver_1",
+          "item_insanity",
+          "item_triangle_of_power"
+        ],
+        "rerolls": 3,
+        "offense_total": 52.639418,
+        "offense_target": 95,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 12
+      },
+      {
+        "wave": 10,
+        "gold_in": 393,
+        "gold_out": 102,
+        "bought": [
+          "item_metal_detector",
+          "weapon_laser_gun_2",
+          "item_adrenaline"
+        ],
+        "rerolls": 1,
+        "offense_total": 61,
+        "offense_target": 185,
+        "exit_reason": "",
+        "affordable_at_exit": 1,
+        "cheapest_affordable_at_exit": 50,
+        "decisions": 7
+      },
+      {
+        "wave": 11,
+        "gold_in": 493,
+        "gold_out": 28,
+        "bought": [
+          "weapon_smg_1",
+          "weapon_laser_gun_2",
+          "item_small_magazine",
+          "item_terrified_onion",
+          "item_honey"
+        ],
+        "rerolls": 2,
+        "offense_total": 87.14575,
+        "offense_target": 116,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 10
+      },
+      {
+        "wave": 12,
+        "gold_in": 427,
+        "gold_out": 250,
+        "bought": [
+          "item_coffee",
+          "item_clockwork_wasp"
+        ],
+        "rerolls": 1,
+        "offense_total": 108.781037,
+        "offense_target": 102,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 5
+      },
+      {
+        "wave": 13,
+        "gold_in": 674,
+        "gold_out": 97,
+        "bought": [
+          "weapon_minigun_3",
+          "item_missile",
+          "item_coffee",
+          "item_beanie",
+          "item_coffee"
+        ],
+        "rerolls": 2,
+        "offense_total": 150.783623,
+        "offense_target": 95,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 11
+      },
+      {
+        "wave": 14,
+        "gold_in": 473,
+        "gold_out": 125,
+        "bought": [
+          "item_banner",
+          "item_silver_bullet"
+        ],
+        "rerolls": 2,
+        "offense_total": 158.067856,
+        "offense_target": 161,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 7
+      },
+      {
+        "wave": 15,
+        "gold_in": 514,
+        "gold_out": 39,
+        "bought": [
+          "weapon_smg_3",
+          "item_jellyshield",
+          "item_banner"
+        ],
+        "rerolls": 1,
+        "offense_total": 178.246559,
+        "offense_target": 245,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 6
+      },
+      {
+        "wave": 16,
+        "gold_in": 612,
+        "gold_out": 139,
+        "bought": [
+          "weapon_laser_gun_3",
+          "weapon_pistol_2",
+          "weapon_smg_1",
+          "item_missile"
+        ],
+        "rerolls": 3,
+        "offense_total": 195.647208,
+        "offense_target": 145,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 12
+      },
+      {
+        "wave": 17,
+        "gold_in": 517,
+        "gold_out": 164,
+        "bought": [
+          "weapon_revolver_3",
+          "item_alien_eyes"
+        ],
+        "rerolls": 1,
+        "offense_total": 228.604339,
+        "offense_target": 209,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 6
+      },
+      {
+        "wave": 18,
+        "gold_in": 613,
+        "gold_out": 143,
+        "bought": [
+          "weapon_minigun_3",
+          "weapon_smg_2"
+        ],
+        "rerolls": 1,
+        "offense_total": 305.592053,
+        "offense_target": 205,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 5
+      },
+      {
+        "wave": 19,
+        "gold_in": 523,
+        "gold_out": 8,
+        "bought": [
+          "weapon_pistol_3",
+          "item_banner",
+          "weapon_smg_2"
+        ],
+        "rerolls": 4,
+        "offense_total": 331.754683,
+        "offense_target": 265,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 10
+      }
+    ],
+    "run_1784948107_34039": [
+      {
+        "wave": 1,
+        "gold_in": 63,
+        "gold_out": 12,
+        "bought": [
+          "weapon_smg_1",
+          "item_broken_mouth"
+        ],
+        "rerolls": 0,
+        "offense_total": 6.03,
+        "offense_target": 7.777778,
+        "exit_reason": "",
+        "affordable_at_exit": 1,
+        "cheapest_affordable_at_exit": 12,
+        "decisions": 3
+      },
+      {
+        "wave": 2,
+        "gold_in": 58,
+        "gold_out": 36,
+        "bought": [
+          "weapon_laser_gun_1"
+        ],
+        "rerolls": 1,
+        "offense_total": 10.668126,
+        "offense_target": 15.555556,
+        "exit_reason": "",
+        "affordable_at_exit": 1,
+        "cheapest_affordable_at_exit": 20,
+        "decisions": 3
+      },
+      {
+        "wave": 3,
+        "gold_in": 100,
+        "gold_out": 24,
+        "bought": [
+          "weapon_laser_gun_1",
+          "weapon_revolver_1",
+          "item_coupon"
+        ],
+        "rerolls": 1,
+        "offense_total": 21.773723,
+        "offense_target": 23.333333,
+        "exit_reason": "",
+        "affordable_at_exit": 1,
+        "cheapest_affordable_at_exit": 15,
+        "decisions": 5
+      },
+      {
+        "wave": 4,
+        "gold_in": 132,
+        "gold_out": 30,
+        "bought": [
+          "weapon_laser_gun_1",
+          "weapon_shredder_1",
+          "item_propeller_hat"
+        ],
+        "rerolls": 3,
+        "offense_total": 21.907941,
+        "offense_target": 31.111111,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 8
+      },
+      {
+        "wave": 5,
+        "gold_in": 147,
+        "gold_out": 52,
+        "bought": [
+          "weapon_smg_1",
+          "weapon_pistol_2",
+          "item_cake"
+        ],
+        "rerolls": 2,
+        "offense_total": 22.917189,
+        "offense_target": 38.888889,
+        "exit_reason": "",
+        "affordable_at_exit": 2,
+        "cheapest_affordable_at_exit": 19,
+        "decisions": 9
+      },
+      {
+        "wave": 6,
+        "gold_in": 210,
+        "gold_out": 23,
+        "bought": [
+          "weapon_smg_2",
+          "weapon_revolver_1",
+          "item_gentle_alien",
+          "item_lens"
+        ],
+        "rerolls": 1,
+        "offense_total": 29.992436,
+        "offense_target": 46.666667,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 7
+      },
+      {
+        "wave": 7,
+        "gold_in": 221,
+        "gold_out": 60,
+        "bought": [
+          "weapon_laser_gun_1",
+          "item_dangerous_bunny",
+          "item_tree",
+          "weapon_laser_gun_1"
+        ],
+        "rerolls": 3,
+        "offense_total": 28.894398,
+        "offense_target": 54.444444,
+        "exit_reason": "",
+        "affordable_at_exit": 1,
+        "cheapest_affordable_at_exit": 38,
+        "decisions": 9
+      },
+      {
+        "wave": 8,
+        "gold_in": 324,
+        "gold_out": 28,
+        "bought": [
+          "weapon_smg_1",
+          "item_grinds_magical_leaf",
+          "weapon_laser_gun_2"
+        ],
+        "rerolls": 1,
+        "offense_total": 46.547888,
+        "offense_target": 62.222222,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 7
+      },
+      {
+        "wave": 9,
+        "gold_in": 516,
+        "gold_out": 66,
+        "bought": [
+          "item_reinforced_steel",
+          "item_blindfold",
+          "item_metal_plate",
+          "item_reinforced_steel",
+          "item_little_frog"
+        ],
+        "rerolls": 1,
+        "offense_total": 63.709069,
+        "offense_target": 95,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 8
+      },
+      {
+        "wave": 10,
+        "gold_in": 450,
+        "gold_out": 216,
+        "bought": [
+          "weapon_double_barrel_shotgun_3",
+          "item_white_flag"
+        ],
+        "rerolls": 2,
+        "offense_total": 69.815333,
+        "offense_target": 199,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 7
+      },
+      {
+        "wave": 11,
+        "gold_in": 608,
+        "gold_out": 42,
+        "bought": [
+          "weapon_minigun_3",
+          "item_poisonous_tonic",
+          "item_alien_eyes",
+          "item_baby_elephant"
+        ],
+        "rerolls": 1,
+        "offense_total": 96.688518,
+        "offense_target": 130,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 7
+      },
+      {
+        "wave": 12,
+        "gold_in": 577,
+        "gold_out": 135,
+        "bought": [
+          "weapon_smg_2",
+          "item_cyclops_worm",
+          "item_lootworm",
+          "item_metal_detector"
+        ],
+        "rerolls": 5,
+        "offense_total": 101.478491,
+        "offense_target": 95,
+        "exit_reason": "",
+        "affordable_at_exit": 1,
+        "cheapest_affordable_at_exit": 32,
+        "decisions": 11
+      },
+      {
+        "wave": 13,
+        "gold_in": 602,
+        "gold_out": 11,
+        "bought": [
+          "weapon_smg_1",
+          "item_clover",
+          "item_baby_gecko",
+          "item_injection",
+          "item_catling_gun",
+          "weapon_shredder_3"
+        ],
+        "rerolls": 4,
+        "offense_total": 123.449218,
+        "offense_target": 134,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 13
+      },
+      {
+        "wave": 14,
+        "gold_in": 435,
+        "gold_out": 78,
+        "bought": [
+          "item_alloy",
+          "item_adrenaline",
+          "weapon_revolver_1"
+        ],
+        "rerolls": 1,
+        "offense_total": 174.78225,
+        "offense_target": 136,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 6
+      },
+      {
+        "wave": 15,
+        "gold_in": 700,
+        "gold_out": 23,
+        "bought": [
+          "weapon_revolver_2",
+          "weapon_smg_1",
+          "item_gummy_berserker",
+          "item_coil",
+          "item_bag",
+          "weapon_revolver_3"
+        ],
+        "rerolls": 4,
+        "offense_total": 225.086962,
+        "offense_target": 227,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 15
+      },
+      {
+        "wave": 16,
+        "gold_in": 579,
+        "gold_out": 184,
+        "bought": [
+          "item_missile",
+          "weapon_double_barrel_shotgun_1",
+          "weapon_smg_1",
+          "weapon_double_barrel_shotgun_2",
+          "weapon_double_barrel_shotgun_1"
+        ],
+        "rerolls": 3,
+        "offense_total": 251.245816,
+        "offense_target": 145,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 13
+      },
+      {
+        "wave": 17,
+        "gold_in": 702,
+        "gold_out": 74,
+        "bought": [
+          "weapon_revolver_2",
+          "item_coil",
+          "item_injection",
+          "item_wandering_bot",
+          "item_glasses"
+        ],
+        "rerolls": 3,
+        "offense_total": 305.46196,
+        "offense_target": 180,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 10
+      },
+      {
+        "wave": 18,
+        "gold_in": 768,
+        "gold_out": 148,
+        "bought": [
+          "weapon_smg_4",
+          "weapon_smg_3",
+          "weapon_smg_2"
+        ],
+        "rerolls": 2,
+        "offense_total": 345.50132,
+        "offense_target": 202,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 9
+      },
+      {
+        "wave": 19,
+        "gold_in": 910,
+        "gold_out": 4,
+        "bought": [
+          "item_glasses",
+          "item_banner",
+          "item_leather_vest",
+          "item_alien_eyes",
+          "item_honey",
+          "item_beanie"
+        ],
+        "rerolls": 4,
+        "offense_total": 395.056006,
+        "offense_target": 206,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 11
+      }
+    ],
+    "run_1784952010_30146": [
+      {
+        "wave": 1,
+        "gold_in": 63,
+        "gold_out": 40,
+        "bought": [
+          "weapon_smg_1"
+        ],
+        "rerolls": 0,
+        "offense_total": 6.03,
+        "offense_target": 7.777778,
+        "exit_reason": "",
+        "affordable_at_exit": 1,
+        "cheapest_affordable_at_exit": 17,
+        "decisions": 2
+      },
+      {
+        "wave": 2,
+        "gold_in": 91,
+        "gold_out": 42,
+        "bought": [
+          "weapon_smg_1",
+          "weapon_pistol_1"
+        ],
+        "rerolls": 3,
+        "offense_total": 10.079,
+        "offense_target": 15.555556,
+        "exit_reason": "",
+        "affordable_at_exit": 1,
+        "cheapest_affordable_at_exit": 20,
+        "decisions": 6
+      },
+      {
+        "wave": 3,
+        "gold_in": 125,
+        "gold_out": 51,
+        "bought": [
+          "weapon_smg_1",
+          "weapon_pistol_1",
+          "weapon_shredder_1"
+        ],
+        "rerolls": 2,
+        "offense_total": 12.927408,
+        "offense_target": 23.333333,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 7
+      },
+      {
+        "wave": 4,
+        "gold_in": 154,
+        "gold_out": 33,
+        "bought": [
+          "item_bat",
+          "weapon_double_barrel_shotgun_1",
+          "item_glasses",
+          "item_coupon"
+        ],
+        "rerolls": 1,
+        "offense_total": 11.969774,
+        "offense_target": 31.111111,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 8
+      },
+      {
+        "wave": 5,
+        "gold_in": 147,
+        "gold_out": 17,
+        "bought": [
+          "item_acid",
+          "item_bat"
+        ],
+        "rerolls": 0,
+        "offense_total": 11.867229,
+        "offense_target": 38.888889,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 5
+      },
+      {
+        "wave": 6,
+        "gold_in": 214,
+        "gold_out": 4,
+        "bought": [
+          "weapon_shredder_2",
+          "item_shady_potion",
+          "item_blindfold"
+        ],
+        "rerolls": 1,
+        "offense_total": 11.00477,
+        "offense_target": 46.666667,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 7
+      },
+      {
+        "wave": 7,
+        "gold_in": 205,
+        "gold_out": 85,
+        "bought": [
+          "weapon_smg_1",
+          "item_plant",
+          "item_coffee"
+        ],
+        "rerolls": 2,
+        "offense_total": 20,
+        "offense_target": 54.444444,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 6
+      },
+      {
+        "wave": 8,
+        "gold_in": 276,
+        "gold_out": 53,
+        "bought": [
+          "item_baby_elephant",
+          "item_baby_with_a_beard"
+        ],
+        "rerolls": 0,
+        "offense_total": 42,
+        "offense_target": 62.222222,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 3
+      },
+      {
+        "wave": 9,
+        "gold_in": 437,
+        "gold_out": 35,
+        "bought": [
+          "weapon_revolver_1",
+          "item_cake",
+          "item_coil",
+          "item_alien_tongue",
+          "weapon_revolver_3"
+        ],
+        "rerolls": 2,
+        "offense_total": 50,
+        "offense_target": 95,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 12
+      },
+      {
+        "wave": 10,
+        "gold_in": 302,
+        "gold_out": 60,
+        "bought": [
+          "weapon_smg_2",
+          "weapon_revolver_2",
+          "item_dynamite",
+          "item_alien_tongue"
+        ],
+        "rerolls": 1,
+        "offense_total": 46,
+        "offense_target": 215,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 8
+      },
+      {
+        "wave": 11,
+        "gold_in": 381,
+        "gold_out": 123,
+        "bought": [
+          "item_alien_tongue",
+          "item_poisonous_tonic"
+        ],
+        "rerolls": 2,
+        "offense_total": 69,
+        "offense_target": 207,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 5
+      },
+      {
+        "wave": 12,
+        "gold_in": 566,
+        "gold_out": 369,
+        "bought": [
+          "weapon_smg_2"
+        ],
+        "rerolls": 5,
+        "offense_total": 69,
+        "offense_target": 166,
+        "exit_reason": "",
+        "affordable_at_exit": 2,
+        "cheapest_affordable_at_exit": 42,
+        "decisions": 8
+      }
+    ],
+    "run_1784952710_62975": [
+      {
+        "wave": 1,
+        "gold_in": 67,
+        "gold_out": 9,
+        "bought": [
+          "weapon_smg_1",
+          "item_cake",
+          "item_tree"
+        ],
+        "rerolls": 1,
+        "offense_total": 5.9697,
+        "offense_target": 7.777778,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 5
+      },
+      {
+        "wave": 2,
+        "gold_in": 59,
+        "gold_out": 1,
+        "bought": [
+          "weapon_smg_1",
+          "item_ugly_tooth"
+        ],
+        "rerolls": 0,
+        "offense_total": 10.446975,
+        "offense_target": 15.555556,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 3
+      },
+      {
+        "wave": 3,
+        "gold_in": 72,
+        "gold_out": 50,
+        "bought": [
+          "weapon_laser_gun_1"
+        ],
+        "rerolls": 0,
+        "offense_total": 14.541245,
+        "offense_target": 23.333333,
+        "exit_reason": "",
+        "affordable_at_exit": 1,
+        "cheapest_affordable_at_exit": 18,
+        "decisions": 2
+      },
+      {
+        "wave": 4,
+        "gold_in": 149,
+        "gold_out": 21,
+        "bought": [
+          "weapon_revolver_2",
+          "weapon_laser_gun_1",
+          "item_plant",
+          "weapon_pistol_1"
+        ],
+        "rerolls": 3,
+        "offense_total": 22.642337,
+        "offense_target": 31.111111,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 11
+      },
+      {
+        "wave": 5,
+        "gold_in": 149,
+        "gold_out": 57,
+        "bought": [
+          "weapon_revolver_1",
+          "item_cake",
+          "item_beanie"
+        ],
+        "rerolls": 0,
+        "offense_total": 26.842826,
+        "offense_target": 38.888889,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 5
+      },
+      {
+        "wave": 6,
+        "gold_in": 214,
+        "gold_out": 22,
+        "bought": [
+          "item_baby_gecko",
+          "item_catling_gun",
+          "item_beanie",
+          "item_hedgehog"
+        ],
+        "rerolls": 1,
+        "offense_total": 29.044014,
+        "offense_target": 46.666667,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 6
+      },
+      {
+        "wave": 7,
+        "gold_in": 215,
+        "gold_out": 71,
+        "bought": [
+          "weapon_revolver_2",
+          "item_propeller_hat",
+          "weapon_laser_gun_1"
+        ],
+        "rerolls": 0,
+        "offense_total": 32.737532,
+        "offense_target": 54.444444,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 6
+      },
+      {
+        "wave": 8,
+        "gold_in": 286,
+        "gold_out": 38,
+        "bought": [
+          "weapon_pistol_2",
+          "item_lost_duck",
+          "item_missile",
+          "weapon_revolver_2"
+        ],
+        "rerolls": 1,
+        "offense_total": 42.036572,
+        "offense_target": 62.222222,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 8
+      },
+      {
+        "wave": 9,
+        "gold_in": 432,
+        "gold_out": 30,
+        "bought": [
+          "item_pocket_factory",
+          "weapon_smg_3",
+          "item_reinforced_steel"
+        ],
+        "rerolls": 1,
+        "offense_total": 59.456746,
+        "offense_target": 95,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 6
+      },
+      {
+        "wave": 10,
+        "gold_in": 371,
+        "gold_out": 19,
+        "bought": [
+          "weapon_revolver_2",
+          "item_cyberball",
+          "weapon_revolver_2",
+          "item_lost_duck",
+          "item_fertilizer"
+        ],
+        "rerolls": 2,
+        "offense_total": 69.849638,
+        "offense_target": 125,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 9
+      },
+      {
+        "wave": 11,
+        "gold_in": 307,
+        "gold_out": 7,
+        "bought": [
+          "item_banner",
+          "item_baby_elephant",
+          "item_terrified_onion",
+          "item_alien_tongue"
+        ],
+        "rerolls": 1,
+        "offense_total": 84.193416,
+        "offense_target": 102,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 6
+      },
+      {
+        "wave": 12,
+        "gold_in": 441,
+        "gold_out": 441,
+        "bought": [],
+        "rerolls": 0,
+        "offense_total": 93.378152,
+        "offense_target": 95,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 1
+      },
+      {
+        "wave": 13,
+        "gold_in": 760,
+        "gold_out": 225,
+        "bought": [
+          "weapon_smg_3",
+          "item_medal",
+          "weapon_revolver_1",
+          "weapon_pistol_2"
+        ],
+        "rerolls": 5,
+        "offense_total": 114.620719,
+        "offense_target": 95,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 13
+      },
+      {
+        "wave": 14,
+        "gold_in": 530,
+        "gold_out": 60,
+        "bought": [
+          "weapon_smg_3",
+          "weapon_shredder_3",
+          "item_missile"
+        ],
+        "rerolls": 2,
+        "offense_total": 131.244345,
+        "offense_target": 123,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 8
+      },
+      {
+        "wave": 15,
+        "gold_in": 407,
+        "gold_out": 8,
+        "bought": [
+          "weapon_shredder_3",
+          "item_lootworm",
+          "item_blindfold"
+        ],
+        "rerolls": 2,
+        "offense_total": 122.602406,
+        "offense_target": 236,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 8
+      },
+      {
+        "wave": 16,
+        "gold_in": 552,
+        "gold_out": 147,
+        "bought": [
+          "weapon_double_barrel_shotgun_1",
+          "weapon_revolver_2",
+          "item_beanie",
+          "item_scope"
+        ],
+        "rerolls": 2,
+        "offense_total": 147.261597,
+        "offense_target": 184,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 8
+      }
+    ],
+    "run_1784954925_96458": [
+      {
+        "wave": 1,
+        "gold_in": 65,
+        "gold_out": 19,
+        "bought": [
+          "weapon_smg_1",
+          "item_glasses"
+        ],
+        "rerolls": 0,
+        "offense_total": 6.03,
+        "offense_target": 7.777778,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 3
+      },
+      {
+        "wave": 2,
+        "gold_in": 63,
+        "gold_out": 43,
+        "bought": [
+          "weapon_laser_gun_1"
+        ],
+        "rerolls": 0,
+        "offense_total": 8.631111,
+        "offense_target": 15.555556,
+        "exit_reason": "",
+        "affordable_at_exit": 1,
+        "cheapest_affordable_at_exit": 14,
+        "decisions": 2
+      },
+      {
+        "wave": 3,
+        "gold_in": 111,
+        "gold_out": 3,
+        "bought": [
+          "weapon_revolver_1",
+          "weapon_revolver_1",
+          "item_catling_gun"
+        ],
+        "rerolls": 1,
+        "offense_total": 17.901111,
+        "offense_target": 23.333333,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 7
+      },
+      {
+        "wave": 4,
+        "gold_in": 104,
+        "gold_out": 3,
+        "bought": [
+          "weapon_pistol_1",
+          "item_plant",
+          "item_lens",
+          "item_injection"
+        ],
+        "rerolls": 1,
+        "offense_total": 23,
+        "offense_target": 31.111111,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 8
+      },
+      {
+        "wave": 5,
+        "gold_in": 122,
+        "gold_out": 37,
+        "bought": [
+          "weapon_laser_gun_1",
+          "weapon_pistol_1",
+          "weapon_revolver_1"
+        ],
+        "rerolls": 1,
+        "offense_total": 29.877492,
+        "offense_target": 38.888889,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 7
+      },
+      {
+        "wave": 6,
+        "gold_in": 199,
+        "gold_out": 35,
+        "bought": [
+          "item_cyclops_worm",
+          "item_mushroom",
+          "item_glasses"
+        ],
+        "rerolls": 1,
+        "offense_total": 38,
+        "offense_target": 46.666667,
+        "exit_reason": "",
+        "affordable_at_exit": 1,
+        "cheapest_affordable_at_exit": 30,
+        "decisions": 6
+      },
+      {
+        "wave": 7,
+        "gold_in": 246,
+        "gold_out": 3,
+        "bought": [
+          "weapon_pistol_1",
+          "weapon_laser_gun_2",
+          "item_metal_detector",
+          "item_little_muscley_dude"
+        ],
+        "rerolls": 1,
+        "offense_total": 40,
+        "offense_target": 54.444444,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 8
+      },
+      {
+        "wave": 8,
+        "gold_in": 233,
+        "gold_out": 83,
+        "bought": [
+          "weapon_pistol_1",
+          "item_mutation",
+          "item_coupon",
+          "weapon_smg_1"
+        ],
+        "rerolls": 1,
+        "offense_total": 48.672072,
+        "offense_target": 62.222222,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 7
+      },
+      {
+        "wave": 9,
+        "gold_in": 471,
+        "gold_out": 91,
+        "bought": [
+          "weapon_smg_1",
+          "weapon_laser_gun_2",
+          "item_medal",
+          "item_pocket_factory",
+          "item_mutation"
+        ],
+        "rerolls": 2,
+        "offense_total": 57,
+        "offense_target": 95,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 10
+      },
+      {
+        "wave": 10,
+        "gold_in": 456,
+        "gold_out": 202,
+        "bought": [
+          "weapon_revolver_1",
+          "item_leather_vest",
+          "item_gambling_token",
+          "item_tree"
+        ],
+        "rerolls": 1,
+        "offense_total": 60.017703,
+        "offense_target": 130,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 8
+      },
+      {
+        "wave": 11,
+        "gold_in": 538,
+        "gold_out": 32,
+        "bought": [
+          "weapon_minigun_3",
+          "item_coffee",
+          "item_beanie",
+          "weapon_smg_2",
+          "item_cyclops_worm"
+        ],
+        "rerolls": 2,
+        "offense_total": 87,
+        "offense_target": 116,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 11
+      },
+      {
+        "wave": 12,
+        "gold_in": 362,
+        "gold_out": 29,
+        "bought": [
+          "weapon_smg_3",
+          "weapon_shredder_1",
+          "item_white_flag"
+        ],
+        "rerolls": 2,
+        "offense_total": 99,
+        "offense_target": 102,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 7
+      },
+      {
+        "wave": 13,
+        "gold_in": 424,
+        "gold_out": 54,
+        "bought": [
+          "weapon_laser_gun_3",
+          "weapon_revolver_1",
+          "item_leather_vest"
+        ],
+        "rerolls": 4,
+        "offense_total": 113.992927,
+        "offense_target": 102,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 10
+      },
+      {
+        "wave": 14,
+        "gold_in": 344,
+        "gold_out": 81,
+        "bought": [
+          "weapon_revolver_2",
+          "weapon_smg_2",
+          "weapon_smg_1",
+          "item_lootworm"
+        ],
+        "rerolls": 1,
+        "offense_total": 136.21335,
+        "offense_target": 166,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 9
+      },
+      {
+        "wave": 15,
+        "gold_in": 577,
+        "gold_out": 173,
+        "bought": [
+          "item_pumpkin",
+          "item_alloy",
+          "weapon_laser_gun_2"
+        ],
+        "rerolls": 2,
+        "offense_total": 167.629729,
+        "offense_target": 249,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 8
+      },
+      {
+        "wave": 16,
+        "gold_in": 546,
+        "gold_out": 104,
+        "bought": [
+          "weapon_double_barrel_shotgun_4",
+          "item_dangerous_bunny",
+          "weapon_double_barrel_shotgun_1",
+          "weapon_pistol_2",
+          "item_scope"
+        ],
+        "rerolls": 1,
+        "offense_total": 175.012086,
+        "offense_target": 205,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 10
+      },
+      {
+        "wave": 17,
+        "gold_in": 711,
+        "gold_out": 63,
+        "bought": [
+          "item_jetpack",
+          "weapon_laser_gun_3",
+          "weapon_shredder_3",
+          "item_gambling_token"
+        ],
+        "rerolls": 1,
+        "offense_total": 191.472438,
+        "offense_target": 218,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 8
+      },
+      {
+        "wave": 18,
+        "gold_in": 472,
+        "gold_out": 459,
+        "bought": [
+          "weapon_double_barrel_shotgun_2"
+        ],
+        "rerolls": 0,
+        "offense_total": 218.170419,
+        "offense_target": 244,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 3
+      },
+      {
+        "wave": 19,
+        "gold_in": 1093,
+        "gold_out": 26,
+        "bought": [
+          "item_small_magazine",
+          "item_clover",
+          "item_lost_duck",
+          "weapon_smg_1",
+          "item_acid",
+          "item_metal_plate",
+          "item_heavy_bullets"
+        ],
+        "rerolls": 2,
+        "offense_total": 315.573935,
+        "offense_target": 265,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 11
+      }
+    ],
+    "run_1784959155_91786": [
+      {
+        "wave": 1,
+        "gold_in": 64,
+        "gold_out": 13,
+        "bought": [
+          "weapon_double_barrel_shotgun_1",
+          "item_ugly_tooth"
+        ],
+        "rerolls": 0,
+        "offense_total": 4.067366,
+        "offense_target": 7.777778,
+        "exit_reason": "",
+        "affordable_at_exit": 1,
+        "cheapest_affordable_at_exit": 12,
+        "decisions": 3
+      },
+      {
+        "wave": 2,
+        "gold_in": 64,
+        "gold_out": 18,
+        "bought": [
+          "weapon_smg_1",
+          "item_tree"
+        ],
+        "rerolls": 0,
+        "offense_total": 7.436484,
+        "offense_target": 15.555556,
+        "exit_reason": "",
+        "affordable_at_exit": 1,
+        "cheapest_affordable_at_exit": 14,
+        "decisions": 3
+      },
+      {
+        "wave": 3,
+        "gold_in": 84,
+        "gold_out": 33,
+        "bought": [
+          "weapon_smg_1",
+          "weapon_shredder_1"
+        ],
+        "rerolls": 0,
+        "offense_total": 11.452113,
+        "offense_target": 23.333333,
+        "exit_reason": "",
+        "affordable_at_exit": 2,
+        "cheapest_affordable_at_exit": 16,
+        "decisions": 3
+      },
+      {
+        "wave": 4,
+        "gold_in": 139,
+        "gold_out": 62,
+        "bought": [
+          "weapon_pistol_1",
+          "item_lens",
+          "weapon_pistol_1"
+        ],
+        "rerolls": 2,
+        "offense_total": 13.234388,
+        "offense_target": 31.111111,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 7
+      },
+      {
+        "wave": 5,
+        "gold_in": 189,
+        "gold_out": 24,
+        "bought": [
+          "item_beanie",
+          "weapon_shredder_2",
+          "item_propeller_hat",
+          "item_fertilizer"
+        ],
+        "rerolls": 1,
+        "offense_total": 14.71031,
+        "offense_target": 38.888889,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 7
+      },
+      {
+        "wave": 6,
+        "gold_in": 199,
+        "gold_out": 5,
+        "bought": [
+          "item_gentle_alien",
+          "item_little_muscley_dude",
+          "item_hedgehog"
+        ],
+        "rerolls": 0,
+        "offense_total": 17.210337,
+        "offense_target": 46.666667,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 4
+      },
+      {
+        "wave": 7,
+        "gold_in": 222,
+        "gold_out": 62,
+        "bought": [
+          "weapon_shredder_2",
+          "item_small_magazine"
+        ],
+        "rerolls": 0,
+        "offense_total": 21.646545,
+        "offense_target": 54.444444,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 6
+      },
+      {
+        "wave": 8,
+        "gold_in": 289,
+        "gold_out": 14,
+        "bought": [
+          "weapon_pistol_1",
+          "item_catling_gun",
+          "item_crown"
+        ],
+        "rerolls": 4,
+        "offense_total": 29,
+        "offense_target": 62.222222,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 8
+      },
+      {
+        "wave": 9,
+        "gold_in": 441,
+        "gold_out": 34,
+        "bought": [
+          "weapon_pistol_2",
+          "weapon_revolver_1",
+          "item_coffee",
+          "item_blindfold",
+          "item_cyberball",
+          "item_sharp_bullet"
+        ],
+        "rerolls": 5,
+        "offense_total": 36.795253,
+        "offense_target": 95,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 14
+      },
+      {
+        "wave": 10,
+        "gold_in": 424,
+        "gold_out": 91,
+        "bought": [
+          "weapon_laser_gun_2",
+          "weapon_shredder_2",
+          "item_catling_gun",
+          "weapon_smg_1",
+          "weapon_shredder_1"
+        ],
+        "rerolls": 3,
+        "offense_total": 37,
+        "offense_target": 123,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 13
+      },
+      {
+        "wave": 11,
+        "gold_in": 445,
+        "gold_out": 74,
+        "bought": [
+          "item_cyclops_worm",
+          "weapon_shredder_1",
+          "weapon_shredder_2",
+          "item_clockwork_wasp"
+        ],
+        "rerolls": 3,
+        "offense_total": 64,
+        "offense_target": 95,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 9
+      },
+      {
+        "wave": 12,
+        "gold_in": 465,
+        "gold_out": 61,
+        "bought": [
+          "weapon_shredder_2",
+          "weapon_pistol_2",
+          "item_padding",
+          "item_gummy_berserker",
+          "item_coffee"
+        ],
+        "rerolls": 2,
+        "offense_total": 85,
+        "offense_target": 102,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 10
+      },
+      {
+        "wave": 13,
+        "gold_in": 429,
+        "gold_out": 141,
+        "bought": [
+          "weapon_smg_1",
+          "weapon_shredder_2",
+          "item_adrenaline"
+        ],
+        "rerolls": 2,
+        "offense_total": 85,
+        "offense_target": 95,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 8
+      },
+      {
+        "wave": 14,
+        "gold_in": 387,
+        "gold_out": 107,
+        "bought": [
+          "item_triangle_of_power",
+          "item_pumpkin"
+        ],
+        "rerolls": 0,
+        "offense_total": 103,
+        "offense_target": 159,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 3
+      },
+      {
+        "wave": 15,
+        "gold_in": 638,
+        "gold_out": 526,
+        "bought": [
+          "weapon_smg_2"
+        ],
+        "rerolls": 1,
+        "offense_total": 118,
+        "offense_target": 202,
+        "exit_reason": "",
+        "affordable_at_exit": 1,
+        "cheapest_affordable_at_exit": 127,
+        "decisions": 4
+      },
+      {
+        "wave": 16,
+        "gold_in": 1116,
+        "gold_out": 583,
+        "bought": [
+          "item_coupon",
+          "item_lens",
+          "item_gummy_berserker",
+          "item_silver_bullet"
+        ],
+        "rerolls": 5,
+        "offense_total": 124,
+        "offense_target": 145,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 10
+      },
+      {
+        "wave": 17,
+        "gold_in": 919,
+        "gold_out": 78,
+        "bought": [
+          "item_dangerous_bunny",
+          "item_baby_with_a_beard",
+          "weapon_smg_2",
+          "item_reinforced_steel",
+          "item_jellyshield"
+        ],
+        "rerolls": 4,
+        "offense_total": 141,
+        "offense_target": 166,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 11
+      },
+      {
+        "wave": 18,
+        "gold_in": 543,
+        "gold_out": 91,
+        "bought": [
+          "weapon_smg_3",
+          "item_mutation",
+          "item_clockwork_wasp"
+        ],
+        "rerolls": 2,
+        "offense_total": 142,
+        "offense_target": 231,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 6
+      },
+      {
+        "wave": 19,
+        "gold_in": 388,
+        "gold_out": 25,
+        "bought": [
+          "item_alien_tongue",
+          "item_lost_duck",
+          "item_clockwork_wasp"
+        ],
+        "rerolls": 3,
+        "offense_total": 142,
+        "offense_target": 265,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 7
+      }
+    ],
+    "run_1784960335_93344": [
+      {
+        "wave": 1,
+        "gold_in": 67,
+        "gold_out": 9,
+        "bought": [
+          "weapon_laser_gun_1",
+          "weapon_smg_1",
+          "weapon_shredder_1"
+        ],
+        "rerolls": 1,
+        "offense_total": 9.480989,
+        "offense_target": 7.777778,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 5
+      },
+      {
+        "wave": 2,
+        "gold_in": 58,
+        "gold_out": 18,
+        "bought": [
+          "weapon_laser_gun_1",
+          "item_fertilizer"
+        ],
+        "rerolls": 0,
+        "offense_total": 11.7806,
+        "offense_target": 15.555556,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 3
+      },
+      {
+        "wave": 3,
+        "gold_in": 100,
+        "gold_out": 22,
+        "bought": [
+          "weapon_shredder_1",
+          "weapon_laser_gun_1",
+          "weapon_shredder_1"
+        ],
+        "rerolls": 3,
+        "offense_total": 14.877248,
+        "offense_target": 23.333333,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 8
+      },
+      {
+        "wave": 4,
+        "gold_in": 128,
+        "gold_out": 21,
+        "bought": [
+          "item_lootworm",
+          "weapon_smg_1",
+          "weapon_shredder_1"
+        ],
+        "rerolls": 1,
+        "offense_total": 23,
+        "offense_target": 31.111111,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 7
+      },
+      {
+        "wave": 5,
+        "gold_in": 161,
+        "gold_out": 11,
+        "bought": [
+          "item_scope",
+          "item_gentle_alien",
+          "weapon_shredder_1"
+        ],
+        "rerolls": 0,
+        "offense_total": 23.885513,
+        "offense_target": 38.888889,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 5
+      },
+      {
+        "wave": 6,
+        "gold_in": 175,
+        "gold_out": 1,
+        "bought": [
+          "weapon_shredder_1",
+          "item_hedgehog",
+          "weapon_smg_1",
+          "item_sharp_bullet"
+        ],
+        "rerolls": 1,
+        "offense_total": 22.320916,
+        "offense_target": 46.666667,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 8
+      },
+      {
+        "wave": 7,
+        "gold_in": 234,
+        "gold_out": 63,
+        "bought": [
+          "weapon_shredder_1",
+          "item_shmoop",
+          "item_fertilizer"
+        ],
+        "rerolls": 0,
+        "offense_total": 23.545608,
+        "offense_target": 54.444444,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 4
+      },
+      {
+        "wave": 8,
+        "gold_in": 334,
+        "gold_out": 78,
+        "bought": [
+          "weapon_laser_gun_2",
+          "item_cyberball",
+          "weapon_shredder_2",
+          "item_peaceful_bee"
+        ],
+        "rerolls": 3,
+        "offense_total": 25.509529,
+        "offense_target": 62.222222,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 10
+      },
+      {
+        "wave": 9,
+        "gold_in": 530,
+        "gold_out": 138,
+        "bought": [
+          "weapon_laser_gun_1",
+          "item_piggy_bank",
+          "weapon_laser_gun_1",
+          "item_coil",
+          "weapon_laser_gun_1"
+        ],
+        "rerolls": 4,
+        "offense_total": 35.131674,
+        "offense_target": 95,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 11
+      },
+      {
+        "wave": 10,
+        "gold_in": 583,
+        "gold_out": 9,
+        "bought": [
+          "item_adrenaline",
+          "weapon_revolver_2",
+          "item_blindfold",
+          "item_little_frog",
+          "weapon_smg_3"
+        ],
+        "rerolls": 2,
+        "offense_total": 60.010667,
+        "offense_target": 207,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 10
+      },
+      {
+        "wave": 11,
+        "gold_in": 382,
+        "gold_out": 34,
+        "bought": [
+          "weapon_shredder_3",
+          "weapon_smg_1",
+          "item_candle"
+        ],
+        "rerolls": 2,
+        "offense_total": 71.133441,
+        "offense_target": 102,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 8
+      },
+      {
+        "wave": 12,
+        "gold_in": 475,
+        "gold_out": 0,
+        "bought": [
+          "weapon_minigun_3",
+          "weapon_shredder_2",
+          "item_dangerous_bunny"
+        ],
+        "rerolls": 5,
+        "offense_total": 72.305356,
+        "offense_target": 95,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 11
+      },
+      {
+        "wave": 13,
+        "gold_in": 354,
+        "gold_out": 105,
+        "bought": [
+          "item_coffee",
+          "item_helmet",
+          "item_lost_duck",
+          "item_beanie"
+        ],
+        "rerolls": 2,
+        "offense_total": 77.389564,
+        "offense_target": 116,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 7
+      },
+      {
+        "wave": 14,
+        "gold_in": 441,
+        "gold_out": 379,
+        "bought": [
+          "item_coffee"
+        ],
+        "rerolls": 0,
+        "offense_total": 82.950734,
+        "offense_target": 159,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 2
+      },
+      {
+        "wave": 15,
+        "gold_in": 922,
+        "gold_out": 19,
+        "bought": [
+          "item_missile",
+          "weapon_smg_1",
+          "weapon_revolver_3",
+          "item_glasses",
+          "item_coffee",
+          "weapon_smg_3",
+          "item_poisonous_tonic"
+        ],
+        "rerolls": 3,
+        "offense_total": 133.23627,
+        "offense_target": 228,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 14
+      },
+      {
+        "wave": 16,
+        "gold_in": 426,
+        "gold_out": 26,
+        "bought": [
+          "item_silver_bullet",
+          "weapon_smg_1",
+          "item_banner"
+        ],
+        "rerolls": 2,
+        "offense_total": 159.492701,
+        "offense_target": 145,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 7
+      },
+      {
+        "wave": 17,
+        "gold_in": 367,
+        "gold_out": 23,
+        "bought": [
+          "item_alien_tongue",
+          "weapon_revolver_3",
+          "weapon_revolver_1"
+        ],
+        "rerolls": 1,
+        "offense_total": 205.263695,
+        "offense_target": 219,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 7
+      },
+      {
+        "wave": 18,
+        "gold_in": 413,
+        "gold_out": 83,
+        "bought": [
+          "item_blood_leech",
+          "item_wandering_bot"
+        ],
+        "rerolls": 1,
+        "offense_total": 205.263695,
+        "offense_target": 198,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 5
+      },
+      {
+        "wave": 19,
+        "gold_in": 645,
+        "gold_out": 6,
+        "bought": [
+          "item_triangle_of_power",
+          "weapon_revolver_1",
+          "weapon_smg_1",
+          "item_reinforced_steel",
+          "weapon_pistol_3"
+        ],
+        "rerolls": 4,
+        "offense_total": 274.695133,
+        "offense_target": 265,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 12
+      }
+    ],
+    "run_1784962766_94914": [
+      {
+        "wave": 1,
+        "gold_in": 62,
+        "gold_out": 38,
+        "bought": [
+          "weapon_smg_1"
+        ],
+        "rerolls": 1,
+        "offense_total": 6.03,
+        "offense_target": 7.777778,
+        "exit_reason": "",
+        "affordable_at_exit": 1,
+        "cheapest_affordable_at_exit": 20,
+        "decisions": 3
+      },
+      {
+        "wave": 2,
+        "gold_in": 78,
+        "gold_out": 4,
+        "bought": [
+          "weapon_shredder_1",
+          "weapon_shredder_1",
+          "item_ugly_tooth"
+        ],
+        "rerolls": 1,
+        "offense_total": 8.815698,
+        "offense_target": 15.555556,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 5
+      },
+      {
+        "wave": 3,
+        "gold_in": 91,
+        "gold_out": 33,
+        "bought": [
+          "weapon_shredder_1",
+          "weapon_revolver_1"
+        ],
+        "rerolls": 2,
+        "offense_total": 13.202881,
+        "offense_target": 23.333333,
+        "exit_reason": "",
+        "affordable_at_exit": 2,
+        "cheapest_affordable_at_exit": 16,
+        "decisions": 7
+      },
+      {
+        "wave": 4,
+        "gold_in": 132,
+        "gold_out": 54,
+        "bought": [
+          "weapon_smg_1",
+          "item_lootworm"
+        ],
+        "rerolls": 1,
+        "offense_total": 17.153072,
+        "offense_target": 31.111111,
+        "exit_reason": "",
+        "affordable_at_exit": 1,
+        "cheapest_affordable_at_exit": 43,
+        "decisions": 5
+      },
+      {
+        "wave": 5,
+        "gold_in": 215,
+        "gold_out": 29,
+        "bought": [
+          "weapon_smg_1",
+          "item_cyclops_worm",
+          "weapon_smg_1",
+          "item_peaceful_bee"
+        ],
+        "rerolls": 2,
+        "offense_total": 27,
+        "offense_target": 38.888889,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 9
+      },
+      {
+        "wave": 6,
+        "gold_in": 225,
+        "gold_out": 23,
+        "bought": [
+          "item_pumpkin",
+          "weapon_pistol_1",
+          "item_beanie",
+          "weapon_smg_2"
+        ],
+        "rerolls": 2,
+        "offense_total": 25,
+        "offense_target": 46.666667,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 9
+      },
+      {
+        "wave": 7,
+        "gold_in": 261,
+        "gold_out": 3,
+        "bought": [
+          "item_tardigrade",
+          "weapon_double_barrel_shotgun_1",
+          "item_silver_bullet"
+        ],
+        "rerolls": 1,
+        "offense_total": 33.3866,
+        "offense_target": 54.444444,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 6
+      },
+      {
+        "wave": 8,
+        "gold_in": 244,
+        "gold_out": 13,
+        "bought": [
+          "weapon_double_barrel_shotgun_1",
+          "item_helmet",
+          "item_pocket_factory"
+        ],
+        "rerolls": 1,
+        "offense_total": 35.056219,
+        "offense_target": 62.222222,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 5
+      },
+      {
+        "wave": 9,
+        "gold_in": 468,
+        "gold_out": 10,
+        "bought": [
+          "weapon_double_barrel_shotgun_1",
+          "weapon_pistol_2",
+          "item_pumpkin",
+          "item_sharp_bullet",
+          "item_gambling_token",
+          "weapon_revolver_2",
+          "weapon_shredder_2"
+        ],
+        "rerolls": 2,
+        "offense_total": 42.408573,
+        "offense_target": 95,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 13
+      },
+      {
+        "wave": 10,
+        "gold_in": 408,
+        "gold_out": 21,
+        "bought": [
+          "weapon_revolver_2",
+          "weapon_pistol_3",
+          "item_riposte",
+          "item_injection",
+          "item_riposte"
+        ],
+        "rerolls": 1,
+        "offense_total": 46.806473,
+        "offense_target": 139,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 9
+      },
+      {
+        "wave": 11,
+        "gold_in": 381,
+        "gold_out": 90,
+        "bought": [
+          "item_leather_vest",
+          "item_missile",
+          "item_insanity"
+        ],
+        "rerolls": 2,
+        "offense_total": 55.138167,
+        "offense_target": 95,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 6
+      },
+      {
+        "wave": 12,
+        "gold_in": 464,
+        "gold_out": 187,
+        "bought": [
+          "item_tardigrade",
+          "item_insanity",
+          "item_catling_gun"
+        ],
+        "rerolls": 1,
+        "offense_total": 56.131839,
+        "offense_target": 123,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 5
+      },
+      {
+        "wave": 13,
+        "gold_in": 540,
+        "gold_out": 131,
+        "bought": [
+          "weapon_smg_1",
+          "item_medal",
+          "weapon_double_barrel_shotgun_3",
+          "item_terrified_onion"
+        ],
+        "rerolls": 2,
+        "offense_total": 63.314965,
+        "offense_target": 116,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 9
+      },
+      {
+        "wave": 14,
+        "gold_in": 490,
+        "gold_out": 15,
+        "bought": [
+          "item_tardigrade",
+          "item_catling_gun",
+          "item_beanie",
+          "weapon_pistol_3",
+          "item_tree"
+        ],
+        "rerolls": 2,
+        "offense_total": 62,
+        "offense_target": 201,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 10
+      },
+      {
+        "wave": 15,
+        "gold_in": 501,
+        "gold_out": 279,
+        "bought": [
+          "weapon_pistol_2",
+          "item_scope"
+        ],
+        "rerolls": 1,
+        "offense_total": 79.604021,
+        "offense_target": 259,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 5
+      },
+      {
+        "wave": 16,
+        "gold_in": 789,
+        "gold_out": 167,
+        "bought": [
+          "weapon_minigun_3",
+          "item_blindfold",
+          "item_clockwork_wasp"
+        ],
+        "rerolls": 2,
+        "offense_total": 102.981272,
+        "offense_target": 204,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 7
+      },
+      {
+        "wave": 17,
+        "gold_in": 630,
+        "gold_out": 57,
+        "bought": [
+          "weapon_double_barrel_shotgun_2",
+          "item_glasses",
+          "weapon_double_barrel_shotgun_1",
+          "weapon_pistol_2",
+          "item_injection",
+          "item_beanie"
+        ],
+        "rerolls": 4,
+        "offense_total": 120.468586,
+        "offense_target": 239,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 13
+      },
+      {
+        "wave": 18,
+        "gold_in": 427,
+        "gold_out": 1,
+        "bought": [
+          "item_terrified_onion",
+          "weapon_double_barrel_shotgun_3",
+          "item_catling_gun"
+        ],
+        "rerolls": 2,
+        "offense_total": 134.411576,
+        "offense_target": 193,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 7
+      },
+      {
+        "wave": 19,
+        "gold_in": 625,
+        "gold_out": 32,
+        "bought": [
+          "item_beanie",
+          "item_sunglasses",
+          "item_jellyshield",
+          "item_lumberjack_shirt"
+        ],
+        "rerolls": 4,
+        "offense_total": 147.751725,
+        "offense_target": 265,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 9
+      }
+    ],
+    "run_1784966179_70477": [
+      {
+        "wave": 1,
+        "gold_in": 60,
+        "gold_out": 20,
+        "bought": [
+          "weapon_double_barrel_shotgun_1",
+          "item_alien_worm"
+        ],
+        "rerolls": 0,
+        "offense_total": 4.067366,
+        "offense_target": 7.777778,
+        "exit_reason": "",
+        "affordable_at_exit": 1,
+        "cheapest_affordable_at_exit": 12,
+        "decisions": 4
+      },
+      {
+        "wave": 2,
+        "gold_in": 71,
+        "gold_out": 17,
+        "bought": [
+          "weapon_double_barrel_shotgun_1",
+          "item_fresh_meat"
+        ],
+        "rerolls": 0,
+        "offense_total": 5.119731,
+        "offense_target": 15.555556,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 3
+      },
+      {
+        "wave": 3,
+        "gold_in": 86,
+        "gold_out": 3,
+        "bought": [
+          "weapon_smg_1",
+          "weapon_laser_gun_1",
+          "item_insanity"
+        ],
+        "rerolls": 1,
+        "offense_total": 12.237274,
+        "offense_target": 23.333333,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 5
+      },
+      {
+        "wave": 4,
+        "gold_in": 103,
+        "gold_out": 41,
+        "bought": [
+          "weapon_smg_2"
+        ],
+        "rerolls": 1,
+        "offense_total": 14.445964,
+        "offense_target": 31.111111,
+        "exit_reason": "",
+        "affordable_at_exit": 1,
+        "cheapest_affordable_at_exit": 34,
+        "decisions": 4
+      },
+      {
+        "wave": 5,
+        "gold_in": 168,
+        "gold_out": 19,
+        "bought": [
+          "weapon_smg_1",
+          "item_dangerous_bunny",
+          "weapon_smg_1",
+          "weapon_smg_1"
+        ],
+        "rerolls": 2,
+        "offense_total": 22.434143,
+        "offense_target": 38.888889,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 11
+      },
+      {
+        "wave": 6,
+        "gold_in": 183,
+        "gold_out": 23,
+        "bought": [
+          "weapon_shredder_2",
+          "item_tractor"
+        ],
+        "rerolls": 2,
+        "offense_total": 15.882299,
+        "offense_target": 46.666667,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 8
+      },
+      {
+        "wave": 7,
+        "gold_in": 255,
+        "gold_out": 12,
+        "bought": [
+          "weapon_smg_1",
+          "item_banner",
+          "item_metal_detector"
+        ],
+        "rerolls": 5,
+        "offense_total": 19.662752,
+        "offense_target": 54.444444,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 10
+      },
+      {
+        "wave": 8,
+        "gold_in": 246,
+        "gold_out": 8,
+        "bought": [
+          "weapon_smg_2",
+          "item_small_magazine",
+          "item_beanie"
+        ],
+        "rerolls": 2,
+        "offense_total": 25.572964,
+        "offense_target": 62.222222,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 7
+      },
+      {
+        "wave": 9,
+        "gold_in": 492,
+        "gold_out": 5,
+        "bought": [
+          "weapon_smg_3",
+          "item_helmet",
+          "weapon_revolver_3",
+          "item_mutation",
+          "item_helmet",
+          "item_dangerous_bunny"
+        ],
+        "rerolls": 3,
+        "offense_total": 51.150699,
+        "offense_target": 95,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 11
+      },
+      {
+        "wave": 10,
+        "gold_in": 271,
+        "gold_out": 11,
+        "bought": [
+          "item_jellyshield",
+          "item_leather_vest",
+          "item_dynamite"
+        ],
+        "rerolls": 3,
+        "offense_total": 52.801171,
+        "offense_target": 157,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 9
+      },
+      {
+        "wave": 11,
+        "gold_in": 400,
+        "gold_out": 63,
+        "bought": [
+          "weapon_double_barrel_shotgun_1",
+          "item_cyberball",
+          "item_reinforced_steel",
+          "item_lootworm",
+          "item_bag"
+        ],
+        "rerolls": 3,
+        "offense_total": 72.154132,
+        "offense_target": 109,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 12
+      },
+      {
+        "wave": 12,
+        "gold_in": 610,
+        "gold_out": 75,
+        "bought": [
+          "weapon_double_barrel_shotgun_1",
+          "item_coil",
+          "item_clover",
+          "weapon_revolver_3"
+        ],
+        "rerolls": 3,
+        "offense_total": 86.638111,
+        "offense_target": 102,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 9
+      },
+      {
+        "wave": 13,
+        "gold_in": 469,
+        "gold_out": 72,
+        "bought": [
+          "item_lens",
+          "item_gambling_token",
+          "item_baby_gecko",
+          "weapon_pistol_2",
+          "item_recycling_machine"
+        ],
+        "rerolls": 1,
+        "offense_total": 90.438129,
+        "offense_target": 172,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 8
+      },
+      {
+        "wave": 14,
+        "gold_in": 452,
+        "gold_out": 38,
+        "bought": [
+          "weapon_double_barrel_shotgun_2",
+          "item_bag",
+          "item_terrified_onion",
+          "item_clover",
+          "item_fresh_meat"
+        ],
+        "rerolls": 3,
+        "offense_total": 99.205626,
+        "offense_target": 177,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 11
+      },
+      {
+        "wave": 15,
+        "gold_in": 728,
+        "gold_out": 35,
+        "bought": [
+          "weapon_smg_1",
+          "item_ugly_tooth",
+          "item_tardigrade",
+          "item_clockwork_wasp",
+          "item_potato",
+          "item_broken_mouth"
+        ],
+        "rerolls": 3,
+        "offense_total": 126.172564,
+        "offense_target": 265,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 12
+      },
+      {
+        "wave": 16,
+        "gold_in": 585,
+        "gold_out": 14,
+        "bought": [
+          "item_cyclops_worm",
+          "item_mutation",
+          "weapon_smg_1",
+          "item_blindfold",
+          "weapon_smg_3"
+        ],
+        "rerolls": 4,
+        "offense_total": 158.795504,
+        "offense_target": 265,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 13
+      }
+    ],
+    "run_1784968385_22836": [
+      {
+        "wave": 1,
+        "gold_in": 63,
+        "gold_out": 12,
+        "bought": [
+          "weapon_smg_1",
+          "item_fresh_meat"
+        ],
+        "rerolls": 0,
+        "offense_total": 6.3315,
+        "offense_target": 7.777778,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 3
+      },
+      {
+        "wave": 2,
+        "gold_in": 59,
+        "gold_out": 11,
+        "bought": [
+          "weapon_smg_2"
+        ],
+        "rerolls": 0,
+        "offense_total": 12.2409,
+        "offense_target": 15.555556,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 2
+      },
+      {
+        "wave": 3,
+        "gold_in": 79,
+        "gold_out": 7,
+        "bought": [
+          "weapon_laser_gun_1",
+          "item_catling_gun"
+        ],
+        "rerolls": 1,
+        "offense_total": 14.770472,
+        "offense_target": 23.333333,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 5
+      },
+      {
+        "wave": 4,
+        "gold_in": 121,
+        "gold_out": 39,
+        "bought": [
+          "weapon_revolver_1",
+          "item_broken_mouth"
+        ],
+        "rerolls": 3,
+        "offense_total": 24.169194,
+        "offense_target": 31.111111,
+        "exit_reason": "",
+        "affordable_at_exit": 1,
+        "cheapest_affordable_at_exit": 25,
+        "decisions": 6
+      },
+      {
+        "wave": 5,
+        "gold_in": 169,
+        "gold_out": 25,
+        "bought": [
+          "weapon_double_barrel_shotgun_1",
+          "item_lens",
+          "item_ugly_tooth",
+          "item_baby_gecko"
+        ],
+        "rerolls": 1,
+        "offense_total": 28.330272,
+        "offense_target": 38.888889,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 9
+      },
+      {
+        "wave": 6,
+        "gold_in": 236,
+        "gold_out": 8,
+        "bought": [
+          "weapon_double_barrel_shotgun_1",
+          "weapon_pistol_2",
+          "item_fresh_meat",
+          "item_propeller_hat",
+          "item_cake"
+        ],
+        "rerolls": 4,
+        "offense_total": 23.343594,
+        "offense_target": 46.666667,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 12
+      },
+      {
+        "wave": 7,
+        "gold_in": 204,
+        "gold_out": 24,
+        "bought": [
+          "weapon_laser_gun_1",
+          "item_fresh_meat",
+          "item_garden"
+        ],
+        "rerolls": 1,
+        "offense_total": 25.749364,
+        "offense_target": 54.444444,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 6
+      },
+      {
+        "wave": 8,
+        "gold_in": 248,
+        "gold_out": 58,
+        "bought": [
+          "weapon_double_barrel_shotgun_1",
+          "item_clover"
+        ],
+        "rerolls": 2,
+        "offense_total": 34.537924,
+        "offense_target": 62.222222,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 6
+      },
+      {
+        "wave": 9,
+        "gold_in": 478,
+        "gold_out": 51,
+        "bought": [
+          "weapon_pistol_3",
+          "item_mutation",
+          "item_jellyshield",
+          "item_blindfold",
+          "item_white_flag"
+        ],
+        "rerolls": 1,
+        "offense_total": 44.401629,
+        "offense_target": 95,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 9
+      },
+      {
+        "wave": 10,
+        "gold_in": 387,
+        "gold_out": 126,
+        "bought": [
+          "item_banner",
+          "item_riposte",
+          "item_helmet"
+        ],
+        "rerolls": 1,
+        "offense_total": 48.630355,
+        "offense_target": 130,
+        "exit_reason": "",
+        "affordable_at_exit": 1,
+        "cheapest_affordable_at_exit": 50,
+        "decisions": 6
+      },
+      {
+        "wave": 11,
+        "gold_in": 436,
+        "gold_out": 116,
+        "bought": [
+          "weapon_minigun_3",
+          "item_baby_elephant"
+        ],
+        "rerolls": 1,
+        "offense_total": 58.008984,
+        "offense_target": 102,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 5
+      },
+      {
+        "wave": 12,
+        "gold_in": 452,
+        "gold_out": 242,
+        "bought": [
+          "weapon_double_barrel_shotgun_2",
+          "weapon_double_barrel_shotgun_2"
+        ],
+        "rerolls": 2,
+        "offense_total": 62.761273,
+        "offense_target": 95,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 7
+      },
+      {
+        "wave": 13,
+        "gold_in": 543,
+        "gold_out": 187,
+        "bought": [
+          "weapon_revolver_3",
+          "item_mutation",
+          "item_alien_tongue"
+        ],
+        "rerolls": 3,
+        "offense_total": 85.38021,
+        "offense_target": 102,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 8
+      },
+      {
+        "wave": 14,
+        "gold_in": 447,
+        "gold_out": 51,
+        "bought": [
+          "weapon_revolver_2",
+          "item_bat",
+          "item_baby_elephant",
+          "weapon_smg_3"
+        ],
+        "rerolls": 2,
+        "offense_total": 102.66443,
+        "offense_target": 157,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 10
+      },
+      {
+        "wave": 15,
+        "gold_in": 434,
+        "gold_out": 243,
+        "bought": [
+          "weapon_double_barrel_shotgun_1",
+          "item_beanie"
+        ],
+        "rerolls": 3,
+        "offense_total": 109.636147,
+        "offense_target": 257,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 6
+      },
+      {
+        "wave": 16,
+        "gold_in": 635,
+        "gold_out": 161,
+        "bought": [
+          "item_warrior_helmet",
+          "item_lens",
+          "item_missile"
+        ],
+        "rerolls": 3,
+        "offense_total": 135.904243,
+        "offense_target": 222,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 7
+      },
+      {
+        "wave": 17,
+        "gold_in": 495,
+        "gold_out": 132,
+        "bought": [
+          "item_bat",
+          "item_padding",
+          "item_gummy_berserker",
+          "item_insanity"
+        ],
+        "rerolls": 1,
+        "offense_total": 144.259255,
+        "offense_target": 253,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 6
+      },
+      {
+        "wave": 18,
+        "gold_in": 440,
+        "gold_out": 126,
+        "bought": [
+          "weapon_double_barrel_shotgun_2",
+          "item_cyclops_worm",
+          "weapon_pistol_2"
+        ],
+        "rerolls": 0,
+        "offense_total": 158.407646,
+        "offense_target": 255,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 6
+      },
+      {
+        "wave": 19,
+        "gold_in": 319,
+        "gold_out": 15,
+        "bought": [
+          "item_silver_bullet",
+          "item_lens"
+        ],
+        "rerolls": 1,
+        "offense_total": 162.505154,
+        "offense_target": 265,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 5
+      }
+    ],
+    "run_1784969600_14272": [
+      {
+        "wave": 1,
+        "gold_in": 66,
+        "gold_out": 9,
+        "bought": [
+          "weapon_smg_1",
+          "weapon_shredder_1",
+          "item_fertilizer"
+        ],
+        "rerolls": 0,
+        "offense_total": 6.839408,
+        "offense_target": 7.777778,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 5
+      },
+      {
+        "wave": 2,
+        "gold_in": 70,
+        "gold_out": 16,
+        "bought": [
+          "weapon_smg_1",
+          "item_bat"
+        ],
+        "rerolls": 1,
+        "offense_total": 8.265967,
+        "offense_target": 15.555556,
+        "exit_reason": "",
+        "affordable_at_exit": 1,
+        "cheapest_affordable_at_exit": 14,
+        "decisions": 5
+      },
+      {
+        "wave": 3,
+        "gold_in": 101,
+        "gold_out": 2,
+        "bought": [
+          "weapon_smg_2",
+          "weapon_shredder_2"
+        ],
+        "rerolls": 1,
+        "offense_total": 13.63039,
+        "offense_target": 23.333333,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 6
+      },
+      {
+        "wave": 4,
+        "gold_in": 119,
+        "gold_out": 16,
+        "bought": [
+          "weapon_smg_1",
+          "item_cyclops_worm"
+        ],
+        "rerolls": 1,
+        "offense_total": 18.607266,
+        "offense_target": 31.111111,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 6
+      },
+      {
+        "wave": 5,
+        "gold_in": 161,
+        "gold_out": 40,
+        "bought": [
+          "weapon_shredder_1",
+          "item_lost_duck",
+          "item_cake",
+          "weapon_pistol_1"
+        ],
+        "rerolls": 1,
+        "offense_total": 22.250297,
+        "offense_target": 38.888889,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 8
+      },
+      {
+        "wave": 6,
+        "gold_in": 214,
+        "gold_out": 82,
+        "bought": [
+          "item_mushroom",
+          "weapon_revolver_1",
+          "item_bat"
+        ],
+        "rerolls": 2,
+        "offense_total": 23.667672,
+        "offense_target": 46.666667,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 8
+      },
+      {
+        "wave": 7,
+        "gold_in": 311,
+        "gold_out": 151,
+        "bought": [
+          "item_little_muscley_dude",
+          "item_hedgehog"
+        ],
+        "rerolls": 2,
+        "offense_total": 24.960629,
+        "offense_target": 54.444444,
+        "exit_reason": "",
+        "affordable_at_exit": 2,
+        "cheapest_affordable_at_exit": 44,
+        "decisions": 7
+      },
+      {
+        "wave": 8,
+        "gold_in": 370,
+        "gold_out": 43,
+        "bought": [
+          "weapon_minigun_3",
+          "weapon_revolver_1",
+          "weapon_double_barrel_shotgun_2"
+        ],
+        "rerolls": 0,
+        "offense_total": 33.041191,
+        "offense_target": 62.222222,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 7
+      },
+      {
+        "wave": 9,
+        "gold_in": 464,
+        "gold_out": 62,
+        "bought": [
+          "item_gentle_alien",
+          "item_blindfold",
+          "item_dynamite",
+          "item_eyes_surgery",
+          "item_mutation"
+        ],
+        "rerolls": 2,
+        "offense_total": 41.904293,
+        "offense_target": 95,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 9
+      },
+      {
+        "wave": 10,
+        "gold_in": 288,
+        "gold_out": 16,
+        "bought": [
+          "item_helmet",
+          "item_gentle_alien",
+          "item_baby_gecko",
+          "item_riposte"
+        ],
+        "rerolls": 2,
+        "offense_total": 43.491577,
+        "offense_target": 215,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 7
+      },
+      {
+        "wave": 11,
+        "gold_in": 471,
+        "gold_out": 129,
+        "bought": [
+          "weapon_smg_2",
+          "item_pumpkin",
+          "item_baby_gecko",
+          "weapon_double_barrel_shotgun_2"
+        ],
+        "rerolls": 2,
+        "offense_total": 54,
+        "offense_target": 201,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 10
+      },
+      {
+        "wave": 12,
+        "gold_in": 598,
+        "gold_out": 134,
+        "bought": [
+          "item_small_magazine",
+          "item_blindfold",
+          "item_blindfold"
+        ],
+        "rerolls": 5,
+        "offense_total": 75,
+        "offense_target": 168,
+        "exit_reason": "",
+        "affordable_at_exit": 1,
+        "cheapest_affordable_at_exit": 34,
+        "decisions": 10
+      },
+      {
+        "wave": 13,
+        "gold_in": 540,
+        "gold_out": 21,
+        "bought": [
+          "weapon_smg_3",
+          "weapon_smg_1",
+          "weapon_shredder_3",
+          "item_pumpkin"
+        ],
+        "rerolls": 2,
+        "offense_total": 103.460192,
+        "offense_target": 197,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 10
+      },
+      {
+        "wave": 14,
+        "gold_in": 354,
+        "gold_out": 80,
+        "bought": [
+          "item_vigilante_ring",
+          "weapon_shredder_1"
+        ],
+        "rerolls": 0,
+        "offense_total": 104.239011,
+        "offense_target": 181,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 4
+      },
+      {
+        "wave": 15,
+        "gold_in": 538,
+        "gold_out": 44,
+        "bought": [
+          "weapon_shredder_1",
+          "item_baby_gecko",
+          "item_poisonous_tonic",
+          "item_leather_vest"
+        ],
+        "rerolls": 2,
+        "offense_total": 119.612016,
+        "offense_target": 246,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 7
+      },
+      {
+        "wave": 16,
+        "gold_in": 600,
+        "gold_out": 464,
+        "bought": [
+          "item_recycling_machine",
+          "weapon_smg_1"
+        ],
+        "rerolls": 1,
+        "offense_total": 132.615307,
+        "offense_target": 172,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 5
+      },
+      {
+        "wave": 17,
+        "gold_in": 992,
+        "gold_out": 181,
+        "bought": [
+          "item_silver_bullet",
+          "item_honey",
+          "item_mutation",
+          "item_medal"
+        ],
+        "rerolls": 5,
+        "offense_total": 172.411794,
+        "offense_target": 247,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 10
+      },
+      {
+        "wave": 18,
+        "gold_in": 599,
+        "gold_out": 163,
+        "bought": [
+          "weapon_double_barrel_shotgun_2",
+          "item_poisonous_tonic",
+          "weapon_smg_1",
+          "item_gambling_token",
+          "item_insanity"
+        ],
+        "rerolls": 1,
+        "offense_total": 196.50999,
+        "offense_target": 265,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 9
+      },
+      {
+        "wave": 19,
+        "gold_in": 792,
+        "gold_out": 39,
+        "bought": [
+          "weapon_double_barrel_shotgun_3",
+          "weapon_minigun_3",
+          "weapon_smg_2"
+        ],
+        "rerolls": 4,
+        "offense_total": 285.199659,
+        "offense_target": 265,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 11
+      }
+    ],
+    "run_1784972087_51182": [
+      {
+        "wave": 1,
+        "gold_in": 62,
+        "gold_out": 5,
+        "bought": [
+          "weapon_revolver_1",
+          "weapon_laser_gun_1",
+          "item_alien_worm"
+        ],
+        "rerolls": 0,
+        "offense_total": 10.100361,
+        "offense_target": 7.777778,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 4
+      },
+      {
+        "wave": 2,
+        "gold_in": 52,
+        "gold_out": 4,
+        "bought": [
+          "weapon_smg_1",
+          "weapon_laser_gun_1"
+        ],
+        "rerolls": 1,
+        "offense_total": 15.565721,
+        "offense_target": 15.555556,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 6
+      },
+      {
+        "wave": 3,
+        "gold_in": 83,
+        "gold_out": 18,
+        "bought": [
+          "weapon_smg_1",
+          "weapon_revolver_1"
+        ],
+        "rerolls": 2,
+        "offense_total": 19.573423,
+        "offense_target": 23.333333,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 8
+      },
+      {
+        "wave": 4,
+        "gold_in": 125,
+        "gold_out": 25,
+        "bought": [
+          "weapon_pistol_1",
+          "item_bat",
+          "item_helmet",
+          "item_coupon"
+        ],
+        "rerolls": 1,
+        "offense_total": 19.388737,
+        "offense_target": 31.111111,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 9
+      },
+      {
+        "wave": 5,
+        "gold_in": 146,
+        "gold_out": 6,
+        "bought": [
+          "weapon_smg_3",
+          "item_insanity"
+        ],
+        "rerolls": 0,
+        "offense_total": 26.458952,
+        "offense_target": 38.888889,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 4
+      },
+      {
+        "wave": 6,
+        "gold_in": 176,
+        "gold_out": 45,
+        "bought": [
+          "item_alien_tongue",
+          "weapon_revolver_1",
+          "item_lootworm"
+        ],
+        "rerolls": 1,
+        "offense_total": 30.476866,
+        "offense_target": 46.666667,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 6
+      },
+      {
+        "wave": 7,
+        "gold_in": 283,
+        "gold_out": 46,
+        "bought": [
+          "item_blood_leech",
+          "item_little_muscley_dude",
+          "item_metal_plate"
+        ],
+        "rerolls": 0,
+        "offense_total": 31.384109,
+        "offense_target": 54.444444,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 4
+      },
+      {
+        "wave": 8,
+        "gold_in": 268,
+        "gold_out": 31,
+        "bought": [
+          "item_alloy",
+          "item_reinforced_steel"
+        ],
+        "rerolls": 0,
+        "offense_total": 49.713496,
+        "offense_target": 62.222222,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 5
+      },
+      {
+        "wave": 9,
+        "gold_in": 465,
+        "gold_out": 111,
+        "bought": [
+          "item_injection",
+          "item_gentle_alien",
+          "item_fertilizer",
+          "weapon_smg_2",
+          "item_dangerous_bunny",
+          "weapon_revolver_2"
+        ],
+        "rerolls": 3,
+        "offense_total": 62.839064,
+        "offense_target": 95,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 13
+      },
+      {
+        "wave": 10,
+        "gold_in": 510,
+        "gold_out": 75,
+        "bought": [
+          "weapon_smg_2",
+          "item_clockwork_wasp",
+          "weapon_laser_gun_2",
+          "item_coffee",
+          "item_silver_bullet"
+        ],
+        "rerolls": 2,
+        "offense_total": 73.599891,
+        "offense_target": 215,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 10
+      },
+      {
+        "wave": 11,
+        "gold_in": 378,
+        "gold_out": 18,
+        "bought": [
+          "item_triangle_of_power",
+          "item_reinforced_steel",
+          "weapon_laser_gun_3"
+        ],
+        "rerolls": 1,
+        "offense_total": 99.141934,
+        "offense_target": 109,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 7
+      },
+      {
+        "wave": 12,
+        "gold_in": 383,
+        "gold_out": 67,
+        "bought": [
+          "weapon_revolver_1",
+          "item_honey",
+          "weapon_laser_gun_2"
+        ],
+        "rerolls": 3,
+        "offense_total": 151.899143,
+        "offense_target": 139,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 10
+      },
+      {
+        "wave": 13,
+        "gold_in": 455,
+        "gold_out": 23,
+        "bought": [
+          "weapon_smg_3",
+          "item_gambling_token",
+          "weapon_revolver_3"
+        ],
+        "rerolls": 1,
+        "offense_total": 187.241535,
+        "offense_target": 116,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 7
+      },
+      {
+        "wave": 14,
+        "gold_in": 283,
+        "gold_out": 115,
+        "bought": [
+          "weapon_laser_gun_2",
+          "item_gummy_berserker"
+        ],
+        "rerolls": 2,
+        "offense_total": 208.668578,
+        "offense_target": 191,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 6
+      },
+      {
+        "wave": 15,
+        "gold_in": 584,
+        "gold_out": 68,
+        "bought": [
+          "item_alloy",
+          "item_extra_stomach",
+          "weapon_smg_1"
+        ],
+        "rerolls": 1,
+        "offense_total": 264.612253,
+        "offense_target": 265,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 7
+      },
+      {
+        "wave": 16,
+        "gold_in": 473,
+        "gold_out": 78,
+        "bought": [
+          "weapon_laser_gun_3",
+          "weapon_revolver_3",
+          "item_lens"
+        ],
+        "rerolls": 1,
+        "offense_total": 320.012634,
+        "offense_target": 189,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 7
+      },
+      {
+        "wave": 17,
+        "gold_in": 473,
+        "gold_out": 105,
+        "bought": [
+          "item_alien_tongue",
+          "weapon_smg_1",
+          "weapon_revolver_2",
+          "item_gambling_token"
+        ],
+        "rerolls": 4,
+        "offense_total": 351.894533,
+        "offense_target": 229,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 11
+      },
+      {
+        "wave": 18,
+        "gold_in": 536,
+        "gold_out": 72,
+        "bought": [
+          "weapon_smg_4",
+          "item_terrified_onion"
+        ],
+        "rerolls": 2,
+        "offense_total": 390.127301,
+        "offense_target": 229,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 7
+      },
+      {
+        "wave": 19,
+        "gold_in": 602,
+        "gold_out": 11,
+        "bought": [
+          "weapon_smg_3",
+          "item_insanity",
+          "item_small_magazine",
+          "item_insanity"
+        ],
+        "rerolls": 3,
+        "offense_total": 479.855983,
+        "offense_target": 265,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 8
+      }
+    ],
+    "run_1784975722_8937": [
+      {
+        "wave": 1,
+        "gold_in": 62,
+        "gold_out": 27,
+        "bought": [
+          "weapon_smg_1",
+          "weapon_pistol_1"
+        ],
+        "rerolls": 0,
+        "offense_total": 7.064,
+        "offense_target": 7.777778,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 4
+      },
+      {
+        "wave": 2,
+        "gold_in": 75,
+        "gold_out": 16,
+        "bought": [
+          "weapon_laser_gun_2",
+          "weapon_shredder_1"
+        ],
+        "rerolls": 0,
+        "offense_total": 11.604708,
+        "offense_target": 15.555556,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 5
+      },
+      {
+        "wave": 3,
+        "gold_in": 88,
+        "gold_out": 2,
+        "bought": [
+          "weapon_pistol_2",
+          "item_riposte"
+        ],
+        "rerolls": 0,
+        "offense_total": 12.742813,
+        "offense_target": 23.333333,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 6
+      },
+      {
+        "wave": 4,
+        "gold_in": 106,
+        "gold_out": 13,
+        "bought": [
+          "weapon_pistol_3",
+          "weapon_smg_1"
+        ],
+        "rerolls": 0,
+        "offense_total": 21.090258,
+        "offense_target": 31.111111,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 5
+      },
+      {
+        "wave": 5,
+        "gold_in": 132,
+        "gold_out": 67,
+        "bought": [
+          "weapon_smg_1",
+          "weapon_pistol_2"
+        ],
+        "rerolls": 1,
+        "offense_total": 24,
+        "offense_target": 38.888889,
+        "exit_reason": "",
+        "affordable_at_exit": 2,
+        "cheapest_affordable_at_exit": 23,
+        "decisions": 7
+      },
+      {
+        "wave": 6,
+        "gold_in": 247,
+        "gold_out": 29,
+        "bought": [
+          "weapon_smg_1",
+          "item_jellyshield",
+          "item_riposte"
+        ],
+        "rerolls": 3,
+        "offense_total": 28.076131,
+        "offense_target": 46.666667,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 10
+      },
+      {
+        "wave": 7,
+        "gold_in": 205,
+        "gold_out": 56,
+        "bought": [
+          "weapon_smg_2",
+          "item_lost_duck",
+          "item_helmet"
+        ],
+        "rerolls": 0,
+        "offense_total": 29.450268,
+        "offense_target": 54.444444,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 5
+      },
+      {
+        "wave": 8,
+        "gold_in": 253,
+        "gold_out": 6,
+        "bought": [
+          "weapon_smg_1",
+          "item_lootworm",
+          "item_hedgehog",
+          "weapon_shredder_1",
+          "item_glasses"
+        ],
+        "rerolls": 1,
+        "offense_total": 34.786144,
+        "offense_target": 62.222222,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 8
+      },
+      {
+        "wave": 9,
+        "gold_in": 470,
+        "gold_out": 45,
+        "bought": [
+          "weapon_shredder_2",
+          "item_coffee",
+          "item_poisonous_tonic",
+          "item_dangerous_bunny",
+          "weapon_smg_2"
+        ],
+        "rerolls": 3,
+        "offense_total": 49,
+        "offense_target": 95,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 13
+      },
+      {
+        "wave": 10,
+        "gold_in": 412,
+        "gold_out": 108,
+        "bought": [
+          "weapon_laser_gun_1",
+          "item_gentle_alien",
+          "weapon_shredder_2",
+          "item_blindfold"
+        ],
+        "rerolls": 3,
+        "offense_total": 66,
+        "offense_target": 197,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 9
+      },
+      {
+        "wave": 11,
+        "gold_in": 442,
+        "gold_out": 112,
+        "bought": [
+          "weapon_shredder_3",
+          "weapon_pistol_2",
+          "item_jellyshield"
+        ],
+        "rerolls": 3,
+        "offense_total": 66,
+        "offense_target": 95,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 9
+      },
+      {
+        "wave": 12,
+        "gold_in": 474,
+        "gold_out": 185,
+        "bought": [
+          "item_cyberball",
+          "weapon_laser_gun_1",
+          "item_fertilizer",
+          "weapon_double_barrel_shotgun_1"
+        ],
+        "rerolls": 5,
+        "offense_total": 76.890809,
+        "offense_target": 130,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 12
+      },
+      {
+        "wave": 13,
+        "gold_in": 522,
+        "gold_out": 202,
+        "bought": [
+          "item_terrified_onion",
+          "item_tardigrade",
+          "item_insanity"
+        ],
+        "rerolls": 5,
+        "offense_total": 81.068072,
+        "offense_target": 154,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 9
+      },
+      {
+        "wave": 14,
+        "gold_in": 477,
+        "gold_out": 74,
+        "bought": [
+          "weapon_double_barrel_shotgun_1",
+          "item_vigilante_ring",
+          "weapon_double_barrel_shotgun_2"
+        ],
+        "rerolls": 1,
+        "offense_total": 95.451036,
+        "offense_target": 178,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 6
+      },
+      {
+        "wave": 15,
+        "gold_in": 488,
+        "gold_out": 175,
+        "bought": [
+          "item_alien_tongue",
+          "weapon_shredder_3",
+          "item_bag"
+        ],
+        "rerolls": 3,
+        "offense_total": 98.18591,
+        "offense_target": 259,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 9
+      },
+      {
+        "wave": 16,
+        "gold_in": 616,
+        "gold_out": 35,
+        "bought": [
+          "item_grinds_magical_leaf",
+          "item_fresh_meat",
+          "item_honey"
+        ],
+        "rerolls": 1,
+        "offense_total": 116.512634,
+        "offense_target": 259,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 6
+      },
+      {
+        "wave": 17,
+        "gold_in": 507,
+        "gold_out": 63,
+        "bought": [
+          "item_coffee",
+          "weapon_shredder_3",
+          "weapon_pistol_1",
+          "item_alien_eyes"
+        ],
+        "rerolls": 2,
+        "offense_total": 129.564357,
+        "offense_target": 259,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 9
+      },
+      {
+        "wave": 18,
+        "gold_in": 417,
+        "gold_out": 417,
+        "bought": [],
+        "rerolls": 0,
+        "offense_total": 132.301632,
+        "offense_target": 261,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 1
+      },
+      {
+        "wave": 19,
+        "gold_in": 956,
+        "gold_out": 321,
+        "bought": [
+          "weapon_smg_2",
+          "item_lumberjack_shirt",
+          "item_banner",
+          "item_mutation",
+          "item_white_flag"
+        ],
+        "rerolls": 3,
+        "offense_total": 172.172923,
+        "offense_target": 265,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 10
+      }
+    ],
+    "run_1784976889_60009": [
+      {
+        "wave": 1,
+        "gold_in": 62,
+        "gold_out": 16,
+        "bought": [
+          "weapon_revolver_1",
+          "item_beanie"
+        ],
+        "rerolls": 0,
+        "offense_total": 8.226071,
+        "offense_target": 7.777778,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 3
+      },
+      {
+        "wave": 2,
+        "gold_in": 65,
+        "gold_out": 19,
+        "bought": [
+          "weapon_smg_1",
+          "weapon_shredder_1"
+        ],
+        "rerolls": 0,
+        "offense_total": 12.633921,
+        "offense_target": 15.555556,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 4
+      },
+      {
+        "wave": 3,
+        "gold_in": 100,
+        "gold_out": 26,
+        "bought": [
+          "weapon_double_barrel_shotgun_1",
+          "item_gentle_alien"
+        ],
+        "rerolls": 2,
+        "offense_total": 15.824517,
+        "offense_target": 23.333333,
+        "exit_reason": "",
+        "affordable_at_exit": 1,
+        "cheapest_affordable_at_exit": 16,
+        "decisions": 5
+      },
+      {
+        "wave": 4,
+        "gold_in": 138,
+        "gold_out": 33,
+        "bought": [
+          "weapon_smg_1",
+          "weapon_revolver_1",
+          "item_bat"
+        ],
+        "rerolls": 2,
+        "offense_total": 20.113502,
+        "offense_target": 31.111111,
+        "exit_reason": "",
+        "affordable_at_exit": 1,
+        "cheapest_affordable_at_exit": 20,
+        "decisions": 7
+      },
+      {
+        "wave": 5,
+        "gold_in": 152,
+        "gold_out": 15,
+        "bought": [
+          "weapon_shredder_1",
+          "item_coffee",
+          "weapon_smg_1",
+          "weapon_double_barrel_shotgun_1"
+        ],
+        "rerolls": 1,
+        "offense_total": 28.704774,
+        "offense_target": 38.888889,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 7
+      },
+      {
+        "wave": 6,
+        "gold_in": 179,
+        "gold_out": 89,
+        "bought": [
+          "item_broken_mouth",
+          "item_cake"
+        ],
+        "rerolls": 2,
+        "offense_total": 25.454169,
+        "offense_target": 46.666667,
+        "exit_reason": "",
+        "affordable_at_exit": 4,
+        "cheapest_affordable_at_exit": 25,
+        "decisions": 6
+      },
+      {
+        "wave": 7,
+        "gold_in": 276,
+        "gold_out": 0,
+        "bought": [
+          "weapon_smg_1",
+          "item_propeller_hat",
+          "weapon_double_barrel_shotgun_1",
+          "item_mushroom",
+          "item_pumpkin"
+        ],
+        "rerolls": 3,
+        "offense_total": 26.046158,
+        "offense_target": 54.444444,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 10
+      },
+      {
+        "wave": 8,
+        "gold_in": 221,
+        "gold_out": 36,
+        "bought": [
+          "item_mutation",
+          "weapon_revolver_3"
+        ],
+        "rerolls": 1,
+        "offense_total": 41.688998,
+        "offense_target": 62.222222,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 6
+      },
+      {
+        "wave": 9,
+        "gold_in": 426,
+        "gold_out": 327,
+        "bought": [
+          "item_lost_duck",
+          "item_tree"
+        ],
+        "rerolls": 1,
+        "offense_total": 45.163081,
+        "offense_target": 95,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 5
+      },
+      {
+        "wave": 10,
+        "gold_in": 588,
+        "gold_out": 6,
+        "bought": [
+          "item_recycling_machine",
+          "item_chameleon",
+          "item_tardigrade",
+          "weapon_double_barrel_shotgun_1",
+          "weapon_double_barrel_shotgun_1",
+          "item_missile",
+          "item_tree"
+        ],
+        "rerolls": 3,
+        "offense_total": 47.692797,
+        "offense_target": 215,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 13
+      },
+      {
+        "wave": 11,
+        "gold_in": 352,
+        "gold_out": 0,
+        "bought": [
+          "weapon_revolver_2",
+          "item_lens",
+          "weapon_double_barrel_shotgun_2",
+          "item_glasses"
+        ],
+        "rerolls": 4,
+        "offense_total": 63.169507,
+        "offense_target": 215,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 10
+      },
+      {
+        "wave": 12,
+        "gold_in": 375,
+        "gold_out": 41,
+        "bought": [
+          "weapon_revolver_2",
+          "weapon_laser_gun_2",
+          "item_lens",
+          "weapon_smg_1",
+          "item_catling_gun"
+        ],
+        "rerolls": 3,
+        "offense_total": 82.35258,
+        "offense_target": 191,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 12
+      },
+      {
+        "wave": 13,
+        "gold_in": 429,
+        "gold_out": 53,
+        "bought": [
+          "weapon_smg_3",
+          "weapon_revolver_3",
+          "item_tree",
+          "item_tree"
+        ],
+        "rerolls": 1,
+        "offense_total": 96.712812,
+        "offense_target": 185,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 9
+      },
+      {
+        "wave": 14,
+        "gold_in": 274,
+        "gold_out": 33,
+        "bought": [
+          "weapon_double_barrel_shotgun_3",
+          "item_bag"
+        ],
+        "rerolls": 0,
+        "offense_total": 104.558319,
+        "offense_target": 215,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 5
+      },
+      {
+        "wave": 15,
+        "gold_in": 405,
+        "gold_out": 21,
+        "bought": [
+          "weapon_smg_2",
+          "item_cyclops_worm",
+          "weapon_double_barrel_shotgun_3"
+        ],
+        "rerolls": 1,
+        "offense_total": 141.819771,
+        "offense_target": 265,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 7
+      },
+      {
+        "wave": 16,
+        "gold_in": 597,
+        "gold_out": 270,
+        "bought": [
+          "item_coffee",
+          "item_clockwork_wasp",
+          "item_alien_tongue",
+          "weapon_smg_1",
+          "weapon_shredder_2"
+        ],
+        "rerolls": 2,
+        "offense_total": 151.721311,
+        "offense_target": 265,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 10
+      },
+      {
+        "wave": 17,
+        "gold_in": 873,
+        "gold_out": 181,
+        "bought": [
+          "weapon_smg_3",
+          "item_alien_eyes",
+          "weapon_revolver_3",
+          "item_small_magazine"
+        ],
+        "rerolls": 3,
+        "offense_total": 216.711145,
+        "offense_target": 265,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 11
+      },
+      {
+        "wave": 18,
+        "gold_in": 682,
+        "gold_out": 207,
+        "bought": [
+          "item_poisonous_tonic",
+          "weapon_double_barrel_shotgun_2",
+          "item_sharp_bullet",
+          "item_glasses"
+        ],
+        "rerolls": 3,
+        "offense_total": 206.241021,
+        "offense_target": 265,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 9
+      },
+      {
+        "wave": 19,
+        "gold_in": 486,
+        "gold_out": 486,
+        "bought": [],
+        "rerolls": 0,
+        "offense_total": 222.873362,
+        "offense_target": 265,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 1
+      }
+    ],
+    "run_1784980475_23728": [
+      {
+        "wave": 1,
+        "gold_in": 64,
+        "gold_out": 24,
+        "bought": [
+          "weapon_smg_1",
+          "item_alien_worm"
+        ],
+        "rerolls": 0,
+        "offense_total": 6.03,
+        "offense_target": 7.777778,
+        "exit_reason": "",
+        "affordable_at_exit": 1,
+        "cheapest_affordable_at_exit": 17,
+        "decisions": 3
+      },
+      {
+        "wave": 2,
+        "gold_in": 73,
+        "gold_out": 27,
+        "bought": [
+          "weapon_smg_1",
+          "item_alien_worm"
+        ],
+        "rerolls": 0,
+        "offense_total": 9.49725,
+        "offense_target": 15.555556,
+        "exit_reason": "",
+        "affordable_at_exit": 1,
+        "cheapest_affordable_at_exit": 20,
+        "decisions": 3
+      },
+      {
+        "wave": 3,
+        "gold_in": 105,
+        "gold_out": 2,
+        "bought": [
+          "weapon_smg_1",
+          "weapon_smg_1",
+          "item_hedgehog"
+        ],
+        "rerolls": 1,
+        "offense_total": 18.466875,
+        "offense_target": 23.333333,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 5
+      },
+      {
+        "wave": 4,
+        "gold_in": 103,
+        "gold_out": 53,
+        "bought": [
+          "weapon_laser_gun_1",
+          "item_coupon"
+        ],
+        "rerolls": 0,
+        "offense_total": 20.222308,
+        "offense_target": 31.111111,
+        "exit_reason": "",
+        "affordable_at_exit": 2,
+        "cheapest_affordable_at_exit": 23,
+        "decisions": 4
+      },
+      {
+        "wave": 5,
+        "gold_in": 227,
+        "gold_out": 8,
+        "bought": [
+          "weapon_smg_1",
+          "weapon_smg_3",
+          "item_propeller_hat"
+        ],
+        "rerolls": 4,
+        "offense_total": 31.051246,
+        "offense_target": 38.888889,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 9
+      },
+      {
+        "wave": 6,
+        "gold_in": 177,
+        "gold_out": 0,
+        "bought": [
+          "item_broken_mouth",
+          "weapon_pistol_2",
+          "item_banner"
+        ],
+        "rerolls": 1,
+        "offense_total": 36.419139,
+        "offense_target": 46.666667,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 6
+      },
+      {
+        "wave": 7,
+        "gold_in": 210,
+        "gold_out": 70,
+        "bought": [
+          "item_ugly_tooth",
+          "item_pumpkin",
+          "weapon_pistol_1"
+        ],
+        "rerolls": 0,
+        "offense_total": 31.799891,
+        "offense_target": 54.444444,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 5
+      },
+      {
+        "wave": 8,
+        "gold_in": 293,
+        "gold_out": 4,
+        "bought": [
+          "weapon_smg_3",
+          "item_catling_gun",
+          "weapon_pistol_1",
+          "item_riposte"
+        ],
+        "rerolls": 1,
+        "offense_total": 47.631709,
+        "offense_target": 62.222222,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 8
+      },
+      {
+        "wave": 9,
+        "gold_in": 426,
+        "gold_out": 382,
+        "bought": [
+          "weapon_smg_1"
+        ],
+        "rerolls": 0,
+        "offense_total": 66.525329,
+        "offense_target": 95,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 3
+      },
+      {
+        "wave": 10,
+        "gold_in": 714,
+        "gold_out": 153,
+        "bought": [
+          "weapon_smg_2",
+          "item_chameleon",
+          "item_crown",
+          "weapon_smg_2",
+          "item_glasses",
+          "item_bat"
+        ],
+        "rerolls": 3,
+        "offense_total": 112.100508,
+        "offense_target": 127,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 12
+      },
+      {
+        "wave": 11,
+        "gold_in": 729,
+        "gold_out": 235,
+        "bought": [
+          "item_adrenaline",
+          "weapon_smg_3",
+          "weapon_revolver_2",
+          "weapon_smg_2"
+        ],
+        "rerolls": 5,
+        "offense_total": 131.72088,
+        "offense_target": 95,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 12
+      },
+      {
+        "wave": 12,
+        "gold_in": 599,
+        "gold_out": 68,
+        "bought": [
+          "item_padding",
+          "item_dangerous_bunny",
+          "item_alien_tongue",
+          "weapon_minigun_3"
+        ],
+        "rerolls": 2,
+        "offense_total": 149.43993,
+        "offense_target": 95,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 8
+      },
+      {
+        "wave": 13,
+        "gold_in": 468,
+        "gold_out": 63,
+        "bought": [
+          "weapon_minigun_3",
+          "weapon_smg_2",
+          "weapon_smg_1"
+        ],
+        "rerolls": 2,
+        "offense_total": 200.5991,
+        "offense_target": 95,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 8
+      },
+      {
+        "wave": 14,
+        "gold_in": 365,
+        "gold_out": 56,
+        "bought": [
+          "item_triangle_of_power",
+          "item_catling_gun",
+          "weapon_smg_1"
+        ],
+        "rerolls": 1,
+        "offense_total": 240.550411,
+        "offense_target": 95,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 6
+      },
+      {
+        "wave": 15,
+        "gold_in": 486,
+        "gold_out": 15,
+        "bought": [
+          "weapon_minigun_3",
+          "item_catling_gun",
+          "item_lens"
+        ],
+        "rerolls": 1,
+        "offense_total": 300.84208,
+        "offense_target": 145,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 5
+      },
+      {
+        "wave": 16,
+        "gold_in": 481,
+        "gold_out": 122,
+        "bought": [
+          "item_gambling_token",
+          "item_metal_plate",
+          "item_lootworm"
+        ],
+        "rerolls": 2,
+        "offense_total": 300.84208,
+        "offense_target": 145,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 7
+      },
+      {
+        "wave": 17,
+        "gold_in": 523,
+        "gold_out": 141,
+        "bought": [
+          "weapon_shredder_4",
+          "item_glasses",
+          "item_sharp_bullet",
+          "item_clockwork_wasp"
+        ],
+        "rerolls": 5,
+        "offense_total": 273.161818,
+        "offense_target": 145,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 12
+      },
+      {
+        "wave": 18,
+        "gold_in": 518,
+        "gold_out": 339,
+        "bought": [
+          "weapon_laser_gun_1"
+        ],
+        "rerolls": 5,
+        "offense_total": 304.443688,
+        "offense_target": 189,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 7
+      },
+      {
+        "wave": 19,
+        "gold_in": 828,
+        "gold_out": 17,
+        "bought": [
+          "item_mutation",
+          "item_white_flag",
+          "weapon_revolver_3",
+          "item_jellyshield",
+          "item_small_magazine"
+        ],
+        "rerolls": 4,
+        "offense_total": 432.381149,
+        "offense_target": 261,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 11
+      }
+    ],
+    "run_1784981684_28595": [
+      {
+        "wave": 1,
+        "gold_in": 63,
+        "gold_out": 0,
+        "bought": [
+          "weapon_smg_1",
+          "item_helmet",
+          "item_defective_steroids"
+        ],
+        "rerolls": 0,
+        "offense_total": 5.8491,
+        "offense_target": 7.777778,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 4
+      },
+      {
+        "wave": 2,
+        "gold_in": 50,
+        "gold_out": 22,
+        "bought": [
+          "weapon_smg_1"
+        ],
+        "rerolls": 1,
+        "offense_total": 8.77365,
+        "offense_target": 15.555556,
+        "exit_reason": "",
+        "affordable_at_exit": 1,
+        "cheapest_affordable_at_exit": 16,
+        "decisions": 4
+      },
+      {
+        "wave": 3,
+        "gold_in": 98,
+        "gold_out": 16,
+        "bought": [
+          "weapon_smg_2",
+          "weapon_smg_1"
+        ],
+        "rerolls": 0,
+        "offense_total": 15.5976,
+        "offense_target": 23.333333,
+        "exit_reason": "",
+        "affordable_at_exit": 1,
+        "cheapest_affordable_at_exit": 16,
+        "decisions": 4
+      },
+      {
+        "wave": 4,
+        "gold_in": 122,
+        "gold_out": 32,
+        "bought": [
+          "weapon_revolver_1",
+          "item_peaceful_bee",
+          "weapon_laser_gun_1"
+        ],
+        "rerolls": 1,
+        "offense_total": 22.696727,
+        "offense_target": 31.111111,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 6
+      },
+      {
+        "wave": 5,
+        "gold_in": 174,
+        "gold_out": 27,
+        "bought": [
+          "weapon_laser_gun_1",
+          "weapon_laser_gun_1",
+          "item_cyclops_worm"
+        ],
+        "rerolls": 3,
+        "offense_total": 31.074726,
+        "offense_target": 38.888889,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 8
+      },
+      {
+        "wave": 6,
+        "gold_in": 185,
+        "gold_out": 1,
+        "bought": [
+          "weapon_laser_gun_1",
+          "item_sharp_bullet",
+          "item_helmet",
+          "item_hedgehog"
+        ],
+        "rerolls": 3,
+        "offense_total": 36.770895,
+        "offense_target": 46.666667,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 9
+      },
+      {
+        "wave": 7,
+        "gold_in": 204,
+        "gold_out": 24,
+        "bought": [
+          "weapon_revolver_2",
+          "item_campfire",
+          "item_mushroom"
+        ],
+        "rerolls": 0,
+        "offense_total": 42.835933,
+        "offense_target": 54.444444,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 5
+      },
+      {
+        "wave": 8,
+        "gold_in": 299,
+        "gold_out": 97,
+        "bought": [
+          "weapon_laser_gun_1",
+          "weapon_smg_2",
+          "item_helmet"
+        ],
+        "rerolls": 4,
+        "offense_total": 48.360317,
+        "offense_target": 62.222222,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 9
+      },
+      {
+        "wave": 9,
+        "gold_in": 498,
+        "gold_out": 155,
+        "bought": [
+          "weapon_double_barrel_shotgun_3",
+          "weapon_smg_2",
+          "item_claw_tree"
+        ],
+        "rerolls": 5,
+        "offense_total": 64.885448,
+        "offense_target": 95,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 11
+      },
+      {
+        "wave": 10,
+        "gold_in": 448,
+        "gold_out": 102,
+        "bought": [
+          "weapon_revolver_1",
+          "weapon_laser_gun_3",
+          "item_silver_bullet"
+        ],
+        "rerolls": 2,
+        "offense_total": 78.114419,
+        "offense_target": 123,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 8
+      },
+      {
+        "wave": 11,
+        "gold_in": 504,
+        "gold_out": 49,
+        "bought": [
+          "item_dangerous_bunny",
+          "item_piggy_bank",
+          "weapon_revolver_1",
+          "weapon_revolver_1",
+          "item_ugly_tooth",
+          "item_clockwork_wasp"
+        ],
+        "rerolls": 2,
+        "offense_total": 102.20857,
+        "offense_target": 95,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 11
+      },
+      {
+        "wave": 12,
+        "gold_in": 392,
+        "gold_out": 76,
+        "bought": [
+          "weapon_shredder_2",
+          "item_mutation",
+          "item_insanity",
+          "weapon_revolver_2"
+        ],
+        "rerolls": 4,
+        "offense_total": 114.83292,
+        "offense_target": 95,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 11
+      },
+      {
+        "wave": 13,
+        "gold_in": 436,
+        "gold_out": 6,
+        "bought": [
+          "item_insanity",
+          "item_helmet",
+          "item_blindfold",
+          "item_wandering_bot"
+        ],
+        "rerolls": 4,
+        "offense_total": 124.14766,
+        "offense_target": 109,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 9
+      },
+      {
+        "wave": 14,
+        "gold_in": 270,
+        "gold_out": 55,
+        "bought": [
+          "item_scope",
+          "item_dangerous_bunny"
+        ],
+        "rerolls": 2,
+        "offense_total": 137.007047,
+        "offense_target": 205,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 7
+      },
+      {
+        "wave": 15,
+        "gold_in": 418,
+        "gold_out": 19,
+        "bought": [
+          "item_missile",
+          "item_lucky_coin"
+        ],
+        "rerolls": 2,
+        "offense_total": 143.448498,
+        "offense_target": 253,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 8
+      },
+      {
+        "wave": 16,
+        "gold_in": 369,
+        "gold_out": 73,
+        "bought": [
+          "item_mutation",
+          "weapon_smg_1",
+          "weapon_smg_2",
+          "item_missile"
+        ],
+        "rerolls": 2,
+        "offense_total": 135.548512,
+        "offense_target": 265,
+        "exit_reason": "",
+        "affordable_at_exit": 1,
+        "cheapest_affordable_at_exit": 47,
+        "decisions": 14
+      }
+    ],
+    "run_1784983826_28269": [
+      {
+        "wave": 1,
+        "gold_in": 65,
+        "gold_out": 25,
+        "bought": [
+          "weapon_smg_1",
+          "weapon_laser_gun_1"
+        ],
+        "rerolls": 0,
+        "offense_total": 8.220105,
+        "offense_target": 7.777778,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 3
+      },
+      {
+        "wave": 2,
+        "gold_in": 73,
+        "gold_out": 7,
+        "bought": [
+          "weapon_laser_gun_1",
+          "weapon_pistol_1",
+          "item_broken_mouth"
+        ],
+        "rerolls": 0,
+        "offense_total": 12.973398,
+        "offense_target": 15.555556,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 4
+      },
+      {
+        "wave": 3,
+        "gold_in": 78,
+        "gold_out": 49,
+        "bought": [
+          "weapon_smg_1"
+        ],
+        "rerolls": 0,
+        "offense_total": 14.078898,
+        "offense_target": 23.333333,
+        "exit_reason": "",
+        "affordable_at_exit": 3,
+        "cheapest_affordable_at_exit": 18,
+        "decisions": 3
+      },
+      {
+        "wave": 4,
+        "gold_in": 159,
+        "gold_out": 27,
+        "bought": [
+          "weapon_smg_1",
+          "weapon_laser_gun_1",
+          "weapon_double_barrel_shotgun_1",
+          "weapon_pistol_1",
+          "weapon_laser_gun_1"
+        ],
+        "rerolls": 1,
+        "offense_total": 19.770753,
+        "offense_target": 31.111111,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 8
+      },
+      {
+        "wave": 5,
+        "gold_in": 158,
+        "gold_out": 16,
+        "bought": [
+          "weapon_pistol_3",
+          "weapon_laser_gun_2",
+          "weapon_shredder_1"
+        ],
+        "rerolls": 0,
+        "offense_total": 20.545329,
+        "offense_target": 38.888889,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 6
+      },
+      {
+        "wave": 6,
+        "gold_in": 186,
+        "gold_out": 47,
+        "bought": [
+          "weapon_laser_gun_1",
+          "item_mushroom",
+          "item_piggy_bank"
+        ],
+        "rerolls": 0,
+        "offense_total": 25.551978,
+        "offense_target": 46.666667,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 5
+      },
+      {
+        "wave": 7,
+        "gold_in": 234,
+        "gold_out": 18,
+        "bought": [
+          "item_candle",
+          "item_lootworm",
+          "item_claw_tree"
+        ],
+        "rerolls": 0,
+        "offense_total": 24.794464,
+        "offense_target": 54.444444,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 4
+      },
+      {
+        "wave": 8,
+        "gold_in": 246,
+        "gold_out": 40,
+        "bought": [
+          "item_lost_duck",
+          "item_tree",
+          "weapon_laser_gun_3"
+        ],
+        "rerolls": 1,
+        "offense_total": 28.669008,
+        "offense_target": 62.222222,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 8
+      },
+      {
+        "wave": 9,
+        "gold_in": 433,
+        "gold_out": 56,
+        "bought": [
+          "weapon_smg_1",
+          "item_cyclops_worm",
+          "weapon_double_barrel_shotgun_1",
+          "item_plastic_explosive",
+          "weapon_revolver_2"
+        ],
+        "rerolls": 2,
+        "offense_total": 59.790969,
+        "offense_target": 153,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 10
+      },
+      {
+        "wave": 10,
+        "gold_in": 488,
+        "gold_out": 82,
+        "bought": [
+          "item_pumpkin",
+          "item_blindfold",
+          "weapon_laser_gun_2",
+          "item_injection",
+          "item_helmet",
+          "item_tree"
+        ],
+        "rerolls": 2,
+        "offense_total": 60.679326,
+        "offense_target": 184,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 12
+      },
+      {
+        "wave": 11,
+        "gold_in": 436,
+        "gold_out": 29,
+        "bought": [
+          "weapon_laser_gun_2",
+          "item_triangle_of_power",
+          "item_padding",
+          "item_dangerous_bunny"
+        ],
+        "rerolls": 2,
+        "offense_total": 87.48058,
+        "offense_target": 180,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 8
+      },
+      {
+        "wave": 12,
+        "gold_in": 429,
+        "gold_out": 0,
+        "bought": [
+          "item_injection",
+          "item_jellyshield",
+          "item_reinforced_steel",
+          "item_cyberball"
+        ],
+        "rerolls": 4,
+        "offense_total": 104.802974,
+        "offense_target": 102,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 10
+      },
+      {
+        "wave": 13,
+        "gold_in": 295,
+        "gold_out": 48,
+        "bought": [
+          "weapon_laser_gun_2",
+          "item_clockwork_wasp",
+          "weapon_shredder_1"
+        ],
+        "rerolls": 1,
+        "offense_total": 121.599027,
+        "offense_target": 123,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 6
+      },
+      {
+        "wave": 14,
+        "gold_in": 333,
+        "gold_out": 75,
+        "bought": [
+          "item_clockwork_wasp",
+          "weapon_laser_gun_1",
+          "weapon_revolver_2"
+        ],
+        "rerolls": 2,
+        "offense_total": 126.846978,
+        "offense_target": 157,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 9
+      },
+      {
+        "wave": 15,
+        "gold_in": 511,
+        "gold_out": 66,
+        "bought": [
+          "weapon_laser_gun_3",
+          "weapon_laser_gun_2",
+          "item_beanie",
+          "item_banner"
+        ],
+        "rerolls": 1,
+        "offense_total": 161.036426,
+        "offense_target": 265,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 7
+      },
+      {
+        "wave": 16,
+        "gold_in": 520,
+        "gold_out": 275,
+        "bought": [
+          "weapon_smg_1",
+          "item_white_flag",
+          "item_gummy_berserker"
+        ],
+        "rerolls": 1,
+        "offense_total": 172.477588,
+        "offense_target": 234,
+        "exit_reason": "",
+        "affordable_at_exit": 1,
+        "cheapest_affordable_at_exit": 174,
+        "decisions": 6
+      }
+    ],
+    "run_1784986939_57689": [
+      {
+        "wave": 1,
+        "gold_in": 64,
+        "gold_out": 29,
+        "bought": [
+          "weapon_double_barrel_shotgun_1",
+          "weapon_pistol_1"
+        ],
+        "rerolls": 0,
+        "offense_total": 5.101366,
+        "offense_target": 7.777778,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 3
+      },
+      {
+        "wave": 2,
+        "gold_in": 78,
+        "gold_out": 4,
+        "bought": [
+          "weapon_smg_1",
+          "weapon_smg_1",
+          "item_cake"
+        ],
+        "rerolls": 1,
+        "offense_total": 11.020052,
+        "offense_target": 15.555556,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 5
+      },
+      {
+        "wave": 3,
+        "gold_in": 74,
+        "gold_out": 31,
+        "bought": [
+          "weapon_shredder_2"
+        ],
+        "rerolls": 0,
+        "offense_total": 13.868455,
+        "offense_target": 23.333333,
+        "exit_reason": "",
+        "affordable_at_exit": 1,
+        "cheapest_affordable_at_exit": 22,
+        "decisions": 3
+      },
+      {
+        "wave": 4,
+        "gold_in": 142,
+        "gold_out": 28,
+        "bought": [
+          "weapon_revolver_1",
+          "weapon_laser_gun_1",
+          "item_helmet",
+          "weapon_revolver_1"
+        ],
+        "rerolls": 1,
+        "offense_total": 24.603554,
+        "offense_target": 31.111111,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 8
+      },
+      {
+        "wave": 5,
+        "gold_in": 176,
+        "gold_out": 47,
+        "bought": [
+          "weapon_shredder_3",
+          "item_mushroom"
+        ],
+        "rerolls": 0,
+        "offense_total": 25.126276,
+        "offense_target": 38.888889,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 4
+      },
+      {
+        "wave": 6,
+        "gold_in": 230,
+        "gold_out": 22,
+        "bought": [
+          "weapon_shredder_2",
+          "item_baby_gecko",
+          "weapon_revolver_1",
+          "item_gentle_alien"
+        ],
+        "rerolls": 4,
+        "offense_total": 36.182648,
+        "offense_target": 46.666667,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 11
+      },
+      {
+        "wave": 7,
+        "gold_in": 241,
+        "gold_out": 84,
+        "bought": [
+          "item_medal",
+          "weapon_revolver_1"
+        ],
+        "rerolls": 2,
+        "offense_total": 44.728912,
+        "offense_target": 54.444444,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 6
+      },
+      {
+        "wave": 8,
+        "gold_in": 336,
+        "gold_out": 99,
+        "bought": [
+          "item_shady_potion",
+          "item_coupon",
+          "weapon_smg_1",
+          "item_gentle_alien"
+        ],
+        "rerolls": 1,
+        "offense_total": 49.173491,
+        "offense_target": 62.222222,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 7
+      },
+      {
+        "wave": 9,
+        "gold_in": 528,
+        "gold_out": 22,
+        "bought": [
+          "weapon_smg_2",
+          "weapon_revolver_1",
+          "weapon_laser_gun_3",
+          "weapon_double_barrel_shotgun_2",
+          "item_alien_tongue",
+          "item_helmet",
+          "item_gummy_berserker",
+          "item_insanity"
+        ],
+        "rerolls": 3,
+        "offense_total": 56.149322,
+        "offense_target": 95,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 16
+      },
+      {
+        "wave": 10,
+        "gold_in": 284,
+        "gold_out": 18,
+        "bought": [
+          "item_snake",
+          "item_broken_mouth",
+          "weapon_smg_1",
+          "item_dynamite",
+          "item_coffee"
+        ],
+        "rerolls": 1,
+        "offense_total": 59.821669,
+        "offense_target": 215,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 8
+      },
+      {
+        "wave": 11,
+        "gold_in": 530,
+        "gold_out": 156,
+        "bought": [
+          "weapon_revolver_3",
+          "weapon_revolver_1",
+          "item_metal_detector",
+          "weapon_laser_gun_2",
+          "weapon_smg_2",
+          "weapon_revolver_2"
+        ],
+        "rerolls": 5,
+        "offense_total": 76.300657,
+        "offense_target": 136,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 17
+      },
+      {
+        "wave": 12,
+        "gold_in": 507,
+        "gold_out": 65,
+        "bought": [
+          "item_mutation",
+          "weapon_double_barrel_shotgun_3",
+          "weapon_double_barrel_shotgun_2",
+          "item_coil"
+        ],
+        "rerolls": 1,
+        "offense_total": 100.200485,
+        "offense_target": 213,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 8
+      },
+      {
+        "wave": 13,
+        "gold_in": 455,
+        "gold_out": 45,
+        "bought": [
+          "weapon_shredder_1",
+          "item_banner",
+          "item_insanity",
+          "item_baby_gecko",
+          "item_coffee",
+          "item_glasses"
+        ],
+        "rerolls": 2,
+        "offense_total": 114.574906,
+        "offense_target": 207,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 9
+      },
+      {
+        "wave": 14,
+        "gold_in": 349,
+        "gold_out": 84,
+        "bought": [
+          "item_banner",
+          "item_reinforced_steel"
+        ],
+        "rerolls": 0,
+        "offense_total": 131.611916,
+        "offense_target": 211,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 3
+      },
+      {
+        "wave": 15,
+        "gold_in": 471,
+        "gold_out": 113,
+        "bought": [
+          "weapon_double_barrel_shotgun_3",
+          "item_silver_bullet"
+        ],
+        "rerolls": 1,
+        "offense_total": 152.109676,
+        "offense_target": 265,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 5
+      },
+      {
+        "wave": 16,
+        "gold_in": 709,
+        "gold_out": 15,
+        "bought": [
+          "weapon_laser_gun_4",
+          "item_alloy",
+          "item_mutation",
+          "item_tardigrade"
+        ],
+        "rerolls": 1,
+        "offense_total": 209.882469,
+        "offense_target": 145,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 7
+      },
+      {
+        "wave": 17,
+        "gold_in": 374,
+        "gold_out": 133,
+        "bought": [
+          "item_coil",
+          "weapon_pistol_3"
+        ],
+        "rerolls": 1,
+        "offense_total": 219.58854,
+        "offense_target": 261,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 5
+      },
+      {
+        "wave": 18,
+        "gold_in": 678,
+        "gold_out": 102,
+        "bought": [
+          "weapon_laser_gun_4",
+          "weapon_pistol_3",
+          "item_fresh_meat",
+          "item_coffee",
+          "item_broken_mouth",
+          "weapon_revolver_1",
+          "weapon_double_barrel_shotgun_2"
+        ],
+        "rerolls": 3,
+        "offense_total": 262.700728,
+        "offense_target": 236,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 15
+      },
+      {
+        "wave": 19,
+        "gold_in": 472,
+        "gold_out": 20,
+        "bought": [
+          "weapon_smg_2",
+          "item_baby_gecko",
+          "item_poisonous_tonic",
+          "item_lemonade"
+        ],
+        "rerolls": 5,
+        "offense_total": 282.291578,
+        "offense_target": 265,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 11
+      }
+    ],
+    "run_1784988115_41438": [
+      {
+        "wave": 1,
+        "gold_in": 64,
+        "gold_out": 7,
+        "bought": [
+          "weapon_smg_1",
+          "item_lootworm"
+        ],
+        "rerolls": 0,
+        "offense_total": 6.03,
+        "offense_target": 7.777778,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 3
+      },
+      {
+        "wave": 2,
+        "gold_in": 73,
+        "gold_out": 47,
+        "bought": [
+          "weapon_smg_1"
+        ],
+        "rerolls": 0,
+        "offense_total": 10.5525,
+        "offense_target": 15.555556,
+        "exit_reason": "",
+        "affordable_at_exit": 1,
+        "cheapest_affordable_at_exit": 23,
+        "decisions": 3
+      },
+      {
+        "wave": 3,
+        "gold_in": 123,
+        "gold_out": 31,
+        "bought": [
+          "weapon_smg_1",
+          "weapon_laser_gun_1",
+          "weapon_pistol_1",
+          "item_alien_worm"
+        ],
+        "rerolls": 1,
+        "offense_total": 15.187282,
+        "offense_target": 23.333333,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 9
+      },
+      {
+        "wave": 4,
+        "gold_in": 145,
+        "gold_out": 49,
+        "bought": [
+          "weapon_smg_1",
+          "weapon_laser_gun_1",
+          "item_ugly_tooth"
+        ],
+        "rerolls": 1,
+        "offense_total": 17.322436,
+        "offense_target": 31.111111,
+        "exit_reason": "",
+        "affordable_at_exit": 1,
+        "cheapest_affordable_at_exit": 18,
+        "decisions": 6
+      },
+      {
+        "wave": 5,
+        "gold_in": 187,
+        "gold_out": 61,
+        "bought": [
+          "weapon_smg_1",
+          "weapon_laser_gun_1",
+          "item_baby_gecko",
+          "item_cake"
+        ],
+        "rerolls": 1,
+        "offense_total": 21.48766,
+        "offense_target": 38.888889,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 7
+      },
+      {
+        "wave": 6,
+        "gold_in": 239,
+        "gold_out": 15,
+        "bought": [
+          "weapon_shredder_1",
+          "item_metal_detector",
+          "item_mushroom",
+          "item_baby_gecko",
+          "item_cake"
+        ],
+        "rerolls": 2,
+        "offense_total": 18.628729,
+        "offense_target": 46.666667,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 9
+      },
+      {
+        "wave": 7,
+        "gold_in": 237,
+        "gold_out": 13,
+        "bought": [
+          "item_acid",
+          "item_metal_detector",
+          "item_coupon"
+        ],
+        "rerolls": 0,
+        "offense_total": 20.030891,
+        "offense_target": 54.444444,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 4
+      },
+      {
+        "wave": 8,
+        "gold_in": 248,
+        "gold_out": 36,
+        "bought": [
+          "item_propeller_hat",
+          "item_sharp_bullet",
+          "weapon_double_barrel_shotgun_1",
+          "item_catling_gun"
+        ],
+        "rerolls": 1,
+        "offense_total": 24.185733,
+        "offense_target": 62.222222,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 7
+      },
+      {
+        "wave": 9,
+        "gold_in": 505,
+        "gold_out": 408,
+        "bought": [
+          "item_coffee",
+          "item_injection"
+        ],
+        "rerolls": 1,
+        "offense_total": 37,
+        "offense_target": 95,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 4
+      },
+      {
+        "wave": 10,
+        "gold_in": 832,
+        "gold_out": 83,
+        "bought": [
+          "item_mutation",
+          "weapon_double_barrel_shotgun_3",
+          "item_will_o_the_wisp",
+          "weapon_double_barrel_shotgun_2",
+          "item_white_flag",
+          "item_baby_elephant",
+          "item_turret_laser"
+        ],
+        "rerolls": 3,
+        "offense_total": 46.390793,
+        "offense_target": 162,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 13
+      },
+      {
+        "wave": 11,
+        "gold_in": 464,
+        "gold_out": 11,
+        "bought": [
+          "weapon_double_barrel_shotgun_1",
+          "item_alien_tongue",
+          "weapon_smg_2",
+          "weapon_laser_gun_2",
+          "weapon_double_barrel_shotgun_2",
+          "item_missile"
+        ],
+        "rerolls": 2,
+        "offense_total": 65.255709,
+        "offense_target": 95,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 11
+      },
+      {
+        "wave": 12,
+        "gold_in": 411,
+        "gold_out": 120,
+        "bought": [
+          "item_cyberball",
+          "weapon_shredder_2",
+          "item_scope"
+        ],
+        "rerolls": 2,
+        "offense_total": 64.719629,
+        "offense_target": 95,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 7
+      },
+      {
+        "wave": 13,
+        "gold_in": 493,
+        "gold_out": 26,
+        "bought": [
+          "item_gambling_token",
+          "item_mutation",
+          "weapon_smg_2",
+          "weapon_pistol_3",
+          "item_baby_elephant"
+        ],
+        "rerolls": 2,
+        "offense_total": 90.087464,
+        "offense_target": 102,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 10
+      },
+      {
+        "wave": 14,
+        "gold_in": 335,
+        "gold_out": 11,
+        "bought": [
+          "item_catling_gun",
+          "weapon_revolver_3",
+          "item_terrified_onion"
+        ],
+        "rerolls": 1,
+        "offense_total": 110.900239,
+        "offense_target": 163,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 6
+      },
+      {
+        "wave": 15,
+        "gold_in": 510,
+        "gold_out": 245,
+        "bought": [
+          "item_beanie",
+          "item_gambling_token",
+          "weapon_revolver_1"
+        ],
+        "rerolls": 2,
+        "offense_total": 115.634803,
+        "offense_target": 209,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 7
+      },
+      {
+        "wave": 16,
+        "gold_in": 721,
+        "gold_out": 200,
+        "bought": [
+          "item_poisonous_tonic",
+          "item_injection",
+          "item_medal",
+          "item_mutation"
+        ],
+        "rerolls": 1,
+        "offense_total": 143.090791,
+        "offense_target": 152,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 6
+      },
+      {
+        "wave": 17,
+        "gold_in": 572,
+        "gold_out": 86,
+        "bought": [
+          "item_cyclops_worm",
+          "item_mutation",
+          "item_honey",
+          "item_baby_gecko"
+        ],
+        "rerolls": 1,
+        "offense_total": 184.805948,
+        "offense_target": 145,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 6
+      },
+      {
+        "wave": 18,
+        "gold_in": 554,
+        "gold_out": 126,
+        "bought": [
+          "item_banner",
+          "item_missile",
+          "weapon_shredder_2"
+        ],
+        "rerolls": 2,
+        "offense_total": 194.193331,
+        "offense_target": 189,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 7
+      },
+      {
+        "wave": 19,
+        "gold_in": 712,
+        "gold_out": 712,
+        "bought": [],
+        "rerolls": 0,
+        "offense_total": 194.193331,
+        "offense_target": 259,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 1
+      }
+    ],
+    "run_1784990448_88332": [
+      {
+        "wave": 1,
+        "gold_in": 62,
+        "gold_out": 22,
+        "bought": [
+          "weapon_smg_1",
+          "item_fertilizer"
+        ],
+        "rerolls": 0,
+        "offense_total": 6.03,
+        "offense_target": 7.777778,
+        "exit_reason": "",
+        "affordable_at_exit": 1,
+        "cheapest_affordable_at_exit": 20,
+        "decisions": 3
+      },
+      {
+        "wave": 2,
+        "gold_in": 87,
+        "gold_out": 36,
+        "bought": [
+          "weapon_smg_1",
+          "weapon_shredder_1"
+        ],
+        "rerolls": 2,
+        "offense_total": 9.854408,
+        "offense_target": 15.555556,
+        "exit_reason": "",
+        "affordable_at_exit": 1,
+        "cheapest_affordable_at_exit": 20,
+        "decisions": 5
+      },
+      {
+        "wave": 3,
+        "gold_in": 116,
+        "gold_out": 27,
+        "bought": [
+          "weapon_shredder_1",
+          "weapon_double_barrel_shotgun_1",
+          "item_lost_duck"
+        ],
+        "rerolls": 1,
+        "offense_total": 10.191492,
+        "offense_target": 23.333333,
+        "exit_reason": "",
+        "affordable_at_exit": 1,
+        "cheapest_affordable_at_exit": 16,
+        "decisions": 7
+      },
+      {
+        "wave": 4,
+        "gold_in": 140,
+        "gold_out": 39,
+        "bought": [
+          "weapon_shredder_1",
+          "item_fresh_meat",
+          "weapon_revolver_1"
+        ],
+        "rerolls": 2,
+        "offense_total": 15.830894,
+        "offense_target": 31.111111,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 7
+      },
+      {
+        "wave": 5,
+        "gold_in": 185,
+        "gold_out": 60,
+        "bought": [
+          "item_will_o_the_wisp"
+        ],
+        "rerolls": 0,
+        "offense_total": 14.722731,
+        "offense_target": 38.888889,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 2
+      },
+      {
+        "wave": 6,
+        "gold_in": 233,
+        "gold_out": 33,
+        "bought": [
+          "item_lost_duck",
+          "item_cyberball",
+          "item_medal"
+        ],
+        "rerolls": 1,
+        "offense_total": 14.872962,
+        "offense_target": 46.666667,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 5
+      },
+      {
+        "wave": 7,
+        "gold_in": 226,
+        "gold_out": 73,
+        "bought": [
+          "weapon_revolver_2",
+          "item_fresh_meat",
+          "weapon_smg_1"
+        ],
+        "rerolls": 1,
+        "offense_total": 18.255794,
+        "offense_target": 54.444444,
+        "exit_reason": "",
+        "affordable_at_exit": 1,
+        "cheapest_affordable_at_exit": 44,
+        "decisions": 7
+      },
+      {
+        "wave": 8,
+        "gold_in": 281,
+        "gold_out": 7,
+        "bought": [
+          "weapon_double_barrel_shotgun_2",
+          "item_riposte",
+          "item_wandering_bot"
+        ],
+        "rerolls": 0,
+        "offense_total": 23.767074,
+        "offense_target": 62.222222,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 4
+      },
+      {
+        "wave": 9,
+        "gold_in": 430,
+        "gold_out": 77,
+        "bought": [
+          "item_terrified_onion",
+          "item_eyes_surgery",
+          "weapon_smg_1",
+          "item_lost_duck",
+          "item_metal_detector"
+        ],
+        "rerolls": 2,
+        "offense_total": 26.844231,
+        "offense_target": 122,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 9
+      },
+      {
+        "wave": 10,
+        "gold_in": 395,
+        "gold_out": 114,
+        "bought": [
+          "item_white_flag",
+          "item_small_magazine",
+          "weapon_smg_1"
+        ],
+        "rerolls": 1,
+        "offense_total": 40.646482,
+        "offense_target": 215,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 5
+      },
+      {
+        "wave": 11,
+        "gold_in": 363,
+        "gold_out": 14,
+        "bought": [
+          "item_missile",
+          "weapon_smg_3",
+          "weapon_smg_2"
+        ],
+        "rerolls": 1,
+        "offense_total": 51.125759,
+        "offense_target": 215,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 8
+      },
+      {
+        "wave": 12,
+        "gold_in": 381,
+        "gold_out": 35,
+        "bought": [
+          "weapon_smg_3",
+          "item_beanie",
+          "item_catling_gun"
+        ],
+        "rerolls": 2,
+        "offense_total": 58.477026,
+        "offense_target": 215,
+        "exit_reason": "",
+        "affordable_at_exit": 0,
+        "cheapest_affordable_at_exit": null,
+        "decisions": 7
+      }
+    ]
+  },
+  "contrasts": {
+    "rich_exits": {
+      "defeat": 2.3,
+      "victory": 2.4
+    },
+    "banked_mean": {
+      "defeat": 66.76,
+      "victory": 80.35
+    },
+    "banked_mid_mean": {
+      "defeat": 94.77000000000001,
+      "victory": 97.21000000000001
+    },
+    "items_bought": {
+      "defeat": 52.6,
+      "victory": 64.0
+    },
+    "rerolls": {
+      "defeat": 28.1,
+      "victory": 31.6
+    },
+    "offense_deficit_mean": {
+      "defeat": 38.416,
+      "victory": 21.625
+    },
+    "final_offense_deficit": {
+      "defeat": 72.68100000000001,
+      "victory": -33.668
+    }
+  },
+  "rich_by_wave": {
+    "1": {
+      "shops": 20,
+      "rich": 7
+    },
+    "2": {
+      "shops": 20,
+      "rich": 10
+    },
+    "3": {
+      "shops": 20,
+      "rich": 10
+    },
+    "4": {
+      "shops": 20,
+      "rich": 6
+    },
+    "5": {
+      "shops": 20,
+      "rich": 2
+    },
+    "6": {
+      "shops": 20,
+      "rich": 2
+    },
+    "7": {
+      "shops": 20,
+      "rich": 3
+    },
+    "8": {
+      "shops": 20,
+      "rich": 0
+    },
+    "9": {
+      "shops": 20,
+      "rich": 0
+    },
+    "10": {
+      "shops": 20,
+      "rich": 2
+    },
+    "11": {
+      "shops": 20,
+      "rich": 0
+    },
+    "12": {
+      "shops": 20,
+      "rich": 2
+    },
+    "13": {
+      "shops": 18,
+      "rich": 0
+    },
+    "14": {
+      "shops": 18,
+      "rich": 0
+    },
+    "15": {
+      "shops": 18,
+      "rich": 1
+    },
+    "16": {
+      "shops": 18,
+      "rich": 2
+    },
+    "17": {
+      "shops": 14,
+      "rich": 0
+    },
+    "18": {
+      "shops": 14,
+      "rich": 0
+    },
+    "19": {
+      "shops": 14,
+      "rich": 0
+    }
+  },
+  "exit_reasons": {}
+}
