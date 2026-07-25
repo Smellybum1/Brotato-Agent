@@ -28,6 +28,7 @@ const _FREEZE_KEYS := ["hp_cap", "speed_cap", "dodge_cap"]
 # Per-shop-visit state. Resets each wave.
 var _session_wave: int = -1
 var _session_rerolls: int = 0
+var _session_surplus_rerolls: int = 0
 var _session_combines: int = 0
 var _session_sold_families := {}
 var _session_new_lock_item_ids := {}
@@ -1112,6 +1113,7 @@ func _reset_session_if_new(state: Dictionary) -> void:
 	if _session_wave != w:
 		_session_wave = w
 		_session_rerolls = 0
+		_session_surplus_rerolls = 0
 		_session_combines = 0
 		_session_sold_families = {}
 		_session_new_lock_item_ids = {}
@@ -1201,6 +1203,116 @@ func _needs_allowed_weapon_fill(profile, weapons: Array, slots: int) -> bool:
 	if profile.allowed_weapon_ids != null or profile.allowed_weapon_sets != null:
 		return true
 	return false
+
+
+# ────────────────── v126 bounded surplus-reroll conversion ────────────────────
+# Runs ONLY after the buy loop and the v125 reroll path are exhausted, so it is
+# structurally incapable of preempting a qualifying buy or of changing any v125
+# decision. One reroll at a time; the controller holds the board-signature
+# barrier (idempotency + stale-board protection) between rerolls.
+
+func _locked_item_reserve(items: Array) -> int:
+	# Gold committed to locked/planned purchases still sitting on the board.
+	var reserve := 0
+	for it in items:
+		if it.get("locked", false):
+			reserve += int(it.get("price", 0))
+	return reserve
+
+
+func _material_value_reserve(build: Dictionary, gold: int) -> int:
+	# Items whose effect consumes/values the held material stock (piggy_bank
+	# class interest): reserve the amount the effect operates on. Fractions all
+	# address the same pool, so the reserve is the maximum, never the sum.
+	var table: Dictionary = BotConfig.SURPLUS_MATERIAL_VALUE_ITEMS
+	var reserve := 0
+	for owned in build.get("items", []):
+		# Accept either the {"id": ...} entries the controller emits or bare ids.
+		var owned_id := ""
+		if typeof(owned) == TYPE_DICTIONARY:
+			owned_id = str(owned.get("id", ""))
+		else:
+			owned_id = str(owned)
+		if not table.has(owned_id):
+			continue
+		var entry: Dictionary = table[owned_id]
+		var flat := int(entry.get("flat", 0))
+		var fraction := float(entry.get("fraction_of_gold", 0.0))
+		var scaled := int(round(fraction * float(max(gold, 0))))
+		reserve = int(max(reserve, max(flat, scaled)))
+	return reserve
+
+
+func _board_has_safe_positive_item(items: Array, build: Dictionary, profile,
+		wave: int) -> bool:
+	# An affordable, legally purchasable, non-vetoed, positively scored option.
+	# Hard vetoes score -1e9 inside item_score and survive surplus pressure.
+	for it in items:
+		if not it.get("affordable", false) or not it.get("can_buy", true):
+			continue
+		if it.get("category") == "weapon" and not it.get("usable", true):
+			continue
+		if item_score(it, build, profile, wave) > 0.0:
+			return true
+	return false
+
+
+func _surplus_state(items: Array, build: Dictionary, profile, wave: int,
+		gold: int, reroll_price: int) -> Dictionary:
+	# Recomputes the surplus rule from the CURRENT board, gold and actual reroll
+	# price (which escalates within a shop). Returns the full arithmetic so the
+	# audit can recompute the decision and the reason code from telemetry alone.
+	var in_window: bool = (wave >= BotConfig.SURPLUS_MIN_WAVE
+		and wave <= BotConfig.SURPLUS_MAX_WAVE)
+	var locked_reserve := _locked_item_reserve(items)
+	var material_reserve := _material_value_reserve(build, gold)
+	var next_shop_reserve := BotConfig.surplus_next_shop_reserve(wave)
+	var spendable := gold - locked_reserve - material_reserve - next_shop_reserve
+	var out := {
+		"in_window": in_window,
+		"wave": wave,
+		"gold": gold,
+		"reroll_price": reroll_price,
+		"locked_item_reserve": locked_reserve,
+		"material_value_reserve": material_reserve,
+		"next_shop_reserve": next_shop_reserve,
+		"spendable_surplus": spendable,
+		"surplus_rerolls": _session_surplus_rerolls,
+		"surplus_rerolls_max": BotConfig.SURPLUS_REROLLS_MAX,
+		"reroll": false,
+		"exit_reason": BotConfig.SHOP_EXIT_NO_SURPLUS,
+	}
+	if not in_window:
+		return out
+	var budget_exhausted: bool = (
+		_session_surplus_rerolls >= BotConfig.SURPLUS_REROLLS_MAX
+		or _session_rerolls >= BotConfig.SHOP_MAX_REROLLS_CAP)
+	if budget_exhausted:
+		# The more specific "nothing convertible on this board" reason wins over
+		# the bare budget reason when every affordable option is vetoed or
+		# non-positive — that is why the surplus could not be converted.
+		out["exit_reason"] = (BotConfig.SHOP_EXIT_REROLL_LIMIT
+			if _board_has_safe_positive_item(items, build, profile, wave)
+			else BotConfig.SHOP_EXIT_NO_SAFE_POSITIVE_ITEM)
+		return out
+	if spendable - reroll_price > 0:
+		out["reroll"] = true
+		out["exit_reason"] = ""
+		return out
+	# The rule failed on arithmetic. Attribute it to the first reserve that is
+	# individually binding (removing it alone would let the rule pass).
+	if (locked_reserve > 0
+			and spendable + locked_reserve - reroll_price > 0):
+		out["exit_reason"] = BotConfig.SHOP_EXIT_LOCKED_RESERVE
+	elif (material_reserve > 0
+			and spendable + material_reserve - reroll_price > 0):
+		out["exit_reason"] = BotConfig.SHOP_EXIT_MATERIAL_VALUE_RESERVE
+	elif (next_shop_reserve > 0
+			and spendable + next_shop_reserve - reroll_price > 0):
+		out["exit_reason"] = BotConfig.SHOP_EXIT_NEXT_SHOP_RESERVE
+	else:
+		out["exit_reason"] = BotConfig.SHOP_EXIT_NO_SURPLUS
+	return out
 
 
 # ─────────────────────────── decide_shop ──────────────────────────────────────
@@ -1555,6 +1667,21 @@ func decide_shop(state: Dictionary, profile) -> Dictionary:
 		if (best_here < worth or need_fill) and not offense_reroll_gate:
 			_session_rerolls += 1
 			return {"type": "shop_reroll", "score": best_here}
+
+	# 5) v126 bounded surplus reroll. Everything above has already declined to
+	# buy and declined to reroll, so v125 would exit here banking the gold. One
+	# reroll at a time while a real spendable surplus survives every reserve;
+	# otherwise exit with an explicit reason code.
+	var surplus := _surplus_state(items, build, profile, wave, gold, reroll_price)
+	if bool(surplus.get("reroll", false)):
+		_session_surplus_rerolls += 1
+		_session_rerolls += 1
+		surplus["surplus_rerolls"] = _session_surplus_rerolls
+		return {"type": "shop_reroll", "score": 0.0, "surplus_reroll": true,
+			"surplus": surplus}
+	if str(surplus.get("exit_reason", "")) != "":
+		return {"type": "shop_go", "score": 0.0,
+			"exit_reason": surplus["exit_reason"], "surplus": surplus}
 
 	return {"type": "shop_go", "score": 0.0}
 

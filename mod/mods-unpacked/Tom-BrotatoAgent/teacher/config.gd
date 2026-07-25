@@ -431,6 +431,64 @@ const SHOP_MAX_COMBINES_PER_VISIT := 1
 # v61 keeps the safe deferred core transaction and only offers pairs with a
 # real upgrades_into path; equal max-tier IDs are not combinable actions.
 const SHOP_COMBINES_ENABLED := true
+
+# ── v126 bounded surplus-reroll (mid/late-game conversion pressure) ────────────
+# v125 banks gold instead of converting when the board has no qualifying buy
+# (evidence: reports/wp2/v126_evidence_rich_exit_w10.json — w10 417g, w17 565g,
+# w18 971g rich exits, ~1200g banked into a w19 death). The surplus rule runs
+# ONLY after the buy loop is exhausted, so it can never preempt a qualifying
+# buy (the four frozen v124 fixtures stay green by construction).
+const SURPLUS_REROLLS_MAX := 3
+const SURPLUS_MIN_WAVE := 6
+const SURPLUS_MAX_WAVE := 19
+# High-percentile cost of one desirable purchase + 2 rerolls at next-shop
+# prices, minus median next-wave income — a SHORTFALL, not a winner bank
+# balance. Derived from the 20-run v122 exact-20 campaign; see
+# reports/wp2/v126_bank_cap_calibration.md and
+# scripts/wp2_v126_bank_cap_calibration.py. Median per-wave income exceeds the
+# p80 qualifying-purchase price plus two rerolls at EVERY wave (by 74-321g), so
+# the calibrated shortfall is zero throughout; the table stays an explicit,
+# wave-indexed surface for future recalibration. Wave 19 is the terminal shop
+# (no next shop) and is 0 by design.
+const SURPLUS_NEXT_SHOP_RESERVE := {
+	6: 0,
+	7: 0,
+	8: 0,
+	9: 0,
+	10: 0,
+	11: 0,
+	12: 0,
+	13: 0,
+	14: 0,
+	15: 0,
+	16: 0,
+	17: 0,
+	18: 0,
+	19: 0,
+}
+# Items whose effect consumes or values the held material stock (piggy-bank
+# class interest). "fraction_of_gold" reserves that share of the current stock
+# — the amount the effect actually operates on; "flat" reserves a fixed sum.
+# Entries do NOT sum: several fractions apply to the same pool, so the reserve
+# is the maximum over owned matching items.
+const SURPLUS_MATERIAL_VALUE_ITEMS := {
+	"item_piggy_bank": {"fraction_of_gold": 1.0},
+}
+# Exit reason codes (design note v2 §"Exit reason codes"). EXIT_BOARD_STALE_TIMEOUT
+# is emitted by the controller's board-refresh barrier, not by the strategy.
+const SHOP_EXIT_NO_SURPLUS := "EXIT_NO_SURPLUS"
+const SHOP_EXIT_REROLL_LIMIT := "EXIT_REROLL_LIMIT"
+const SHOP_EXIT_LOCKED_RESERVE := "EXIT_LOCKED_RESERVE"
+const SHOP_EXIT_MATERIAL_VALUE_RESERVE := "EXIT_MATERIAL_VALUE_RESERVE"
+const SHOP_EXIT_NEXT_SHOP_RESERVE := "EXIT_NEXT_SHOP_RESERVE"
+const SHOP_EXIT_NO_SAFE_POSITIVE_ITEM := "EXIT_NO_SAFE_POSITIVE_ITEM"
+const SHOP_EXIT_BOARD_STALE_TIMEOUT := "EXIT_BOARD_STALE_TIMEOUT"
+
+static func surplus_next_shop_reserve(wave: int) -> int:
+	# Wave-19 terminal-liquidation posture: no future shop exists.
+	if wave >= FINAL_SHOP_WAVE:
+		return 0
+	return int(SURPLUS_NEXT_SHOP_RESERVE.get(wave, 0))
 const OFF_BUILD_PENALTY := 16.0
 const HEALING_WEAPON_PENALTY := 12.0
 const UNKNOWN_EFFECT_WEIGHT := 0.3

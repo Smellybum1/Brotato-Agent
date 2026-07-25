@@ -1,0 +1,54 @@
+{
+  "run_id": "run_1784911798_60074",
+  "source": "reports/wp2/v126_evidence_rich_exit_w10.json",
+  "note": "Observed v125 rich shop exit; the v126 surplus rule must reroll (or buy) here.",
+  "wave": 17,
+  "decision_seq": 37288,
+  "gold_at_exit": 565,
+  "reroll_price": 18,
+  "action_taken": "shop_go",
+  "session_rerolls_before_exit": 0,
+  "surplus_rerolls_before_exit": 0,
+  "items": [
+    {
+      "slot": 0,
+      "id": "weapon_sharp_tooth_1",
+      "price": 46,
+      "tier": 0,
+      "category": "weapon",
+      "affordable": true,
+      "can_buy": false,
+      "locked": false
+    },
+    {
+      "slot": 1,
+      "id": "item_gentle_alien",
+      "price": 93,
+      "tier": 0,
+      "category": "item",
+      "affordable": true,
+      "can_buy": true,
+      "locked": false
+    },
+    {
+      "slot": 2,
+      "id": "item_potato",
+      "price": 259,
+      "tier": 3,
+      "category": "item",
+      "affordable": true,
+      "can_buy": true,
+      "locked": false
+    },
+    {
+      "slot": 3,
+      "id": "weapon_pruner_1",
+      "price": 54,
+      "tier": 0,
+      "category": "weapon",
+      "affordable": true,
+      "can_buy": false,
+      "locked": false
+    }
+  ]
+}

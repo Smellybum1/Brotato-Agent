@@ -13,7 +13,7 @@ const LOG_NAME = "Tom:BrotatoAgent:Runner"
 var active: bool = false
 var auto_start_benchmark: bool = true
 var current_move_vector: Vector2 = Vector2.ZERO
-var policy_version: String = "teacher_v1-0.1.125-gun-wp1"
+var policy_version: String = "teacher_v1-0.1.126-gun-wp1"
 var last_move_debug: Dictionary = {}
 var last_meta_debug: Dictionary = {}
 var _manual_override: bool = false
@@ -86,6 +86,16 @@ var _pending_combine_wave: int = -1
 var _pending_combine_at: float = 0.0
 var _combine_restore_mouse_mode: int = -1
 var _combine_timeout_reported: bool = false
+# v126: bounded surplus reroll — one action per board signature. After a surplus
+# reroll is dispatched, no further shop action is considered until the board
+# signature actually changes (confirmed refresh) or the stale-board timeout
+# fires. The ordinary v125 reroll path is untouched.
+const SHOP_SURPLUS_CONFIRM_INTERVAL = 0.6
+const SHOP_SURPLUS_CONFIRM_TIMEOUT = 4.0
+var _pending_surplus_signature: String = ""
+var _pending_surplus_wave: int = -1
+var _pending_surplus_at: float = 0.0
+var _surplus_timeout_reported: bool = false
 var _end_run_force_at_ms: int = 0
 
 # Stat names whose live values we need for combat valuation.
@@ -768,6 +778,43 @@ func _handle_shop(shop) -> void:
 		_combine_timeout_reported = false
 		_last_shop_action_at = now
 		return
+	if _pending_surplus_wave >= 0:
+		# v126 board-refresh barrier. A surplus reroll was dispatched; act only
+		# on a CONFIRMED new board (changed signature), never on a stale one, and
+		# at most once per board signature.
+		var surplus_signature := _shop_board_signature(state)
+		var surplus_wait: float = now - _pending_surplus_at
+		if surplus_wait < SHOP_SURPLUS_CONFIRM_INTERVAL:
+			return
+		if surplus_signature == _pending_surplus_signature:
+			if surplus_wait >= SHOP_SURPLUS_CONFIRM_TIMEOUT and not _surplus_timeout_reported:
+				_surplus_timeout_reported = true
+				if _telem != null:
+					_telem.emit("shop_surplus_stale_timeout", {
+						"wave": _pending_surplus_wave,
+						"wait_ms": int(surplus_wait * 1000.0),
+						"signature": surplus_signature,
+						"exit_reason": _CONFIG_SCRIPT.SHOP_EXIT_BOARD_STALE_TIMEOUT,
+					})
+				# Clear the barrier so the shop can resume; the surplus reroll
+				# budget for this visit was already spent at dispatch.
+				_pending_surplus_signature = ""
+				_pending_surplus_wave = -1
+				_pending_surplus_at = 0.0
+				_surplus_timeout_reported = false
+				_last_shop_action_at = now
+			return
+		if _telem != null:
+			_telem.emit("shop_surplus_reroll_confirmed", {
+				"wave": _pending_surplus_wave,
+				"wait_ms": int(surplus_wait * 1000.0),
+				"before_signature": _pending_surplus_signature,
+				"after_signature": surplus_signature,
+			})
+		_pending_surplus_signature = ""
+		_pending_surplus_wave = -1
+		_pending_surplus_at = 0.0
+		_surplus_timeout_reported = false
 	var profile = _profiles.get_profile(state.get("character", ""))
 	var decision = choose_meta_action(state, state.get("legal_actions", []))
 	var action: Dictionary = decision.get("action", {})
@@ -789,6 +836,10 @@ func _handle_shop(shop) -> void:
 			"legal_alternatives": decision.get("legal_alternatives", []),
 			"reason": decision.get("reason", ""),
 			"build_metrics": build_metrics,
+			# v126: shop-exit reason code + the surplus arithmetic it was derived
+			# from, so the audit can recompute both from telemetry alone.
+			"exit_reason": action.get("exit_reason", ""),
+			"surplus": action.get("surplus", {}),
 		})
 	_update_shop_hud(action, state, decision)
 	if action.empty() or action.get("type", "") == "shop_go":
@@ -807,6 +858,12 @@ func _handle_shop(shop) -> void:
 		else:
 			_apply_shop_action(shop, action)
 			_last_shop_action_type = str(action.get("type", ""))
+			if action.get("surplus_reroll", false):
+				# Arm the v126 board-refresh barrier against the PRE-reroll board.
+				_pending_surplus_signature = _shop_board_signature(state)
+				_pending_surplus_wave = int(state.get("wave", -1))
+				_pending_surplus_at = now
+				_surplus_timeout_reported = false
 	if _orch != null:
 		_orch.note_action()
 	_last_shop_action_at = now
@@ -840,6 +897,19 @@ func _apply_shop_cycle_guard(action: Dictionary, state: Dictionary) -> Dictionar
 		"blocked_transition": action_type,
 		"transition_count": _shop_transition_count,
 	}
+
+
+func _shop_board_signature(state: Dictionary) -> String:
+	# v126: identity of the offered board. A reroll must change this before any
+	# further shop action is considered (stale-board protection + idempotency).
+	var parts := []
+	for item in state.get("shop_items", []):
+		parts.append("%d:%s:%d:%d:%s" % [
+			int(item.get("slot", -1)), str(item.get("id", "")),
+			int(item.get("tier", -1)), int(item.get("price", 0)),
+			"1" if item.get("locked", false) else "0"])
+	parts.sort()
+	return JSON.print(parts)
 
 
 func _shop_weapon_signature(state: Dictionary) -> String:
@@ -1481,8 +1551,24 @@ func _build_dict() -> Dictionary:
 					or int(burning_data.duration) > 0))
 			entry["sell_value"] = ItemService.get_recycling_value(RunData.current_wave, w.value, 0, true)
 		weapons.append(entry)
+	# v126: owned item ids feed material_value_reserve (piggy-bank class items
+	# whose effect operates on the held material stock). Additive; no existing
+	# consumer reads "items".
+	# Both the 1.1.x per-player accessor and the older flat array are handled;
+	# an unavailable API degrades to an empty list (reserve 0), never an error.
+	var owned_items := []
+	var owned_source := []
+	if RunData.has_method("get_player_items"):
+		owned_source = RunData.get_player_items(0)
+	elif "items" in RunData and RunData.items != null:
+		owned_source = RunData.items
+	for owned in owned_source:
+		if owned == null or not ("my_id" in owned):
+			continue
+		owned_items.append({"id": str(owned.my_id)})
 	return {
 		"weapons": weapons,
+		"items": owned_items,
 		"stats": _current_stats(),
 		"previous_wave_p90_density": _last_wave_p90_density,
 		"previous_wave_peak_density": _last_wave_peak_density,
@@ -1692,7 +1778,7 @@ func _start_run() -> void:
 		"endless": false,
 		"wave_retry": false,
 		"game_version": "1.1.15.4",
-		"mod_version": "0.2.34-wp2-capture",
+		"mod_version": "0.2.35-wp2-capture",
 		"config_id": "well_rounded_d0_anyranged",
 		"policy_version": policy_version,
 	}

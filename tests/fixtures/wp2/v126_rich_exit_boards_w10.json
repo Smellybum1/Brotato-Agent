@@ -1,0 +1,44 @@
+{
+  "run_id": "run_1784911798_60074",
+  "source": "reports/wp2/v126_evidence_rich_exit_w10.json",
+  "note": "Observed v125 rich shop exit; the v126 surplus rule must reroll (or buy) here.",
+  "wave": 10,
+  "decision_seq": 18841,
+  "gold_at_exit": 417,
+  "reroll_price": 11,
+  "action_taken": "shop_go",
+  "session_rerolls_before_exit": 0,
+  "surplus_rerolls_before_exit": 0,
+  "items": [
+    {
+      "slot": 0,
+      "id": "item_gambling_token",
+      "price": 104,
+      "tier": 1,
+      "category": "item",
+      "affordable": true,
+      "can_buy": true,
+      "locked": false
+    },
+    {
+      "slot": 1,
+      "id": "item_bait",
+      "price": 57,
+      "tier": 1,
+      "category": "item",
+      "affordable": true,
+      "can_buy": true,
+      "locked": false
+    },
+    {
+      "slot": 3,
+      "id": "weapon_crossbow_1",
+      "price": 39,
+      "tier": 0,
+      "category": "weapon",
+      "affordable": true,
+      "can_buy": false,
+      "locked": false
+    }
+  ]
+}
