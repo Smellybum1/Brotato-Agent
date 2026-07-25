@@ -1,0 +1,26 @@
+{
+  "run_count": 1,
+  "violation_count": 0,
+  "surplus_rerolls": 4,
+  "stale_board_timeouts": 0,
+  "runs": [
+    {
+      "run": "run_1784995647_96514",
+      "purchase_decisions": 178,
+      "surplus_rerolls": 4,
+      "surplus_exits_with_reason": 19,
+      "reason_code_counts": {
+        "EXIT_NO_SURPLUS": 10,
+        "EXIT_LOCKED_RESERVE": 4,
+        "EXIT_MATERIAL_VALUE_RESERVE": 5
+      },
+      "confirmed_board_refreshes": 4,
+      "stale_board_timeouts": 0,
+      "surplus_exit_violations": [],
+      "reason_code_violations": [],
+      "surplus_budget_violations": [],
+      "unknown_reason_codes": [],
+      "violation_count": 0
+    }
+  ]
+}

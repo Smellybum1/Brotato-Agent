@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "status": "complete",
+  "target_runs": 1,
+  "completed_runs": 1,
+  "capture_schema_hash": "2823CB7E7D6A6DDB7F805A76D0CD674BA7A2A908058771B66B4A8FEFF9BC1174",
+  "policy_version": "teacher_v1-0.1.127-gun-wp1",
+  "mod_version": "0.2.36-wp2-capture",
+  "results": [
+    {
+      "run_id": "run_1784995647_96514",
+      "result": "victory",
+      "last_wave": 20,
+      "duration_ms": 1183330,
+      "damage_taken": 116
+    }
+  ],
+  "completed_at": "2026-07-25T16:27:11.382556+00:00"
+}
