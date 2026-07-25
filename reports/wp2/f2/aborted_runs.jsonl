@@ -1,0 +1,1 @@
+{"run_index": 11, "aborted_run_id": "run_1784957391_49184", "reason": "launched without sigma-0 sidecar on a P-arm slot (operator-agent error); killed mid-wave-1; EXCLUDED, not an F2 observation, replaced by a fresh run 11", "predeclared_exclusion_rule": "technical failure only \u2014 this is an operator/setup failure, run never entered the dataset"}
