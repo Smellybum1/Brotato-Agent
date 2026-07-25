@@ -118,3 +118,48 @@ Related fact worth not rediscovering: `source_dropped_count` is a LIVE
 MODEL INPUT FEATURE. Changing any capture limit would alter what
 bc_v2_f and the residual actors consume — an observation-schema
 decision, not a mod tweak.
+
+---
+
+## RESOLUTION (2026-07-25) — Model B CONFIRMED from game source
+
+A parallel session read the decompiled game source (record:
+`reports/wp2/v127_change_record.md`, memory
+`brotato-v127-materials-telemetry`). The mechanic is **Model B**, read
+directly rather than inferred:
+
+- `main.gd clean_up_room()` sends floor materials to the gold bag ->
+  `RunData.add_bonus_gold`, a pool held SEPARATELY from spendable gold.
+- `spawn_gold()` drains that pool by boosting the value of later drops.
+
+So uncollected material is genuinely deferred income, credited through
+subsequent drops — the operator's model, confirmed. The open question in
+the sections above is CLOSED.
+
+### Consequence that revises this document's numbers upward
+
+`const MAX_GOLDS = 50`: once 50 material entities are on the floor, a new
+drop spawns NOTHING and a random existing entity ABSORBS its value.
+Therefore:
+
+- The 50-ceiling is the ENGINE's, not telemetry's (consistent with
+  Correction 2), and
+- **materials are NOT unit-valued**. Entity count is a CENSORED PROXY
+  for pile worth. Every leftover figure in this document (median 28
+  non-terminal; 44-49 in waves 11-19; 30 on terminal waves) UNDERSTATES
+  the value left on the floor whenever the count approached 50 — which
+  is 18% of wave-observations outright and more once absorption begins.
+
+The terminal-strand and delayed-income estimates derived from counts are
+therefore LOWER BOUNDS on value. v127 adds `entities.materials[].value`
+plus `player.materials` / `player.bonus_materials`, which will make the
+true worth directly measurable on the next teacher campaign.
+
+### Sequencing constraint discovered with it
+
+Deploying v127 moves the capture schema hash; `encoder_v1.py` and the
+sidecar handshake both gate on exact hash equality, so **bc_v2_f and the
+residual actors cannot run on a v127 build** until a compatibility-list
+change lands. Teacher collection is unaffected. Stage F2 must therefore
+complete before v127 deploys, and any future student/residual campaign
+needs the compatibility fix first.
