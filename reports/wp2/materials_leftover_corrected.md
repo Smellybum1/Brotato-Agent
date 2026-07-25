@@ -94,3 +94,27 @@ will resolve this.
 
 Lesson: for contested, load-bearing measurements, the primary agent
 should compute and eyeball the raw series rather than delegate.
+
+---
+
+## CORRECTION 2 (2026-07-25) — the "50-entity capture cap" does not exist
+
+A parallel session auditing `dropped_counts` established from the
+collector source that there is **NO capture-side capacity limit
+anywhere**: every collector iterates the full live entity list, and
+untruncated raw capture is a deliberate certified invariant (so captures
+can be re-encoded at any downstream capacity). All real caps live in
+`configs/wp2/observation_v1.yaml` and apply at ENCODE time, not capture
+time.
+
+Consequence for this document: the repeated values of exactly 50 in the
+leftover series are NOT telemetry censoring. They reflect the game's own
+on-ground material ceiling (max observed across runs: 53). The leftover
+measurements are therefore **real counts, not lower bounds** — this
+strengthens rather than weakens them. References above to "censored
+lower bounds" and to lifting a 50-entity capture cap are withdrawn.
+
+Related fact worth not rediscovering: `source_dropped_count` is a LIVE
+MODEL INPUT FEATURE. Changing any capture limit would alter what
+bc_v2_f and the residual actors consume — an observation-schema
+decision, not a mod tweak.
