@@ -42,6 +42,9 @@ def test_capture_contains_temporal_context_and_untruncated_raw_groups():
     assert '"observation_age_ms"' in controller
     assert '"control_dt_ms"' in controller
     assert '"invalid_counts": state.get("invalid_entities", {})' in controller
-    assert '"dropped_counts": {' in controller
+    # v127: dropped_counts is derived from the emitted arrays, not asserted as a
+    # literal zero block — see test_wp2_capture_materials_telemetry.py.
+    assert '"dropped_counts": dropped_counts,' in controller
+    assert "dropped_counts[group] = raw_groups[group].size() - entities[group].size()" in controller
     for group in ("enemies", "bosses", "projectiles", "materials", "consumables", "crates", "obstacles"):
         assert f'"{group}"' in controller

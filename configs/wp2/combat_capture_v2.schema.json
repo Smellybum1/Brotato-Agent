@@ -63,7 +63,7 @@
     },
     "player": {
       "type": "object",
-      "required": ["x", "y", "vx", "vy", "measured_vx", "measured_vy", "hp", "max_hp", "hp_ratio", "speed", "armor", "dodge", "hp_regeneration", "lifesteal"],
+      "required": ["x", "y", "vx", "vy", "measured_vx", "measured_vy", "hp", "max_hp", "hp_ratio", "speed", "armor", "dodge", "hp_regeneration", "lifesteal", "materials", "bonus_materials"],
       "properties": {
         "x": {"type": "number"},
         "y": {"type": "number"},
@@ -78,7 +78,9 @@
         "armor": {"type": "number"},
         "dodge": {"type": "number"},
         "hp_regeneration": {"type": "number"},
-        "lifesteal": {"type": "number"}
+        "lifesteal": {"type": "number"},
+        "materials": {"type": "integer", "minimum": -1},
+        "bonus_materials": {"type": "integer", "minimum": -1}
       }
     },
     "teacher": {
@@ -101,13 +103,23 @@
         "enemies": {"$ref": "#/$defs/entity_array"},
         "bosses": {"$ref": "#/$defs/entity_array"},
         "projectiles": {"$ref": "#/$defs/entity_array"},
-        "materials": {"$ref": "#/$defs/entity_array"},
+        "materials": {"$ref": "#/$defs/material_array"},
         "consumables": {"$ref": "#/$defs/entity_array"},
         "crates": {"$ref": "#/$defs/entity_array"},
         "obstacles": {"$ref": "#/$defs/entity_array"}
       }
     },
     "entity_array": {"type": "array", "items": {"type": "object"}},
+    "material_array": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["value"],
+        "properties": {
+          "value": {"type": "integer", "minimum": 1}
+        }
+      }
+    },
     "counts": {
       "type": "object",
       "additionalProperties": {"type": "integer", "minimum": 0}

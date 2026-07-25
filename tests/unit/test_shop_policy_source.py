@@ -129,16 +129,16 @@ def test_wp2_capture_build_versions_the_v122_crossing_tier_policy():
     controller = CONTROLLER.read_text(encoding="utf-8")
     telemetry = TELEMETRY.read_text(encoding="utf-8")
 
-    # Teacher policy v126 (bounded surplus reroll) on mod 0.2.35; the M3
+    # Teacher policy v127 (material-crediting telemetry) on mod 0.2.36; the M3
     # student-inference path (learned/ bridge, default-off) is unchanged —
     # deploy surface bumps together: manifest, controller meta, telemetry
     # default, and the collector identity gate.
-    assert '"version_number": "0.2.35"' in manifest
-    assert "v126 deterministic teacher" in manifest
-    assert controller.count("teacher_v1-0.1.126-gun-wp1") == 1
-    assert controller.count("0.2.35-wp2-capture") == 1
-    assert telemetry.count("teacher_v1-0.1.126-gun-wp1") == 1
-    assert telemetry.count("0.2.35-wp2-capture") == 1
+    assert '"version_number": "0.2.36"' in manifest
+    assert "v127 deterministic teacher" in manifest
+    assert controller.count("teacher_v1-0.1.127-gun-wp1") == 1
+    assert controller.count("0.2.36-wp2-capture") == 1
+    assert telemetry.count("teacher_v1-0.1.127-gun-wp1") == 1
+    assert telemetry.count("0.2.36-wp2-capture") == 1
 
 
 def test_v123_strength_signal_is_plumbed_through_controller_and_field():
@@ -1415,11 +1415,18 @@ def test_v118_loot_dash_is_bounded_hp_gated_and_window_tested():
     assert "_loot_dash_ticks = BotConfig.LOOT_DASH_MAX_TICKS" in dash
     assert "_loot_dash_cooldown = BotConfig.loot_dash_cooldown_ticks(wave)" in dash
 
-    # Survival and finale paths always drop an active dash.
+    # Survival and finale paths always drop an active dash. v127 routes both drops
+    # through _suppress_loot_dash so the telemetry records that it happened; the
+    # guarantee is unchanged — the helper clears the flag and nothing else does.
     movement = potential.split("func compute_movement", 1)[1].split(
         "func _best_loot_cluster", 1
     )[0]
-    assert movement.count("_loot_dash_active = false") == 2
+    assert movement.count('_suppress_loot_dash("suppressed_survival")') == 1
+    assert movement.count('_suppress_loot_dash("suppressed_finale")') == 1
+    suppressor = potential.split("func _suppress_loot_dash", 1)[1].split(
+        "\nfunc ", 1
+    )[0]
+    assert "_loot_dash_active = false" in suppressor
     # The final body arbiter relaxes only the pack tier during a dash and
     # keeps the dash route despite crowd penalty, floors permitting.
     assert "not _loot_dash_active, _loot_dash_active)" in movement

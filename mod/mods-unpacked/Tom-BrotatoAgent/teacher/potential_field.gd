@@ -165,7 +165,7 @@ func compute_movement(state, profile) -> Vector2:
 		# and use the battle-tested panic/pure-repulsion path until recovery.
 		# Wave 20 instead uses its center-biased finale survival controller.
 		# v118: survival always outranks collection; drop any active dash.
-		_loot_dash_active = false
+		_suppress_loot_dash("suppressed_survival")
 		var survival_dir = _panic_dodge(pos, enemies, bosses, projectiles, arena)
 		if survival_dir == Vector2.ZERO:
 			survival_dir = _pure_repulsion_flee(
@@ -191,7 +191,7 @@ func compute_movement(state, profile) -> Vector2:
 	var desire: Vector2
 	if finale:
 		# v118: no dashes on the boss wave; survival is the only objective.
-		_loot_dash_active = false
+		_suppress_loot_dash("suppressed_finale")
 		# v97: survival and central map control are the finale's base objective.
 		# Automatic fire does not require movement to preserve a boss-range ring.
 		desire = _pure_repulsion_flee(
@@ -279,6 +279,71 @@ var _loot_dash_active := false
 var _loot_dash_target := Vector2.ZERO
 var _loot_dash_ticks := 0
 var _loot_dash_cooldown := 0
+# v127 loot-dash observability. Only `active` was ever emitted, which made a dash
+# that fires and fails to clear indistinguishable from one the cooldown / HP floor
+# / MAX_TICKS bounds suppressed — opposite fixes, same telemetry (see
+# reports/wp2/late_wave_collection_mechanism.md). These are plain scalars assigned
+# at each decision exit, so the 60 Hz path allocates nothing; loot_dash_debug()
+# builds the dict for the consumer. `_loot_dash_state` carries the per-tick outcome
+# (including the blocking reason on non-armed ticks, which is what measures
+# suppression), while `_loot_dash_seq` advances ONLY on an arm/abort/suppress edge
+# so transitions can be recovered by differencing.
+const LOOT_DASH_STATES := [
+	"idle",                          # no decision recorded yet this run
+	"active",                        # dash ongoing, no transition this tick
+	"armed",                         # EDGE: dash armed this tick
+	"aborted_ticks",                 # EDGE: LOOT_DASH_MAX_TICKS exhausted
+	"aborted_pile_gone",             # EDGE: target pile no longer present — cleared
+	"aborted_arrived",               # EDGE: inside LOOT_DASH_ARRIVE_RADIUS
+	"aborted_hp",                    # EDGE: hp fell under arm floor * 0.8
+	"suppressed_survival",           # late-survival branch dropped/blocked the dash
+	"suppressed_finale",             # boss finale dropped/blocked the dash
+	"not_armed_cooldown",
+	"not_armed_hp_floor",
+	"not_armed_no_stall",            # neither the stall count nor PACK_DENSITY_SOFT met
+	"not_armed_no_pile",             # best cluster under LOOT_DASH_MIN_PILE
+	"not_armed_degenerate",          # target coincides with the player
+	"not_armed_window_clearance",
+	"not_armed_projectile_context",
+]
+var _loot_dash_state := "idle"
+var _loot_dash_seq := 0
+var _loot_dash_scan_count := -1  # materials inside the scan radius; -1 = not computed
+var _loot_dash_pile := -1        # best-cluster size the check saw; -1 = not computed
+
+
+func _note_loot_dash_edge(state: String) -> void:
+	_loot_dash_state = state
+	_loot_dash_seq += 1
+
+
+func _suppress_loot_dash(state: String) -> void:
+	# The late-survival and finale branches drop the dash and return before
+	# _apply_loot_dash runs, so without this the debug block would keep reporting
+	# the last pre-suppression tick indefinitely. Only an actual drop is an edge;
+	# merely being inside a suppressing branch is a per-tick state.
+	if _loot_dash_active:
+		_loot_dash_active = false
+		_loot_dash_seq += 1
+	_loot_dash_state = state
+	_loot_dash_scan_count = -1
+	_loot_dash_pile = -1
+
+
+func loot_dash_debug() -> Dictionary:
+	# Compact per-tick block: seven scalars, no nesting. Dash YIELD is deliberately
+	# not computed here — v127 also emits player.materials on every capture, so the
+	# material gained across a dash window is an exact downstream difference over
+	# the ticks between two _loot_dash_seq edges, at zero runtime cost.
+	return {
+		"active": _loot_dash_active,
+		"state": _loot_dash_state,
+		"seq": _loot_dash_seq,
+		"ticks": _loot_dash_ticks if _loot_dash_active else 0,
+		"cooldown": _loot_dash_cooldown,
+		"scan": _loot_dash_scan_count,
+		"pile": _loot_dash_pile,
+	}
 
 
 func _best_loot_cluster(pos: Vector2, loot) -> Array:
@@ -326,19 +391,44 @@ func _apply_loot_dash(pos: Vector2, desire: Vector2, hp_ratio: float,
 	if _loot_dash_active:
 		_loot_dash_ticks -= 1
 		var reacquired := _best_loot_cluster(_loot_dash_target, loot)
+		var pile_gone: bool = int(reacquired[1]) == 0
 		var arrived: bool = (
-			int(reacquired[1]) == 0
+			pile_gone
 			or (pos - _loot_dash_target).length()
 				<= BotConfig.LOOT_DASH_ARRIVE_RADIUS)
+		_loot_dash_scan_count = -1
+		_loot_dash_pile = int(reacquired[1])
 		if (_loot_dash_ticks <= 0 or arrived
 				or hp_ratio < arm_hp_floor * 0.8):
+			# Attribution follows the condition's own short-circuit order, so a
+			# tick that satisfies several causes reports the first. `pile` is
+			# emitted alongside, so an analyst can still see a zero pile behind an
+			# "aborted_ticks" edge rather than having to trust the precedence.
+			# pile_gone is split out of `arrived` on purpose: ending because the
+			# pile is no longer there means the dash CLEARED it, whereas ending
+			# inside the arrive radius with material still present means it did
+			# not — that split is the capacity-vs-tuning discriminator.
+			if _loot_dash_ticks <= 0:
+				_note_loot_dash_edge("aborted_ticks")
+			elif pile_gone:
+				_note_loot_dash_edge("aborted_pile_gone")
+			elif arrived:
+				_note_loot_dash_edge("aborted_arrived")
+			else:
+				_note_loot_dash_edge("aborted_hp")
 			_loot_dash_active = false
 			_loot_dash_cooldown = BotConfig.loot_dash_cooldown_ticks(wave)
 			return desire
+		_loot_dash_state = "active"
 		if int(reacquired[1]) > 0:
 			_loot_dash_target = reacquired[0]
 		return _normalize(_loot_dash_target - pos)
 	if _loot_dash_cooldown > 0 or hp_ratio < arm_hp_floor:
+		# Same short-circuit order as the branch condition above.
+		_loot_dash_state = ("not_armed_cooldown" if _loot_dash_cooldown > 0
+			else "not_armed_hp_floor")
+		_loot_dash_scan_count = -1
+		_loot_dash_pile = -1
 		return desire
 	# v118 armed only under density suppression, but wave-10 live evidence
 	# showed the ordinary field starving without it: engagement and strafe
@@ -351,17 +441,23 @@ func _apply_loot_dash(pos: Vector2, desire: Vector2, hp_ratio: float,
 			float(item.get("x", 0.0)), float(item.get("y", 0.0)))
 		if (item_pos - pos).length() <= BotConfig.LOOT_DASH_SCAN_RADIUS:
 			scan_count += 1
+	_loot_dash_scan_count = scan_count
 	var stalled: bool = scan_count >= BotConfig.loot_dash_stall_count(wave)
 	if (not stalled
 			and _count_nearby_enemies(pos, enemies, bosses)
 				< BotConfig.PACK_DENSITY_SOFT):
+		_loot_dash_state = "not_armed_no_stall"
+		_loot_dash_pile = -1
 		return desire
 	var cluster := _best_loot_cluster(pos, loot)
+	_loot_dash_pile = int(cluster[1])
 	if int(cluster[1]) < BotConfig.LOOT_DASH_MIN_PILE:
+		_loot_dash_state = "not_armed_no_pile"
 		return desire
 	var target: Vector2 = cluster[0]
 	var direction := _normalize(target - pos)
 	if direction == Vector2.ZERO:
+		_loot_dash_state = "not_armed_degenerate"
 		return desire
 	var dash_sec: float = min(
 		BotConfig.ESCAPE_HORIZON,
@@ -369,6 +465,7 @@ func _apply_loot_dash(pos: Vector2, desire: Vector2, hp_ratio: float,
 	var window := _predictive_body_path_clearance(
 		pos, direction, player_speed, [dash_sec], enemies, bosses)
 	if window < window_floor:
+		_loot_dash_state = "not_armed_window_clearance"
 		return desire
 	if not projectiles.empty():
 		var context := _projectile_clearance_context(
@@ -379,7 +476,9 @@ func _apply_loot_dash(pos: Vector2, desire: Vector2, hp_ratio: float,
 				context["times"], arena)
 			if bullet_clear < (BotConfig.ESCAPE_PANIC_CLEARANCE
 					* float(context["caution"])):
+				_loot_dash_state = "not_armed_projectile_context"
 				return desire
+	_note_loot_dash_edge("armed")
 	_loot_dash_active = true
 	_loot_dash_target = target
 	_loot_dash_ticks = BotConfig.LOOT_DASH_MAX_TICKS
