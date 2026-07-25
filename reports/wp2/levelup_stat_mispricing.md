@@ -102,12 +102,54 @@ things, and winners kill faster for reasons this analysis does not isolate. The
 measured mispricing (~1.3x on a subset of level-up choices) is also modest
 relative to the 1.27x total DPS gap it is being asked to explain.
 
-**Not measured:** the marginal DPS of `ranged_damage`, which needs the equipped
-loadout (`flat` depends on each weapon's base damage and scaling coefficient).
-The v124 replay has a validated `LoadoutReconstructor` that would close this, and
-until it is run the ranged-vs-attack_speed comparison — the one the outcome data
-actually points at — remains unquantified. Only the attack_speed-vs-percent_damage
-pair above is exact.
+**Not measured (AT THE TIME):** the marginal DPS of `ranged_damage`. Now measured
+— see below, and it is the finding that matters.
+
+## The ranged_damage leg, measured — the mispricing is 6-16x, not 1.3x
+
+`scripts/wp2_stat_marginal_value_diag.py` reconstructs the equipped loadout at
+every shop (reusing the v124 `LoadoutReconstructor`, including silent-combine
+reconciliation) and prices all three stats on one basis:
+`effective(loadout, stats + 1) - effective(loadout, stats)`. **244 of 354 shop
+exits validated (68.9%)** against recorded `weapon_dps` / `weapon_count` /
+`weapon_tier_sum`; unvalidated shops are excluded entirely.
+
+Marginal %DPS of +1 stat point:
+
+| wave | n | ranged_damage | percent_damage | attack_speed | best/worst |
+|---|---|---|---|---|---|
+| 1 | 20 | **15.990%** | 0.998% | 0.999% | **16.02x** |
+| 5 | 18 | **10.199%** | 0.952% | 0.946% | 10.78x |
+| 9 | 13 | **6.484%** | 0.935% | 0.836% | 7.76x |
+| 12 | 16 | **5.352%** | 0.844% | 0.761% | 7.03x |
+| 15 | 6 | **4.722%** | 0.751% | 0.785% | 6.29x |
+| 19 | 4 | **4.349%** | 0.677% | 0.698% | 6.43x |
+
+**`ranged_damage` is worth 6.4x an attack_speed point at waves 12-19, and 16x in
+the early game. The scorer values them identically.** The earlier 1.31x figure was
+the attack_speed-vs-percent_damage pair — the *small* one.
+
+The size is mechanical: `ranged_damage` enters `flat` through **every** equipped
+weapon's scaling coefficient, and that flat total is then multiplied by
+`(1 + percent_damage/100)`, the crit term, `nb_projectiles` and `crowd_mult`.
+`attack_speed` is a single rate multiplier with diminishing returns in its own
+level. A six-weapon loadout compounds the former six times over and the latter not
+at all.
+
+## This reframes the argument, and strengthens it
+
+The ratio is **the same in both arms** — 6.55x in defeats, 6.52x in victories.
+
+So the mispricing does **not** explain the win/loss divergence; it is not an
+outcome-mined artifact either. It is a *uniform* defect: **every run, winning and
+losing alike, is systematically under-valuing the single most DPS-efficient stat
+in the game by roughly 6x at the point of choice.**
+
+That is a better basis for a change than the original one. It does not rest on the
+contested causal story, it does not depend on n=20, and it is verifiable against
+the DPS formula alone. The predicted effect is a uniform lift in offense
+trajectory rather than a targeted fix to losing runs — and it should be gated and
+measured as such.
 
 ## Proposed v128 (NOT implemented — deliberately)
 
@@ -116,15 +158,36 @@ Price level-up offense options by marginal DPS instead of raw stat points, reusi
 both. This is a *consistency* fix and is justified by the mispricing alone,
 independent of whether it moves win rate.
 
-Held for review rather than implemented overnight, for three reasons:
+Held for operator review rather than implemented overnight:
 
-1. The ranged_damage leg is unquantified (above), and that is the leg the outcome
-   data points at. Shipping before measuring it would repeat the error this
-   document's parent had to correct.
-2. `decide_levelup` interacts with `_late_shop_pivot_bonus`, whose pinned
-   coefficient strings are protected by frozen tests.
-3. Deploying needs a version bump (which also carries the undeployed mod-ready
+1. `decide_levelup` interacts with `_late_shop_pivot_bonus`, whose pinned
+   coefficient strings are protected by frozen tests — this is not an additive
+   change, it replaces the ranking term.
+2. Deploying needs a version bump (which also carries the undeployed mod-ready
    sentinel) and a qualifying smoke; that should not land unattended.
+3. The change is now well-founded but its *magnitude* is unproven. Reweighting a
+   term that currently dominates selection (6x) could swing level-up choices hard
+   toward ranged_damage, and the v117 cowardice lesson is the standing reminder
+   that a single-axis optimisation can cost a run its survivability. A predeclared
+   gate is required, not just a smoke.
 
-**Next step, in order:** run the loadout reconstruction to quantify ranged_damage's
-marginal DPS at waves 12-19, then decide v128 on the complete picture.
+**Where the measurement now stands:** the defect is quantified and verified against
+the DPS formula (6.4x at w12-19, 16x early), on 244 validated loadouts, present
+equally in winning and losing runs. The remaining work is design, not measurement.
+
+**Scope note for the design.** `_direct_offense_gain` is used in two very different
+ways, and only one is badly harmed. As a *threshold* test (the v125 reroll gate's
+`>= 6.0` check) equal weighting is defensible — it asks "is this item offense at
+all". As a *ranking* term in `decide_levelup` (`+ gain0 * 6.0`) it directly orders
+choices against each other, and there the 6x mispricing bites. v128 should target
+the ranking use and leave the gate's threshold semantics alone, or it will
+destabilise the v125/v126 evidence chain for no reason.
+
+## Limitations
+
+- 68.9% of shop exits validated; the other 31.1% are excluded, and they are not
+  missing at random (unvalidated shops skew to loadouts containing weapons that
+  never appeared on a recorded board). Late waves are thinnest — n=4-6 at w15-19.
+- Marginal value is computed for a **+1 point** step. Real level-up options grant
+  varying amounts, so the per-option error differs from the per-point error.
+- All of this is the *teacher* on one build.
