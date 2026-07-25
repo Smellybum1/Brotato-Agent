@@ -13,7 +13,7 @@ const LOG_NAME = "Tom:BrotatoAgent:Runner"
 var active: bool = false
 var auto_start_benchmark: bool = true
 var current_move_vector: Vector2 = Vector2.ZERO
-var policy_version: String = "teacher_v1-0.1.126-gun-wp1"
+var policy_version: String = "teacher_v1-0.1.127-gun-wp1"
 var last_move_debug: Dictionary = {}
 var last_meta_debug: Dictionary = {}
 var _manual_override: bool = false
@@ -37,8 +37,27 @@ var _batch_runs: int = 0
 const _BATCH_STATS_PATH := "user://brotato_agent/batch_hud.json"
 const _WP2_CAPTURE_SCHEMA_VERSION := "2.0.0"
 const _WP2_CAPTURE_SCHEMA_ID := "combat_capture_v2"
-const _WP2_CAPTURE_SCHEMA_HASH := "95B6444796A21FD44E94113B75BA2097BC381D5F72ED784F9B9A4A99DD46D951"
+const _WP2_CAPTURE_SCHEMA_HASH := "2823CB7E7D6A6DDB7F805A76D0CD674BA7A2A908058771B66B4A8FEFF9BC1174"
 const _WP2_CAPTURE_DIVISOR := 3 # 60 Hz physics / 3 = 20 capture decisions per second.
+# Capture-side capacity limits, per entity group. 0 means unlimited, which is the
+# shipped setting for every group: the capture deliberately emits untruncated raw
+# groups so the stream can be re-encoded at any downstream capacity later (the
+# encoder owns the real caps — see configs/wp2/observation_v1.yaml). These exist so
+# dropped_counts is *derived* from an actual limit rather than asserted: it reports
+# a measured zero while the limits are unlimited, and real counts if one is ever set.
+const _WP2_CAPTURE_LIMITS := {
+	"enemies": 0, "bosses": 0, "projectiles": 0, "materials": 0,
+	"consumables": 0, "crates": 0, "obstacles": 0,
+}
+# v127: the 50-material ceiling seen in capture analysis is the ENGINE's, not ours.
+# Brotato's main.gd holds `const MAX_GOLDS = 50`; past that, a new drop does not
+# spawn an entity — a random existing gold absorbs it (`gold_boosted.value +=
+# unit.stats.value`). So the material entity COUNT saturates at 50 while the
+# material VALUE keeps climbing, which is why every material entity now carries
+# `value` (see _collect_loot). Sum `value` for the true pile; the count alone is a
+# censored lower bound. Documented here because the mod cannot raise the engine cap
+# without changing game behaviour, and must not.
+const _WP2_ENGINE_MAX_GOLDS := 50
 
 const _PROFILES_SCRIPT = preload("res://mods-unpacked/Tom-BrotatoAgent/teacher/build_profiles.gd")
 const _SHOP_SCRIPT = preload("res://mods-unpacked/Tom-BrotatoAgent/teacher/shop_strategy.gd")
@@ -492,6 +511,20 @@ func _emit_wp2_combat_capture(main, state: Dictionary, teacher_action_fresh: boo
 		else:
 			consumables.append(item)
 	_wp2_capture_seq += 1
+	var raw_groups := {
+		"enemies": state.get("enemies", []),
+		"bosses": state.get("bosses", []),
+		"projectiles": state.get("projectiles", []),
+		"materials": state.get("loot", []),
+		"consumables": consumables,
+		"crates": crates,
+		"obstacles": state.get("trees", []),
+	}
+	var entities := {}
+	var dropped_counts := {}
+	for group in raw_groups:
+		entities[group] = _wp2_apply_capture_limit(raw_groups[group], group)
+		dropped_counts[group] = raw_groups[group].size() - entities[group].size()
 	var payload = {
 		"capture_schema_id": _WP2_CAPTURE_SCHEMA_ID,
 		"capture_schema_hash": _WP2_CAPTURE_SCHEMA_HASH,
@@ -510,25 +543,18 @@ func _emit_wp2_combat_capture(main, state: Dictionary, teacher_action_fresh: boo
 			"reason": str(last_move_debug.get("reason", "potential_field")),
 			"contributions": last_move_debug.get("debug", {}).duplicate(true),
 		},
-		"entities": {
-			"enemies": state.get("enemies", []),
-			"bosses": state.get("bosses", []),
-			"projectiles": state.get("projectiles", []),
-			"materials": state.get("loot", []),
-			"consumables": consumables,
-			"crates": crates,
-			"obstacles": state.get("trees", []),
-		},
+		"entities": entities,
 		"weapons": state.get("weapons", []),
 		"arena": state.get("arena", {}),
 		"invalid_counts": state.get("invalid_entities", {}),
-		"dropped_counts": {
-			"enemies": 0, "bosses": 0, "projectiles": 0, "materials": 0,
-			"consumables": 0, "crates": 0, "obstacles": 0,
-		},
+		"dropped_counts": dropped_counts,
 	}
 	payload["player"]["measured_vx"] = measured_velocity.x
 	payload["player"]["measured_vy"] = measured_velocity.y
+	# v127 material-crediting instrumentation. Written onto the payload copy, never
+	# into `state`, so the teacher's decision inputs are byte-identical to v126.
+	payload["player"]["materials"] = _wp2_player_materials()
+	payload["player"]["bonus_materials"] = _wp2_bonus_materials()
 	_telem.emit_versioned("combat_capture", payload, _WP2_CAPTURE_SCHEMA_VERSION)
 	# Flag-off path unchanged: prev-action tracks current_move_vector. In student
 	# mode the learned controller owns prev-action (resolved applied vector), so
@@ -538,6 +564,49 @@ func _emit_wp2_combat_capture(main, state: Dictionary, teacher_action_fresh: boo
 	_wp2_last_capture_player_pos = player_pos
 	_wp2_last_capture_ts_ms = now_ms
 	return payload
+
+
+func _wp2_apply_capture_limit(raw: Array, group: String) -> Array:
+	# Returns the entities of `group` that survive its capture-side capacity limit.
+	# A limit of 0 — the shipped setting for every group — means unlimited, so the
+	# raw array is returned untouched and the capture stays untruncated. The caller
+	# derives dropped_counts from raw.size() - kept.size(), so the reported drops can
+	# never drift from what was actually emitted.
+	var limit := int(_WP2_CAPTURE_LIMITS.get(group, 0))
+	if limit <= 0 or raw.size() <= limit:
+		return raw
+	var kept := []
+	for i in range(limit):
+		kept.append(raw[i])
+	return kept
+
+
+func _wp2_player_materials() -> int:
+	# Spendable material counter — the same RunData accessor the shop path reads for
+	# `gold` (see _handle_shop / _build_dict). -1 means "unavailable", never 0, so a
+	# missing accessor cannot be misread as a genuinely empty purse.
+	if RunData == null or not RunData.has_method("get_player_gold"):
+		return -1
+	return int(RunData.get_player_gold(0))
+
+
+func _wp2_bonus_materials() -> int:
+	# The end-of-wave carry-over pool. Brotato's clean_up_room() sends every material
+	# still on the floor to the gold bag, and those credit `bonus_gold` rather than
+	# spendable gold; spawn_gold() then drains it by boosting subsequent drops. It is
+	# therefore the direct observable for the deferred-crediting question in
+	# reports/wp2/materials_leftover_corrected.md — a jump here at wave end (with no
+	# matching jump in `materials`) is the backlog model; no jump is immediate credit.
+	# Accessor shape differs across builds, so probe method then property; -1 =
+	# unavailable.
+	if RunData == null:
+		return -1
+	if RunData.has_method("get_player_bonus_gold"):
+		return int(RunData.get_player_bonus_gold(0))
+	var value = RunData.get("bonus_gold")
+	if value == null:
+		return -1
+	return int(value)
 
 
 func _wave_timer_snapshot(main) -> Dictionary:
@@ -634,7 +703,7 @@ func _collect_loot(main) -> Array:
 				continue
 			if ("visible" in item) and not item.visible:
 				continue
-			loot.append(_pickup_snapshot(item, "material", ""))
+			loot.append(_material_snapshot(item))
 		return loot
 	var items = main.get_node_or_null("Items")
 	if items == null:
@@ -643,8 +712,19 @@ func _collect_loot(main) -> Array:
 		for item in items.get_children():
 			if not is_instance_valid(item) or not item.visible:
 				continue
-			loot.append(_pickup_snapshot(item, "material", ""))
+			loot.append(_material_snapshot(item))
 	return loot
+
+
+func _material_snapshot(item) -> Dictionary:
+	# v127: materials are NOT unit-valued. A Gold node ships with `value = 1`, but it
+	# grows in two engine paths: bonus_gold boosting at spawn, and MAX_GOLDS
+	# absorption once _WP2_ENGINE_MAX_GOLDS entities are already on the floor. Emit
+	# the live value so the pile can be measured past the entity ceiling; fall back to
+	# 1 (the class default) only if the property is absent on this build.
+	var snap := _pickup_snapshot(item, "material", "")
+	snap["value"] = int(item.value) if ("value" in item) else 1
+	return snap
 
 
 func _collect_trees(es) -> Array:
@@ -1682,6 +1762,14 @@ func choose_movement(combat_observation: Dictionary) -> Dictionary:
 	var translation_debug: Dictionary = {}
 	if _field.has_method("finale_translation_debug"):
 		translation_debug = _field.finale_translation_debug()
+	# v127: the loot-dash state machine gets its own compact block. It rides the
+	# existing debug bag, so it reaches BOTH consumers with no new plumbing — the
+	# 20 Hz capture (teacher.contributions) and the 0.5 s combat_tick. Kept out of
+	# finale_translation because it is not a finale signal; `loot_dash_active`
+	# stays duplicated there so analysis written against pre-v127 runs still works.
+	var loot_dash_debug: Dictionary = {}
+	if _field.has_method("loot_dash_debug"):
+		loot_dash_debug = _field.loot_dash_debug()
 	return {
 		"vector": vec,
 		"reason": "potential_field",
@@ -1690,6 +1778,7 @@ func choose_movement(combat_observation: Dictionary) -> Dictionary:
 			"enemies": combat_observation.get("enemies", []).size(),
 			"projectiles": combat_observation.get("projectiles", []).size(),
 			"finale_translation": translation_debug,
+			"loot_dash": loot_dash_debug,
 		},
 	}
 
@@ -1778,7 +1867,7 @@ func _start_run() -> void:
 		"endless": false,
 		"wave_retry": false,
 		"game_version": "1.1.15.4",
-		"mod_version": "0.2.35-wp2-capture",
+		"mod_version": "0.2.36-wp2-capture",
 		"config_id": "well_rounded_d0_anyranged",
 		"policy_version": policy_version,
 	}

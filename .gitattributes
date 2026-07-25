@@ -1,0 +1,12 @@
+# Identity-bearing files whose SHA-256 is taken over RAW BYTES. A CRLF checkout
+# (core.autocrlf=true on Windows) silently changes those bytes and therefore the
+# hash, which breaks the capture/observation identity gates: the mod's
+# _WP2_CAPTURE_SCHEMA_HASH stops matching the schema file, validate_telemetry
+# rejects every capture, and the encoder's golden digest moves. Pin them to LF so
+# the hash is a property of the content, not of who checked the repo out.
+#
+# Discovered 2026-07-25 while bumping the capture schema for v127: a worktree
+# checkout produced CRLF and yielded a different schema hash than the main
+# checkout for byte-identical content.
+configs/** text eol=lf
+datasets/**/manifest.json text eol=lf
