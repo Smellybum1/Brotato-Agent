@@ -233,7 +233,10 @@ def test_v126_controller_board_barrier_and_exit_reason_telemetry():
     # The owned-item lookup must never be able to break _build_dict: both the
     # 1.1.x accessor and the older flat array are handled, else an empty list.
     assert 'if RunData.has_method("get_player_items"):' in controller
-    assert 'elif "items" in RunData and RunData.items != null:' in controller
+    # The property probe must use get(), NOT `"items" in RunData`: Godot 3 rejects
+    # `in` against an autoload at PARSE time, which takes the whole mod down. That
+    # is what the first v127 deploy smoke hit; see test_no_in_operator_against_autoloads.
+    assert 'elif RunData.get("items") != null:' in controller
 
 
 # ── 2. the three evidence boards ──────────────────────────────────────────────

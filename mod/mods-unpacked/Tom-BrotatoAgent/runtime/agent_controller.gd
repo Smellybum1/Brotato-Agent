@@ -1640,7 +1640,9 @@ func _build_dict() -> Dictionary:
 	var owned_source := []
 	if RunData.has_method("get_player_items"):
 		owned_source = RunData.get_player_items(0)
-	elif "items" in RunData and RunData.items != null:
+	elif RunData.get("items") != null:
+		# Avoid `"prop" in RunData` — Godot 3 rejects that for some autoload types
+		# (see adapter/game_adapter.gd::_danger). Probe with get(), read the property.
 		owned_source = RunData.items
 	for owned in owned_source:
 		if owned == null or not ("my_id" in owned):
