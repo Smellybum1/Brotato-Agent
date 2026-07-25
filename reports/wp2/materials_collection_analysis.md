@@ -216,3 +216,44 @@ Recommend **not** pursuing a collection-behaviour change. The material-economy
 lever is the shop layer (spend efficiency), consistent with the existing v126
 rich-exit evidence; the survival lever is the boss/projectile phase, which is
 where the damage actually is.
+
+---
+
+## CORRECTION (2026-07-25, same day) — two claims above are unsupported
+
+Follow-up analysis (`material_crediting_model_test.md`) invalidated two
+inferences in this report. Both are retracted:
+
+1. **"End-of-wave auto-collect banks everything."** UNSUPPORTED. The
+   observed drain of the on-ground count to 0 at wave end is equally
+   consistent with despawn-plus-deferred-credit. Distinguishing them
+   requires a player-side material counter in telemetry (does not exist)
+   or a deliberate experiment leaving a large pile in a survivable wave
+   (this policy never produces that naturally). The crediting mechanic
+   is OPEN.
+2. **"No material instance_id survives into the next wave."** INVALID.
+   `instance_id` is pooled and recycled — per wave, the distinct-id count
+   exactly equals the peak simultaneous count in every wave of every run.
+   The comparison carried no information.
+
+**What survives, and why the conclusion is unchanged.** The operational
+finding does not depend on the crediting mechanic: on SURVIVED waves the
+material count remaining at wave end has median 1, mean 3.15, p90 4, and
+a maximum of 6 (n=239 wave-observations). Every pile >= 10 occurs on a
+run's TERMINAL wave (death wave or the wave-20 finish), where no
+subsequent wave exists. Against ~300 gold/wave of realized income, the
+leftover is under 1%. Mid-wave piles are real and large (the capture list
+saturates at its 50-entity ceiling in late waves), but the decline curves
+are gradual (e.g. [11,7,4,3,2,1,0]), indicating in-wave pickup — the
+material is banked BEFORE the shop opens, so no income is delayed across
+a shop boundary and the collection-tempo/compounding argument has no
+mechanism to act through.
+
+Recommendation is therefore unchanged: no collection-behaviour change.
+
+**Additional telemetry defects recorded** (see also the hardcoded
+`dropped_counts` defect noted above): material entities carry no
+value/amount field (`x,y,vx,vy,instance_id,id,category,type_id,radius,
+nx,ny`; only `gold.gd` observed as type_id), and the materials list is
+capped at 50 entities, saturating in late waves — mid-wave counts are
+lower bounds.
