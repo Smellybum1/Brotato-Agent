@@ -1,4 +1,22 @@
-# Stage F2 handoff — fresh-session entry point (2026-07-25)
+# Stage F2 handoff — HISTORICAL (superseded 2026-07-26)
+
+> **THIS DOCUMENT IS NO LONGER THE ENTRY POINT.** Stage F2 completed
+> 2026-07-26 at 40/40 runs with a NULL verdict. Read
+> **`reports/wp2/f2/f2_verdict.md`** instead.
+>
+> Two things below are now WRONG and must not be acted on:
+> - the "Progress (11 of 40 launched)" table and "NEXT RUN IS 12" — the
+>   campaign is finished; do not resume it;
+> - the v127 deploy pointer at worktree `elastic-mcnulty-7aa022` — that copy
+>   is stale/redundant. The authoritative branch is `claude/keen-wu-fa36b5`
+>   (commit `cfade0f`), which bundles materials + dropped_counts + loot-dash.
+>
+> One claim below is also wrong: the loot-dash telemetry was NOT an
+> unobservable gap. `finale_translation.loot_dash_active` is emitted and
+> uptime was measured at 10.5% overall (not shut off in late waves).
+>
+> Still accurate and reusable: the exact per-run T/P procedure, the r11
+> sidecar-integrity gotcha, and the authority/delegation notes.
 
 READ FIRST, then `.tmp/wp2_stage_f2_design.md` (BINDING), then memory
 `brotato-agent-project-state` + `brotato-v127-materials-telemetry`.

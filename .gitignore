@@ -59,3 +59,7 @@ models/bc_v3/
 # Deploy markers
 .deploy_stamp
 *.log
+
+# Claude Code local state (agent definitions in .claude/agents ARE tracked)
+.claude/worktrees/
+.claude/settings.local.json

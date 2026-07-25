@@ -1,4 +1,4 @@
-{"run_index": 1, "arm": "T", "sts2_workers": 10}
+﻿{"run_index": 1, "arm": "T", "sts2_workers": 10}
 {"run_index": 2, "arm": "P", "sts2_workers": 0}
 {"run_index": 3, "arm": "T", "sts2_workers": 0}
 {"run_index": 4, "arm": "P", "sts2_workers": 0}
@@ -9,3 +9,32 @@
 {"run_index": 9, "arm": "T", "sts2_workers": 0}
 {"run_index": 10, "arm": "P", "sts2_workers": 10}
 {"run_index": 11, "arm": "P", "sts2_workers": 10, "note": "relaunched after aborted sidecar-less start"}
+{"run_index": 12, "arm": "T", "sts2_workers": 10}
+{"run_index": 13, "arm": "T", "sts2_workers": 9}
+{"run_index": 14, "arm": "P", "sts2_workers": 9}
+{"run_index": 15, "arm": "T", "sts2_workers": 0, "note": "STS2 campaign ended; machine load dropped mid-block-4"}
+{"run_index": 16, "arm": "P", "sts2_workers": 0}
+{"run_index": 17, "arm": "P", "sts2_workers": 0}
+{"run_index": 18, "arm": "T", "sts2_workers": 0}
+{"run_index": 19, "arm": "P", "sts2_workers": 0}
+{"run_index": 20, "arm": "T", "sts2_workers": 0}
+{"run_index": 21, "arm": "T", "sts2_workers": 6}
+{"run_index": 22, "arm": "P", "sts2_workers": 1}
+{"run_index": 23, "arm": "T", "sts2_workers": 1}
+{"run_index": 24, "arm": "P", "sts2_workers": 1}
+{"run_index": 25, "arm": "P", "sts2_workers": 0}
+{"run_index": 26, "arm": "T", "sts2_workers": 6}
+{"run_index": 27, "arm": "T", "sts2_workers": 1}
+{"run_index": 28, "arm": "P", "sts2_workers": 1}
+{"run_index": 29, "arm": "P", "sts2_workers": 1}
+{"run_index": 30, "arm": "T", "sts2_workers": 1}
+{"run_index": 31, "arm": "T", "sts2_workers": 1}
+{"run_index": 32, "arm": "P", "sts2_workers": 1}
+{"run_index": 33, "arm": "T", "sts2_workers": 1}
+{"run_index": 34, "arm": "P", "sts2_workers": 1}
+{"run_index": 35, "arm": "P", "sts2_workers": 2}
+{"run_index": 36, "arm": "T", "sts2_workers": 1}
+{"run_index": 37, "arm": "T", "sts2_workers": 1}
+{"run_index": 38, "arm": "P", "sts2_workers": 1}
+{"run_index": 39, "arm": "T", "sts2_workers": 1}
+{"run_index": 40, "arm": "P", "sts2_workers": 0}
