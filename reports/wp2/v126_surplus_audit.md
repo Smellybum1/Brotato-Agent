@@ -7,4 +7,4 @@
 
 | run | decisions | surplus rerolls | reasoned exits | violations |
 |---|---|---|---|---|
-| run_1785074590_34831 | 2 | 0 | 1 | 0 |
+| run_1785092490_74794 | 2 | 0 | 1 | 0 |

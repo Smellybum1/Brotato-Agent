@@ -152,7 +152,9 @@ def test_finale_v2_captures_stay_on_the_20hz_schedule():
     # Written so removing "and not finale_v2" fails: the immediately enclosing
     # guard must carry the exclusion, not merely appear somewhere in the function.
     assert guard_line.startswith("if wave >= _CONFIG_SCRIPT.BOSS_FINALE_WAVE")
-    assert guard_line.endswith("and not finale_v2:")
+    assert "and not finale_v2" in guard_line
+    # The rate-only arm also recomputes every tick and must be excluded too.
+    assert guard_line.endswith("and not finale_rate_full:")
 
 
 def test_overlapping_threat_does_not_flatten_every_heading():

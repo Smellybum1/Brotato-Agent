@@ -2,15 +2,15 @@
 
 Runs: **1**; accepted: **1**.
 
-## `run_1785074590_34831` -- accepted
+## `run_1785092490_74794` -- accepted
 
-- Result: `defeat` through wave 20.
-- Captures: 717 total; 717 fresh decisions; 717 late; 717 fresh late decisions.
-- Safety activations: 251 body, 189 projectile, 540 wall, 218 wall-body relief.
+- Result: `victory` through wave 20.
+- Captures: 1581 total; 1581 fresh decisions; 1581 late; 1581 fresh late decisions.
+- Safety activations: 451 body, 971 projectile, 1177 wall, 155 wall-body relief.
 - Violations: **0**.
-- Damage events retained for all-wave review: 3.
+- Damage events retained for all-wave review: 5.
 - Avoidable damage-path violations: 0.
 - Hidden wall-relief body lanes: 0.
-- Preserved-command body fallbacks with no eligible projectile-floor sample: 52.
-- Events SHA-256: `12D80F1B5DFAF82462016D8AF07181C0A73D2DFDEE6762E12C2552925514A895`.
-- Summary SHA-256: `5DF32EB1D026D40C39D1C2EFDD89A00CB6E751C0351FE6E9F20966807674829C`.
+- Preserved-command body fallbacks with no eligible projectile-floor sample: 212.
+- Events SHA-256: `EDE055B888A998155FC8F1EE3EC3FEBBE7194BD1F329A01EE9AD4E5AC8189471`.
+- Summary SHA-256: `554443A97348C90B8232CDB29433897F78C7C94A9A403C29AB87E1A23D8EECDC`.

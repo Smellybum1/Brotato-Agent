@@ -19,6 +19,12 @@ var resume_from_save: bool = false
 # byte-identical. When true the finale recomputes at 60 Hz while captures stay
 # on the ordinary 20 Hz schedule (see reports/wp2/finale_v2_design.md).
 var finale_v2: bool = false
+# Rate-only finale arm (wave 20 only). Default false -- flag-off behaviour is
+# byte-identical. When true the v1 movement policy is untouched but it
+# recomputes every physics tick (60 Hz) instead of 1 tick in 3, so the rate
+# change is isolated from the policy change v2 bundled with it. Captures stay
+# on the ordinary 20 Hz schedule.
+var finale_rate_full: bool = false
 var _resume_done: bool = false
 var _resume_ticks: int = 0
 # ~10 s at 60 Hz. ProgressData populates current_run_state during startup, so the
@@ -29,7 +35,7 @@ var policy_version: String = "teacher_v1-0.1.128-gun-wp1"
 # Single source of truth for the deployed mod identity: stamped into every run's
 # meta AND into the mod-ready sentinel, so the collector cannot accept a build
 # whose identity disagrees with what it asked for.
-const MOD_VERSION := "0.2.39-wp2-capture"
+const MOD_VERSION := "0.2.40-wp2-capture"
 const _MOD_READY_PATH := "user://brotato_agent/mod_ready.json"
 var last_move_debug: Dictionary = {}
 var last_meta_debug: Dictionary = {}
@@ -201,6 +207,7 @@ func _write_mod_ready() -> void:
 		# Lets a caller assert the finale arm BEFORE spending a trial, rather
 		# than discovering from the summary afterwards that the flag was lost.
 		"finale_v2": finale_v2,
+		"finale_rate_full": finale_rate_full,
 	}))
 	f.close()
 
@@ -311,6 +318,12 @@ func _physics_process(_delta: float) -> void:
 
 var _flee_tick := 0
 var _finale_move_tick := 0
+# Direct verification instrument for the finale rate arms. The ratio
+# finale_recompute_ticks / finale_combat_ticks is 1.0 when the finale recomputes
+# every tick and ~0.333 on the v1 1-in-3 schedule, so the arm that actually ran
+# is proved from the run summary rather than inferred from behaviour.
+var finale_combat_ticks: int = 0
+var finale_recompute_ticks: int = 0
 func _handle_combat(main) -> void:
 	var state = _gather_combat_state(main)
 	if state.empty():
@@ -336,8 +349,15 @@ func _handle_combat(main) -> void:
 		if finale_v2:
 			# v2 recomputes every physics tick (60 Hz); captures stay at 20 Hz.
 			recompute_move = true
+		elif finale_rate_full:
+			# Rate-only arm: same v1 policy, recomputed every physics tick.
+			# BOSS_FINALE_RECOMPUTE_DIVISOR is left at 3 and simply bypassed.
+			recompute_move = true
 		else:
 			recompute_move = (_finale_move_tick % _CONFIG_SCRIPT.BOSS_FINALE_RECOMPUTE_DIVISOR) == 1
+		finale_combat_ticks += 1
+		if recompute_move:
+			finale_recompute_ticks += 1
 	else:
 		_finale_move_tick = 0
 	if recompute_move:
@@ -357,7 +377,10 @@ func _handle_combat(main) -> void:
 	# The v1 alignment override must NOT apply on the v2 path: v2 recomputes on
 	# every tick, so this would move captures to 60 Hz and change control_dt_ms
 	# from ~50 ms to ~16 ms under a dataset and student path fixed at 20 Hz.
-	if wave >= _CONFIG_SCRIPT.BOSS_FINALE_WAVE and not finale_v2:
+	# The same applies to the rate-only arm, which also recomputes every tick;
+	# and the alignment the override buys is automatic when every tick is a
+	# recompute tick, so excluding both arms loses nothing.
+	if wave >= _CONFIG_SCRIPT.BOSS_FINALE_WAVE and not finale_v2 and not finale_rate_full:
 		emit_capture = recompute_move
 	if _student_active():
 		# Prev-action is the resolved applied vector of the finished period
@@ -1946,6 +1969,8 @@ func on_manual_override() -> void:
 func _start_run() -> void:
 	_run_started = true
 	_combat_tick_counter = 0
+	finale_combat_ticks = 0
+	finale_recompute_ticks = 0
 	_wp2_capture_seq = 0
 	_wp2_previous_action = Vector2.ZERO
 	_wp2_last_capture_player_pos = Vector2.ZERO
@@ -1977,6 +2002,7 @@ func _start_run() -> void:
 		"config_id": "well_rounded_d0_anyranged",
 		"policy_version": policy_version,
 		"finale_v2": finale_v2,
+		"finale_rate_full": finale_rate_full,
 	}
 	if _telem != null:
 		_telem.begin_run(meta)
@@ -1991,7 +2017,15 @@ func _finish_run(result_phase: String) -> void:
 		return
 	var result = "victory" if result_phase == "VICTORY" else "defeat"
 	if _telem != null:
-		_telem.end_run(result, {"last_wave": RunData.current_wave, "waves_completed": RunData.current_wave})
+		# end_run copies every extra key into the summary verbatim (begin_run's
+		# dict is an allowlist and would drop these), so the recompute ratio is
+		# recorded directly.
+		_telem.end_run(result, {
+			"last_wave": RunData.current_wave,
+			"waves_completed": RunData.current_wave,
+			"finale_combat_ticks": finale_combat_ticks,
+			"finale_recompute_ticks": finale_recompute_ticks,
+		})
 	_restore_pre_combine_mouse_mode()
 	_record_batch_result(result == "victory")
 	_run_started = false
@@ -2059,7 +2093,12 @@ func _on_watchdog(reason: String) -> void:
 	if _orch != null and not _orch.begin_recovery(reason):
 		if _telem != null:
 			_telem.emit("error", {"kind": "terminal", "reason": reason})
-			_telem.end_run("automation_fault", {"failure_category": reason, "last_wave": RunData.current_wave})
+			_telem.end_run("automation_fault", {
+				"failure_category": reason,
+				"last_wave": RunData.current_wave,
+				"finale_combat_ticks": finale_combat_ticks,
+				"finale_recompute_ticks": finale_recompute_ticks,
+			})
 		_run_started = false
 		active = false
 		# Keep auto_start_benchmark so menu driving can still chain the next run.
@@ -2216,6 +2255,8 @@ func _load_auto_config() -> void:
 		resume_from_save = bool(cfg["resume_from_save"])
 	if cfg.has("finale_v2"):
 		finale_v2 = bool(cfg["finale_v2"])
+	if cfg.has("finale_rate_full"):
+		finale_rate_full = bool(cfg["finale_rate_full"])
 
 func _update_hud_phase(detected: String) -> void:
 	if _hud == null:

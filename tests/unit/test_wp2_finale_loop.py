@@ -55,6 +55,7 @@ def _summary(**overrides):
         "damage_taken": 12,
         "duration_ms": 60000,
         "finale_v2": False,
+        "finale_rate_full": False,
     }
     base.update(overrides)
     return base
@@ -160,3 +161,72 @@ def test_finale_arm_missing_key_treated_as_false(tmp_path: Path):
     summary.pop("finale_v2")
     assert validate_trial(analysis, summary, "predator", True) == "finale_arm_mismatch:None"
     assert validate_trial(analysis, summary, "predator", False) == ""
+
+
+# --- rate-only arm guard ------------------------------------------------------
+
+
+def test_finale_rate_arm_matches_both_arms(tmp_path: Path):
+    analysis = analyse_events(_events(tmp_path, [(20, [PREDATOR])]))
+    assert validate_trial(analysis, _summary(), "predator", False, False) == ""
+    assert (
+        validate_trial(
+            analysis, _summary(finale_rate_full=True), "predator", False, True
+        )
+        == ""
+    )
+
+
+def test_finale_rate_arm_mismatch_expected_rate_full(tmp_path: Path):
+    analysis = analyse_events(_events(tmp_path, [(20, [PREDATOR])]))
+    reason = validate_trial(analysis, _summary(), "predator", False, True)
+    assert reason == "finale_rate_arm_mismatch:False"
+
+
+def test_finale_rate_arm_mismatch_expected_v1(tmp_path: Path):
+    analysis = analyse_events(_events(tmp_path, [(20, [PREDATOR])]))
+    reason = validate_trial(
+        analysis, _summary(finale_rate_full=True), "predator", False, False
+    )
+    assert reason == "finale_rate_arm_mismatch:True"
+
+
+def test_finale_rate_arm_missing_key_treated_as_false(tmp_path: Path):
+    analysis = analyse_events(_events(tmp_path, [(20, [PREDATOR])]))
+    summary = _summary()
+    summary.pop("finale_rate_full")
+    assert (
+        validate_trial(analysis, summary, "predator", False, True)
+        == "finale_rate_arm_mismatch:None"
+    )
+    assert validate_trial(analysis, summary, "predator", False, False) == ""
+
+
+def test_write_agent_config_writes_both_finale_flags_every_time(tmp_path: Path):
+    path = tmp_path / "agent_config.json"
+    write_agent_config(
+        path, auto_start=True, resume_from_save=True, finale_v2=False,
+        finale_rate_full=True,
+    )
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    assert payload["finale_v2"] is False
+    assert payload["finale_rate_full"] is True
+
+    write_agent_config(
+        path, auto_start=False, resume_from_save=False, finale_v2=False,
+        finale_rate_full=False,
+    )
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    assert payload["finale_rate_full"] is False
+
+
+def test_loop_source_exposes_finale_rate_full_flag():
+    src = (
+        Path(__file__).resolve().parents[2] / "scripts/wp2_finale_loop.py"
+    ).read_text(encoding="utf-8")
+    assert 'ap.add_argument("--finale-rate-full", action="store_true")' in src
+    assert "finale_rate_full=args.finale_rate_full," in src
+    assert '"finale_rate_full": bool(args.finale_rate_full),' in src
+    # The finally block must disarm BOTH flags.
+    tail = src.split("    finally:", 1)[1]
+    assert "finale_rate_full=False," in tail
