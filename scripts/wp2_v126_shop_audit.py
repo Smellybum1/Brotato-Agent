@@ -51,9 +51,29 @@ REASON_CODES = frozenset({
 
 
 def config_int(name: str, default: int) -> int:
+    """Read a policy constant out of config.gd, or FAIL LOUDLY.
+
+    This used to fall back to `default` when the regex missed. That is the same
+    defect class as an audit filter that can never match: a renamed, reformatted or
+    deleted constant would leave the audit silently checking the WRONG value and
+    still reporting zero violations. `can_buy` (null for every non-weapon offer, so
+    "0 gate misses" was vacuous) and `dropped_counts` (hardcoded 0) are the two
+    other instances in this project.
+
+    The default is retained only as the documented expected value, so a drift is
+    reported with both numbers rather than swallowed.
+    """
     match = re.search(rf"^const {name} := (-?\d+)$", CONFIG.read_text(encoding="utf-8"),
                       re.MULTILINE)
-    return int(match.group(1)) if match else default
+    if match is None:
+        raise SystemExit(
+            f"AUDIT ABORTED: could not parse `const {name} := <int>` from {CONFIG}.\n"
+            f"The audit mirrors this policy constant; without it the mirror would be "
+            f"checked against a stale hardcoded {default} and would report zero "
+            f"violations while testing the wrong rule. Fix the parser or the "
+            f"constant -- do not let this fall back."
+        )
+    return int(match.group(1))
 
 
 SURPLUS_REROLLS_MAX = config_int("SURPLUS_REROLLS_MAX", 3)
