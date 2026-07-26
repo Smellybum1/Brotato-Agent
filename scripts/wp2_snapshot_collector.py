@@ -52,6 +52,80 @@ def boss_label(bosses_spawn) -> str:
     return BOSS_ID_TO_ENTITY.get(raw, raw)
 
 
+def runs_dir() -> Path:
+    return Path(os.environ["APPDATA"]) / "Brotato" / "brotato_agent" / "runs"
+
+
+def newest_telemetry_run_id(runs_root: Path | None = None) -> str | None:
+    """Name of the run directory whose events.jsonl was written most recently.
+
+    That directory is the LIVE run, so it is the run whose save file we are
+    snapshotting. Returns None -- never a guess -- when no candidate exists.
+
+    WHY this field exists: on 2026-07-26 two fixtures captured 6 s apart from the
+    SAME run were mistaken for two independent builds, because nothing in the index
+    linked a fixture back to its source run. Recording the run id lets the library
+    be built one-build-per-run (see select_library).
+    """
+    root = runs_dir() if runs_root is None else runs_root
+    try:
+        candidates = [
+            p for p in root.iterdir() if p.is_dir() and (p / "events.jsonl").exists()
+        ]
+    except OSError:
+        return None
+    if not candidates:
+        return None
+    try:
+        newest = max(candidates, key=lambda p: (p / "events.jsonl").stat().st_mtime)
+    except OSError:
+        return None
+    return newest.name
+
+
+def select_library(index_rows, boss: str, one_per_run: bool = True) -> list[dict]:
+    """Fixture rows for `boss`, at most one per source run when one_per_run.
+
+    Two fixtures from the same run are the SAME build and do not constitute
+    independent evidence about a controller; grouping by source_run_id is what
+    makes the library a distribution of builds rather than an anecdote repeated.
+
+    Within a run the LOWEST-gold row wins: gold is spent in the wave-19 shop, so the
+    low-gold state is the POST-shop one. Resuming from it starts the trial at the
+    finale rather than re-running the shop, which both costs wall clock and lets
+    shop policy vary between trials that are meant to differ only in the controller.
+
+    Rows with a null/absent source_run_id are each their own group -- they predate
+    the field, and merging them would silently drop evidence.
+    """
+    selected: dict[object, dict] = {}
+    out: list[dict] = []
+    for i, row in enumerate(index_rows):
+        label = row.get("boss")
+        if label is None:
+            label = boss_label(row.get("bosses_spawn"))
+        if label != boss:
+            continue
+        if not one_per_run:
+            out.append(row)
+            continue
+        run_id = row.get("source_run_id")
+        key: object = run_id if run_id else ("__nogroup__", i)
+        current = selected.get(key)
+        if current is None or _gold_key(row) < _gold_key(current):
+            selected[key] = row
+    if not one_per_run:
+        return out
+    return list(selected.values())
+
+
+def _gold_key(row: dict) -> float:
+    gold = row.get("gold")
+    if isinstance(gold, (int, float)):
+        return float(gold)
+    return float("inf")  # unknown gold never beats a known one
+
+
 def save_dir() -> Path:
     base = Path(os.environ["APPDATA"]) / "Brotato"
     cands = [p for p in base.iterdir() if p.is_dir() and p.name.isdigit()]
@@ -140,11 +214,20 @@ def main() -> int:
                     seen.discard(digest)
                     print(f"  [torn copy discarded, will retry] wave {meta['current_wave']}")
                 else:
-                    rec = {"digest": digest, "file": name, "captured_at": stamp, **meta}
+                    rec = {
+                        "digest": digest,
+                        "file": name,
+                        "captured_at": stamp,
+                        # Link back to the run that produced this build; see
+                        # newest_telemetry_run_id for why.
+                        "source_run_id": newest_telemetry_run_id(),
+                        **meta,
+                    }
                     with index.open("a", encoding="utf-8") as fh:
                         fh.write(json.dumps(rec) + "\n")
                     print(f"  + {name}  boss={boss} hp={meta['hp']} "
-                          f"lvl={meta['level']} items={meta['n_items']}")
+                          f"lvl={meta['level']} items={meta['n_items']} "
+                          f"gold={meta['gold']} src={rec['source_run_id']}")
         time.sleep(args.poll_sec)
 
     print("done")
