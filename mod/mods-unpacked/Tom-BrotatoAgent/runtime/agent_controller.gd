@@ -12,12 +12,20 @@ const LOG_NAME = "Tom:BrotatoAgent:Runner"
 # Activated by difficulty robot button / auto-start benchmark.
 var active: bool = false
 var auto_start_benchmark: bool = true
+# Fixture harness (wave-20 iteration): resume a restored mid-run save instead of
+# starting a fresh run. Default false -- flag-off behaviour is byte-identical.
+var resume_from_save: bool = false
+var _resume_done: bool = false
+var _resume_ticks: int = 0
+# ~10 s at 60 Hz. ProgressData populates current_run_state during startup, so the
+# first MAIN_MENU tick can arrive before the save is loaded.
+const RESUME_MAX_TICKS := 600
 var current_move_vector: Vector2 = Vector2.ZERO
 var policy_version: String = "teacher_v1-0.1.128-gun-wp1"
 # Single source of truth for the deployed mod identity: stamped into every run's
 # meta AND into the mod-ready sentinel, so the collector cannot accept a build
 # whose identity disagrees with what it asked for.
-const MOD_VERSION := "0.2.37-wp2-capture"
+const MOD_VERSION := "0.2.38-wp2-capture"
 const _MOD_READY_PATH := "user://brotato_agent/mod_ready.json"
 var last_move_debug: Dictionary = {}
 var last_meta_debug: Dictionary = {}
@@ -188,6 +196,42 @@ func _write_mod_ready() -> void:
 	f.close()
 
 
+func _try_resume_saved_run() -> bool:
+	# Wave-20 fixture harness. Restoring a snapshot of run_v3_0.json and launching
+	# would otherwise start a NEW run and overwrite the very save being restored.
+	#
+	# Clicks the game's own ContinueButton rather than calling
+	# RunData.resume_from_state directly. Reading ProgressData.get("current_run_state")
+	# was tried first and always returned TYPE_NIL, and going through the real button
+	# is more robust anyway: main_menu.gd only shows/focuses ContinueButton when
+	# has_run_state is true, so the button's VISIBILITY is the run-state check, and
+	# its handler does the resume with whatever internal bookkeeping the live build
+	# expects. Resume lands in the SHOP of the saved wave, so a wave-19 fixture shops
+	# and then plays wave 20.
+	if not resume_from_save:
+		return false
+	if _orch == null:
+		return false
+	var scene = get_tree().current_scene
+	if scene == null:
+		return false
+	if not _orch._click_named_button(scene, ["ContinueButton"]):
+		if _resume_ticks % 120 == 1:
+			ModLoaderLog.info("resume_from_save: ContinueButton not clickable yet", LOG_NAME)
+		return false
+	# Resuming bypasses the normal danger-select path, so the agent never gets
+	# switched on and would sit idle in the restored shop (observed: save parked at
+	# wave 19 for 114 s with no telemetry). Activate explicitly; on_benchmark_activated
+	# calls _start_run(), so the resumed session gets its own telemetry run covering
+	# the wave-19 shop and wave 20.
+	var danger = 0
+	if _orch != null:
+		danger = int(_orch.target_danger)
+	on_benchmark_activated(danger)
+	ModLoaderLog.info("resume_from_save: clicked ContinueButton and activated agent", LOG_NAME)
+	return true
+
+
 func _student_active() -> bool:
 	# Student mode engages only with the flag on, the agent active, and the
 	# learned controller instantiated. Never engages while active is false.
@@ -209,6 +253,18 @@ func _physics_process(_delta: float) -> void:
 		# Always drive menus while auto-start is on — including after automation_fault
 		# (active=false) so EndRun / title screens still chain the next benchmark.
 		if auto_start_benchmark and not _manual_override and not active:
+			# Resume BLOCKS menu advance until it succeeds or gives up. Without this the
+			# menu driver races ahead, starts a fresh run, and overwrites the very save
+			# we are trying to restore (observed 2026-07-26: fixture clobbered to wave 2).
+			if resume_from_save and not _resume_done and detected in ["MAIN_MENU", "BOOT"]:
+				_resume_ticks += 1
+				if _try_resume_saved_run():
+					_resume_done = true
+					return
+				if _resume_ticks < RESUME_MAX_TICKS:
+					return
+				_resume_done = true
+				ModLoaderLog.info("resume_from_save: gave up after %d ticks; starting fresh" % _resume_ticks, LOG_NAME)
 			if detected in ["MAIN_MENU", "CHARACTER_SELECT", "STARTING_WEAPON_SELECT", "DANGER_SELECT", "BOOT", "RECOVERY", "VICTORY", "DEFEAT", "TERMINAL_ERROR"]:
 				var adv = _orch.try_menu_advance(scene, _adapter)
 				if adv.get("acted", false) and _telem != null and _run_started:
@@ -2139,6 +2195,8 @@ func _load_auto_config() -> void:
 		student_port = int(cfg["student_port"])
 	if cfg.has("student_model_sha256"):
 		student_model_sha256 = str(cfg["student_model_sha256"])
+	if cfg.has("resume_from_save"):
+		resume_from_save = bool(cfg["resume_from_save"])
 
 func _update_hud_phase(detected: String) -> void:
 	if _hud == null:
