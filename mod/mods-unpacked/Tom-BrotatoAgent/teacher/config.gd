@@ -202,6 +202,15 @@ const BOSS_FINALE_BODY_EMERGENCY_CLEARANCE_SLACK := 5.0
 const BOSS_FINALE_BODY_EMERGENCY_MIN_GAIN := 20.0
 # Bound every body-escape relaxation against the best sampled projectile lane.
 const BOSS_FINALE_BODY_ESCAPE_PROJECTILE_SLACK := 60.0
+# Finale controller v2 (default OFF, see reports/wp2/finale_v2_design.md).
+# Heading selection instead of vector summation: evaluate K candidate headings,
+# score each by closed-form time-to-collision saturated at a short horizon, and
+# pick the argmax. Hysteresis replaces both the anti-reversal patch and the
+# smoothing blend; the wall penalty keeps the hard margin dominant.
+const FINALE_V2_HEADINGS := 32
+const FINALE_V2_HORIZON := 0.60
+const FINALE_V2_HYSTERESIS := 12.0
+const FINALE_V2_WALL_PENALTY := 1000.0
 # Battlefield: chase/destroy trees for crates through wave 10.
 const TREE_PRIORITY_WAVE := 10
 const TREE_ATTRACTION := 1450.0

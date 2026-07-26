@@ -51,6 +51,8 @@ var _finale_body_best_clearance := -1.0
 var _finale_body_selected_clearance := -1.0
 var _finale_body_projectile_floor := -1.0
 var _finale_body_selected_projectile_clearance := -1.0
+# Finale controller v2 flag; the controller propagates agent_config.finale_v2.
+var finale_v2_enabled: bool = false
 
 
 func compute_movement(state, profile) -> Vector2:
@@ -192,6 +194,31 @@ func compute_movement(state, profile) -> Vector2:
 	if finale:
 		# v118: no dashes on the boss wave; survival is the only objective.
 		_suppress_loot_dash("suppressed_finale")
+		if finale_v2_enabled:
+			# Finale v2: heading selection replaces _pure_repulsion_flee /
+			# _panic_dodge, the projectile-escape blend, the anti-reversal and
+			# commitment patches, and the smoothing blend. The corner guard and
+			# the ordered safety tail are deliberately retained unchanged: they
+			# are shared late-wave code and the audit replay surface.
+			# The wave check on the corner guard is omitted because a finale
+			# wave is always >= LATE_EDGE_KITE_WAVE.
+			var v2_move = _finale_v2_heading(
+				pos, enemies, bosses, projectiles, arena, player_speed, _prev_move)
+			var v2_corner = _late_corner_escape(pos, arena)
+			if v2_corner != Vector2.ZERO:
+				v2_move = _normalize(
+					v2_move * BotConfig.LATE_CORNER_KEEP_MOVE + v2_corner)
+			v2_move = _finale_projectile_safety(
+				pos, v2_move, projectiles, player_speed, arena, enemies, bosses,
+				profile)
+			v2_move = _finale_wall_safety(
+				pos, v2_move, arena, bosses, projectiles, player_speed,
+				enemies, profile)
+			v2_move = _finale_body_safety(
+				pos, v2_move, player_speed, arena, enemies, bosses,
+				projectiles, profile, wave, true)
+			_prev_move = v2_move
+			return _prev_move
 		# v97: survival and central map control are the finale's base objective.
 		# Automatic fire does not require movement to preserve a boss-range ring.
 		desire = _pure_repulsion_flee(
@@ -2928,3 +2955,84 @@ func _consumable_attraction(pos, consumables, player, enemies, bosses, wave = 1)
 				continue
 		force += (diff / dist) * weight * local_urgency * local_safety / dist
 	return force
+
+
+# Finale controller v2 (default OFF). Evaluate K candidate headings and pick the
+# one that survives longest, saturating at FINALE_V2_HORIZON. Time to collision
+# is CLOSED FORM, never sampled: v116 established discrete time sampling as the
+# systemic root cause of the v84-103 collapse.
+func _finale_v2_heading(pos: Vector2, enemies, bosses, projectiles, arena,
+		player_speed: float, prev_dir: Vector2) -> Vector2:
+	var headings := int(BotConfig.FINALE_V2_HEADINGS)
+	if headings <= 0:
+		return Vector2.ZERO
+	var threat_list: Array = []
+	for projectile in projectiles:
+		threat_list.append(projectile)
+	for boss in bosses:
+		threat_list.append(boss)
+	for enemy in enemies:
+		threat_list.append(enemy)
+	var w := float(arena.get("width", 2048.0))
+	var h := float(arena.get("height", 1536.0))
+	var horizon := float(BotConfig.FINALE_V2_HORIZON)
+	var safe_speed := max(player_speed, 1.0)
+	var best_score := -INF
+	var best_dir := Vector2.ZERO
+	for k in range(headings):
+		var angle := (TAU * k) / float(headings)
+		var candidate := Vector2(cos(angle), sin(angle))
+		var player_vel := candidate * safe_speed
+		var t_hit := INF
+		for threat in threat_list:
+			var threat_pos := Vector2(
+				float(threat.get("x", 0.0)), float(threat.get("y", 0.0)))
+			var threat_vel := Vector2(
+				float(threat.get("vx", 0.0)), float(threat.get("vy", 0.0)))
+			var threat_radius := max(float(threat.get("radius", 12.0)), 0.0)
+			var rel_pos := pos - threat_pos
+			var rel_vel := player_vel - threat_vel
+			var c := rel_pos.length_squared() - threat_radius * threat_radius
+			if c <= 0.0:
+				# Already overlapping this threat. A heading that INCREASES
+				# separation is not a future collision, so it must not be
+				# scored as one: rel_pos points from threat to player, so
+				# rel_pos.dot(rel_vel) > 0 means the gap is opening. Without
+				# this branch every heading scores 0 whenever the player is in
+				# contact with any enemy -- which in a finale swarm is most of
+				# the time -- and heading selection stops discriminating at
+				# exactly the moment it matters most.
+				if rel_pos.dot(rel_vel) > 0.0:
+					continue
+				t_hit = 0.0
+				continue
+			var a := rel_vel.length_squared()
+			if a <= 1.0e-9:
+				continue
+			var b := 2.0 * rel_pos.dot(rel_vel)
+			var disc := b * b - 4.0 * a * c
+			if disc < 0.0:
+				continue
+			var root := sqrt(disc)
+			var t_first := (-b - root) / (2.0 * a)
+			if t_first < 0.0:
+				t_first = (-b + root) / (2.0 * a)
+			if t_first < 0.0:
+				continue
+			if t_first < t_hit:
+				t_hit = t_first
+		var score := min(t_hit, horizon)
+		var end_pos := pos + candidate * (safe_speed * horizon)
+		var end_margin := min(
+			min(end_pos.x, w - end_pos.x), min(end_pos.y, h - end_pos.y))
+		if end_margin < BotConfig.BOSS_FINALE_WALL_HARD_MARGIN:
+			score -= BotConfig.FINALE_V2_WALL_PENALTY
+		if prev_dir != Vector2.ZERO:
+			var align := candidate.dot(prev_dir)
+			if align > 0.0:
+				score += BotConfig.FINALE_V2_HYSTERESIS * align * 0.001
+		# Strictly greater: ties resolve to the lowest k, for determinism.
+		if score > best_score:
+			best_score = score
+			best_dir = candidate
+	return best_dir

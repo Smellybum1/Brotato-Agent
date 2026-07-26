@@ -15,6 +15,10 @@ var auto_start_benchmark: bool = true
 # Fixture harness (wave-20 iteration): resume a restored mid-run save instead of
 # starting a fresh run. Default false -- flag-off behaviour is byte-identical.
 var resume_from_save: bool = false
+# Finale controller v2 (wave 20 only). Default false -- flag-off behaviour is
+# byte-identical. When true the finale recomputes at 60 Hz while captures stay
+# on the ordinary 20 Hz schedule (see reports/wp2/finale_v2_design.md).
+var finale_v2: bool = false
 var _resume_done: bool = false
 var _resume_ticks: int = 0
 # ~10 s at 60 Hz. ProgressData populates current_run_state during startup, so the
@@ -149,6 +153,8 @@ func _ready() -> void:
 	_hud = _HUD_SCRIPT.new()
 	add_child(_hud)
 	_load_auto_config()
+	if _field != null:
+		_field.finale_v2_enabled = finale_v2
 	if student_enabled:
 		_bridge = _COMBAT_BRIDGE_SCRIPT.new()
 		_bridge.name = "CombatBridge"
@@ -324,7 +330,11 @@ func _handle_combat(main) -> void:
 	var recompute_move := true
 	if wave >= _CONFIG_SCRIPT.BOSS_FINALE_WAVE:
 		_finale_move_tick += 1
-		recompute_move = (_finale_move_tick % _CONFIG_SCRIPT.BOSS_FINALE_RECOMPUTE_DIVISOR) == 1
+		if finale_v2:
+			# v2 recomputes every physics tick (60 Hz); captures stay at 20 Hz.
+			recompute_move = true
+		else:
+			recompute_move = (_finale_move_tick % _CONFIG_SCRIPT.BOSS_FINALE_RECOMPUTE_DIVISOR) == 1
 	else:
 		_finale_move_tick = 0
 	if recompute_move:
@@ -341,7 +351,10 @@ func _handle_combat(main) -> void:
 	# an offset (0/496 fresh) and every fresh-gated audit silently skipped
 	# the death sequence. Emit finale captures on the recompute tick itself.
 	var emit_capture := _combat_tick_counter % _WP2_CAPTURE_DIVISOR == 0
-	if wave >= _CONFIG_SCRIPT.BOSS_FINALE_WAVE:
+	# The v1 alignment override must NOT apply on the v2 path: v2 recomputes on
+	# every tick, so this would move captures to 60 Hz and change control_dt_ms
+	# from ~50 ms to ~16 ms under a dataset and student path fixed at 20 Hz.
+	if wave >= _CONFIG_SCRIPT.BOSS_FINALE_WAVE and not finale_v2:
 		emit_capture = recompute_move
 	if _student_active():
 		# Prev-action is the resolved applied vector of the finished period
@@ -2197,6 +2210,8 @@ func _load_auto_config() -> void:
 		student_model_sha256 = str(cfg["student_model_sha256"])
 	if cfg.has("resume_from_save"):
 		resume_from_save = bool(cfg["resume_from_save"])
+	if cfg.has("finale_v2"):
+		finale_v2 = bool(cfg["finale_v2"])
 
 func _update_hud_phase(detected: String) -> void:
 	if _hud == null:
