@@ -32,6 +32,26 @@ import time
 from pathlib import Path
 
 
+# The save file's boss ids do NOT match the entity script paths seen in combat
+# telemetry. Verified 2026-07-26 against run_1785036448_61774, which carried
+# bosses_spawn ["boss_crab"] at wave 19 and then 526 captures of
+# res://entities/units/enemies/predator/ at wave 20.
+#
+# This matters: "predator" is the boss the agent actually loses to (0% stationary
+# projectiles, all moving at 500 u/s), while "invoker" is 96.3% stationary and has
+# never beaten the agent. Selecting fixtures by the wrong id would silently build a
+# library of the easy boss.
+BOSS_ID_TO_ENTITY = {
+    "boss_crab": "predator",
+}
+
+
+def boss_label(bosses_spawn) -> str:
+    """Familiar entity name where known, else the raw save id (never guess)."""
+    raw = (bosses_spawn or ["unknown"])[0]
+    return BOSS_ID_TO_ENTITY.get(raw, raw)
+
+
 def save_dir() -> Path:
     base = Path(os.environ["APPDATA"]) / "Brotato"
     cands = [p for p in base.iterdir() if p.is_dir() and p.name.isdigit()]
@@ -108,7 +128,9 @@ def main() -> int:
             if digest not in seen:
                 seen.add(digest)
                 stamp = time.strftime("%Y%m%d_%H%M%S")
-                boss = (meta["bosses_spawn"] or ["unknown"])[0]
+                boss = boss_label(meta["bosses_spawn"])
+                meta["boss"] = boss
+                meta["boss_raw"] = (meta["bosses_spawn"] or ["unknown"])[0]
                 name = f"w{meta['current_wave']}_{boss}_{stamp}_{digest}.json"
                 dest = args.out / name
                 shutil.copy2(src, dest)
