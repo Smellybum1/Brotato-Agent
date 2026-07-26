@@ -1,0 +1,471 @@
+#!/usr/bin/env python3
+"""Wave-20 finale trial loop: restore a wave-19 fixture, run ONE resumed wave, record it.
+
+A full run costs ~20 min and only ~2/3 reach wave 20, of which ~70% draw the
+Predator -- ~42 min of wall clock per Predator observation. Restoring a wave-19
+save and resuming gives the same observation in ~110 s. This script is the loop
+around that: restore -> launch -> wait for run_end -> validate -> record -> repeat.
+
+The validation is not decoration. If `resume_from_save` fails for any reason the
+mod starts a FRESH run, which walks waves 1..20 and produces a summary that looks
+exactly like a normal run. Counting one of those as a finale trial would silently
+poison the arm. Hence: waves must be exactly [20].
+
+Never edits mod source; always restores the operator's own save and turns
+auto_start/resume_from_save back off in a finally block.
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import shutil
+import sys
+import time
+from collections import Counter
+from pathlib import Path
+from typing import Any
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from scripts.wp2_collect_teacher import (  # noqa: E402
+    CAPTURE_SCHEMA_HASH,
+    MOD_VERSION,
+    POLICY_VERSION,
+    atomic_json,
+    await_mod_ready,
+    game_running,
+    launch_game,
+    read_json_when_ready,
+    stop_game,
+    utc_now,
+)
+from scripts.wp2_snapshot_collector import boss_label, save_dir  # noqa: E402
+
+
+BACKUP_DIR = Path(".tmp/finale_loop")
+BACKUP_NAME = "run_v3_0.original.json"
+
+
+# --------------------------------------------------------------------------
+# pure helpers (unit-tested)
+# --------------------------------------------------------------------------
+
+
+def agent_config_path() -> Path:
+    return Path(os.environ["APPDATA"]) / "Brotato" / "brotato_agent" / "agent_config.json"
+
+
+def runs_dir() -> Path:
+    return Path(os.environ["APPDATA"]) / "Brotato" / "brotato_agent" / "runs"
+
+
+def boss_entity_from_path(script_path: str) -> str:
+    """Entity folder name from a boss script path, else the raw path.
+
+    'res://entities/units/enemies/predator/predator.gd' -> 'predator'.
+    Deliberately does NOT guess when the pattern does not match: an unexpected
+    path shape must show up in the record as itself, not as a plausible-looking
+    entity name.
+    """
+    if not isinstance(script_path, str):
+        return str(script_path)
+    marker = "enemies/"
+    idx = script_path.find(marker)
+    if idx < 0:
+        return script_path
+    rest = script_path[idx + len(marker):]
+    segment = rest.split("/")[0]
+    if not segment or "/" not in rest:
+        return script_path
+    return segment
+
+
+def write_agent_config(path: Path, auto_start: bool, resume_from_save: bool) -> None:
+    """Set auto_start/resume_from_save, PRESERVING every other key already present.
+
+    Same read-modify-write contract as wp2_collect_teacher.set_auto_start: the
+    student keys (student_enabled / student_port / student_model_sha256) live in
+    this file and a fixed-dict overwrite would silently strip them.
+    """
+    payload: dict[str, Any] = {}
+    try:
+        existing = json.loads(path.read_text(encoding="utf-8"))
+        if isinstance(existing, dict):
+            payload = existing
+    except (FileNotFoundError, json.JSONDecodeError):
+        pass
+    payload.setdefault("character", "character_well_rounded")
+    payload.setdefault("danger", 0)
+    payload.setdefault("weapon_prefixes", ["weapon_smg", "weapon_stick"])
+    payload["auto_start"] = auto_start
+    payload["resume_from_save"] = resume_from_save
+    atomic_json(path, payload)
+
+
+def analyse_events(events_path: Path) -> dict[str, Any]:
+    """Waves / capture count / boss script paths from a run's events.jsonl."""
+    waves: set[int] = set()
+    n_captures = 0
+    boss_paths: Counter[str] = Counter()
+    # STREAM, never read_text(). A valid fixture trial's events.jsonl is ~8 MB, but
+    # the case this analysis exists to catch -- resume failed, so the mod played a
+    # FULL run -- produces up to ~330 MB (measured across 650 archived runs). The
+    # diagnostic path must not be the one that blows up memory.
+    try:
+        handle = events_path.open("r", encoding="utf-8", errors="replace")
+    except OSError:
+        handle = None
+    if handle is None:
+        return {
+            "waves": [], "n_captures": 0, "boss_paths": {},
+            "boss_entity": "", "boss_capture_count": 0,
+        }
+    with handle:
+        for line in handle:
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                event = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            if event.get("event") != "combat_capture":
+                continue
+            payload = event.get("payload") or {}
+            n_captures += 1
+            wave = payload.get("wave")
+            if isinstance(wave, int):
+                waves.add(wave)
+            bosses = (payload.get("entities") or {}).get("bosses") or []
+            for boss in bosses:
+                if isinstance(boss, dict):
+                    boss_paths[str(boss.get("script_path"))] += 1
+    entities = sorted({boss_entity_from_path(p) for p in boss_paths})
+    return {
+        "waves": sorted(waves),
+        "n_captures": n_captures,
+        "boss_paths": dict(boss_paths),
+        "boss_entity": entities[0] if len(entities) == 1 else (";".join(entities) if entities else ""),
+        "boss_capture_count": int(sum(boss_paths.values())),
+    }
+
+
+def validate_trial(analysis: dict[str, Any], summary: dict[str, Any], expected_boss: str) -> str:
+    """Return "" when the trial is a valid finale observation, else a reason code."""
+    waves = list(analysis.get("waves") or [])
+    if not waves:
+        return "no_combat_captures"
+    if any(w < 20 for w in waves):
+        # The resume failed and the mod started a FRESH run from wave 1. Without
+        # this check a full 20-wave run would be recorded as a finale trial.
+        return "resume_failed_fresh_run"
+    if waves != [20]:
+        return f"unexpected_waves:{waves}"
+    boss_paths = analysis.get("boss_paths") or {}
+    if len(boss_paths) != 1:
+        return f"boss_path_count:{len(boss_paths)}"
+    entity = analysis.get("boss_entity")
+    if entity != expected_boss:
+        return f"boss_mismatch:{entity}"
+    result = str(summary.get("result", "")).lower()
+    if result not in {"victory", "defeat"}:
+        return f"unexpected_result:{summary.get('result')}"
+    if summary.get("policy_version") != POLICY_VERSION:
+        return f"policy_mismatch:{summary.get('policy_version')}"
+    if summary.get("mod_version") != MOD_VERSION:
+        return f"mod_mismatch:{summary.get('mod_version')}"
+    return ""
+
+
+def load_index(fixture_dir: Path) -> list[dict[str, Any]]:
+    index = fixture_dir / "index.jsonl"
+    rows: list[dict[str, Any]] = []
+    if not index.exists():
+        return rows
+    for line in index.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            rows.append(json.loads(line))
+        except json.JSONDecodeError:
+            continue
+    return rows
+
+
+def select_fixtures(fixture_dir: Path, boss: str) -> list[tuple[Path, str]]:
+    """(path, digest) for index rows whose boss matches and whose file exists."""
+    out: list[tuple[Path, str]] = []
+    for row in load_index(fixture_dir):
+        # The two fixtures that exist today were indexed BEFORE the collector
+        # started writing a `boss` field, so their rows carry only the raw
+        # `bosses_spawn` save id. Fall back to the collector's own authoritative
+        # id->entity mapping rather than dropping them.
+        label = row.get("boss")
+        if label is None:
+            label = boss_label(row.get("bosses_spawn"))
+        if label != boss:
+            continue
+        path = fixture_dir / str(row.get("file"))
+        if path.exists():
+            out.append((path, str(row.get("digest", ""))))
+    return out
+
+
+def digest_for(fixture_dir: Path, path: Path) -> str:
+    for row in load_index(fixture_dir):
+        if str(row.get("file")) == path.name:
+            return str(row.get("digest", ""))
+    return ""
+
+
+# --------------------------------------------------------------------------
+# loop
+# --------------------------------------------------------------------------
+
+
+def run_trial(
+    root: Path,
+    fixture: Path,
+    fixture_digest: str,
+    args: argparse.Namespace,
+) -> dict[str, Any]:
+    """One trial. Returns the record row. Raises RuntimeError only for loop-fatal faults."""
+    started = time.time()
+    live_save = save_dir() / "run_v3_0.json"
+
+    stop_game()
+    deadline = time.time() + 10.0
+    while game_running() and time.time() < deadline:
+        time.sleep(0.25)
+    if game_running():
+        raise RuntimeError("Brotato still running after stop_game(); aborting loop")
+
+    shutil.copy2(fixture, live_save)
+    write_agent_config(agent_config_path(), auto_start=True, resume_from_save=True)
+
+    rd = runs_dir()
+    baseline = {p.name for p in rd.iterdir() if p.is_dir()} if rd.exists() else set()
+
+    # launch_game() already calls prepare_mod_environment() + clear_mod_ready().
+    launch_game(root)
+
+    launch_deadline = time.time() + 90.0
+    while not game_running() and time.time() < launch_deadline:
+        time.sleep(0.25)
+    if not game_running():
+        raise RuntimeError(
+            "Brotato did not start within 90s; aborting loop. Check "
+            "%APPDATA%/Brotato/logs/modloader*.log"
+        )
+    ready_fault = await_mod_ready()
+    if ready_fault is not None:
+        raise RuntimeError(
+            f"{ready_fault} (aborting loop -- a broken build must not be retried). "
+            "Check %APPDATA%/Brotato/logs/modloader*.log"
+        )
+
+    row: dict[str, Any] = {
+        "ts": utc_now(),
+        "label": args.label,
+        "fixture_file": fixture.name,
+        "fixture_digest": fixture_digest,
+        "run_id": "",
+        "result": "",
+        "last_wave": None,
+        "damage_taken": None,
+        "duration_ms": None,
+        "n_captures": 0,
+        "waves": [],
+        "boss_entity": "",
+        "boss_capture_count": 0,
+        "boss_paths": {},
+        "valid": False,
+        "invalid_reason": "",
+        "policy_version": POLICY_VERSION,
+        "mod_version": MOD_VERSION,
+        "capture_schema_hash": CAPTURE_SCHEMA_HASH,
+        "trial_wall_sec": None,
+    }
+
+    trial_deadline = time.time() + args.timeout_sec
+    last_mtime = time.time()
+    summary_path: Path | None = None
+    run_dir: Path | None = None
+    while True:
+        new_dirs = (
+            [p for p in rd.iterdir() if p.is_dir() and p.name not in baseline]
+            if rd.exists()
+            else []
+        )
+        done = [p for p in new_dirs if (p / "summary.json").exists()]
+        if done:
+            run_dir = max(done, key=lambda p: (p / "summary.json").stat().st_mtime)
+            summary_path = run_dir / "summary.json"
+            break
+        live = [p for p in new_dirs if (p / "events.jsonl").exists()]
+        if live:
+            newest = max(live, key=lambda p: (p / "events.jsonl").stat().st_mtime)
+            mtime = (newest / "events.jsonl").stat().st_mtime
+            if mtime > last_mtime:
+                last_mtime = mtime
+            age = time.time() - mtime
+            if age > args.stale_sec:
+                row["run_id"] = newest.name
+                row["invalid_reason"] = f"telemetry_stale_{age:.1f}s"
+                break
+        if time.time() > trial_deadline:
+            row["invalid_reason"] = f"timeout_{args.timeout_sec:.0f}s"
+            if new_dirs:
+                row["run_id"] = max(new_dirs, key=lambda p: p.stat().st_mtime).name
+            break
+        if not game_running():
+            row["invalid_reason"] = "game_exited_before_summary"
+            break
+        time.sleep(args.poll_sec)
+
+    summary: dict[str, Any] = {}
+    if summary_path is not None:
+        summary = read_json_when_ready(summary_path)
+
+    # Stop the game IMMEDIATELY after reading summary.json and BEFORE any
+    # events.jsonl analysis: with auto_start=true the mod chains straight into a
+    # fresh run, which would overwrite the fixture-restored save and burn wall
+    # clock. Analysis is on files already on disk, so it can wait.
+    stop_game()
+
+    if run_dir is not None:
+        analysis = analyse_events(run_dir / "events.jsonl")
+        row.update(
+            {
+                "run_id": run_dir.name,
+                "result": summary.get("result", ""),
+                "last_wave": summary.get("last_wave"),
+                "damage_taken": summary.get("damage_taken"),
+                "duration_ms": summary.get("duration_ms"),
+                "n_captures": analysis["n_captures"],
+                "waves": analysis["waves"],
+                "boss_entity": analysis["boss_entity"],
+                "boss_capture_count": analysis["boss_capture_count"],
+                "boss_paths": analysis["boss_paths"],
+                "policy_version": summary.get("policy_version"),
+                "mod_version": summary.get("mod_version"),
+            }
+        )
+        reason = validate_trial(analysis, summary, args.boss)
+        row["valid"] = reason == ""
+        row["invalid_reason"] = reason
+
+    row["trial_wall_sec"] = round(time.time() - started, 1)
+    return row
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--fixture", type=Path, action="append", default=None)
+    ap.add_argument("--fixture-dir", type=Path, default=Path(".tmp/snapshots"))
+    ap.add_argument("--boss", type=str, default="predator")
+    ap.add_argument("--trials", type=int, required=True)
+    ap.add_argument("--label", type=str, required=True)
+    ap.add_argument("--out", type=Path, required=True)
+    ap.add_argument("--timeout-sec", type=float, default=900.0)
+    ap.add_argument("--stale-sec", type=float, default=45.0)
+    ap.add_argument("--poll-sec", type=float, default=0.5)
+    args = ap.parse_args()
+
+    if args.trials < 1:
+        raise SystemExit("--trials must be positive")
+
+    root = Path(__file__).resolve().parents[1]
+    if args.fixture:
+        fixtures = [(Path(f), digest_for(args.fixture_dir, Path(f))) for f in args.fixture]
+        missing = [str(f) for f, _ in fixtures if not f.exists()]
+        if missing:
+            raise SystemExit(f"missing fixture(s): {missing}")
+    else:
+        fixtures = select_fixtures(args.fixture_dir, args.boss)
+    if not fixtures:
+        raise SystemExit(f"no fixtures selected (dir={args.fixture_dir} boss={args.boss})")
+
+    print(f"{len(fixtures)} fixture(s) selected, boss={args.boss}, trials={args.trials}")
+    for path, digest in fixtures:
+        print(f"  fixture {path.name} digest={digest}")
+
+    live_save = save_dir() / "run_v3_0.json"
+    backup_dir = root / BACKUP_DIR
+    backup_dir.mkdir(parents=True, exist_ok=True)
+    backup = backup_dir / BACKUP_NAME
+    had_original = live_save.exists()
+    # Back up ONCE: a crashed prior loop may have left a fixture in place, and
+    # overwriting the backup with that fixture would destroy the operator's save.
+    if had_original and not backup.exists():
+        shutil.copy2(live_save, backup)
+
+    rows: list[dict[str, Any]] = []
+    args.out.parent.mkdir(parents=True, exist_ok=True)
+    exit_code = 0
+    try:
+        with args.out.open("a", encoding="utf-8", newline="\n") as fh:
+            for i in range(args.trials):
+                fixture, digest = fixtures[i % len(fixtures)]
+                row = run_trial(root, fixture, digest, args)
+                rows.append(row)
+                fh.write(json.dumps(row) + "\n")
+                fh.flush()
+                print(
+                    f"[{i + 1}/{args.trials}] {row['run_id']} waves={row['waves']} "
+                    f"boss={row['boss_entity']} captures={row['n_captures']} "
+                    f"result={row['result']} valid={row['valid']} "
+                    f"reason={row['invalid_reason']!r} wall={row['trial_wall_sec']}s "
+                    f"fixture={row['fixture_file']}",
+                    flush=True,
+                )
+    except Exception as exc:  # loop-fatal: report and stop, do not retry
+        print(f"ABORT: {exc}", file=sys.stderr, flush=True)
+        exit_code = 2
+    finally:
+        stop_game()
+        try:
+            write_agent_config(agent_config_path(), auto_start=False, resume_from_save=False)
+        except Exception as exc:  # noqa: BLE001
+            print(f"WARNING: could not restore agent_config: {exc}", file=sys.stderr)
+        try:
+            if backup.exists():
+                shutil.copy2(backup, live_save)
+                print(f"restored original save from {backup}")
+            elif not had_original:
+                live_save.unlink(missing_ok=True)
+                print("no original save existed; removed fixture copy")
+        except Exception as exc:  # noqa: BLE001
+            print(f"WARNING: could not restore save: {exc}", file=sys.stderr)
+
+    # Raw rows FIRST, always -- an aggregate without its rows is not evidence.
+    print("\n--- raw trials ---")
+    print(
+        f"{'#':>2}  {'run_id':<24} {'fixture':<40} {'waves':<10} {'boss':<12} "
+        f"{'caps':>6} {'result':<8} {'dmg':>5} {'ms':>7} {'valid':<5} reason"
+    )
+    for i, row in enumerate(rows, 1):
+        print(
+            f"{i:>2}  {str(row['run_id']):<24} {row['fixture_file']:<40} "
+            f"{str(row['waves']):<10} {str(row['boss_entity']):<12} "
+            f"{row['n_captures']:>6} {str(row['result']):<8} "
+            f"{str(row['damage_taken']):>5} {str(row['duration_ms']):>7} "
+            f"{str(row['valid']):<5} {row['invalid_reason']}"
+        )
+    valid = [r for r in rows if r["valid"]]
+    wins = [r for r in valid if str(r["result"]).lower() == "victory"]
+    print("\n--- aggregate ---")
+    print(f"label={args.label} boss={args.boss}")
+    print(f"valid trials: {len(valid)}/{len(rows)}")
+    if valid:
+        print(f"victories:    {len(wins)}/{len(valid)} = {len(wins) / len(valid):.3f}")
+    else:
+        print("victories:    n/a (no valid trials)")
+    print(f"results appended to {args.out}")
+    return exit_code
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
