@@ -54,6 +54,7 @@ def _summary(**overrides):
         "last_wave": 20,
         "damage_taken": 12,
         "duration_ms": 60000,
+        "finale_v2": False,
     }
     base.update(overrides)
     return base
@@ -65,29 +66,29 @@ def test_valid_trial(tmp_path: Path):
     assert analysis["n_captures"] == 2
     assert analysis["boss_entity"] == "predator"
     assert analysis["boss_capture_count"] == 2
-    assert validate_trial(analysis, _summary(), "predator") == ""
+    assert validate_trial(analysis, _summary(), "predator", False) == ""
 
 
 def test_fresh_run_detected(tmp_path: Path):
     analysis = analyse_events(_events(tmp_path, [(1, []), (2, [])]))
     assert analysis["waves"] == [1, 2]
-    assert validate_trial(analysis, _summary(), "predator") == "resume_failed_fresh_run"
+    assert validate_trial(analysis, _summary(), "predator", False) == "resume_failed_fresh_run"
 
 
 def test_two_distinct_boss_paths_invalid(tmp_path: Path):
     analysis = analyse_events(_events(tmp_path, [(20, [PREDATOR]), (20, [INVOKER])]))
-    assert validate_trial(analysis, _summary(), "predator") == "boss_path_count:2"
+    assert validate_trial(analysis, _summary(), "predator", False) == "boss_path_count:2"
 
 
 def test_wrong_mod_version_invalid(tmp_path: Path):
     analysis = analyse_events(_events(tmp_path, [(20, [PREDATOR])]))
-    reason = validate_trial(analysis, _summary(mod_version="0.0.1-bogus"), "predator")
+    reason = validate_trial(analysis, _summary(mod_version="0.0.1-bogus"), "predator", False)
     assert reason == "mod_mismatch:0.0.1-bogus"
 
 
 def test_boss_mismatch_invalid(tmp_path: Path):
     analysis = analyse_events(_events(tmp_path, [(20, [INVOKER])]))
-    assert validate_trial(analysis, _summary(), "predator") == "boss_mismatch:invoker"
+    assert validate_trial(analysis, _summary(), "predator", False) == "boss_mismatch:invoker"
 
 
 def test_write_agent_config_preserves_unrelated_keys(tmp_path: Path):
@@ -103,7 +104,7 @@ def test_write_agent_config_preserves_unrelated_keys(tmp_path: Path):
         ),
         encoding="utf-8",
     )
-    write_agent_config(path, auto_start=True, resume_from_save=True)
+    write_agent_config(path, auto_start=True, resume_from_save=True, finale_v2=True)
     payload = json.loads(path.read_text(encoding="utf-8"))
     assert payload["student_model_sha256"] == "DEADBEEF"
     assert payload["student_enabled"] is True
@@ -111,18 +112,51 @@ def test_write_agent_config_preserves_unrelated_keys(tmp_path: Path):
     assert payload["danger"] == 3
     assert payload["auto_start"] is True
     assert payload["resume_from_save"] is True
+    assert payload["finale_v2"] is True
 
-    write_agent_config(path, auto_start=False, resume_from_save=False)
+    write_agent_config(path, auto_start=False, resume_from_save=False, finale_v2=False)
     payload = json.loads(path.read_text(encoding="utf-8"))
     assert payload["auto_start"] is False
     assert payload["resume_from_save"] is False
+    assert payload["finale_v2"] is False
     assert payload["student_model_sha256"] == "DEADBEEF"
+    assert payload["student_enabled"] is True
 
 
 def test_write_agent_config_defaults_when_absent(tmp_path: Path):
     path = tmp_path / "agent_config.json"
-    write_agent_config(path, auto_start=True, resume_from_save=True)
+    write_agent_config(path, auto_start=True, resume_from_save=True, finale_v2=True)
     payload = json.loads(path.read_text(encoding="utf-8"))
     assert payload["character"] == "character_well_rounded"
     assert payload["danger"] == 0
     assert payload["weapon_prefixes"] == ["weapon_smg", "weapon_stick"]
+    assert payload["finale_v2"] is True
+
+
+# --- arm guard: a lost finale_v2 flag must INVALIDATE, not mislabel -----------
+
+
+def test_finale_arm_matches_both_arms(tmp_path: Path):
+    analysis = analyse_events(_events(tmp_path, [(20, [PREDATOR])]))
+    assert validate_trial(analysis, _summary(finale_v2=False), "predator", False) == ""
+    assert validate_trial(analysis, _summary(finale_v2=True), "predator", True) == ""
+
+
+def test_finale_arm_mismatch_expected_v2(tmp_path: Path):
+    analysis = analyse_events(_events(tmp_path, [(20, [PREDATOR])]))
+    reason = validate_trial(analysis, _summary(finale_v2=False), "predator", True)
+    assert reason == "finale_arm_mismatch:False"
+
+
+def test_finale_arm_mismatch_expected_v1(tmp_path: Path):
+    analysis = analyse_events(_events(tmp_path, [(20, [PREDATOR])]))
+    reason = validate_trial(analysis, _summary(finale_v2=True), "predator", False)
+    assert reason == "finale_arm_mismatch:True"
+
+
+def test_finale_arm_missing_key_treated_as_false(tmp_path: Path):
+    analysis = analyse_events(_events(tmp_path, [(20, [PREDATOR])]))
+    summary = _summary()
+    summary.pop("finale_v2")
+    assert validate_trial(analysis, summary, "predator", True) == "finale_arm_mismatch:None"
+    assert validate_trial(analysis, summary, "predator", False) == ""

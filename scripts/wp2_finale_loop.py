@@ -81,8 +81,10 @@ def boss_entity_from_path(script_path: str) -> str:
     return segment
 
 
-def write_agent_config(path: Path, auto_start: bool, resume_from_save: bool) -> None:
-    """Set auto_start/resume_from_save, PRESERVING every other key already present.
+def write_agent_config(
+    path: Path, auto_start: bool, resume_from_save: bool, finale_v2: bool
+) -> None:
+    """Set auto_start/resume_from_save/finale_v2, PRESERVING every other key present.
 
     Same read-modify-write contract as wp2_collect_teacher.set_auto_start: the
     student keys (student_enabled / student_port / student_model_sha256) live in
@@ -100,6 +102,9 @@ def write_agent_config(path: Path, auto_start: bool, resume_from_save: bool) -> 
     payload.setdefault("weapon_prefixes", ["weapon_smg", "weapon_stick"])
     payload["auto_start"] = auto_start
     payload["resume_from_save"] = resume_from_save
+    # Written EVERY time, never setdefault: deploy_mod.py rewrites this file from a
+    # fixed dict, so a stale/absent flag would silently run the wrong arm.
+    payload["finale_v2"] = finale_v2
     atomic_json(path, payload)
 
 
@@ -151,7 +156,12 @@ def analyse_events(events_path: Path) -> dict[str, Any]:
     }
 
 
-def validate_trial(analysis: dict[str, Any], summary: dict[str, Any], expected_boss: str) -> str:
+def validate_trial(
+    analysis: dict[str, Any],
+    summary: dict[str, Any],
+    expected_boss: str,
+    expected_finale_v2: bool,
+) -> str:
     """Return "" when the trial is a valid finale observation, else a reason code."""
     waves = list(analysis.get("waves") or [])
     if not waves:
@@ -175,6 +185,10 @@ def validate_trial(analysis: dict[str, Any], summary: dict[str, Any], expected_b
         return f"policy_mismatch:{summary.get('policy_version')}"
     if summary.get("mod_version") != MOD_VERSION:
         return f"mod_mismatch:{summary.get('mod_version')}"
+    # The mod reports which controller actually ran. If the flag were lost (see
+    # write_agent_config) the trial would otherwise be recorded under the wrong arm.
+    if bool(summary.get("finale_v2", False)) != expected_finale_v2:
+        return f"finale_arm_mismatch:{summary.get('finale_v2')}"
     return ""
 
 
@@ -243,7 +257,12 @@ def run_trial(
         raise RuntimeError("Brotato still running after stop_game(); aborting loop")
 
     shutil.copy2(fixture, live_save)
-    write_agent_config(agent_config_path(), auto_start=True, resume_from_save=True)
+    write_agent_config(
+        agent_config_path(),
+        auto_start=True,
+        resume_from_save=True,
+        finale_v2=args.finale_v2,
+    )
 
     rd = runs_dir()
     baseline = {p.name for p in rd.iterdir() if p.is_dir()} if rd.exists() else set()
@@ -269,6 +288,9 @@ def run_trial(
     row: dict[str, Any] = {
         "ts": utc_now(),
         "label": args.label,
+        # The arm this trial was ARMED for; validate_trial cross-checks it against
+        # the controller the mod reports it actually ran.
+        "finale_v2": bool(args.finale_v2),
         "fixture_file": fixture.name,
         "fixture_digest": fixture_digest,
         "run_id": "",
@@ -353,7 +375,7 @@ def run_trial(
                 "mod_version": summary.get("mod_version"),
             }
         )
-        reason = validate_trial(analysis, summary, args.boss)
+        reason = validate_trial(analysis, summary, args.boss, bool(args.finale_v2))
         row["valid"] = reason == ""
         row["invalid_reason"] = reason
 
@@ -372,6 +394,7 @@ def main() -> int:
     ap.add_argument("--timeout-sec", type=float, default=900.0)
     ap.add_argument("--stale-sec", type=float, default=45.0)
     ap.add_argument("--poll-sec", type=float, default=0.5)
+    ap.add_argument("--finale-v2", action="store_true")
     args = ap.parse_args()
 
     if args.trials < 1:
@@ -388,7 +411,10 @@ def main() -> int:
     if not fixtures:
         raise SystemExit(f"no fixtures selected (dir={args.fixture_dir} boss={args.boss})")
 
-    print(f"{len(fixtures)} fixture(s) selected, boss={args.boss}, trials={args.trials}")
+    print(
+        f"{len(fixtures)} fixture(s) selected, boss={args.boss}, "
+        f"trials={args.trials}, finale_v2={bool(args.finale_v2)}"
+    )
     for path, digest in fixtures:
         print(f"  fixture {path.name} digest={digest}")
 
@@ -427,7 +453,13 @@ def main() -> int:
     finally:
         stop_game()
         try:
-            write_agent_config(agent_config_path(), auto_start=False, resume_from_save=False)
+            # finale_v2=False too: an interrupted loop must never leave the machine armed.
+            write_agent_config(
+                agent_config_path(),
+                auto_start=False,
+                resume_from_save=False,
+                finale_v2=False,
+            )
         except Exception as exc:  # noqa: BLE001
             print(f"WARNING: could not restore agent_config: {exc}", file=sys.stderr)
         try:
@@ -457,7 +489,7 @@ def main() -> int:
     valid = [r for r in rows if r["valid"]]
     wins = [r for r in valid if str(r["result"]).lower() == "victory"]
     print("\n--- aggregate ---")
-    print(f"label={args.label} boss={args.boss}")
+    print(f"label={args.label} boss={args.boss} finale_v2={bool(args.finale_v2)}")
     print(f"valid trials: {len(valid)}/{len(rows)}")
     if valid:
         print(f"victories:    {len(wins)}/{len(valid)} = {len(wins) / len(valid):.3f}")

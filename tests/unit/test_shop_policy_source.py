@@ -129,16 +129,16 @@ def test_wp2_capture_build_versions_the_v122_crossing_tier_policy():
     controller = CONTROLLER.read_text(encoding="utf-8")
     telemetry = TELEMETRY.read_text(encoding="utf-8")
 
-    # Teacher policy v128 (material-crediting telemetry) on mod 0.2.38; the M3
+    # Teacher policy v128 (material-crediting telemetry) on mod 0.2.39; the M3
     # student-inference path (learned/ bridge, default-off) is unchanged —
     # deploy surface bumps together: manifest, controller meta, telemetry
     # default, and the collector identity gate.
-    assert '"version_number": "0.2.38"' in manifest
+    assert '"version_number": "0.2.39"' in manifest
     assert "v128 deterministic teacher" in manifest
     assert controller.count("teacher_v1-0.1.128-gun-wp1") == 1
-    assert controller.count("0.2.38-wp2-capture") == 1
+    assert controller.count("0.2.39-wp2-capture") == 1
     assert telemetry.count("teacher_v1-0.1.128-gun-wp1") == 1
-    assert telemetry.count("0.2.38-wp2-capture") == 1
+    assert telemetry.count("0.2.39-wp2-capture") == 1
 
 
 def test_v123_strength_signal_is_plumbed_through_controller_and_field():

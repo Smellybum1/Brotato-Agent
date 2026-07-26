@@ -34,8 +34,14 @@ func begin_run(meta: Dictionary) -> void:
 		"endless": meta.get("endless", false),
 		"wave_retry": meta.get("wave_retry", false),
 		"game_version": meta.get("game_version", ""),
-		"mod_version": meta.get("mod_version", "0.2.38-wp2-capture"),
+		"mod_version": meta.get("mod_version", "0.2.39-wp2-capture"),
 		"config_id": meta.get("config_id", "well_rounded_d0_smg"),
+		# Which finale controller actually ran. policy_version cannot carry this:
+		# the flag lives in agent_config.json, so a v2 run and a v1 run of the
+		# same build are otherwise indistinguishable in the record -- and
+		# deploy_mod.py rewrites agent_config.json wholesale, so a dropped flag
+		# would silently turn a v2 arm back into v1.
+		"finale_v2": meta.get("finale_v2", false),
 		"result": "incomplete",
 		"last_wave": 0,
 		"waves_completed": 0,

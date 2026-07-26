@@ -29,7 +29,7 @@ var policy_version: String = "teacher_v1-0.1.128-gun-wp1"
 # Single source of truth for the deployed mod identity: stamped into every run's
 # meta AND into the mod-ready sentinel, so the collector cannot accept a build
 # whose identity disagrees with what it asked for.
-const MOD_VERSION := "0.2.38-wp2-capture"
+const MOD_VERSION := "0.2.39-wp2-capture"
 const _MOD_READY_PATH := "user://brotato_agent/mod_ready.json"
 var last_move_debug: Dictionary = {}
 var last_meta_debug: Dictionary = {}
@@ -198,6 +198,9 @@ func _write_mod_ready() -> void:
 		"policy_version": policy_version,
 		"mod_version": MOD_VERSION,
 		"capture_schema_hash": _WP2_CAPTURE_SCHEMA_HASH,
+		# Lets a caller assert the finale arm BEFORE spending a trial, rather
+		# than discovering from the summary afterwards that the flag was lost.
+		"finale_v2": finale_v2,
 	}))
 	f.close()
 
@@ -1973,6 +1976,7 @@ func _start_run() -> void:
 		"mod_version": MOD_VERSION,
 		"config_id": "well_rounded_d0_anyranged",
 		"policy_version": policy_version,
+		"finale_v2": finale_v2,
 	}
 	if _telem != null:
 		_telem.begin_run(meta)
