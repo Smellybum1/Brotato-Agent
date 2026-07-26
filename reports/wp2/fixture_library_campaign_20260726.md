@@ -63,21 +63,35 @@ Honest limits: n=16 reaching wave 20 keeps the CI wide; the strong-era compariso
 still across eras with different builds and versions; and this measures the CURRENT
 hazard, not the size of the gap.
 
-## 4. Win rate: 46.2%, BUT MEASURED UNDER LOAD
+## 4. Win rate: 46.2% — LOAD CONFOUND RAISED, THEN MEASURED AND DISMISSED
 
 12/26 = 0.462 [0.288, 0.645] is the largest single-version teacher sample on 0.1.128
 (prior estimates rested on n=21) and is consistent with the recorded current-era 53.9%.
 
-**Do NOT bank this as the frozen champion.** Other projects were running on the machine
-throughout (two Backpack Battles `run_m2c_rail` processes and a `sim27l_solver`). This
-project has a documented machine-load confound — the F2 campaign ran its control arm
-unloaded and its learned arm under 8-12 workers, which argued underpower. A champion
-number that future candidates are gated against must be collected under known
-conditions. **Treat 46.2% as "win rate under load", and re-run the bank clean if the
-frozen champion is needed.**
+I initially flagged this as "win rate under load" because other projects were running
+(two Backpack Battles `run_m2c_rail` processes and a `sim27l_solver`), citing the
+documented F2 machine-load confound. **The operator stated STS2 had been asked to limit
+its resource usage. That is checkable, so it was checked rather than assumed.**
 
-The finale hazard in §3 is far more robust to this caveat than the win rate is: load
-would have to act specifically at wave 20, conditional on reaching it.
+`control_dt_ms` is computed as `OS.get_ticks_msec()` deltas between captures
+(`agent_controller.gd:588-590`) — **wall clock, not the fixed physics delta** — so it
+detects starvation: a machine that cannot keep up stretches the real time across three
+physics ticks beyond 50 ms. Measured against that ABSOLUTE 50 ms standard (60 Hz
+physics / capture divisor 3), not against a relative baseline:
+
+| run | n | median | p95 | p99 |
+|---|---|---|---|---|
+| campaign ×6 | 15k-21k each | **51** | **52** | 54-58 |
+| pre-campaign `..._68538` | 20,674 | 51 | 52 | 54 |
+| pre-campaign `..._90520` | 21,839 | 51 | 52 | 55 |
+
+**The game held real-time 60 Hz throughout the campaign, indistinguishable from
+pre-campaign runs.** (The ~10 s maxima appear in both eras — they are wave/shop
+transitions where captures pause, not stalls.)
+
+**CONCLUSION: there is no load confound. 46.2% is a clean measurement.** The only
+remaining limit is sample size: n=26 against the 36-run champion-bank spec, giving a
+CI half-width of ~18 pp. It is usable champion evidence, short of the planned bank.
 
 ## 5. Method notes worth keeping
 
