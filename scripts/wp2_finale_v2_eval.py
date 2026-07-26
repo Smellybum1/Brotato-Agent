@@ -49,6 +49,7 @@ from scripts.wp2_finale_metrics import (  # noqa: E402
 DEFAULT_SEED = 20260727
 N_BOOTSTRAP = 10000
 N_HOLDOUT = 3  # protocol: the LAST 3 predator fixtures by capture time
+PROTOCOL_PREDATOR_N = 11  # the ONE list the positional 8/3 split is valid for
 Z95 = 1.959963984540054
 
 CONTROL_RULE = (
@@ -84,29 +85,107 @@ def _ratio(num: int, den: int) -> float | None:
     return num / den
 
 
-def load_fixture_lists(path: Path) -> dict[str, list[str]]:
-    """The frozen ordered fixture lists. Order defines the holdout roles."""
+def load_fixture_lists(path: Path) -> dict[str, Any]:
+    """The frozen ordered fixture lists, plus an OPTIONAL explicit role map.
+
+    Shape on disk:
+      {"predator": [...], "invoker": [...],
+       "roles": {"<fixture filename or digest>": "iteration"|"holdout"}}
+
+    `roles`, when present, is AUTHORITATIVE and overrides any positional split.
+    """
     data = json.loads(path.read_text(encoding="utf-8"))
-    out: dict[str, list[str]] = {}
+    out: dict[str, Any] = {}
     for boss in ("predator", "invoker"):
         names = data.get(boss) or []
         out[boss] = [str(n) for n in names]
+    raw_roles = data.get("roles")
+    if isinstance(raw_roles, dict):
+        out["roles"] = {str(k): str(v) for k, v in raw_roles.items()}
     return out
 
 
-def fixture_role(fixture_file: str, lists: dict[str, list[str]]) -> tuple[str, str]:
-    """(boss, role) for a fixture filename against the frozen lists.
+def predator_role_plan(lists: dict[str, Any]) -> dict[str, Any]:
+    """How predator builds get their iteration/holdout roles, and why.
 
-    Predator: the last N_HOLDOUT entries are `holdout`, the rest `iteration`.
-    Invoker: every entry is `control`. Anything unlisted is ("unknown", "unlisted")
-    and is excluded from the endpoints -- but printed, never dropped silently.
+    WHY THIS EXISTS -- the defect this guards against:
+    the positional split (first len-3 = iteration, last 3 = holdout) encodes the
+    ORDER of the ORIGINAL 11-build protocol list and NOTHING else. A campaign run
+    against a differently scoped list (e.g. the 8-build confirmation list, whose
+    members are ALL iteration builds) has no holdout tail at all, so slicing its
+    last 3 entries mislabels 3 iteration builds as "holdout" AND computes the
+    PRIMARY endpoint over only 5 of the 8 builds -- silently, with a wrong number
+    printed. Positional slicing is therefore applied ONLY when the predator list
+    has exactly PROTOCOL_PREDATOR_N entries; otherwise every predator build is
+    `iteration` and the difference is announced loudly. An explicit `roles` map
+    in the fixtures JSON beats both and is the preferred way to express roles.
+    """
+    predator: list[str] = list(lists.get("predator") or [])
+    explicit = lists.get("roles")
+    warnings: list[str] = []
+
+    if isinstance(explicit, dict) and explicit:
+        roles = {name: explicit[name] for name in predator if name in explicit}
+        missing = [name for name in predator if name not in explicit]
+        if missing:
+            warnings.append(
+                "explicit `roles` map does not cover "
+                f"{len(missing)} of {len(predator)} predator fixtures; these are "
+                "given role `unassigned` and are EXCLUDED from both the primary "
+                "and the holdout endpoints (they are listed below, not dropped "
+                f"silently): {', '.join(missing)}"
+            )
+        for name in missing:
+            roles[name] = "unassigned"
+        return {"mode": "explicit", "roles": roles, "warnings": warnings}
+
+    if len(predator) == PROTOCOL_PREDATOR_N:
+        n_iter = PROTOCOL_PREDATOR_N - N_HOLDOUT
+        roles = {
+            name: ("iteration" if i < n_iter else "holdout")
+            for i, name in enumerate(predator)
+        }
+        return {"mode": "positional", "roles": roles, "warnings": warnings}
+
+    warnings.append(
+        f"predator fixture list has {len(predator)} entries, not the "
+        f"{PROTOCOL_PREDATOR_N} of the original protocol: THE POSITIONAL "
+        f"{PROTOCOL_PREDATOR_N - N_HOLDOUT}/{N_HOLDOUT} ITERATION/HOLDOUT SPLIT "
+        "WAS NOT APPLIED. Every predator build is treated as `iteration` and the "
+        "holdout endpoint is empty. Supply an explicit `roles` map in the "
+        "fixtures JSON if this list does have held-out builds."
+    )
+    return {
+        "mode": "all_iteration",
+        "roles": {name: "iteration" for name in predator},
+        "warnings": warnings,
+    }
+
+
+def fixture_role(
+    fixture_file: str,
+    lists: dict[str, Any],
+    fixture_digest: str | None = None,
+) -> tuple[str, str]:
+    """(boss, role) for a fixture against the frozen lists.
+
+    Roles come from `predator_role_plan` (explicit map > positional-on-11-only >
+    all-iteration). An explicit map may also be keyed by `fixture_digest`, which
+    takes precedence over the filename. Invoker entries are always `control`.
+    Anything unlisted is ("unknown", "unlisted") -- excluded from the endpoints
+    but printed, never dropped silently.
     """
     predator = lists.get("predator") or []
     invoker = lists.get("invoker") or []
+    explicit = lists.get("roles")
+    if fixture_digest and isinstance(explicit, dict) and fixture_digest in explicit:
+        return "predator" if fixture_file not in invoker else "invoker", str(
+            explicit[fixture_digest]
+        )
     if fixture_file in predator:
-        idx = predator.index(fixture_file)
-        n_iter = max(len(predator) - N_HOLDOUT, 0)
-        return "predator", ("iteration" if idx < n_iter else "holdout")
+        return "predator", predator_role_plan(lists)["roles"].get(
+            fixture_file, "unassigned"
+        )
     if fixture_file in invoker:
         return "invoker", "control"
     return "unknown", "unlisted"
@@ -140,7 +219,7 @@ def group_builds(
         fixture_file = str(row.get("fixture_file") or "")
         build = builds.get(digest)
         if build is None:
-            boss, role = fixture_role(fixture_file, lists)
+            boss, role = fixture_role(fixture_file, lists, digest)
             build = {
                 "fixture_digest": digest,
                 "fixture_file": fixture_file,
@@ -407,6 +486,31 @@ def _f(value: Any, digits: int = 4) -> str:
     return str(value)
 
 
+def _print_banner(title: str, body: str) -> None:
+    """A block that cannot be read past. Never raises -- a differently scoped
+    campaign must still analyse; it just must not be able to look normal."""
+    bar = "!" * 78
+    print(bar)
+    print(f"!!! {title}")
+    for line in str(body).splitlines() or [""]:
+        print(f"!!! {line}")
+    print(bar)
+
+
+def _print_candidate_set_size(label: str, actual: int, expected: int) -> None:
+    """The protocol's size line. Prominent -- never silent -- on a mismatch."""
+    line = f"candidate set size: {actual} builds (protocol expects {expected})"
+    if actual == expected:
+        print(line)
+        return
+    _print_banner(
+        f"CANDIDATE SET SIZE MISMATCH -- {label}",
+        f"{line}\n"
+        f"The endpoint below is computed over {actual} builds, NOT {expected}. "
+        "Do not quote it as the full-protocol endpoint without saying so.",
+    )
+
+
 def _print_build_table(title: str, result: dict[str, Any]) -> None:
     print(f"\n--- {title} ---")
     print(
@@ -465,15 +569,39 @@ def main() -> int:
     args = ap.parse_args()
 
     lists = load_fixture_lists(args.fixtures)
+    plan = predator_role_plan(lists)
+    plan_counts: dict[str, int] = {}
+    for role in plan["roles"].values():
+        plan_counts[role] = plan_counts.get(role, 0) + 1
+    expect_iteration = plan_counts.get("iteration", 0)
+    expect_holdout = plan_counts.get("holdout", 0)
+
     print("=== finale v2 evaluation (protocol: reports/wp2/finale_v2_eval_protocol.md) ===")
     print(
         f"frozen fixtures: predator={len(lists['predator'])} "
-        f"(iteration={max(len(lists['predator']) - N_HOLDOUT, 0)}, holdout={N_HOLDOUT}), "
-        f"invoker={len(lists['invoker'])}"
+        f"(iteration={expect_iteration}, holdout={expect_holdout}"
+        + (
+            f", unassigned={plan_counts['unassigned']}"
+            if plan_counts.get("unassigned")
+            else ""
+        )
+        + f"), invoker={len(lists['invoker'])}"
     )
+    print(f"predator role assignment mode: {plan['mode']}")
+    for warning in plan["warnings"]:
+        _print_banner("FIXTURE ROLE WARNING", warning)
     print(f"seed={args.seed} bootstrap_resamples={N_BOOTSTRAP}")
 
-    report: dict[str, Any] = {"seed": args.seed, "fixtures": lists, "sets": {}}
+    report: dict[str, Any] = {
+        "seed": args.seed,
+        "fixtures": lists,
+        "role_plan": {
+            "mode": plan["mode"],
+            "roles": plan["roles"],
+            "warnings": plan["warnings"],
+        },
+        "sets": {},
+    }
 
     all_rows: dict[str, list[dict[str, Any]]] = {}
     for boss, path in (("predator", args.predator), ("invoker", args.invoker)):
@@ -536,14 +664,24 @@ def main() -> int:
     holdout = [b for b in builds_all["predator"] if b["role"] == "holdout"]
     unlisted = [b for b in builds_all["predator"] + builds_all["invoker"]
                 if b["role"] == "unlisted"]
+    unassigned = [b for b in builds_all["predator"] if b["role"] == "unassigned"]
     if unlisted:
-        print("\nWARNING: builds not in the frozen lists (excluded from all endpoints):")
-        for b in unlisted:
-            print(f"  {b['fixture_file']} digest={b['fixture_digest']}")
+        _print_banner(
+            "BUILDS NOT IN THE FROZEN LISTS (excluded from all endpoints)",
+            "\n".join(f"{b['fixture_file']} digest={b['fixture_digest']}" for b in unlisted),
+        )
+    if unassigned:
+        _print_banner(
+            "PREDATOR BUILDS WITH NO ROLE IN THE EXPLICIT `roles` MAP",
+            "excluded from BOTH the primary and the holdout endpoints:\n"
+            + "\n".join(
+                f"{b['fixture_file']} digest={b['fixture_digest']}" for b in unassigned
+            ),
+        )
 
     # ---- 3. PRIMARY: 8 iteration predator builds --------------------------
     print("\n=== 3. PRIMARY endpoint -- iteration predator builds ===")
-    print(f"candidate set size: {len(iteration)} builds (protocol expects 8)")
+    _print_candidate_set_size("PRIMARY / iteration predator", len(iteration), expect_iteration)
     primary = analyse_arm_set(iteration, args.seed)
     report["sets"]["predator_iteration"] = primary
     _print_build_table("primary per-build paired table", primary)
@@ -561,7 +699,7 @@ def main() -> int:
 
     # ---- 4. SECONDARY: held-out predator builds ---------------------------
     print("\n=== 4. SECONDARY -- held-out predator builds (does v2 REGRESS?) ===")
-    print(f"candidate set size: {len(holdout)} builds (protocol expects 3)")
+    _print_candidate_set_size("SECONDARY / held-out predator", len(holdout), expect_holdout)
     hold = analyse_arm_set(holdout, args.seed)
     report["sets"]["predator_holdout"] = hold
     _print_build_table("holdout per-build paired table", hold)
@@ -569,7 +707,9 @@ def main() -> int:
 
     # ---- 5. INTERNAL CONTROL: invoker -------------------------------------
     print("\n=== 5. INTERNAL CONTROL -- invoker builds ===")
-    print(f"candidate set size: {len(builds_all['invoker'])} builds (protocol expects 6)")
+    _print_candidate_set_size(
+        "CONTROL / invoker", len(builds_all["invoker"]), len(lists["invoker"])
+    )
     control = analyse_arm_set(builds_all["invoker"], args.seed)
     report["sets"]["invoker_control"] = control
     _print_build_table("invoker per-build paired table", control)
