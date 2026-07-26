@@ -1,0 +1,224 @@
+{
+  "schema_version": 1,
+  "driver": "wp2_fixture_campaign",
+  "status": "complete",
+  "target_runs": 26,
+  "completed_runs": 26,
+  "victories": 12,
+  "restarts_used": 0,
+  "stop_reason": "target reached",
+  "capture_schema_hash": "2823CB7E7D6A6DDB7F805A76D0CD674BA7A2A908058771B66B4A8FEFF9BC1174",
+  "policy_version": "teacher_v1-0.1.128-gun-wp1",
+  "mod_version": "0.2.38-wp2-capture",
+  "runs": [
+    {
+      "run_id": "run_1785042605_79051",
+      "result": "victory",
+      "last_wave": 20,
+      "damage_taken": 184,
+      "duration_ms": 1197759,
+      "fault": ""
+    },
+    {
+      "run_id": "run_1785043804_88878",
+      "result": "defeat",
+      "last_wave": 15,
+      "damage_taken": 87,
+      "duration_ms": 826627,
+      "fault": ""
+    },
+    {
+      "run_id": "run_1785044632_66124",
+      "result": "defeat",
+      "last_wave": 17,
+      "damage_taken": 146,
+      "duration_ms": 951909,
+      "fault": ""
+    },
+    {
+      "run_id": "run_1785045585_48491",
+      "result": "victory",
+      "last_wave": 20,
+      "damage_taken": 101,
+      "duration_ms": 1187656,
+      "fault": ""
+    },
+    {
+      "run_id": "run_1785046774_28954",
+      "result": "defeat",
+      "last_wave": 17,
+      "damage_taken": 126,
+      "duration_ms": 939370,
+      "fault": ""
+    },
+    {
+      "run_id": "run_1785047714_78182",
+      "result": "victory",
+      "last_wave": 20,
+      "damage_taken": 151,
+      "duration_ms": 1152247,
+      "fault": ""
+    },
+    {
+      "run_id": "run_1785048868_21885",
+      "result": "defeat",
+      "last_wave": 20,
+      "damage_taken": 75,
+      "duration_ms": 1141425,
+      "fault": ""
+    },
+    {
+      "run_id": "run_1785050011_46324",
+      "result": "defeat",
+      "last_wave": 17,
+      "damage_taken": 83,
+      "duration_ms": 974036,
+      "fault": ""
+    },
+    {
+      "run_id": "run_1785050986_12835",
+      "result": "defeat",
+      "last_wave": 20,
+      "damage_taken": 41,
+      "duration_ms": 1127476,
+      "fault": ""
+    },
+    {
+      "run_id": "run_1785052115_85928",
+      "result": "defeat",
+      "last_wave": 17,
+      "damage_taken": 168,
+      "duration_ms": 954991,
+      "fault": ""
+    },
+    {
+      "run_id": "run_1785053071_28257",
+      "result": "victory",
+      "last_wave": 20,
+      "damage_taken": 313,
+      "duration_ms": 1205149,
+      "fault": ""
+    },
+    {
+      "run_id": "run_1785054278_23137",
+      "result": "victory",
+      "last_wave": 20,
+      "damage_taken": 132,
+      "duration_ms": 1212568,
+      "fault": ""
+    },
+    {
+      "run_id": "run_1785055492_29696",
+      "result": "defeat",
+      "last_wave": 10,
+      "damage_taken": 106,
+      "duration_ms": 479593,
+      "fault": ""
+    },
+    {
+      "run_id": "run_1785055972_79809",
+      "result": "defeat",
+      "last_wave": 20,
+      "damage_taken": 134,
+      "duration_ms": 1178694,
+      "fault": ""
+    },
+    {
+      "run_id": "run_1785057152_83590",
+      "result": "victory",
+      "last_wave": 20,
+      "damage_taken": 19,
+      "duration_ms": 1156523,
+      "fault": ""
+    },
+    {
+      "run_id": "run_1785058310_12439",
+      "result": "victory",
+      "last_wave": 20,
+      "damage_taken": 44,
+      "duration_ms": 1147775,
+      "fault": ""
+    },
+    {
+      "run_id": "run_1785059459_77386",
+      "result": "defeat",
+      "last_wave": 20,
+      "damage_taken": 89,
+      "duration_ms": 1125861,
+      "fault": ""
+    },
+    {
+      "run_id": "run_1785060586_28998",
+      "result": "victory",
+      "last_wave": 20,
+      "damage_taken": 42,
+      "duration_ms": 1161016,
+      "fault": ""
+    },
+    {
+      "run_id": "run_1785061749_34948",
+      "result": "defeat",
+      "last_wave": 13,
+      "damage_taken": 82,
+      "duration_ms": 694721,
+      "fault": ""
+    },
+    {
+      "run_id": "run_1785062445_956",
+      "result": "victory",
+      "last_wave": 20,
+      "damage_taken": 43,
+      "duration_ms": 1164118,
+      "fault": ""
+    },
+    {
+      "run_id": "run_1785063610_31200",
+      "result": "defeat",
+      "last_wave": 17,
+      "damage_taken": 155,
+      "duration_ms": 957796,
+      "fault": ""
+    },
+    {
+      "run_id": "run_1785064569_62891",
+      "result": "victory",
+      "last_wave": 20,
+      "damage_taken": 320,
+      "duration_ms": 1194169,
+      "fault": ""
+    },
+    {
+      "run_id": "run_1785065765_79883",
+      "result": "victory",
+      "last_wave": 20,
+      "damage_taken": 57,
+      "duration_ms": 1207199,
+      "fault": ""
+    },
+    {
+      "run_id": "run_1785066973_50511",
+      "result": "victory",
+      "last_wave": 20,
+      "damage_taken": 33,
+      "duration_ms": 1165438,
+      "fault": ""
+    },
+    {
+      "run_id": "run_1785068140_71385",
+      "result": "defeat",
+      "last_wave": 10,
+      "damage_taken": 185,
+      "duration_ms": 475850,
+      "fault": ""
+    },
+    {
+      "run_id": "run_1785068617_32868",
+      "result": "defeat",
+      "last_wave": 17,
+      "damage_taken": 87,
+      "duration_ms": 965227,
+      "fault": ""
+    }
+  ],
+  "completed_at": "2026-07-26T12:39:44.200254+00:00"
+}
