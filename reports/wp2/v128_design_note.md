@@ -1,3 +1,56 @@
+# v128 design note — WITHDRAWN: the proposed change is INERT
+
+> **OUTCOME: the change below was implemented, checked against the arithmetic, and
+> REVERTED before shipping. It flips none of the 9 decisions it was designed to
+> fix.** The version bump to policy `0.1.128` / mod `0.2.37` was kept, because a
+> deploy is independently owed for the mod-ready sentinel. See "Why it is inert".
+>
+> This is the third time in this session that a conclusion survived until one more
+> step of arithmetic was done. The pattern is worth naming: **a mechanism being
+> real is not the same as a mechanism being load-bearing.**
+
+## Why it is inert (the calculation that killed it)
+
+`score0 = _effects_value + _late_shop_pivot_bonus`, and BOTH contain raw-point
+terms besides the `gain0 * 6.0` this change removes:
+
+- `combat_value` (inside `_effects_value`) adds
+  `score += v * gain * flat_damage_value` for every key in `_DAMAGE_STATS`.
+  For well_rounded `flat_damage_value = 0.55`, `dps_gain_weight = 1.45`.
+  Note `_DAMAGE_STATS` **excludes `stat_attack_speed`**.
+- `_late_shop_pivot_bonus` weights raw points almost equally across the three
+  offense stats — mid tier (waves 9-14) `ranged 2.40/0.95`,
+  `attack_speed 2.10/0.85`, `percent_damage 1.85/0.70`, gated on
+  `offense < OFFENSE_FLOOR_MID (70)`.
+
+Worked on the real wave-12 case (loadout DPS 792.1, `offense ≈ 94 > 70`):
+
+| option | DPS term (×1.45) | flat term (×0.55) | pivot | **score0** | old rank (+gain×6) |
+|---|---|---|---|---|---|
+| ranged_damage+2 | 18.21% → 26.40 | 1.10 | 1.90 | **29.40** | 41.40 |
+| attack_speed+15 | 13.04% → 18.91 | — | 12.75 | **31.66** | 121.66 |
+
+`score0` alone still picks `attack_speed`. The wave-10 case behaves the same
+(13.26 vs 15.87). Removing `gain0 * 6.0` changes the *margin* but not the
+*ordering*, because the pivot bonus's raw-point weighting already favours the
+high-raw-point option once the larger term is gone.
+
+**The real lever is `_late_shop_pivot_bonus`'s coefficients**, which price a raw
+point of attack_speed at 0.85-2.10 against a raw point of ranged_damage at
+0.95-2.40 — a ratio of roughly 1.1-1.15x, where the measured DPS ratio is **6.4x**.
+That was explicitly placed out of scope in this note (six string pins across the
+test suite), and placing it out of scope is what made the remaining change
+powerless.
+
+**Any successor must be gated on the arithmetic BEFORE implementation:** compute
+`score0` for both options on the real fixtures and show the ordering actually
+flips. A replay showing "the teacher picked the worse option" is necessary but NOT
+sufficient — it does not establish that the proposed edit changes that pick.
+
+---
+
+# Original design note (superseded, retained for the reasoning trail)
+
 # v128 design note — remove the raw-points override in level-up ranking
 
 Date: 2026-07-26. Status: **DESIGN, not implemented.** Predecessor evidence:

@@ -13,11 +13,11 @@ const LOG_NAME = "Tom:BrotatoAgent:Runner"
 var active: bool = false
 var auto_start_benchmark: bool = true
 var current_move_vector: Vector2 = Vector2.ZERO
-var policy_version: String = "teacher_v1-0.1.127-gun-wp1"
+var policy_version: String = "teacher_v1-0.1.128-gun-wp1"
 # Single source of truth for the deployed mod identity: stamped into every run's
 # meta AND into the mod-ready sentinel, so the collector cannot accept a build
 # whose identity disagrees with what it asked for.
-const MOD_VERSION := "0.2.36-wp2-capture"
+const MOD_VERSION := "0.2.37-wp2-capture"
 const _MOD_READY_PATH := "user://brotato_agent/mod_ready.json"
 var last_move_debug: Dictionary = {}
 var last_meta_debug: Dictionary = {}
