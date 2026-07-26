@@ -117,6 +117,78 @@ should not cost defence. Confirm in the smoke that `defense.total` at each shop
 exit is not systematically below the v127 smoke's trajectory. If offense is being
 bought with survivability, that is a fail regardless of DPS.
 
+## GATE RESULT (run 2026-07-26) — mechanism confirmed, opportunity small
+
+`scripts/wp2_levelup_replay_diag.py` replayed all 574 recorded level-ups across
+the 20 F2 pure-teacher runs; 425 validated (149 skipped where the loadout could
+not be validated — excluded, not guessed). Event integrity verified directly:
+`level_up_offer` count equals `level_up_decision` count in every run sampled and
+all seqs are distinct, so the repeated rows are genuinely distinct level-ups at
+the same build state, not double-emission.
+
+**The ranking term is inert in 90.6% of level-ups:**
+
+| offense-eligible options on the board | decisions | share |
+|---|---|---|
+| 0 | 172 | 40.5% |
+| 1 | 213 | 50.1% |
+| **2** | **40** | **9.4%** |
+
+With 0 or 1 offense option there is nothing to rank, so `gain0 * 6.0` cannot
+change the outcome. Of the 40 decisions where it *could*, the teacher chose an
+offense option 32 times and picked the lower-DPS one **9 times**.
+
+**So v128 would change 9 of 425 decisions — 2.1%, or 0.45 per run.**
+
+| wave | outcome | chose | better offense option | DPS gap | % loadout |
+|---|---|---|---|---|---|
+| 12 | victory | percent_damage+12 | ranged_damage+3 | 134.2 | **12.41%** |
+| 12 | victory | attack_speed+15 | ranged_damage+2 | 40.9 | 5.17% |
+| 12 | victory | attack_speed+15 | ranged_damage+2 | 40.9 | 5.17% |
+| 10 | defeat | attack_speed+5 | ranged_damage+1 | 18.8 | 3.41% |
+| 10 | defeat | attack_speed+5 | ranged_damage+1 | 18.8 | 3.41% |
+| 12 | defeat | attack_speed+5 | ranged_damage+1 | 12.1 | 1.12% |
+| 12 | defeat | attack_speed+5 | ranged_damage+1 | 12.1 | 1.12% |
+| 11 | defeat | attack_speed+15 | percent_damage+12 | 5.1 | 0.64% |
+| 11 | defeat | attack_speed+15 | percent_damage+12 | 5.1 | 0.64% |
+
+Median 3.41% of loadout DPS, max 12.41%. Six in defeats, three in victories.
+
+**The mechanism is confirmed exactly as predicted.** `attack_speed+15` over
+`ranged_damage+2` is the raw-points failure in the wild: `gain0 * 6.0` scores them
+90 vs 12, while the true marginal DPS favours ranged by 40.9. There is no doubt
+about *what* is happening — only about whether it happens often enough to matter.
+
+### Ruling
+
+My predeclared bar ("≥5% of offense-branch choices move") was **written
+ambiguously** and I am not going to let the ambiguity decide this. Against the 40
+rankable decisions it is 22.5% (pass); against all 425 level-ups it is 2.1%
+(fail). Ruling on substance instead:
+
+**Implement, but bundle it — do not spend a deploy cycle on it alone.**
+
+- The opportunity is genuinely small: ~0.45 decisions per run, median 3.4% loadout
+  DPS, concentrated at waves 10-12.
+- The change is **structurally safe in a way the original design could not
+  guarantee**: it only reorders *within* the offense-filtered set, so it cannot
+  buy offense at the cost of defence. **Predeclared gate 4 (anti-cowardice) is
+  therefore moot** — there is no defensive option in the set being reordered.
+- A version bump and smoke are **already owed** for the committed-undeployed
+  mod-ready sentinel. v128 rides along at near-zero marginal cost, exactly as v126
+  rode along with v127.
+
+### Revised expectation, stated before implementing
+
+This will **not** measurably move win rate and must not be claimed to. n=20 could
+not resolve an effect this size, and 0.45 decisions per run at ~3% loadout DPS is
+below the noise floor of any campaign this project can afford. The honest claim is
+narrower: **a small, strictly-positive, zero-downside correction to a confirmed
+scoring defect**, shipped because the deploy cycle is already being paid for.
+
+If the smoke is clean, that is the whole result. No campaign should be run to
+"prove" v128 works.
+
 ## Expected effect, stated in advance
 
 A **uniform** lift in offense trajectory across all runs, not a targeted fix to
