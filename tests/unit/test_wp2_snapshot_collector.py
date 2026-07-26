@@ -98,3 +98,37 @@ def test_newest_telemetry_run_id_none_when_no_candidates(tmp_path):
 
 def test_newest_telemetry_run_id_none_when_root_missing(tmp_path):
     assert newest_telemetry_run_id(tmp_path / "nope") is None
+
+
+def test_both_boss_ids_map_to_verified_entities():
+    """Both mappings were verified against real runs, not guessed.
+
+    boss_crab -> predator: run_1785036448_61774 (bosses_spawn ["boss_crab"], then
+    predator captures at wave 20). boss_wizard -> invoker: run_1785042605_79051
+    (bosses_spawn ["boss_wizard"], then 1,397 invoker captures at wave 20).
+
+    This matters because predator is the boss the agent actually loses to, while
+    invoker has never beaten it. Mislabelling would silently build a library of
+    the easy boss -- the exact failure the collector's own docstring warns about.
+    """
+    assert boss_label(["boss_crab"]) == "predator"
+    assert boss_label(["boss_wizard"]) == "invoker"
+    # An unknown id must fall through to the RAW id, never a plausible guess.
+    assert boss_label(["boss_unknown_future"]) == "boss_unknown_future"
+    assert boss_label(None) == "unknown"
+
+
+def test_stale_stored_label_does_not_hide_a_fixture():
+    """A row archived before an id was mapped carries a RAW id in `boss`.
+
+    Rows written on 2026-07-26 before boss_wizard->invoker was added store
+    boss="boss_wizard". Selecting for "invoker" must still find them, or the
+    Invoker fixtures -- the planned internal control for a latency fix -- become
+    silently unselectable. An "if absent" fallback never fires for these rows
+    because the field is present, just stale.
+    """
+    stale = {"digest": "d1", "boss": "boss_wizard", "bosses_spawn": ["boss_wizard"],
+             "gold": 45, "source_run_id": "run_x"}
+    assert len(select_library([stale], "invoker")) == 1
+    assert select_library([stale], "boss_wizard") == []
+    assert select_library([stale], "predator") == []

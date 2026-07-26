@@ -41,8 +41,13 @@ from pathlib import Path
 # projectiles, all moving at 500 u/s), while "invoker" is 96.3% stationary and has
 # never beaten the agent. Selecting fixtures by the wrong id would silently build a
 # library of the easy boss.
+#
+# boss_wizard -> invoker verified 2026-07-26 against run_1785042605_79051, whose
+# wave-19 save carried bosses_spawn ["boss_wizard"] and which then logged 1,397
+# captures of res://entities/units/enemies/invoker/invoker.gd at wave 20.
 BOSS_ID_TO_ENTITY = {
     "boss_crab": "predator",
+    "boss_wizard": "invoker",
 }
 
 
@@ -101,9 +106,15 @@ def select_library(index_rows, boss: str, one_per_run: bool = True) -> list[dict
     selected: dict[object, dict] = {}
     out: list[dict] = []
     for i, row in enumerate(index_rows):
-        label = row.get("boss")
-        if label is None:
-            label = boss_label(row.get("bosses_spawn"))
+        # Derive from bosses_spawn FIRST and treat the stored `boss` as advisory.
+        # A stored label is written by whichever collector build was running at the
+        # time, so rows archived before an id was added to BOSS_ID_TO_ENTITY carry a
+        # RAW id (e.g. "boss_wizard") that is present-but-stale -- an "if absent"
+        # fallback never fires for them, and they would be silently unselectable
+        # under their real entity name ("invoker"). The mapping is the single source
+        # of truth; the stored label only covers rows with no bosses_spawn at all.
+        spawn = row.get("bosses_spawn")
+        label = boss_label(spawn) if spawn else row.get("boss")
         if label != boss:
             continue
         if not one_per_run:
