@@ -69,6 +69,32 @@ internal control that made several earlier findings interpretable. If a wave-17
 intervention is ever justified, that trade has to be made deliberately and by the
 operator.
 
+## The two failures are DIFFERENT problems — a unification hypothesis, refuted
+
+Wave 17 separates on **offense** and not defense. I proposed that the whole late
+game might therefore be an offense story, which would have explained why every
+movement intervention nulled. **It does not hold.** Same covariates, wave-20
+full-run outcomes, rank-biserial P(defeat > victory), null band [0.370, 0.630]:
+
+| | weapon damage | max_hp | armor |
+|---|---|---|---|
+| **wave 17** | **0.188** | 0.479 | 0.426 |
+| wave 20, invoker (42W/29L) | 0.553 | 0.320 | 0.620 |
+| wave 20, predator (38W/35L) | 0.464 | 0.370 | 0.350 |
+
+**Offense does not separate wave-20 outcomes for either boss.** If anything
+defense weakly does, but at P = 0.32-0.37 those sit at the very edge of the null
+band and are suggestive at most.
+
+That is mechanistically coherent: **wave 17 is a 60 s timed wave** where the
+arena saturates unless enemies are cleared fast enough (offense), while **wave 20
+is a boss fight** decided by surviving incoming damage (defense and dodging). So
+the finale movement work was aimed at the right modality for wave 20 — and wave
+17 is not more of the same.
+
+Caveat: weapon damage is read at the first wave-20 capture, and these are
+marginal effects at n≈70 per boss.
+
 ## Caveats
 
 - The projection inherits every caveat of the corrected derivation, chiefly that
