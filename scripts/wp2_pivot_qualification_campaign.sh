@@ -42,8 +42,12 @@ check_progress() {
 for round in 1 2 3 4; do
   echo "=== round $round/4 : control (shipped default, no fix) ==="
   before=$(rows_of "$OUT/control.jsonl")
+  # --no-... is REQUIRED here since mod 0.2.49 made the fix the shipped default
+  # and the loop follows that default. Passing no flag would now run the
+  # TREATMENT in both arms.
   "$PY" scripts/wp2_finale_loop.py --trials 8 --boss predator "${FIXARGS[@]}" \
-    --label "pivotqual_control_r${round}" --out "$OUT/control.jsonl"
+    --label "pivotqual_control_r${round}" --out "$OUT/control.jsonl" \
+    --no-finale-pivot-projectiles
   check_progress "$OUT/control.jsonl" "$before" "round $round control"
 
   echo "=== round $round/4 : treatment (pivot fix) ==="

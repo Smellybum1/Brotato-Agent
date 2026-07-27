@@ -472,10 +472,24 @@ def main() -> int:
     ap.add_argument("--finale-heal-seek", action="store_true")
     ap.add_argument("--finale-range-keep", action="store_true")
     ap.add_argument("--finale-projectile-priority", action="store_true")
+    # DEFAULT-ON since mod 0.2.49 (qualified: 0.688 -> 1.000, Fisher p=0.000426).
+    # write_agent_config writes this key on EVERY trial, so leaving the loop's
+    # default at False would have silently disabled the SHIPPED behaviour on every
+    # future trial -- and produced a "baseline" that looks legitimate while running
+    # a build nobody ships. Kept for explicitness; --no-finale-pivot-projectiles is
+    # how a control arm turns it off.
     ap.add_argument("--finale-pivot-projectiles", action="store_true")
+    ap.add_argument("--no-finale-pivot-projectiles", action="store_true",
+                    help="disable the shipped default (control arms only)")
     ap.add_argument("--finale-co-rotate", action="store_true")
     ap.add_argument("--finale-ring-radius", action="store_true")
     args = ap.parse_args()
+
+    # Resolve the shipped default ONCE, here, so every downstream use (config
+    # write, per-trial row, arm validation, summary prints) agrees. The arm
+    # recorded in telemetry is checked against this, so a mismatch still
+    # invalidates the trial.
+    args.finale_pivot_projectiles = not args.no_finale_pivot_projectiles
 
     if args.trials < 1:
         raise SystemExit("--trials must be positive")

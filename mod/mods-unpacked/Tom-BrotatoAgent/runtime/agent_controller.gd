@@ -56,7 +56,14 @@ var _scene_dump_visited: int = 0
 # sees), so flag-off must stay byte-identical for the baseline to hold.
 # The emitted dicts carry EXACTLY the existing projectile key set, so the
 # capture schema hash does not move and the collector gate still passes.
-var finale_pivot_projectiles: bool = false
+# DEFAULT-ON since the qualification campaign (0.2.49). Pre-registered protocol
+# reports/wp2/pivot_fix_qualification_protocol.md, 64 paired trials on 8 fixtures:
+# victory rate 22/32 = 0.688 without the fix vs 32/32 = 1.000 with it, one-sided
+# Fisher p = 0.000426, damage median 64 -> 20. The control arm came in at 0.688,
+# right on its historical 0.651/0.703, so the baseline was not confounded.
+# Structural gate: 0 rotating projectiles in 245,057 control observations vs
+# 326,151 in the treatment -- the arms could not have been confused.
+var finale_pivot_projectiles: bool = true
 # Wave-20 dev flag: strafe around the boss in the same direction its projectile
 # ring is rotating. DEPENDS ON finale_pivot_projectiles -- without it the ring is
 # not in the state and this term is inert (a no-op, not an error).
@@ -86,11 +93,11 @@ var _resume_ticks: int = 0
 # first MAIN_MENU tick can arrive before the save is loaded.
 const RESUME_MAX_TICKS := 600
 var current_move_vector: Vector2 = Vector2.ZERO
-var policy_version: String = "teacher_v1-0.1.128-gun-wp1"
+var policy_version: String = "teacher_v1-0.1.129-gun-wp1"
 # Single source of truth for the deployed mod identity: stamped into every run's
 # meta AND into the mod-ready sentinel, so the collector cannot accept a build
 # whose identity disagrees with what it asked for.
-const MOD_VERSION := "0.2.48-wp2-capture"
+const MOD_VERSION := "0.2.49-wp2-capture"
 const _MOD_READY_PATH := "user://brotato_agent/mod_ready.json"
 var last_move_debug: Dictionary = {}
 var last_meta_debug: Dictionary = {}
