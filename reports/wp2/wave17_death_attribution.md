@@ -96,6 +96,56 @@ flip). Both can be true — and the unresolved question is which:
 is anything to build. Per the standing rule, no fix should be designed until it
 is settled — the same gate that returned NO-GO on the invoker.
 
+## ⛔ (a) vs (b) RESOLVED AS FAR AS THE DATA ALLOWS — do NOT reopen the shop layer
+
+22 died / 150 survivors, 0 runs dropped, 63,711 offered-item observations.
+**Null band calibrated first:** SE(rank-biserial) at 22x150 is 0.066, so
+**P between 0.370 and 0.630 is indistinguishable from no separation.** Every
+threshold below is read against that band, not against 0.5.
+
+**The strong form of (b) — "starved from early on" — is REFUTED.** Through wave
+12 there is no resource gap of any kind. Per-wave gold earned is null every wave
+from 1 to 12 (P 0.34-0.53) and first leaves the band at **wave 13**. Cumulative
+level-ups are null throughout (the whole-run total of 18 vs 21, P=0.040, is a
+confound — died runs stop at wave 17; restricted to waves ≤16 it is 18 vs 19,
+P=0.353).
+
+**(a) has ZERO positive support.** Nothing about the decision process differs:
+
+| through w16 | died | surv | P(d>s) |
+|---|---|---|---|
+| gold earned | 4002 | 4241 | 0.266 |
+| gold spent | 3670 | 4009 | 0.291 |
+| weapons bought | 23.5 | 24.0 | 0.474 |
+| rerolls | 27 | 26 | 0.492 |
+| gold left after w16 shop | 90.5 | 99 | 0.392 |
+
+Boards at waves 12-16 were if anything marginally **better** for the doomed runs
+(best affordable weapon damage 15.5 vs 15.0, P=0.555; affordable weapons per
+board 1.02 vs 1.06) — **offer luck is ruled out.** Purchases are identical on
+every axis: tier 2/2, max tier 3/3, median price 83.8/82.8, weapon share
+0.416/0.400, combines 8.5/8.0, sells 8.5/8.0. Offense-deficient shop exits with
+an affordable weapon on the board: **28.1% died vs 26.9% survived.**
+
+**The trap reproduced exactly.** `can_buy` is `None` on **all 39,637**
+item-category offers (100%); `affordable and can_buy` retains 11,734 rows with
+composition `{'weapon': 11734}` — **weapons only, zero items.** That is the
+defect that voided `wp2_shop_selection_diag.py`'s "0 misses over 1,037 buys".
+Filtering on `affordable` alone is correct.
+
+**What is left is unattributable.** The w16 offense gap decomposes as ~41% gold,
+~59% conversion (survivor OLS `weapon_score(16) ~ cum_gold_spent`: slope 0.0483,
+r²=0.103; median gold gap 274 predicts 13.2 of the observed 32.0). But the
+conversion residual is P=0.351 — barely outside the band — and **every direct
+proxy for how conversion could differ is null. The residual has no identified
+mechanism.**
+
+**Verdict: genuinely undetermined, and not actionable.** The gap emerges only
+from ~wave 13, and its late co-emergence with the gold gap is consistent with a
+**feedback loop** — weaker offense → slower clears → fewer materials → weaker
+offense — which this data cannot orient. **n=22 is the binding constraint and no
+amount of re-analysis fixes it.**
+
 ## Caveats
 
 1. **The fatal blow is never captured.** All 22 died runs' final wave-17 capture
