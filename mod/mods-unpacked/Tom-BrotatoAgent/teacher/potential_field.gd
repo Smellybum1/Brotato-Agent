@@ -53,6 +53,15 @@ var _finale_body_projectile_floor := -1.0
 var _finale_body_selected_projectile_clearance := -1.0
 # Finale controller v2 flag; the controller propagates agent_config.finale_v2.
 var finale_v2_enabled: bool = false
+# Wave-20 dev flags; the controller propagates agent_config.finale_no_panic and
+# agent_config.finale_heal_seek. Default false -- flag-off is byte-identical.
+var finale_no_panic_enabled: bool = false
+var finale_heal_seek_enabled: bool = false
+var finale_range_keep_enabled: bool = false
+# Dev flag: give boss-projectile dodging the FINAL word in the safety tail.
+# Off, the tail order is projectile -> wall -> body, so wall and body safety can
+# both override a dodge. On, projectile safety runs LAST at wave 20.
+var finale_projectile_priority_enabled: bool = false
 
 
 func compute_movement(state, profile) -> Vector2:
@@ -223,14 +232,24 @@ func compute_movement(state, profile) -> Vector2:
 		# Automatic fire does not require movement to preserve a boss-range ring.
 		desire = _pure_repulsion_flee(
 			pos, enemies, bosses, projectiles, arena, _prev_move)
-		if (hp_ratio <= BotConfig.LATE_SURVIVAL_HP_RATIO
-			and (not enemies.empty() or not bosses.empty() or not projectiles.empty())):
-			var finale_survival = _panic_dodge(
-				pos, enemies, bosses, projectiles, arena)
-			if finale_survival == Vector2.ZERO:
-				finale_survival = _pure_repulsion_flee(
-					pos, enemies, bosses, projectiles, arena, _prev_move)
-			desire = finale_survival
+		# Dev flag finale_no_panic: skip the low-HP panic override entirely and
+		# keep the pure-repulsion desire. Flag off, this block is unchanged.
+		if not finale_no_panic_enabled:
+			if (hp_ratio <= BotConfig.LATE_SURVIVAL_HP_RATIO
+				and (not enemies.empty() or not bosses.empty() or not projectiles.empty())):
+				var finale_survival = _panic_dodge(
+					pos, enemies, bosses, projectiles, arena)
+				if finale_survival == Vector2.ZERO:
+					finale_survival = _pure_repulsion_flee(
+						pos, enemies, bosses, projectiles, arena, _prev_move)
+				desire = finale_survival
+		# Dev flag finale_heal_seek: below the HP threshold, steer at the nearest
+		# ordinary healing consumable. The ordered safety tail still runs after.
+		if finale_heal_seek_enabled:
+			var heal_dir = _finale_heal_seek(pos, consumables, player)
+			if heal_dir != Vector2.ZERO:
+				desire = _normalize(desire * (1.0 - BotConfig.BOSS_FINALE_HEAL_SEEK_WEIGHT)
+					+ heal_dir * BotConfig.BOSS_FINALE_HEAL_SEEK_WEIGHT)
 	else:
 		desire = _build_desire(pos, enemies, bosses, loot, consumables, trees, weapons, arena, profile, player, wave)
 		# v118: when density suppression has zeroed ordinary loot attraction,
@@ -263,6 +282,16 @@ func compute_movement(state, profile) -> Vector2:
 	else:
 		combined = desire
 	combined = _normalize(combined)
+	# Dev flag finale_range_keep: applied AFTER the projectile blend, not before.
+	# Pre-blend it was structurally capped: BOSS_FINALE_PROJ_URGENCY_FLOOR is 0.55,
+	# so desire contributes at most 45% of the command whenever any escape
+	# direction exists -- which against a firing boss is essentially always.
+	# The ordered safety tail below is still the only hard constraint.
+	if finale and finale_range_keep_enabled:
+		var range_dir = _finale_range_keep(pos, bosses, weapons)
+		if range_dir != Vector2.ZERO:
+			combined = _normalize(combined * (1.0 - BotConfig.BOSS_FINALE_RANGE_KEEP_WEIGHT)
+				+ range_dir * BotConfig.BOSS_FINALE_RANGE_KEEP_WEIGHT)
 	if finale:
 		combined = _finale_turn_without_reversal(_prev_move, combined, pos, arena)
 
@@ -280,13 +309,21 @@ func compute_movement(state, profile) -> Vector2:
 	var alpha = BotConfig.MOVE_SMOOTHING
 	var smoothed = _prev_move * (1.0 - alpha) + combined * alpha
 	var final_move = _normalize(smoothed)
+	# Dev flag finale_projectile_priority: wave 20 only. Off, this is unchanged.
+	# On, projectile safety is deferred to AFTER body safety so that dodging has
+	# the final word instead of being overridden by wall and body arbitration.
+	# RISK, stated deliberately: wall safety exists to stop the agent being
+	# commanded into a physical pin, and body safety to stop it walking into
+	# contact. Letting a dodge outrank both can re-open the historical corner trap.
+	var projectile_last = finale and finale_projectile_priority_enabled
 	if wave >= BotConfig.LATE_SURVIVAL_WAVE:
 		# v99: every late-wave command must pass the same final safety tail. v98
 		# protected the low-health early return, but ordinary full-health movement
 		# on waves 17-19 could still project through the hard margin after smoothing.
 		# Re-evaluate projectile safety first and predictive wall safety last.
-		final_move = _finale_projectile_safety(
-			pos, final_move, projectiles, player_speed, arena, enemies, bosses, profile)
+		if not projectile_last:
+			final_move = _finale_projectile_safety(
+				pos, final_move, projectiles, player_speed, arena, enemies, bosses, profile)
 		final_move = _finale_wall_safety(
 			pos, final_move, arena, bosses, projectiles, player_speed,
 			enemies, profile)
@@ -298,6 +335,9 @@ func compute_movement(state, profile) -> Vector2:
 	final_move = _finale_body_safety(
 		pos, final_move, player_speed, arena, enemies, bosses,
 		projectiles, profile, wave, not _loot_dash_active, _loot_dash_active)
+	if projectile_last:
+		final_move = _finale_projectile_safety(
+			pos, final_move, projectiles, player_speed, arena, enemies, bosses, profile)
 	_prev_move = final_move
 	return _prev_move
 
@@ -2902,6 +2942,64 @@ func _is_valuable_pickup(cid: String) -> bool:
 	if id.find("crate") >= 0 and id.find("explosive") < 0:
 		return true
 	return false
+
+
+func _finale_range_keep(pos, bosses, weapons) -> Vector2:
+	# Wave-20 range keeping: unit direction toward the nearest boss when it has
+	# drifted outside shortest_range * BOSS_FINALE_RANGE_KEEP_FRACTION, else zero.
+	# Never pushes AWAY, and never pulls while already inside the band.
+	if bosses.empty():
+		return Vector2.ZERO
+	var shortest = _shortest_weapon_range(weapons)
+	if shortest <= 0.0:
+		return Vector2.ZERO
+	var best_dist = -1.0
+	var best_diff = Vector2.ZERO
+	for b in bosses:
+		var bp = Vector2(b.get("x", 0.0), b.get("y", 0.0))
+		var diff = bp - pos
+		var dist = diff.length()
+		if best_dist < 0.0 or dist < best_dist:
+			best_dist = dist
+			best_diff = diff
+	if best_dist < 0.0:
+		return Vector2.ZERO
+	if best_dist <= shortest * BotConfig.BOSS_FINALE_RANGE_KEEP_FRACTION:
+		return Vector2.ZERO
+	return _normalize(best_diff)
+
+
+func _finale_heal_seek(pos, consumables, player) -> Vector2:
+	# Wave-20 heal seeking: unit direction to the nearest ordinary heal, else zero.
+	# Deliberately NOT _consumable_attraction: that function is gated by farming
+	# heuristics (EARLY_LOOT_WAVE, greed multipliers, pack-density gates, a safety
+	# term that shrinks the force as threats close in), so its behaviour depends on
+	# constants unrelated to this experiment. This is a single directly tunable knob.
+	if consumables.empty():
+		return Vector2.ZERO
+	var hp = float(player.get("hp", 1))
+	var max_hp = max(float(player.get("max_hp", 1)), 1.0)
+	if hp / max_hp >= BotConfig.BOSS_FINALE_HEAL_SEEK_HP_RATIO:
+		return Vector2.ZERO
+	var best_dist = -1.0
+	var best_diff = Vector2.ZERO
+	for c in consumables:
+		var cid = str(c.get("id", ""))
+		if _is_valuable_pickup(cid):
+			continue
+		if cid.to_lower().find("item_box") >= 0:
+			continue
+		var cp = Vector2(c.get("x", 0.0), c.get("y", 0.0))
+		var diff = cp - pos
+		var dist = diff.length()
+		if best_dist < 0.0 or dist < best_dist:
+			best_dist = dist
+			best_diff = diff
+	if best_dist < 0.0:
+		return Vector2.ZERO
+	if best_dist > BotConfig.BOSS_FINALE_HEAL_SEEK_MAX_DIST:
+		return Vector2.ZERO
+	return _normalize(best_diff)
 
 
 func _consumable_attraction(pos, consumables, player, enemies, bosses, wave = 1) -> Vector2:

@@ -25,6 +25,18 @@ var finale_v2: bool = false
 # change is isolated from the policy change v2 bundled with it. Captures stay
 # on the ordinary 20 Hz schedule.
 var finale_rate_full: bool = false
+# Wave-20 dev flag: skip the low-HP panic override inside the v1 finale branch,
+# leaving the pure-repulsion desire in place. Default false -- byte-identical.
+var finale_no_panic: bool = false
+# Wave-20 dev flag: below BOSS_FINALE_HEAL_SEEK_HP_RATIO, steer at the nearest
+# ordinary healing consumable. Default false -- byte-identical.
+var finale_heal_seek: bool = false
+# Wave-20 dev flag: keep the boss inside weapon range instead of drifting out.
+# Default false -- byte-identical.
+var finale_range_keep: bool = false
+# Dev flag: boss-projectile dodging gets the FINAL word in the wave-20 safety
+# tail (projectile safety deferred to after body safety).
+var finale_projectile_priority: bool = false
 var _resume_done: bool = false
 var _resume_ticks: int = 0
 # ~10 s at 60 Hz. ProgressData populates current_run_state during startup, so the
@@ -35,7 +47,7 @@ var policy_version: String = "teacher_v1-0.1.128-gun-wp1"
 # Single source of truth for the deployed mod identity: stamped into every run's
 # meta AND into the mod-ready sentinel, so the collector cannot accept a build
 # whose identity disagrees with what it asked for.
-const MOD_VERSION := "0.2.40-wp2-capture"
+const MOD_VERSION := "0.2.41-wp2-capture"
 const _MOD_READY_PATH := "user://brotato_agent/mod_ready.json"
 var last_move_debug: Dictionary = {}
 var last_meta_debug: Dictionary = {}
@@ -161,6 +173,10 @@ func _ready() -> void:
 	_load_auto_config()
 	if _field != null:
 		_field.finale_v2_enabled = finale_v2
+		_field.finale_no_panic_enabled = finale_no_panic
+		_field.finale_heal_seek_enabled = finale_heal_seek
+		_field.finale_range_keep_enabled = finale_range_keep
+		_field.finale_projectile_priority_enabled = finale_projectile_priority
 	if student_enabled:
 		_bridge = _COMBAT_BRIDGE_SCRIPT.new()
 		_bridge.name = "CombatBridge"
@@ -208,6 +224,10 @@ func _write_mod_ready() -> void:
 		# than discovering from the summary afterwards that the flag was lost.
 		"finale_v2": finale_v2,
 		"finale_rate_full": finale_rate_full,
+		"finale_no_panic": finale_no_panic,
+		"finale_heal_seek": finale_heal_seek,
+		"finale_range_keep": finale_range_keep,
+		"finale_projectile_priority": finale_projectile_priority,
 	}))
 	f.close()
 
@@ -324,6 +344,15 @@ var _finale_move_tick := 0
 # is proved from the run summary rather than inferred from behaviour.
 var finale_combat_ticks: int = 0
 var finale_recompute_ticks: int = 0
+# Range-keeping instrument. "boss in range 90% of the time" must be read off a
+# run, not inferred. Counted on wave-20 combat ticks with a boss present; both
+# the shortest and the longest weapon range are reported because with five
+# weapons spanning ~458-559 units "in range" is otherwise ambiguous.
+# Computed UNCONDITIONALLY at wave 20 (not gated on the flag): they are pure
+# observation and affect no decision, so flag-off behaviour stays identical.
+var finale_boss_ticks: int = 0
+var finale_boss_in_short_range_ticks: int = 0
+var finale_boss_in_long_range_ticks: int = 0
 func _handle_combat(main) -> void:
 	var state = _gather_combat_state(main)
 	if state.empty():
@@ -358,6 +387,7 @@ func _handle_combat(main) -> void:
 		finale_combat_ticks += 1
 		if recompute_move:
 			finale_recompute_ticks += 1
+		_record_finale_range_sample(state)
 	else:
 		_finale_move_tick = 0
 	if recompute_move:
@@ -1971,6 +2001,9 @@ func _start_run() -> void:
 	_combat_tick_counter = 0
 	finale_combat_ticks = 0
 	finale_recompute_ticks = 0
+	finale_boss_ticks = 0
+	finale_boss_in_short_range_ticks = 0
+	finale_boss_in_long_range_ticks = 0
 	_wp2_capture_seq = 0
 	_wp2_previous_action = Vector2.ZERO
 	_wp2_last_capture_player_pos = Vector2.ZERO
@@ -2003,6 +2036,10 @@ func _start_run() -> void:
 		"policy_version": policy_version,
 		"finale_v2": finale_v2,
 		"finale_rate_full": finale_rate_full,
+		"finale_no_panic": finale_no_panic,
+		"finale_heal_seek": finale_heal_seek,
+		"finale_range_keep": finale_range_keep,
+		"finale_projectile_priority": finale_projectile_priority,
 	}
 	if _telem != null:
 		_telem.begin_run(meta)
@@ -2025,6 +2062,9 @@ func _finish_run(result_phase: String) -> void:
 			"waves_completed": RunData.current_wave,
 			"finale_combat_ticks": finale_combat_ticks,
 			"finale_recompute_ticks": finale_recompute_ticks,
+			"finale_boss_ticks": finale_boss_ticks,
+			"finale_boss_in_short_range_ticks": finale_boss_in_short_range_ticks,
+			"finale_boss_in_long_range_ticks": finale_boss_in_long_range_ticks,
 		})
 	_restore_pre_combine_mouse_mode()
 	_record_batch_result(result == "victory")
@@ -2098,6 +2138,9 @@ func _on_watchdog(reason: String) -> void:
 				"last_wave": RunData.current_wave,
 				"finale_combat_ticks": finale_combat_ticks,
 				"finale_recompute_ticks": finale_recompute_ticks,
+				"finale_boss_ticks": finale_boss_ticks,
+				"finale_boss_in_short_range_ticks": finale_boss_in_short_range_ticks,
+				"finale_boss_in_long_range_ticks": finale_boss_in_long_range_ticks,
 			})
 		_run_started = false
 		active = false
@@ -2257,6 +2300,48 @@ func _load_auto_config() -> void:
 		finale_v2 = bool(cfg["finale_v2"])
 	if cfg.has("finale_rate_full"):
 		finale_rate_full = bool(cfg["finale_rate_full"])
+	if cfg.has("finale_no_panic"):
+		finale_no_panic = bool(cfg["finale_no_panic"])
+	if cfg.has("finale_heal_seek"):
+		finale_heal_seek = bool(cfg["finale_heal_seek"])
+	if cfg.has("finale_range_keep"):
+		finale_range_keep = bool(cfg["finale_range_keep"])
+	if cfg.has("finale_projectile_priority"):
+		finale_projectile_priority = bool(cfg["finale_projectile_priority"])
+
+func _record_finale_range_sample(state) -> void:
+	# Same state the controller already passed to the field: one source of truth
+	# for the boss distance. No-op unless a boss is present on this tick.
+	var bosses = state.get("bosses", [])
+	if bosses.empty():
+		return
+	var player = state.get("player", {})
+	if player.empty():
+		return
+	var pos = Vector2(player.get("x", 0.0), player.get("y", 0.0))
+	var nearest = -1.0
+	for b in bosses:
+		var d = (Vector2(b.get("x", 0.0), b.get("y", 0.0)) - pos).length()
+		if nearest < 0.0 or d < nearest:
+			nearest = d
+	if nearest < 0.0:
+		return
+	finale_boss_ticks += 1
+	var shortest = -1.0
+	var longest = -1.0
+	for w in state.get("weapons", []):
+		var r = float(w.get("max_range", 0))
+		if r <= 0.0:
+			continue
+		if shortest < 0.0 or r < shortest:
+			shortest = r
+		if r > longest:
+			longest = r
+	if shortest > 0.0 and nearest <= shortest:
+		finale_boss_in_short_range_ticks += 1
+	if longest > 0.0 and nearest <= longest:
+		finale_boss_in_long_range_ticks += 1
+
 
 func _update_hud_phase(detected: String) -> void:
 	if _hud == null:

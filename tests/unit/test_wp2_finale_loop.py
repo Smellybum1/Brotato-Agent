@@ -230,3 +230,106 @@ def test_loop_source_exposes_finale_rate_full_flag():
     # The finally block must disarm BOTH flags.
     tail = src.split("    finally:", 1)[1]
     assert "finale_rate_full=False," in tail
+
+
+# --------------------------------------------------------------------------
+# wave-20 dev flags: finale_no_panic / finale_heal_seek / finale_range_keep
+# --------------------------------------------------------------------------
+
+DEV_FLAGS = ("finale_no_panic", "finale_heal_seek", "finale_range_keep")
+
+
+def _dev_summary(**overrides):
+    base = _summary()
+    for flag in DEV_FLAGS:
+        base[flag] = False
+    base.update(overrides)
+    return base
+
+
+def test_dev_flag_arms_match_when_requested_and_recorded_agree(tmp_path: Path):
+    analysis = analyse_events(_events(tmp_path, [(20, [PREDATOR])]))
+    summary = _dev_summary(finale_no_panic=True, finale_heal_seek=True,
+                           finale_range_keep=True)
+    assert validate_trial(
+        analysis, summary, "predator", False, False, True, True, True
+    ) == ""
+
+
+def test_finale_no_panic_mismatch_both_directions(tmp_path: Path):
+    analysis = analyse_events(_events(tmp_path, [(20, [PREDATOR])]))
+    assert validate_trial(
+        analysis, _dev_summary(), "predator", False, False, True
+    ) == "finale_no_panic_mismatch:False"
+    assert validate_trial(
+        analysis, _dev_summary(finale_no_panic=True), "predator", False, False, False
+    ) == "finale_no_panic_mismatch:True"
+
+
+def test_finale_heal_seek_mismatch_both_directions(tmp_path: Path):
+    analysis = analyse_events(_events(tmp_path, [(20, [PREDATOR])]))
+    assert validate_trial(
+        analysis, _dev_summary(), "predator", False, False, False, True
+    ) == "finale_heal_seek_mismatch:False"
+    assert validate_trial(
+        analysis, _dev_summary(finale_heal_seek=True), "predator",
+        False, False, False, False
+    ) == "finale_heal_seek_mismatch:True"
+
+
+def test_finale_range_keep_mismatch_both_directions(tmp_path: Path):
+    analysis = analyse_events(_events(tmp_path, [(20, [PREDATOR])]))
+    assert validate_trial(
+        analysis, _dev_summary(), "predator", False, False, False, False, True
+    ) == "finale_range_keep_mismatch:False"
+    assert validate_trial(
+        analysis, _dev_summary(finale_range_keep=True), "predator",
+        False, False, False, False, False
+    ) == "finale_range_keep_mismatch:True"
+
+
+def test_dev_flag_missing_key_is_treated_as_false(tmp_path: Path):
+    """A build that predates a flag records nothing; asking for it must invalidate."""
+    analysis = analyse_events(_events(tmp_path, [(20, [PREDATOR])]))
+    summary = _summary()  # carries none of the dev-flag keys
+    assert validate_trial(
+        analysis, summary, "predator", False, False, True
+    ) == "finale_no_panic_mismatch:None"
+    # ... but the all-off arm still validates against such a summary.
+    assert validate_trial(analysis, summary, "predator", False, False) == ""
+
+
+def test_write_agent_config_writes_the_dev_flags_unconditionally(tmp_path: Path):
+    path = tmp_path / "agent_config.json"
+    write_agent_config(
+        path, auto_start=True, resume_from_save=True, finale_v2=False,
+        finale_rate_full=False, finale_no_panic=True, finale_heal_seek=True,
+        finale_range_keep=True,
+    )
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    for flag in DEV_FLAGS:
+        assert payload[flag] is True
+
+    # deploy_mod.py rewrites this file wholesale, so every key must be written
+    # every time -- a setdefault would silently run a stale arm.
+    write_agent_config(
+        path, auto_start=False, resume_from_save=False, finale_v2=False,
+    )
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    for flag in DEV_FLAGS:
+        assert payload[flag] is False
+
+
+def test_loop_source_exposes_the_dev_flag_cli_and_disarms_them():
+    src = (
+        Path(__file__).resolve().parents[2] / "scripts/wp2_finale_loop.py"
+    ).read_text(encoding="utf-8")
+    tail = src.split("    finally:", 1)[1]
+    for flag in DEV_FLAGS:
+        cli = "--" + flag.replace("_", "-")
+        assert 'ap.add_argument("%s", action="store_true")' % cli in src
+        assert "%s=args.%s," % (flag, flag) in src
+        # Recorded on EVERY trial row, so the arm is in the raw data.
+        assert '"%s": bool(args.%s),' % (flag, flag) in src
+        # An interrupted loop must never leave the machine armed.
+        assert "%s=False," % flag in tail

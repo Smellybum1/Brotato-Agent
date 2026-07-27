@@ -87,8 +87,12 @@ def write_agent_config(
     resume_from_save: bool,
     finale_v2: bool,
     finale_rate_full: bool = False,
+    finale_no_panic: bool = False,
+    finale_heal_seek: bool = False,
+    finale_range_keep: bool = False,
+    finale_projectile_priority: bool = False,
 ) -> None:
-    """Set auto_start/resume_from_save/finale_v2/finale_rate_full, PRESERVING other keys.
+    """Set auto_start/resume_from_save and the finale arm flags, PRESERVING other keys.
 
     Same read-modify-write contract as wp2_collect_teacher.set_auto_start: the
     student keys (student_enabled / student_port / student_model_sha256) live in
@@ -110,6 +114,10 @@ def write_agent_config(
     # fixed dict, so a stale/absent flag would silently run the wrong arm.
     payload["finale_v2"] = finale_v2
     payload["finale_rate_full"] = finale_rate_full
+    payload["finale_no_panic"] = finale_no_panic
+    payload["finale_heal_seek"] = finale_heal_seek
+    payload["finale_range_keep"] = finale_range_keep
+    payload["finale_projectile_priority"] = finale_projectile_priority
     atomic_json(path, payload)
 
 
@@ -167,6 +175,10 @@ def validate_trial(
     expected_boss: str,
     expected_finale_v2: bool,
     expected_finale_rate_full: bool = False,
+    expected_finale_no_panic: bool = False,
+    expected_finale_heal_seek: bool = False,
+    expected_finale_range_keep: bool = False,
+    expected_finale_projectile_priority: bool = False,
 ) -> str:
     """Return "" when the trial is a valid finale observation, else a reason code."""
     waves = list(analysis.get("waves") or [])
@@ -197,6 +209,14 @@ def validate_trial(
         return f"finale_arm_mismatch:{summary.get('finale_v2')}"
     if bool(summary.get("finale_rate_full", False)) != expected_finale_rate_full:
         return f"finale_rate_arm_mismatch:{summary.get('finale_rate_full')}"
+    if bool(summary.get("finale_no_panic", False)) != expected_finale_no_panic:
+        return f"finale_no_panic_mismatch:{summary.get('finale_no_panic')}"
+    if bool(summary.get("finale_heal_seek", False)) != expected_finale_heal_seek:
+        return f"finale_heal_seek_mismatch:{summary.get('finale_heal_seek')}"
+    if bool(summary.get("finale_range_keep", False)) != expected_finale_range_keep:
+        return f"finale_range_keep_mismatch:{summary.get('finale_range_keep')}"
+    if bool(summary.get("finale_projectile_priority", False)) != expected_finale_projectile_priority:
+        return f"finale_projectile_priority_mismatch:{summary.get('finale_projectile_priority')}"
     return ""
 
 
@@ -271,6 +291,10 @@ def run_trial(
         resume_from_save=True,
         finale_v2=args.finale_v2,
         finale_rate_full=args.finale_rate_full,
+        finale_no_panic=args.finale_no_panic,
+        finale_heal_seek=args.finale_heal_seek,
+        finale_range_keep=args.finale_range_keep,
+        finale_projectile_priority=args.finale_projectile_priority,
     )
 
     rd = runs_dir()
@@ -301,6 +325,10 @@ def run_trial(
         # the controller the mod reports it actually ran.
         "finale_v2": bool(args.finale_v2),
         "finale_rate_full": bool(args.finale_rate_full),
+        "finale_no_panic": bool(args.finale_no_panic),
+        "finale_heal_seek": bool(args.finale_heal_seek),
+        "finale_range_keep": bool(args.finale_range_keep),
+        "finale_projectile_priority": bool(args.finale_projectile_priority),
         "fixture_file": fixture.name,
         "fixture_digest": fixture_digest,
         "run_id": "",
@@ -391,6 +419,10 @@ def run_trial(
             args.boss,
             bool(args.finale_v2),
             bool(args.finale_rate_full),
+            bool(args.finale_no_panic),
+            bool(args.finale_heal_seek),
+            bool(args.finale_range_keep),
+            bool(args.finale_projectile_priority),
         )
         row["valid"] = reason == ""
         row["invalid_reason"] = reason
@@ -412,6 +444,10 @@ def main() -> int:
     ap.add_argument("--poll-sec", type=float, default=0.5)
     ap.add_argument("--finale-v2", action="store_true")
     ap.add_argument("--finale-rate-full", action="store_true")
+    ap.add_argument("--finale-no-panic", action="store_true")
+    ap.add_argument("--finale-heal-seek", action="store_true")
+    ap.add_argument("--finale-range-keep", action="store_true")
+    ap.add_argument("--finale-projectile-priority", action="store_true")
     args = ap.parse_args()
 
     if args.trials < 1:
@@ -431,7 +467,11 @@ def main() -> int:
     print(
         f"{len(fixtures)} fixture(s) selected, boss={args.boss}, "
         f"trials={args.trials}, finale_v2={bool(args.finale_v2)}, "
-        f"finale_rate_full={bool(args.finale_rate_full)}"
+        f"finale_rate_full={bool(args.finale_rate_full)}, "
+        f"finale_no_panic={bool(args.finale_no_panic)}, "
+        f"finale_heal_seek={bool(args.finale_heal_seek)}, "
+        f"finale_range_keep={bool(args.finale_range_keep)}, "
+        f"finale_projectile_priority={bool(args.finale_projectile_priority)}"
     )
     for path, digest in fixtures:
         print(f"  fixture {path.name} digest={digest}")
@@ -479,6 +519,10 @@ def main() -> int:
                 resume_from_save=False,
                 finale_v2=False,
                 finale_rate_full=False,
+                finale_no_panic=False,
+                finale_heal_seek=False,
+                finale_range_keep=False,
+                finale_projectile_priority=False,
             )
         except Exception as exc:  # noqa: BLE001
             print(f"WARNING: could not restore agent_config: {exc}", file=sys.stderr)
@@ -511,7 +555,11 @@ def main() -> int:
     print("\n--- aggregate ---")
     print(
         f"label={args.label} boss={args.boss} finale_v2={bool(args.finale_v2)} "
-        f"finale_rate_full={bool(args.finale_rate_full)}"
+        f"finale_rate_full={bool(args.finale_rate_full)} "
+        f"finale_no_panic={bool(args.finale_no_panic)} "
+        f"finale_heal_seek={bool(args.finale_heal_seek)} "
+        f"finale_range_keep={bool(args.finale_range_keep)}, "
+        f"finale_projectile_priority={bool(args.finale_projectile_priority)}"
     )
     print(f"valid trials: {len(valid)}/{len(rows)}")
     if valid:

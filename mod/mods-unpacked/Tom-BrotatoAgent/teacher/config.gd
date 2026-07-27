@@ -128,6 +128,25 @@ const BOSS_FINALE_CONTACT_ESCAPE_DISTANCE := 420.0
 # v77: wave-20 vectors were recomputed at 60 Hz and repeatedly reversed under
 # symmetric boss/projectile pressure.  Hold commands at 20 Hz, strongly prefer
 # an already-open escape lane, and turn across a reversal instead of cancelling.
+# Wave-20 range keeping (dev flag finale_range_keep). Reverses the v97 decision
+# that automatic fire needs no movement-enforced boss-range ring.
+# Operator dial: target standoff as a FRACTION of the shortest weapon range.
+# LOWER = tighter ring = MORE time in range. 0.65 holds well inside the edge
+# so ordinary boss movement does not keep pushing the agent out of range.
+const BOSS_FINALE_RANGE_KEEP_FRACTION := 0.90
+# Operator dial: how hard the agent pulls back toward the boss when it is
+# outside the band. 1.0 would make closing the objective; 0.5 blends it with
+# the survival desire. The ordered safety tail still runs after either way.
+const BOSS_FINALE_RANGE_KEEP_WEIGHT := 1.00
+# Wave-20 heal seeking (dev flag finale_heal_seek). Below this HP fraction the
+# finale biases movement toward the nearest ordinary healing consumable.
+const BOSS_FINALE_HEAL_SEEK_HP_RATIO := 0.50
+# 1.0 means FULL COMMITMENT: the blend reduces to desire = heal_dir, so the
+# pickup becomes the objective and the ordered safety tail
+# (projectile -> wall -> body) is the only thing constraining the approach.
+# Lowering it (0.75, 0.5, ...) blends back toward the survival desire.
+const BOSS_FINALE_HEAL_SEEK_WEIGHT := 1.00
+const BOSS_FINALE_HEAL_SEEK_MAX_DIST := 700.0
 const BOSS_FINALE_RECOMPUTE_DIVISOR := 3
 const BOSS_FINALE_ESCAPE_CONTINUITY := 85.0
 const BOSS_FINALE_REVERSE_DOT := -0.35
