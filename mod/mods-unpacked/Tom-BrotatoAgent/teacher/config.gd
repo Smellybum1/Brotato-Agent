@@ -174,7 +174,7 @@ const BOSS_FINALE_RING_RADIUS_TARGET := 300.0
 # Deadband. Range-keep is bang-bang and a deeper deadband made it OVERSHOOT
 # (fraction 0.65 pushed the agent further out than 0.90), so keep this tight.
 const BOSS_FINALE_RING_RADIUS_BAND := 60.0
-const BOSS_FINALE_RING_RADIUS_WEIGHT := 0.50
+const BOSS_FINALE_RING_RADIUS_WEIGHT := 0.85
 # Wave-20 heal seeking (dev flag finale_heal_seek). Below this HP fraction the
 # finale biases movement toward the nearest ordinary healing consumable.
 const BOSS_FINALE_HEAL_SEEK_HP_RATIO := 0.50

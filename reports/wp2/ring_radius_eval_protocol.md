@@ -73,6 +73,44 @@ Identical to the co-rotation protocol, so the two campaigns are directly compara
 3. **Both may be null**, leaving the pivot fix as the whole story. That is an
    acceptable outcome and would close the wave-20 line for now.
 
+## AMENDMENT, made BEFORE trial 1 and on the SIGNATURE only
+
+Pre-campaign smoke measured the radius signature and it moved far less than intended.
+Recorded here in full, before any outcome data exists, because it changes what this
+campaign can and cannot conclude.
+
+| arm | dist p25 | p50 | p75 | in-band 240-360 | out-rotating |
+|---|---|---|---|---|---|
+| control (pivot only) | 467 | **565** | 717 | 8.4% | **7.2%** |
+| + radius, weight 0.50 | 382 | **503** | 632 | 10.8% | 8.0% |
+| + radius, weight 0.85 | 404 | **485** | 587 | 12.2% | **8.6%** |
+
+**Weight is not the lever.** A 70% weight increase (0.50 -> 0.85) moved the median only
+18 u. Weight raised to 0.85 for the campaign, but the target band is NOT being held.
+
+**Why: the inward command does not survive the pipeline.** On ticks beyond 360 u, where
+the term should command inward, the FINAL action points **outward 73.5%** of the time
+(1079/1468). On 91.4% of those the PREVIOUS command was also outward, and the agent was
+neither cornered (nearest wall p50 411 u) nor dodging (projectile gap p50 386 u). An
+outward heading, once established, persists.
+
+**Honest limit on that diagnosis:** heading persistence is consistent with the
+anti-reversal guard (`_finale_turn_without_reversal`) AND with plain `MOVE_SMOOTHING`
+against `prev_move`. This measurement cannot separate them. Not asserting which.
+
+**Consequence for interpretation — stated now, not afterwards.** The treatment does NOT
+deliver the outrun mechanism: out-rotating goes 7.2% -> 8.6%, which is nearly nothing.
+**This campaign therefore tests "a moderately closer standoff (565 -> 485 u)", NOT
+"outrunning the ring".** A null here is NOT evidence against the operator's outrun
+hypothesis; it is evidence about a partial intervention. The mechanism itself remains
+untested and would need the heading-persistence problem solved first — which means
+touching safety machinery, and the one previous attempt at that
+(`finale_projectile_priority`) looked harmful in supervised trials.
+
+The campaign is still worth running: per failure mode 1 below, a damage INCREASE would
+be evidence the burst dominates at closer range and would close the "get closer" line
+regardless of whether the full mechanism is ever delivered.
+
 ## Dials
 
 `BOSS_FINALE_RING_RADIUS_TARGET` 300.0, `..._BAND` 60.0 (tight, because range-keep
