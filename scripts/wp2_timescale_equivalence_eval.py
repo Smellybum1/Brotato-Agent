@@ -1,13 +1,28 @@
 #!/usr/bin/env python
-"""Evaluator for the pre-registered time_scale equivalence protocol.
+"""Evaluator for the pre-registered time_scale equivalence protocols.
 
 Implements exactly and only the decision rule in
 reports/wp2/timescale_equivalence_protocol.md, including the AMENDMENT section
 (A1-A6, ambiguities closed before any outcome data was read).
 
+The same decision rule is re-used, per arm, by
+reports/wp2/timescale_doseresponse_protocol.md (the 2x/4x dose-response
+campaign). That protocol differs only in its structural-gate CONSTANTS -- a
+per-arm G1 lower bound with NO upper bound, and 28/32 rather than 14/16 -- plus
+a declared-in-advance achieved/nominal MECHANISM diagnostic. All of those are
+CLI arguments whose defaults reproduce the 8x campaign exactly, so the original
+invocation below still produces byte-identical output.
+
 Usage:
+  # original 8x equivalence campaign (defaults unchanged)
   python scripts/wp2_timescale_equivalence_eval.py \
       --slow .tmp/ts_equiv/slow.jsonl --fast .tmp/ts_equiv/fast.jsonl
+
+  # dose-response campaign, 2.0x arm vs the contemporaneous 1.0x control
+  python scripts/wp2_timescale_equivalence_eval.py \
+      --slow .tmp/ts_dose/s1.jsonl --fast .tmp/ts_dose/s2.jsonl \
+      --nominal-scale 2.0 --g1-min 1.5 --g1-max none \
+      --min-valid 28 --min-pairs 28
 
 Standard library only. Reporting tool, not a gate.
 
@@ -31,10 +46,16 @@ import sys
 from collections import Counter, defaultdict
 
 DELTA = 19.0                      # equivalence margin (damage)
+# Defaults are the 8x equivalence protocol's. The dose-response protocol
+# overrides them on the command line.
 G1_RATIO_LO, G1_RATIO_HI = 6.5, 9.5
 G2_MIN_VALID = 14
 G2_DENOM = 16
 G5_MIN_PAIRS = 14                 # A2: precision gate, INCONCLUSIVE not FAIL
+# Dose-response mechanism-test bands (achieved / nominal), declared in advance
+# in reports/wp2/timescale_doseresponse_protocol.md. Diagnostic, NOT a gate.
+MECH_SATURATION_IMPLICATED = 0.95
+MECH_ARM_SATURATED = 0.90
 EXPECTED_MOD = "0.2.49-wp2-capture"
 # The protocol wrote this as the bare version "0.1.129"; the field actually
 # carries "teacher_v1-0.1.129-gun-wp1". Correcting the expected STRING, not the
@@ -175,7 +196,18 @@ def check_arm_labels(rows, arm, path):
 # --------------------------------------------------------------------------
 # Gates
 # --------------------------------------------------------------------------
-def gate_g1(slow_rows, fast_rows, out):
+def gate_g1(slow_rows, fast_rows, out, lo_bound=G1_RATIO_LO, hi_bound=G1_RATIO_HI,
+            nominal=None):
+    """G1 -- acceleration actually took effect.
+
+    `hi_bound` may be None or math.inf, meaning NO UPPER BOUND: the
+    dose-response protocol deliberately drops it because an upper bound tests
+    this machine's throughput, not whether acceleration took effect.
+
+    `nominal`, when given, adds the pre-registered achieved/nominal MECHANISM
+    diagnostic. It is a DIAGNOSTIC and never changes the gate's pass/fail.
+    """
+
     def rate(rows):
         vals = []
         for r in rows:
@@ -193,22 +225,60 @@ def gate_g1(slow_rows, fast_rows, out):
         return False
     ms, mf = statistics.median(sv), statistics.median(fv)
     ratio = mf / ms if ms else float("inf")
-    ok = G1_RATIO_LO <= ratio <= G1_RATIO_HI
+    unbounded = hi_bound is None or hi_bound == float("inf")
+    # The dose-response protocol writes the lower bound STRICTLY ("> 1.5",
+    # "> 2.5"); implement the text it claims to implement.
+    ok = ratio > lo_bound and (unbounded or ratio <= hi_bound)
+    req = ("> %.1f, NO UPPER BOUND APPLIED (an upper bound tests throughput, "
+           "not effect)" % lo_bound) if unbounded else "[%.1f, %.1f]" % (lo_bound, hi_bound)
     out.append("G1  %s  median n_captures/duration_ms: slow %.6f (n=%d), fast %.6f (n=%d), "
-               "ratio fast/slow = %.4f, required [%.1f, %.1f]"
-               % ("PASS" if ok else "FAIL", ms, len(sv), mf, len(fv), ratio,
-                  G1_RATIO_LO, G1_RATIO_HI))
+               "ratio fast/slow = %.4f, required %s"
+               % ("PASS" if ok else "FAIL", ms, len(sv), mf, len(fv), ratio, req))
+    # Dose-response protocol, Reporting: "Achieved-ratio series printed per arm,
+    # not just its median." A median can hide a bimodal or drifting series, and
+    # here the series IS the mechanism evidence.
+    for arm, vals in (("slow", sv), ("fast", fv)):
+        series = ", ".join("%.2f" % (v * 1000.0) for v in vals)
+        out.append("G1  SERIES  %s arm captures per real second, per trial (n=%d): [%s]"
+                   % (arm, len(vals), series))
+    out.append("G1  SERIES  the ratio above is median/median; the series are printed so a "
+               "bimodal or drifting arm cannot hide behind its median.")
+    if nominal:
+        quot = ratio / nominal
+        out.append("G1  DIAGNOSTIC (mechanism test, NOT a gate): achieved %.4f / nominal "
+                   "%.2f = %.4f of nominal" % (ratio, nominal, quot))
+        if quot >= MECH_SATURATION_IMPLICATED:
+            out.append("G1  DIAGNOSTIC  band: >= %.2f of nominal -- if this arm comes back "
+                       "EQUIVALENT, SATURATION IS IMPLICATED and the safe operating rule is "
+                       "'any scale this machine sustains', headroom checked per machine. If "
+                       "it STILL degrades, saturation is refuted, acceleration is unsafe in "
+                       "principle, and the line closes permanently."
+                       % MECH_SATURATION_IMPLICATED)
+        elif quot < MECH_ARM_SATURATED:
+            out.append("G1  DIAGNOSTIC  band: < %.2f of nominal -- THIS ARM WAS ITSELF "
+                       "SATURATED. Its result reads as 'saturated at this scale', NOT 'this "
+                       "scale is unsafe'; the honest conclusion is that this machine's "
+                       "ceiling sits below it." % MECH_ARM_SATURATED)
+        else:
+            out.append("G1  DIAGNOSTIC  band: in [%.2f, %.2f) of nominal -- the protocol "
+                       "declares no interpretation for this band; neither the saturation-"
+                       "implicated nor the arm-saturated reading is licensed."
+                       % (MECH_ARM_SATURATED, MECH_SATURATION_IMPLICATED))
     return ok
 
 
-def gate_g2(slow_rows, fast_rows, out):
+def gate_g2(slow_rows, fast_rows, out, min_valid=G2_MIN_VALID):
     ok = True
     for arm, rows in (("slow", slow_rows), ("fast", fast_rows)):
         valid = [r for r in rows if is_valid(r)]
-        arm_ok = len(valid) >= G2_MIN_VALID
+        arm_ok = len(valid) >= min_valid
+        # The 8x protocol's denominator is 16 (2 rounds); the dose-response
+        # protocol's is 32 (4 rounds). Report the arm's own trial count when it
+        # exceeds the default so the printed ratio is never "28 / 16".
+        denom = max(G2_DENOM, len(rows))
         out.append("G2  %s  %s arm valid trials = %d / %d (rows present = %d), required >= %d"
-                   % ("PASS" if arm_ok else "FAIL", arm, len(valid), G2_DENOM, len(rows),
-                      G2_MIN_VALID))
+                   % ("PASS" if arm_ok else "FAIL", arm, len(valid), denom, len(rows),
+                      min_valid))
         ok = ok and arm_ok
         bad_waves = [r.get("run_id") for r in valid if r.get("waves") != [20]]
         bad_boss = [r.get("run_id") for r in valid if r.get("boss_entity") != "predator"]
@@ -273,11 +343,70 @@ def short(digest):
     return str(digest)[:12] if digest is not None else "<none>"
 
 
+def parse_upper_bound(text):
+    """G1's upper bound, which must be genuinely optional.
+
+    Accepts a float, or any of none/off/inf/infinity/disabled meaning NO UPPER
+    BOUND (the dose-response protocol deliberately specifies none).
+    """
+    if text is None:
+        return None
+    t = str(text).strip().lower()
+    if t in ("none", "off", "no", "disabled", "inf", "+inf", "infinity", "float('inf')"):
+        return float("inf")
+    try:
+        return float(t)
+    except ValueError:
+        raise argparse.ArgumentTypeError(
+            "--g1-max must be a number, or one of none/off/inf to disable the upper bound")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--slow", required=True)
     ap.add_argument("--fast", required=True)
+    ap.add_argument("--nominal-scale", type=float, default=None,
+                    help="the treatment arm's REQUESTED time_scale (e.g. 2.0, 4.0, 8.0). "
+                         "When given, G1 additionally prints the pre-registered "
+                         "achieved/nominal mechanism diagnostic. Diagnostic only -- it "
+                         "never changes the verdict.")
+    ap.add_argument("--g1-min", type=float, default=G1_RATIO_LO,
+                    help="G1 minimum achieved ratio (default %(default)s, the 8x "
+                         "protocol's; dose-response uses 1.5 for the 2x arm and 2.5 "
+                         "for the 4x arm)")
+    ap.add_argument("--g1-max", type=parse_upper_bound, default=G1_RATIO_HI,
+                    help="G1 maximum achieved ratio (default %s). Pass none/off/inf to "
+                         "DISABLE the upper bound entirely, as the dose-response protocol "
+                         "requires." % G1_RATIO_HI)
+    ap.add_argument("--min-valid", type=int, default=G2_MIN_VALID,
+                    help="G2 minimum valid trials per arm (default %(default)s; "
+                         "dose-response uses 28)")
+    ap.add_argument("--min-pairs", type=int, default=G5_MIN_PAIRS,
+                    help="G5 minimum pairs formed (default %(default)s; dose-response "
+                         "uses 28). Failure yields INCONCLUSIVE, never FAIL.")
+    # The 8x protocol pre-registers exactly ONE escalation to 32 pairs. The
+    # dose-response protocol pre-registers NONE ("No escalation is pre-registered
+    # in any branch"), so an INCONCLUSIVE verdict there must not offer one.
+    # Deliberately NOT inferred from --nominal-scale: an implicit coupling
+    # between an unrelated flag and the wording of a verdict gets misread later.
+    ap.add_argument("--escalation", dest="escalation", action="store_true", default=True,
+                    help="one escalation to 32 pairs is pre-registered (default; the 8x "
+                         "equivalence protocol)")
+    ap.add_argument("--no-escalation", dest="escalation", action="store_false",
+                    help="NO escalation is pre-registered in any branch (the "
+                         "dose-response protocol); the campaign ends at the verdict")
     args = ap.parse_args()
+    min_pairs = args.min_pairs
+    esc = args.escalation
+    # Verdict-text fragments. The escalation-granting forms are the originals,
+    # byte for byte.
+    ESC_G5 = ("-> eligible for the single pre-registered escalation." if esc else
+              "-> NO ESCALATION IS PRE-REGISTERED IN ANY BRANCH; the campaign ends at "
+              "this verdict.")
+    ESC_R5 = ("-> the single pre-registered escalation to 32 pairs (64 trials, 2 further "
+              "rounds) is permitted; same rules, same margin, no second extension." if esc
+              else "-> NO ESCALATION IS PRE-REGISTERED IN ANY BRANCH; the campaign ends at "
+              "this verdict, with the same margin and no extension of any kind.")
 
     slow_rows, p1 = load(args.slow, "slow")
     fast_rows, p2 = load(args.fast, "fast")
@@ -364,8 +493,9 @@ def main():
     # ---- 2. gates ----------------------------------------------------------
     print("--- 2. STRUCTURAL GATES ---")
     lines = []
-    g1 = gate_g1(slow_rows, fast_rows, lines)
-    g2 = gate_g2(slow_rows, fast_rows, lines)
+    g1 = gate_g1(slow_rows, fast_rows, lines, lo_bound=args.g1_min,
+                 hi_bound=args.g1_max, nominal=args.nominal_scale)
+    g2 = gate_g2(slow_rows, fast_rows, lines, min_valid=args.min_valid)
     g3 = gate_g3(slow_rows, fast_rows, lines)
     g4 = gate_g4(slow_rows, fast_rows, lines)
     for line in lines:
@@ -375,10 +505,10 @@ def main():
           % ("PASS" if gates_pass else "FAIL",
              "PASS" if g1 else "FAIL", "PASS" if g2 else "FAIL",
              "PASS" if g3 else "FAIL", "PASS" if g4 else "FAIL"))
-    g5 = len(diffs) >= G5_MIN_PAIRS
+    g5 = len(diffs) >= min_pairs
     print("G5  %s  pairs formed = %d, required >= %d  "
           "(A2 precision gate -- failure yields INCONCLUSIVE, NOT FAIL)"
-          % ("PASS" if g5 else "FAIL", len(diffs), G5_MIN_PAIRS))
+          % ("PASS" if g5 else "FAIL", len(diffs), min_pairs))
     print()
 
     # ---- 3. primary --------------------------------------------------------
@@ -454,7 +584,7 @@ def main():
         else:
             print("VERDICT: INCONCLUSIVE  [G5 (A2)] -- only %d pairs formed (< %d) and "
                   "no CI is computable below 2 pairs; a precision shortfall, not a "
-                  "validity break." % (len(diffs), G5_MIN_PAIRS))
+                  "validity break." % (len(diffs), min_pairs))
     else:
         lo, hi = ci
         within = (lo >= -DELTA) and (hi <= DELTA)
@@ -477,16 +607,20 @@ def main():
         elif mandatory_escalation:
             verdict = ("INCONCLUSIVE", "A5 loss clause",
                        "the fast arm recorded %d more losses than the slow arm (>= 3), "
-                       "which OUTRANKS the damage CI %s -> mandatory escalation to 32 "
-                       "pairs (64 trials, 2 further rounds); same rules, same margin "
-                       "%.0f, no second extension." % (loss_gap, cis, DELTA))
+                       "which OUTRANKS the damage CI %s %s" % (
+                           loss_gap, cis,
+                           ("-> mandatory escalation to 32 pairs (64 trials, 2 further "
+                            "rounds); same rules, same margin %.0f, no second extension."
+                            % DELTA) if esc else
+                           ("-> NO ESCALATION IS PRE-REGISTERED IN ANY BRANCH, so the "
+                            "mandatory-escalation remedy is unavailable and the campaign "
+                            "ends at this verdict (margin %.0f)." % DELTA)))
         # A2: precision shortfall, evaluated after the FAIL gates, before the CI rules.
         elif not g5:
             verdict = ("INCONCLUSIVE", "G5 (A2)",
                        "only %d pairs formed, fewer than the required %d; this is a "
                        "precision shortfall, not a validity break, so it is INCONCLUSIVE "
-                       "and not FAIL. %s -> eligible for the single pre-registered "
-                       "escalation." % (len(diffs), G5_MIN_PAIRS, cis))
+                       "and not FAIL. %s %s" % (len(diffs), min_pairs, cis, ESC_G5))
         elif within and contains_zero:
             verdict = ("EQUIVALENT", "rule 3",
                        "%s lies within [%+.0f, %+.0f] and contains 0, all structural "
@@ -501,9 +635,7 @@ def main():
         else:
             verdict = ("INCONCLUSIVE", "rule 5",
                        "%s straddles a margin boundary of [%+.0f, %+.0f] (neither wholly "
-                       "inside nor wholly outside) -> the single pre-registered escalation "
-                       "to 32 pairs (64 trials, 2 further rounds) is permitted; same "
-                       "rules, same margin, no second extension." % (cis, -DELTA, DELTA))
+                       "inside nor wholly outside) %s" % (cis, -DELTA, DELTA, ESC_R5))
         # The A1 rule set is exhaustive; this must never fire.
         assert verdict is not None, "A1 rule set failed to be exhaustive"
         print("VERDICT: %s  [%s] -- %s" % verdict)
