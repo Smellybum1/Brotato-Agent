@@ -67,6 +67,10 @@ var finale_projectile_priority_enabled: bool = false
 # finale_pivot_projectiles -- the ring is not in the state without it, so with
 # that flag off this term reads zero orbiters and returns Vector2.ZERO.
 var finale_co_rotate_enabled: bool = false
+# Dev flag: hold the radius band where the agent can out-rotate the ring. Pairs
+# with co-rotation -- direction without radius cannot outrun anything, since at
+# the agent's usual 566 u it out-rotates only 7% of the time.
+var finale_ring_radius_enabled: bool = false
 
 
 func compute_movement(state, profile) -> Vector2:
@@ -297,6 +301,14 @@ func compute_movement(state, profile) -> Vector2:
 		if range_dir != Vector2.ZERO:
 			combined = _normalize(combined * (1.0 - BotConfig.BOSS_FINALE_RANGE_KEEP_WEIGHT)
 				+ range_dir * BotConfig.BOSS_FINALE_RANGE_KEEP_WEIGHT)
+	# Radius BEFORE direction: co-rotation only pays off inside the crossover
+	# radius, so closing to the band first is what makes the tangential term
+	# meaningful. Applied in this order so the tangent is the last word.
+	if finale and finale_ring_radius_enabled:
+		var ring_dir = _finale_ring_radius(pos, bosses, projectiles)
+		if ring_dir != Vector2.ZERO:
+			combined = _normalize(combined * (1.0 - BotConfig.BOSS_FINALE_RING_RADIUS_WEIGHT)
+				+ ring_dir * BotConfig.BOSS_FINALE_RING_RADIUS_WEIGHT)
 	if finale and finale_co_rotate_enabled:
 		var co_dir = _finale_co_rotate(pos, bosses, projectiles)
 		if co_dir != Vector2.ZERO:
@@ -2952,6 +2964,37 @@ func _is_valuable_pickup(cid: String) -> bool:
 	if id.find("crate") >= 0 and id.find("explosive") < 0:
 		return true
 	return false
+
+
+func _finale_ring_radius(pos, bosses, projectiles) -> Vector2:
+	# Unit direction toward or away from the boss to hold the band where the agent
+	# can OUT-ROTATE the projectile ring. Zero inside the deadband, and zero when
+	# there is no ring in the state (this only makes sense against the ring).
+	#
+	# Requires finale_pivot_projectiles, same as co-rotation: without the ring in
+	# the state there is nothing to outrun and the term is inert.
+	if bosses.empty():
+		return Vector2.ZERO
+	var has_ring = false
+	for p in projectiles:
+		if str(p.get("type_id", "")).find("rotating") >= 0:
+			has_ring = true
+			break
+	if not has_ring:
+		return Vector2.ZERO
+	var boss = bosses[0]
+	var bpos = Vector2(float(boss.get("x", 0.0)), float(boss.get("y", 0.0)))
+	var radial = pos - bpos
+	var dist = radial.length()
+	if dist < 1.0:
+		return Vector2.ZERO
+	var target = BotConfig.BOSS_FINALE_RING_RADIUS_TARGET
+	var band = BotConfig.BOSS_FINALE_RING_RADIUS_BAND
+	if dist > target + band:
+		return _normalize(bpos - pos)
+	if dist < target - band:
+		return _normalize(radial)
+	return Vector2.ZERO
 
 
 func _finale_co_rotate(pos, bosses, projectiles) -> Vector2:

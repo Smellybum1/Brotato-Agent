@@ -93,6 +93,7 @@ def write_agent_config(
     finale_projectile_priority: bool = False,
     finale_pivot_projectiles: bool = False,
     finale_co_rotate: bool = False,
+    finale_ring_radius: bool = False,
 ) -> None:
     """Set auto_start/resume_from_save and the finale arm flags, PRESERVING other keys.
 
@@ -122,6 +123,7 @@ def write_agent_config(
     payload["finale_projectile_priority"] = finale_projectile_priority
     payload["finale_pivot_projectiles"] = finale_pivot_projectiles
     payload["finale_co_rotate"] = finale_co_rotate
+    payload["finale_ring_radius"] = finale_ring_radius
     atomic_json(path, payload)
 
 
@@ -185,6 +187,7 @@ def validate_trial(
     expected_finale_projectile_priority: bool = False,
     expected_finale_pivot_projectiles: bool = False,
     expected_finale_co_rotate: bool = False,
+    expected_finale_ring_radius: bool = False,
 ) -> str:
     """Return "" when the trial is a valid finale observation, else a reason code."""
     waves = list(analysis.get("waves") or [])
@@ -227,6 +230,8 @@ def validate_trial(
         return f"finale_pivot_projectiles_mismatch:{summary.get('finale_pivot_projectiles')}"
     if bool(summary.get("finale_co_rotate", False)) != expected_finale_co_rotate:
         return f"finale_co_rotate_mismatch:{summary.get('finale_co_rotate')}"
+    if bool(summary.get("finale_ring_radius", False)) != expected_finale_ring_radius:
+        return f"finale_ring_radius_mismatch:{summary.get('finale_ring_radius')}"
     return ""
 
 
@@ -307,6 +312,7 @@ def run_trial(
         finale_projectile_priority=args.finale_projectile_priority,
         finale_pivot_projectiles=args.finale_pivot_projectiles,
         finale_co_rotate=args.finale_co_rotate,
+        finale_ring_radius=args.finale_ring_radius,
     )
 
     rd = runs_dir()
@@ -343,6 +349,7 @@ def run_trial(
         "finale_projectile_priority": bool(args.finale_projectile_priority),
         "finale_pivot_projectiles": bool(args.finale_pivot_projectiles),
         "finale_co_rotate": bool(args.finale_co_rotate),
+        "finale_ring_radius": bool(args.finale_ring_radius),
         "fixture_file": fixture.name,
         "fixture_digest": fixture_digest,
         "run_id": "",
@@ -439,6 +446,7 @@ def run_trial(
             bool(args.finale_projectile_priority),
             bool(args.finale_pivot_projectiles),
             bool(args.finale_co_rotate),
+            bool(args.finale_ring_radius),
         )
         row["valid"] = reason == ""
         row["invalid_reason"] = reason
@@ -466,6 +474,7 @@ def main() -> int:
     ap.add_argument("--finale-projectile-priority", action="store_true")
     ap.add_argument("--finale-pivot-projectiles", action="store_true")
     ap.add_argument("--finale-co-rotate", action="store_true")
+    ap.add_argument("--finale-ring-radius", action="store_true")
     args = ap.parse_args()
 
     if args.trials < 1:
@@ -491,7 +500,8 @@ def main() -> int:
         f"finale_range_keep={bool(args.finale_range_keep)}, "
         f"finale_projectile_priority={bool(args.finale_projectile_priority)}, "
         f"finale_pivot_projectiles={bool(args.finale_pivot_projectiles)}, "
-        f"finale_co_rotate={bool(args.finale_co_rotate)}"
+        f"finale_co_rotate={bool(args.finale_co_rotate)}, "
+        f"finale_ring_radius={bool(args.finale_ring_radius)}"
     )
     for path, digest in fixtures:
         print(f"  fixture {path.name} digest={digest}")
@@ -545,6 +555,7 @@ def main() -> int:
                 finale_projectile_priority=False,
                 finale_pivot_projectiles=False,
                 finale_co_rotate=False,
+                finale_ring_radius=False,
             )
         except Exception as exc:  # noqa: BLE001
             print(f"WARNING: could not restore agent_config: {exc}", file=sys.stderr)
@@ -583,7 +594,8 @@ def main() -> int:
         f"finale_range_keep={bool(args.finale_range_keep)}, "
         f"finale_projectile_priority={bool(args.finale_projectile_priority)}, "
         f"finale_pivot_projectiles={bool(args.finale_pivot_projectiles)}, "
-        f"finale_co_rotate={bool(args.finale_co_rotate)}"
+        f"finale_co_rotate={bool(args.finale_co_rotate)}, "
+        f"finale_ring_radius={bool(args.finale_ring_radius)}"
     )
     print(f"valid trials: {len(valid)}/{len(rows)}")
     if valid:

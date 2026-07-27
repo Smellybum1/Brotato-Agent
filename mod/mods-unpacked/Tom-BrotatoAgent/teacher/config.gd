@@ -156,6 +156,25 @@ const BOSS_FINALE_CO_ROTATE_WEIGHT := 0.50
 # ~1.4-1.55 rad/s when the ring is genuinely turning, so 0.25 is well clear of
 # the working range while still rejecting the flip.
 const BOSS_FINALE_CO_ROTATE_MIN_OMEGA := 0.25
+# Ring-radius targeting ("outrun the ring"). The agent out-rotates the projectile
+# ring when v_player / r > omega. Measured: player speed p50 558 u/s, ring omega
+# p50 1.45 rad/s -> nominal crossover 386 u, ~300 u in practice because some of
+# the agent's speed goes radial. Measured out-rotating fraction by band:
+# 0-150 84.7%, 150-300 51.9%, 300-450 18.7%, 450-600 7.1%, 600+ <4%.
+# The agent currently sits at p50 566 u, i.e. inside the crossover only 17.5% of
+# ticks, so it loses this race ~82% of the time.
+#
+# 300, NOT closer, because the two threat classes want OPPOSITE radii: the
+# RADIATING burst's inter-projectile gap scales with distance (9 u at 0-150,
+# 61 u at 300-450, 87 u at 450-600) and a ~12 u player cannot thread 9 u. 300 u
+# keeps the burst gap around 61 u while putting out-rotating in reach. It also
+# sits comfortably inside the shortest weapon range (458 u), so it does not
+# trade against damage output.
+const BOSS_FINALE_RING_RADIUS_TARGET := 300.0
+# Deadband. Range-keep is bang-bang and a deeper deadband made it OVERSHOOT
+# (fraction 0.65 pushed the agent further out than 0.90), so keep this tight.
+const BOSS_FINALE_RING_RADIUS_BAND := 60.0
+const BOSS_FINALE_RING_RADIUS_WEIGHT := 0.50
 # Wave-20 heal seeking (dev flag finale_heal_seek). Below this HP fraction the
 # finale biases movement toward the nearest ordinary healing consumable.
 const BOSS_FINALE_HEAL_SEEK_HP_RATIO := 0.50

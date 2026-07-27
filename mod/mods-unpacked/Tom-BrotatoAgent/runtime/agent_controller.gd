@@ -61,6 +61,10 @@ var finale_pivot_projectiles: bool = false
 # ring is rotating. DEPENDS ON finale_pivot_projectiles -- without it the ring is
 # not in the state and this term is inert (a no-op, not an error).
 var finale_co_rotate: bool = false
+# Wave-20 dev flag: hold the radius band where the agent can out-rotate the ring
+# (~300 u). Also depends on finale_pivot_projectiles, and pairs with
+# finale_co_rotate -- direction without radius cannot outrun anything.
+var finale_ring_radius: bool = false
 # Previous-tick world positions, keyed by instance id, for finite-difference
 # velocity. These nodes DO expose `velocity` and it reads 0 -- their motion
 # comes from the parent Pivot's rotation, so reading the property would model
@@ -86,7 +90,7 @@ var policy_version: String = "teacher_v1-0.1.128-gun-wp1"
 # Single source of truth for the deployed mod identity: stamped into every run's
 # meta AND into the mod-ready sentinel, so the collector cannot accept a build
 # whose identity disagrees with what it asked for.
-const MOD_VERSION := "0.2.46-wp2-capture"
+const MOD_VERSION := "0.2.47-wp2-capture"
 const _MOD_READY_PATH := "user://brotato_agent/mod_ready.json"
 var last_move_debug: Dictionary = {}
 var last_meta_debug: Dictionary = {}
@@ -217,6 +221,7 @@ func _ready() -> void:
 		_field.finale_range_keep_enabled = finale_range_keep
 		_field.finale_projectile_priority_enabled = finale_projectile_priority
 		_field.finale_co_rotate_enabled = finale_co_rotate
+		_field.finale_ring_radius_enabled = finale_ring_radius
 	if student_enabled:
 		_bridge = _COMBAT_BRIDGE_SCRIPT.new()
 		_bridge.name = "CombatBridge"
@@ -271,6 +276,7 @@ func _write_mod_ready() -> void:
 		"finale_scene_dump": finale_scene_dump,
 		"finale_pivot_projectiles": finale_pivot_projectiles,
 		"finale_co_rotate": finale_co_rotate,
+		"finale_ring_radius": finale_ring_radius,
 	}))
 	f.close()
 
@@ -2244,6 +2250,7 @@ func _start_run() -> void:
 		"finale_projectile_priority": finale_projectile_priority,
 		"finale_pivot_projectiles": finale_pivot_projectiles,
 		"finale_co_rotate": finale_co_rotate,
+		"finale_ring_radius": finale_ring_radius,
 	}
 	if _telem != null:
 		_telem.begin_run(meta)
@@ -2518,6 +2525,8 @@ func _load_auto_config() -> void:
 		finale_pivot_projectiles = bool(cfg["finale_pivot_projectiles"])
 	if cfg.has("finale_co_rotate"):
 		finale_co_rotate = bool(cfg["finale_co_rotate"])
+	if cfg.has("finale_ring_radius"):
+		finale_ring_radius = bool(cfg["finale_ring_radius"])
 
 func _record_finale_range_sample(state) -> void:
 	# Same state the controller already passed to the field: one source of truth
