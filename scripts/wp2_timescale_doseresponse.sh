@@ -32,15 +32,34 @@ FIX=(
 FIXARGS=()
 for f in "${FIX[@]}"; do FIXARGS+=(--fixture "$f"); done
 
+# Writes the scale, then READS IT BACK and aborts on any mismatch.
+#
+# The first attempt at this campaign died here and kept going: a PowerShell
+# `Set-Content -Encoding utf8` had left a UTF-8 BOM in agent_config.json, the
+# write raised JSONDecodeError, and the driver launched the round anyway with the
+# scale unset. A scale that fails to apply produces a campaign that looks
+# perfectly healthy and measures nothing. Read with utf-8-sig so a BOM cannot
+# break it, and never trust the write without a readback.
 set_scale() {
   "$PY" -c "
 import json,sys
 from pathlib import Path
 p=Path(r'C:\Users\moxhe\AppData\Roaming\Brotato\brotato_agent\agent_config.json')
-cfg=json.loads(p.read_text(encoding='utf-8'))
+cfg=json.loads(p.read_text(encoding='utf-8-sig'))
 cfg['time_scale']=float(sys.argv[1])
 p.write_text(json.dumps(cfg,indent=2),encoding='utf-8')
-" "$1"
+" "$1" || { echo "FATAL: set_scale $1 write failed" >&2; exit 1; }
+  local got
+  got=$("$PY" -c "
+import json
+from pathlib import Path
+p=Path(r'C:\Users\moxhe\AppData\Roaming\Brotato\brotato_agent\agent_config.json')
+print(float(json.loads(p.read_text(encoding='utf-8-sig')).get('time_scale', -1)))
+") || { echo "FATAL: set_scale $1 readback failed" >&2; exit 1; }
+  if [ "$got" != "$1" ]; then
+    echo "FATAL: time_scale readback '$got' != requested '$1'" >&2; exit 1
+  fi
+  echo "time_scale set and verified: $got"
 }
 
 # time_scale must NEVER be left accelerated: dataset collection reads
