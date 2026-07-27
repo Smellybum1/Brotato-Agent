@@ -37,6 +37,21 @@ var finale_range_keep: bool = false
 # Dev flag: boss-projectile dodging gets the FINAL word in the wave-20 safety
 # tail (projectile safety deferred to after body safety).
 var finale_projectile_priority: bool = false
+# DIAGNOSTIC ONLY, default false. Walks the live scene tree on wave 20 and emits
+# every damage-carrying node with its PARENT PATH and `visible` flag, alongside
+# the instance ids the controller actually collected on the same tick. Read-only:
+# it reads the tree and emits telemetry, it changes no decision and no state.
+# Exists because 84-91% of wave-20 predator damage has no cause in the captured
+# state (invoker control: 0%), and the two candidate mechanisms -- wrong parent
+# node vs. the `if not proj.visible: continue` filter -- are indistinguishable
+# from existing telemetry.
+var finale_scene_dump: bool = false
+var _scene_dump_tick: int = 0
+var _scene_dump_visited: int = 0
+# 0.5 s at 60 Hz. The walk is O(tree); this keeps it off the per-tick path.
+const SCENE_DUMP_EVERY := 30
+const SCENE_DUMP_MAX_NODES := 400
+const SCENE_DUMP_MAX_DEPTH := 14
 var _resume_done: bool = false
 var _resume_ticks: int = 0
 # ~10 s at 60 Hz. ProgressData populates current_run_state during startup, so the
@@ -47,7 +62,7 @@ var policy_version: String = "teacher_v1-0.1.128-gun-wp1"
 # Single source of truth for the deployed mod identity: stamped into every run's
 # meta AND into the mod-ready sentinel, so the collector cannot accept a build
 # whose identity disagrees with what it asked for.
-const MOD_VERSION := "0.2.41-wp2-capture"
+const MOD_VERSION := "0.2.42-wp2-capture"
 const _MOD_READY_PATH := "user://brotato_agent/mod_ready.json"
 var last_move_debug: Dictionary = {}
 var last_meta_debug: Dictionary = {}
@@ -228,6 +243,7 @@ func _write_mod_ready() -> void:
 		"finale_heal_seek": finale_heal_seek,
 		"finale_range_keep": finale_range_keep,
 		"finale_projectile_priority": finale_projectile_priority,
+		"finale_scene_dump": finale_scene_dump,
 	}))
 	f.close()
 
@@ -388,6 +404,10 @@ func _handle_combat(main) -> void:
 		if recompute_move:
 			finale_recompute_ticks += 1
 		_record_finale_range_sample(state)
+		if finale_scene_dump and _telem != null:
+			_scene_dump_tick += 1
+			if _scene_dump_tick % SCENE_DUMP_EVERY == 1:
+				_emit_scene_dump(main, state, wave)
 	else:
 		_finale_move_tick = 0
 	if recompute_move:
@@ -624,6 +644,85 @@ func _node_script_path(node) -> String:
 	if script != null and "resource_path" in script:
 		return str(script.resource_path)
 	return ""
+
+
+# DIAGNOSTIC ONLY. Recursive, depth- and count-bounded, mirrors the shape of
+# _collect_buttons. Builds the parent path on the way DOWN rather than calling
+# get_parent(), which has no precedent in this mod.
+func _scene_dump_walk(node: Node, path: String, depth: int, out: Array) -> void:
+	if node == null or depth < 0:
+		return
+	if out.size() >= SCENE_DUMP_MAX_NODES:
+		return
+	_scene_dump_visited += 1
+	var script_path := _node_script_path(node)
+	var lname := str(node.name).to_lower()
+	# Broad on purpose: the source is unidentified, so match anything that can
+	# deal damage or is named/scripted like a projectile or a hitbox.
+	# has_method() is a pure query and calls nothing. Whether get_damage() is
+	# actually INVOKED is decided separately below.
+	var is_candidate := node.has_method("get_damage")
+	var is_projectile_like := script_path.to_lower().find("projectile") >= 0
+	if is_projectile_like:
+		is_candidate = true
+	if lname.find("projectile") >= 0 or lname.find("hitbox") >= 0:
+		is_candidate = true
+	if is_candidate:
+		# Only CALL get_damage() on projectile-scripted nodes -- exactly the class
+		# of object the existing collection path already calls it on. A weapon's
+		# get_damage() may roll crit RNG, and calling it would perturb the RNG
+		# stream: that would make this diagnostic change behaviour. -1 means
+		# "has the method, deliberately not queried".
+		# Untyped on purpose: get_damage() may return a float and `:= -1` would
+		# infer int, making the assignment a type error at runtime.
+		var dmg = -1
+		if is_projectile_like and node.has_method("get_damage"):
+			dmg = node.get_damage()
+		var rec := {
+			"path": path,
+			"name": str(node.name),
+			"script": script_path,
+			"iid": node.get_instance_id(),
+			"visible": bool(node.visible) if "visible" in node else true,
+			"has_gp": ("global_position" in node),
+			"has_get_damage": node.has_method("get_damage"),
+			"damage": dmg,
+		}
+		if "global_position" in node:
+			rec["x"] = node.global_position.x
+			rec["y"] = node.global_position.y
+		if "velocity" in node:
+			rec["vx"] = node.velocity.x
+			rec["vy"] = node.velocity.y
+		out.append(rec)
+	for c in node.get_children():
+		_scene_dump_walk(c, path + "/" + str(c.name), depth - 1, out)
+
+
+# DIAGNOSTIC ONLY. Emits the live tree's damage-carrying nodes next to the
+# instance ids the controller collected on the SAME tick, so "present in the
+# scene but absent from the state" is a direct comparison rather than an
+# inference. Changes no decision.
+func _emit_scene_dump(main, state, wave: int) -> void:
+	var found := []
+	_scene_dump_visited = 0
+	_scene_dump_walk(main, str(main.name), SCENE_DUMP_MAX_DEPTH, found)
+	var collected := []
+	for pr in state.get("projectiles", []):
+		collected.append(pr.get("instance_id", 0))
+	var main_children := []
+	for c in main.get_children():
+		main_children.append(str(c.name))
+	_telem.emit("scene_dump", {
+		"wave": wave,
+		"finale_tick": _finale_move_tick,
+		"nodes_visited": _scene_dump_visited,
+		"truncated": found.size() >= SCENE_DUMP_MAX_NODES,
+		"collected_count": collected.size(),
+		"collected_iids": collected,
+		"candidates": found,
+		"main_children": main_children,
+	})
 
 
 func _collision_radius(node, fallback: float) -> float:
@@ -2308,6 +2407,8 @@ func _load_auto_config() -> void:
 		finale_range_keep = bool(cfg["finale_range_keep"])
 	if cfg.has("finale_projectile_priority"):
 		finale_projectile_priority = bool(cfg["finale_projectile_priority"])
+	if cfg.has("finale_scene_dump"):
+		finale_scene_dump = bool(cfg["finale_scene_dump"])
 
 func _record_finale_range_sample(state) -> void:
 	# Same state the controller already passed to the field: one source of truth
