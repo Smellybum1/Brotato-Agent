@@ -61,15 +61,20 @@ check() {
   fi
 }
 
-for round in 1 2; do
-  echo "=== round $round/2 : 1.0x ==="
+# Rounds are parameterised because the pre-registered escalation APPENDS rounds
+# to the same files. Re-running with the default would relabel the new rounds
+# r1/r2, colliding with the existing (fixture, round) pair keys and silently
+# corrupting the pairing. Escalate with: ROUNDS="3 4" bash scripts/...
+ROUNDS="${ROUNDS:-1 2}"
+for round in $ROUNDS; do
+  echo "=== round $round : 1.0x ==="
   set_scale 1.0
   before=$(rows_of "$OUT/slow.jsonl")
   "$PY" scripts/wp2_finale_loop.py --trials 8 --boss predator "${FIXARGS[@]}" \
     --label "ts_slow_r${round}" --out "$OUT/slow.jsonl"
   check "$OUT/slow.jsonl" "$before" "round $round 1.0x"
 
-  echo "=== round $round/2 : 8.0x ==="
+  echo "=== round $round : 8.0x ==="
   set_scale 8.0
   before=$(rows_of "$OUT/fast.jsonl")
   "$PY" scripts/wp2_finale_loop.py --trials 8 --boss predator "${FIXARGS[@]}" \

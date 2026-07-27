@@ -67,7 +67,11 @@ median `n_captures / duration_ms` for the fast arm ÷ the slow arm must fall in
 set exactly `[20]` and one boss path, boss `predator`.
 
 **G3 — build identity.** Every trial: `finale_pivot_projectiles == true`,
-`mod_version == 0.2.49-wp2-capture`, `policy_version == 0.1.129`. The repo is
+`mod_version == 0.2.49-wp2-capture`, `policy_version == 0.1.129`.
+[**Corrected post-hoc, factual not substantive:** the field carries the full
+string `teacher_v1-0.1.129-gun-wp1`. The expected VALUE was written wrong here;
+the gate's intent — the deployed policy must be 0.1.129 — is unchanged, and the
+observed value satisfies it on all 32 trials.] The repo is
 FROZEN for the run — no edits to `MOD_VERSION`, `manifest.json`, or
 `wp2_collect_teacher.MOD_VERSION`, and no deploy.
 
@@ -81,6 +85,48 @@ wall-clock per trial. **One exception with teeth:** if the fast arm records
 **≥ 3 more losses** than the slow arm, escalation to 64 is MANDATORY regardless
 of the damage CI — win rate can only move downward from 1.000, so that is the
 one direction in which a ceiling-pinned metric carries information.
+
+## AMENDMENT — ambiguities closed BEFORE any outcome data was read
+
+Writing the evaluator against this protocol exposed six places where the rule
+above did not determine an answer. All six are closed here **while the campaign
+is still running and before a single result has been looked at**, so this is
+specification, not tuning. The original text above is left unedited.
+
+**A1 — the decision table was not exhaustive.** A CI like `[+10, +25]` is neither
+wholly inside nor wholly outside `[−19, +19]` and matched no row. The table is
+replaced by these five mutually exclusive, exhaustive rules, evaluated in order:
+
+1. any structural gate fails → **FAIL**
+2. CI lies wholly outside `[−19, +19]` → **FAIL**
+3. `CI ⊂ [−19, +19]` and `0 ∈ CI` → **EQUIVALENT**
+4. `CI ⊂ [−19, +19]` and `0 ∉ CI` → **SMALL SHIFT**
+5. otherwise (the CI straddles a margin boundary) → **INCONCLUSIVE**
+
+**A2 — pairs, not per-arm counts, set the precision.** G2 is per-arm, so both arms
+could pass at 14/16 while only 12 pairs survive; the Δ = 19 attainability
+calculation assumed 16 pairs. New gate **G5: at least 14 pairs must form.** Fewer
+than 14 → **INCONCLUSIVE** (not FAIL — it is a precision shortfall, not a
+validity break), eligible for the single pre-registered escalation.
+
+**A3 — G2's boss check.** Read as: every valid trial has `len(boss_paths) == 1`
+**and** `boss_entity == "predator"`.
+
+**A4 — boss TTK is struck from the report.** The trial row carries no boss-death
+timestamp; `duration_ms` is whole-trial real time. It was listed in error. Do not
+substitute a proxy — it is non-decisive either way.
+
+**A5 — the loss clause outranks the damage CI.** If the fast arm records ≥ 3 more
+losses than the slow arm, the verdict is **INCONCLUSIVE with mandatory
+escalation**, overriding EQUIVALENT or SMALL SHIFT. "Regardless of the damage CI"
+means what it says: a ceiling-pinned metric moving downward is the one signal
+that does not need the CI's permission.
+
+**A6 — arm identity is cross-checked, not assumed.** The evaluator takes the arm
+from the file argument; it must additionally assert that every row in the slow
+file has a `label` beginning `ts_slow` and every row in the fast file `ts_fast`,
+and abort loudly on any mismatch. A file passed to the wrong flag would otherwise
+invert the sign of the entire result silently.
 
 ## Reporting
 
