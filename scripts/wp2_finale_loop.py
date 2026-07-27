@@ -555,8 +555,11 @@ def main() -> int:
     finally:
         stop_game()
         try:
-            # Both finale flags False too: an interrupted loop must never leave
-            # the machine armed.
+            # Experimental flags False: an interrupted loop must never leave the
+            # machine armed. finale_pivot_projectiles is the EXCEPTION -- it is a
+            # SHIPPED DEFAULT, not an arm, so disarming to False would leave the
+            # machine running WITHOUT the shipped fix and misrepresent the build
+            # for any later manual run or dataset collection.
             write_agent_config(
                 agent_config_path(),
                 auto_start=False,
@@ -567,7 +570,7 @@ def main() -> int:
                 finale_heal_seek=False,
                 finale_range_keep=False,
                 finale_projectile_priority=False,
-                finale_pivot_projectiles=False,
+                finale_pivot_projectiles=True,
                 finale_co_rotate=False,
                 finale_ring_radius=False,
             )

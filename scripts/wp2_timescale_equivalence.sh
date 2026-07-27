@@ -6,7 +6,10 @@
 # proves the OUTCOME distribution is unchanged: game logic may have timing paths
 # that run off _process rather than _physics_process.
 #
-# Same 8 fixtures, 4 trials each, at 1.0x and 8.0x, arms alternating per round.
+# Same 8 fixtures, 2 trials each, at 1.0x and 8.0x, arms alternating per round.
+# 32 trials = 16 pairs = the SCREEN tier in reports/wp2/campaign_sizing.md, which
+# resolves ~19 damage against a control mean of ~20.7. That is ample for a
+# validity break; it is NOT sized to certify small equivalence.
 # Primary comparator is DAMAGE TAKEN, not win rate: the shipped pivot fix pins
 # win rate at the ceiling on these fixtures, so it cannot discriminate.
 #
@@ -45,6 +48,11 @@ p.write_text(json.dumps(cfg,indent=2),encoding='utf-8')
 " "$1"
 }
 
+# time_scale must NEVER be left at 8.0: dataset collection reads control_dt_ms as
+# a real-time student input, so an accelerated machine silently corrupts it. The
+# tail reset below only runs on the happy path, so trap every exit.
+trap 'set_scale 1.0; echo "time_scale reset to 1.0 (trap)"' EXIT INT TERM
+
 rows_of() { [ -f "$1" ] && wc -l < "$1" || echo 0; }
 check() {
   local after; after=$(rows_of "$1")
@@ -53,15 +61,15 @@ check() {
   fi
 }
 
-for round in 1 2 3 4; do
-  echo "=== round $round/4 : 1.0x ==="
+for round in 1 2; do
+  echo "=== round $round/2 : 1.0x ==="
   set_scale 1.0
   before=$(rows_of "$OUT/slow.jsonl")
   "$PY" scripts/wp2_finale_loop.py --trials 8 --boss predator "${FIXARGS[@]}" \
     --label "ts_slow_r${round}" --out "$OUT/slow.jsonl"
   check "$OUT/slow.jsonl" "$before" "round $round 1.0x"
 
-  echo "=== round $round/4 : 8.0x ==="
+  echo "=== round $round/2 : 8.0x ==="
   set_scale 8.0
   before=$(rows_of "$OUT/fast.jsonl")
   "$PY" scripts/wp2_finale_loop.py --trials 8 --boss predator "${FIXARGS[@]}" \
