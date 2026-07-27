@@ -87,6 +87,23 @@ const SCENE_DUMP_MAX_DEPTH := 14
 # Boss -> Pivot -> projectile is 2 levels; 3 leaves one level of headroom without
 # turning this into a whole-subtree scan on every physics tick.
 const PIVOT_SCAN_DEPTH := 3
+# Wall-clock accelerator for EVALUATION campaigns. Godot scales physics ticks
+# with Engine.time_scale, so the agent still receives its 60 ticks per GAME
+# second and its behaviour is unchanged -- only real time shrinks, provided the
+# machine can compute the extra ticks.
+#
+# DEFAULT 1.0, and it must stay 1.0 for DATASET COLLECTION: `control_dt_ms` is
+# measured in REAL time (now_ms - last_capture_ts_ms) and is a student model
+# input, so captures taken at 2.0 would carry ~25 ms where the 20 Hz dataset
+# carries ~51 ms. The value is written into the run summary so any dataset
+# collected at != 1.0 is identifiable after the fact rather than silently wrong.
+var time_scale: float = 1.0
+const TIME_SCALE_MAX := 16.0
+# Skip rendering entirely while accelerating. This is as close to headless as a
+# shipped Godot client gets without re-exporting from source, which is not
+# available: the only decompile on hand is a DIFFERENT, older build. Only worth
+# enabling if the machine turns out to be render-bound -- at 4.0x it was not.
+var headless_render: bool = false
 var _resume_done: bool = false
 var _resume_ticks: int = 0
 # ~10 s at 60 Hz. ProgressData populates current_run_state during startup, so the
@@ -221,6 +238,34 @@ func _ready() -> void:
 	_hud = _HUD_SCRIPT.new()
 	add_child(_hud)
 	_load_auto_config()
+	# Applied AFTER _load_auto_config so agent_config.json can set it. Clamped:
+	# a typo of 40 instead of 4 would outrun the machine, and once the engine
+	# cannot keep up the tick budget is missed and behaviour DOES change.
+	time_scale = clamp(time_scale, 1.0, TIME_SCALE_MAX)
+	Engine.time_scale = time_scale
+	# iterations_per_second MUST scale with time_scale, and this was MEASURED,
+	# not reasoned. time_scale alone multiplies the delta per tick while ticks
+	# keep firing at 60/REAL second, so the agent gets 60/time_scale decisions
+	# per GAME second -- at 2.0 the capture rate fell 20 Hz -> 10 Hz and a trial
+	# that won at 1.0 lost. Raising ips in proportion restores 60 ticks per game
+	# second, so the agent decides exactly as often as before and only wall time
+	# shrinks. Validity check for any accelerated run: captures per game-second
+	# must still read 20.0.
+	Engine.iterations_per_second = int(round(60.0 * time_scale))
+	if time_scale > 1.0:
+		# Without this, time_scale buys nothing: vsync caps the frame loop at the
+		# monitor's refresh, so the engine cannot run the extra physics ticks that
+		# time_scale asks for, falls behind, and the tick budget is missed --
+		# which DOES change behaviour. Only touched when accelerating, so normal
+		# 1.0 runs are unaffected.
+		OS.vsync_enabled = false
+		Engine.target_fps = 0
+	if headless_render:
+		# Stop the root viewport drawing at all. The game logic, physics and our
+		# controller are untouched; only the render pass is skipped.
+		var vp = get_tree().get_root()
+		if vp != null:
+			vp.render_target_update_mode = Viewport.UPDATE_DISABLED
 	if _field != null:
 		_field.finale_v2_enabled = finale_v2
 		_field.finale_no_panic_enabled = finale_no_panic
@@ -284,6 +329,7 @@ func _write_mod_ready() -> void:
 		"finale_pivot_projectiles": finale_pivot_projectiles,
 		"finale_co_rotate": finale_co_rotate,
 		"finale_ring_radius": finale_ring_radius,
+		"time_scale": time_scale,
 	}))
 	f.close()
 
@@ -724,16 +770,24 @@ func _collect_mounted_projectiles(node: Node, depth: int, out: Array) -> void:
 func _mounted_projectile_snapshot(proj) -> Dictionary:
 	var iid = proj.get_instance_id()
 	var pos = proj.global_position
-	var now = OS.get_ticks_msec()
+	# GAME-time delta, not real time. This is called exactly once per physics
+	# tick, so the elapsed GAME time between calls is always
+	# time_scale / iterations_per_second -- 1/60 s, whatever the acceleration.
+	#
+	# It previously used OS.get_ticks_msec() and that was WRONG under time_scale:
+	# real time between ticks shrinks while positions advance by the game delta,
+	# so derived speeds inflated with the acceleration (measured: median 864 u/s
+	# at 1.0x, 1730 at 2.0x, 6000 at 4.0x, while the engine-authored burst
+	# projectiles held exactly 500 at every scale). Real time also quantises
+	# badly -- at 4.0x a tick is ~4.17 ms against a 1 ms clock.
+	var game_dt := 1.0 / 60.0
+	if Engine.iterations_per_second > 0:
+		game_dt = Engine.time_scale / float(Engine.iterations_per_second)
 	var vel := Vector2.ZERO
-	if _pivot_prev.has(iid):
+	if _pivot_prev.has(iid) and game_dt > 0.0:
 		var prev = _pivot_prev[iid]
-		var dt := float(now - prev[2]) / 1000.0
-		# Guard against a zero/absurd dt: two gathers in the same millisecond
-		# would divide by ~0 and emit a nonsense velocity.
-		if dt > 0.0005:
-			vel = Vector2((pos.x - prev[0]) / dt, (pos.y - prev[1]) / dt)
-	_pivot_cur[iid] = [pos.x, pos.y, now]
+		vel = Vector2((pos.x - prev[0]) / game_dt, (pos.y - prev[1]) / game_dt)
+	_pivot_cur[iid] = [pos.x, pos.y]
 	return {"x": pos.x, "y": pos.y,
 		"vx": vel.x, "vy": vel.y,
 		"instance_id": iid,
@@ -2258,6 +2312,7 @@ func _start_run() -> void:
 		"finale_pivot_projectiles": finale_pivot_projectiles,
 		"finale_co_rotate": finale_co_rotate,
 		"finale_ring_radius": finale_ring_radius,
+		"time_scale": time_scale,
 	}
 	if _telem != null:
 		_telem.begin_run(meta)
@@ -2526,6 +2581,10 @@ func _load_auto_config() -> void:
 		finale_range_keep = bool(cfg["finale_range_keep"])
 	if cfg.has("finale_projectile_priority"):
 		finale_projectile_priority = bool(cfg["finale_projectile_priority"])
+	if cfg.has("time_scale"):
+		time_scale = float(cfg["time_scale"])
+	if cfg.has("headless_render"):
+		headless_render = bool(cfg["headless_render"])
 	if cfg.has("finale_scene_dump"):
 		finale_scene_dump = bool(cfg["finale_scene_dump"])
 	if cfg.has("finale_pivot_projectiles"):
