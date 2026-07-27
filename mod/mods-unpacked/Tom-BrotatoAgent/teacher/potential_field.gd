@@ -62,6 +62,11 @@ var finale_range_keep_enabled: bool = false
 # Off, the tail order is projectile -> wall -> body, so wall and body safety can
 # both override a dodge. On, projectile safety runs LAST at wave 20.
 var finale_projectile_priority_enabled: bool = false
+# Dev flag: strafe around the boss in the SAME direction its projectile ring is
+# rotating, lowering the relative speed between player and ring. Requires
+# finale_pivot_projectiles -- the ring is not in the state without it, so with
+# that flag off this term reads zero orbiters and returns Vector2.ZERO.
+var finale_co_rotate_enabled: bool = false
 
 
 func compute_movement(state, profile) -> Vector2:
@@ -292,6 +297,11 @@ func compute_movement(state, profile) -> Vector2:
 		if range_dir != Vector2.ZERO:
 			combined = _normalize(combined * (1.0 - BotConfig.BOSS_FINALE_RANGE_KEEP_WEIGHT)
 				+ range_dir * BotConfig.BOSS_FINALE_RANGE_KEEP_WEIGHT)
+	if finale and finale_co_rotate_enabled:
+		var co_dir = _finale_co_rotate(pos, bosses, projectiles)
+		if co_dir != Vector2.ZERO:
+			combined = _normalize(combined * (1.0 - BotConfig.BOSS_FINALE_CO_ROTATE_WEIGHT)
+				+ co_dir * BotConfig.BOSS_FINALE_CO_ROTATE_WEIGHT)
 	if finale:
 		combined = _finale_turn_without_reversal(_prev_move, combined, pos, arena)
 
@@ -2942,6 +2952,50 @@ func _is_valuable_pickup(cid: String) -> bool:
 	if id.find("crate") >= 0 and id.find("explosive") < 0:
 		return true
 	return false
+
+
+func _finale_co_rotate(pos, bosses, projectiles) -> Vector2:
+	# Unit tangent around the nearest boss, pointing the SAME way its orbiting
+	# projectile ring is turning. Zero when there is no boss, no ring in the
+	# state, or the ring is between reversals.
+	#
+	# Measured 2026-07-27 over 10,287 orbiter samples: the ring is coherent (all
+	# nine share a rotation sign in 97.1% of captures) and holds a direction for
+	# a median 3.2-9.7 s, but it REVERSES -- 51.9% clockwise / 48.1% counter
+	# overall. So the direction is read from the state every decision and never
+	# hard-coded.
+	if bosses.empty():
+		return Vector2.ZERO
+	var boss = bosses[0]
+	var bpos = Vector2(float(boss.get("x", 0.0)), float(boss.get("y", 0.0)))
+	# Mean angular velocity of the ring about the boss. Averaged rather than
+	# taken from one projectile so a single mis-sampled orbiter cannot flip it.
+	var spin = 0.0
+	var n = 0
+	for p in projectiles:
+		if str(p.get("type_id", "")).find("rotating") < 0:
+			continue
+		var r = Vector2(float(p.get("x", 0.0)), float(p.get("y", 0.0))) - bpos
+		var rl = r.length()
+		if rl < 1.0:
+			continue
+		var v = Vector2(float(p.get("vx", 0.0)), float(p.get("vy", 0.0)))
+		spin += (r.x * v.y - r.y * v.x) / (rl * rl)
+		n += 1
+	if n == 0:
+		return Vector2.ZERO
+	var omega = spin / float(n)
+	if abs(omega) < BotConfig.BOSS_FINALE_CO_ROTATE_MIN_OMEGA:
+		return Vector2.ZERO
+	var radial = pos - bpos
+	if radial.length() < 1.0:
+		return Vector2.ZERO
+	# cross(radial, tangent) is positive for this tangent, so flip it when the
+	# ring turns the other way.
+	var tangent = _normalize(Vector2(-radial.y, radial.x))
+	if omega < 0.0:
+		tangent = -tangent
+	return tangent
 
 
 func _finale_range_keep(pos, bosses, weapons) -> Vector2:

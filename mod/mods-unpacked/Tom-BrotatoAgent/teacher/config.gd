@@ -138,6 +138,24 @@ const BOSS_FINALE_RANGE_KEEP_FRACTION := 0.90
 # outside the band. 1.0 would make closing the objective; 0.5 blends it with
 # the survival desire. The ordered safety tail still runs after either way.
 const BOSS_FINALE_RANGE_KEEP_WEIGHT := 1.00
+# Co-rotation with the boss's orbiting projectile ring. Strafing WITH the ring
+# lowers the relative speed between player and projectiles; strafing against it
+# adds the two speeds together.
+# Weight starts at 0.50 -- deliberately weaker than range-keep's 1.00, because
+# this term competes with the safety tail rather than expressing a standing
+# preference, and an over-strong tangential pull would orbit the agent straight
+# through the burst projectiles it can already see.
+# 0.50, and this was MEASURED, not assumed. Range-keep found weight to be the
+# real cap (0.5 -> 1.0 helped a lot), so 1.00 was tried here too and was WORSE:
+# co-rotating ticks fell to 65.2%, BELOW the 67.6% control, because at full
+# weight the tangential term replaces the combined vector outright and the
+# anti-reversal guard and safety tail then fight it. 0.50 gives 74.4%.
+const BOSS_FINALE_CO_ROTATE_WEIGHT := 0.50
+# Ignore a ring whose angular speed is near zero: the direction reverses every
+# few seconds, and near the reversal the sign is noise. Measured |omega| sits at
+# ~1.4-1.55 rad/s when the ring is genuinely turning, so 0.25 is well clear of
+# the working range while still rejecting the flip.
+const BOSS_FINALE_CO_ROTATE_MIN_OMEGA := 0.25
 # Wave-20 heal seeking (dev flag finale_heal_seek). Below this HP fraction the
 # finale biases movement toward the nearest ordinary healing consumable.
 const BOSS_FINALE_HEAL_SEEK_HP_RATIO := 0.50

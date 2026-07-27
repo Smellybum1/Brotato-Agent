@@ -57,6 +57,10 @@ var _scene_dump_visited: int = 0
 # The emitted dicts carry EXACTLY the existing projectile key set, so the
 # capture schema hash does not move and the collector gate still passes.
 var finale_pivot_projectiles: bool = false
+# Wave-20 dev flag: strafe around the boss in the same direction its projectile
+# ring is rotating. DEPENDS ON finale_pivot_projectiles -- without it the ring is
+# not in the state and this term is inert (a no-op, not an error).
+var finale_co_rotate: bool = false
 # Previous-tick world positions, keyed by instance id, for finite-difference
 # velocity. These nodes DO expose `velocity` and it reads 0 -- their motion
 # comes from the parent Pivot's rotation, so reading the property would model
@@ -82,7 +86,7 @@ var policy_version: String = "teacher_v1-0.1.128-gun-wp1"
 # Single source of truth for the deployed mod identity: stamped into every run's
 # meta AND into the mod-ready sentinel, so the collector cannot accept a build
 # whose identity disagrees with what it asked for.
-const MOD_VERSION := "0.2.45-wp2-capture"
+const MOD_VERSION := "0.2.46-wp2-capture"
 const _MOD_READY_PATH := "user://brotato_agent/mod_ready.json"
 var last_move_debug: Dictionary = {}
 var last_meta_debug: Dictionary = {}
@@ -212,6 +216,7 @@ func _ready() -> void:
 		_field.finale_heal_seek_enabled = finale_heal_seek
 		_field.finale_range_keep_enabled = finale_range_keep
 		_field.finale_projectile_priority_enabled = finale_projectile_priority
+		_field.finale_co_rotate_enabled = finale_co_rotate
 	if student_enabled:
 		_bridge = _COMBAT_BRIDGE_SCRIPT.new()
 		_bridge.name = "CombatBridge"
@@ -265,6 +270,7 @@ func _write_mod_ready() -> void:
 		"finale_projectile_priority": finale_projectile_priority,
 		"finale_scene_dump": finale_scene_dump,
 		"finale_pivot_projectiles": finale_pivot_projectiles,
+		"finale_co_rotate": finale_co_rotate,
 	}))
 	f.close()
 
@@ -2237,6 +2243,7 @@ func _start_run() -> void:
 		"finale_range_keep": finale_range_keep,
 		"finale_projectile_priority": finale_projectile_priority,
 		"finale_pivot_projectiles": finale_pivot_projectiles,
+		"finale_co_rotate": finale_co_rotate,
 	}
 	if _telem != null:
 		_telem.begin_run(meta)
@@ -2509,6 +2516,8 @@ func _load_auto_config() -> void:
 		finale_scene_dump = bool(cfg["finale_scene_dump"])
 	if cfg.has("finale_pivot_projectiles"):
 		finale_pivot_projectiles = bool(cfg["finale_pivot_projectiles"])
+	if cfg.has("finale_co_rotate"):
+		finale_co_rotate = bool(cfg["finale_co_rotate"])
 
 func _record_finale_range_sample(state) -> void:
 	# Same state the controller already passed to the field: one source of truth
