@@ -34,7 +34,7 @@ func begin_run(meta: Dictionary) -> void:
 		"endless": meta.get("endless", false),
 		"wave_retry": meta.get("wave_retry", false),
 		"game_version": meta.get("game_version", ""),
-		"mod_version": meta.get("mod_version", "0.2.44-wp2-capture"),
+		"mod_version": meta.get("mod_version", "0.2.45-wp2-capture"),
 		"config_id": meta.get("config_id", "well_rounded_d0_smg"),
 		# Which finale controller actually ran. policy_version cannot carry this:
 		# the flag lives in agent_config.json, so a v2 run and a v1 run of the
@@ -49,6 +49,10 @@ func begin_run(meta: Dictionary) -> void:
 		"finale_heal_seek": meta.get("finale_heal_seek", false),
 		"finale_range_keep": meta.get("finale_range_keep", false),
 		"finale_projectile_priority": meta.get("finale_projectile_priority", false),
+		# Boss-mounted projectile collection. This one CHANGES WHAT THE POLICY
+		# SEES, so a trial whose recorded arm disagrees with the requested arm
+		# must be invalidated -- which requires the arm to be in the summary.
+		"finale_pivot_projectiles": meta.get("finale_pivot_projectiles", false),
 		# Direct proof of the rate that actually ran: the ratio is 1.0 for a
 		# full-rate arm and ~0.333 for the v1 1-in-3 schedule. Overwritten by
 		# end_run's extra dict; zeros here mean the run never reached wave 20.

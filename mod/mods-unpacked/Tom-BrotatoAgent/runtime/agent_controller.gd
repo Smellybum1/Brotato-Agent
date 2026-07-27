@@ -48,12 +48,30 @@ var finale_projectile_priority: bool = false
 var finale_scene_dump: bool = false
 var _scene_dump_tick: int = 0
 var _scene_dump_visited: int = 0
+# THE FIX the scene dump motivates. Collects boss-MOUNTED projectiles -- nine
+# `enemy_projectile_rotating.gd` nodes parented under `Boss/Pivot`, which the
+# `Projectiles`/`%EnemyProjectiles` lookup can never reach -- into the same
+# projectile list, so the existing avoidance machinery can act on them.
+# Default FALSE: this CHANGES BEHAVIOUR (it changes what the potential field
+# sees), so flag-off must stay byte-identical for the baseline to hold.
+# The emitted dicts carry EXACTLY the existing projectile key set, so the
+# capture schema hash does not move and the collector gate still passes.
+var finale_pivot_projectiles: bool = false
+# Previous-tick world positions, keyed by instance id, for finite-difference
+# velocity. These nodes DO expose `velocity` and it reads 0 -- their motion
+# comes from the parent Pivot's rotation, so reading the property would model
+# them as parked. Rebuilt every tick, so it cannot grow without bound.
+var _pivot_prev: Dictionary = {}
+var _pivot_cur: Dictionary = {}
 # 0.5 s at 60 Hz. The walk is O(tree); this keeps it off the per-tick path.
 const SCENE_DUMP_EVERY := 30
 # Raised from 400 when unit nodes became candidates: truncation silently caps
 # counts, and a wave-20 swarm is the case where it would bite.
 const SCENE_DUMP_MAX_NODES := 800
 const SCENE_DUMP_MAX_DEPTH := 14
+# Boss -> Pivot -> projectile is 2 levels; 3 leaves one level of headroom without
+# turning this into a whole-subtree scan on every physics tick.
+const PIVOT_SCAN_DEPTH := 3
 var _resume_done: bool = false
 var _resume_ticks: int = 0
 # ~10 s at 60 Hz. ProgressData populates current_run_state during startup, so the
@@ -64,7 +82,7 @@ var policy_version: String = "teacher_v1-0.1.128-gun-wp1"
 # Single source of truth for the deployed mod identity: stamped into every run's
 # meta AND into the mod-ready sentinel, so the collector cannot accept a build
 # whose identity disagrees with what it asked for.
-const MOD_VERSION := "0.2.44-wp2-capture"
+const MOD_VERSION := "0.2.45-wp2-capture"
 const _MOD_READY_PATH := "user://brotato_agent/mod_ready.json"
 var last_move_debug: Dictionary = {}
 var last_meta_debug: Dictionary = {}
@@ -246,6 +264,7 @@ func _write_mod_ready() -> void:
 		"finale_range_keep": finale_range_keep,
 		"finale_projectile_priority": finale_projectile_priority,
 		"finale_scene_dump": finale_scene_dump,
+		"finale_pivot_projectiles": finale_pivot_projectiles,
 	}))
 	f.close()
 
@@ -578,6 +597,17 @@ func _gather_combat_state(main) -> Dictionary:
 				"type_id": _node_script_path(proj),
 				"radius": _collision_radius(proj, 8.0),
 				"damage": proj.get_damage() if proj.has_method("get_damage") else 0})
+	# Boss-mounted projectiles. Flag-gated: with the flag off nothing is appended
+	# and `projs` is byte-identical to before.
+	if finale_pivot_projectiles:
+		_pivot_cur = {}
+		for b in es.bosses:
+			if not is_instance_valid(b):
+				continue
+			if b.dead:
+				continue
+			_collect_mounted_projectiles(b, PIVOT_SCAN_DEPTH, projs)
+		_pivot_prev = _pivot_cur
 	state["projectiles"] = projs
 
 	# Materials / gold — Main keeps the live list in `_golds` under `$Items`
@@ -646,6 +676,51 @@ func _node_script_path(node) -> String:
 	if script != null and "resource_path" in script:
 		return str(script.resource_path)
 	return ""
+
+
+# Walks a boss subtree for projectile-scripted nodes. Bounded depth, and it does
+# NOT descend into a projectile's own children (its hitbox is not a projectile).
+# Deliberately matches on the SCRIPT rather than a node named "Pivot": the name
+# is a property of one boss scene, the script is what makes it a projectile.
+func _collect_mounted_projectiles(node: Node, depth: int, out: Array) -> void:
+	if node == null or depth < 0:
+		return
+	for c in node.get_children():
+		if not is_instance_valid(c):
+			continue
+		if _node_script_path(c).to_lower().find("projectile") >= 0:
+			# Same filters the ordinary projectile path applies, so the two
+			# sources cannot disagree about what counts as collectable.
+			if not c.visible:
+				continue
+			if not ("global_position" in c):
+				continue
+			out.append(_mounted_projectile_snapshot(c))
+			continue
+		_collect_mounted_projectiles(c, depth - 1, out)
+
+
+# Key set is EXACTLY the ordinary projectile dict's. Any extra key here would
+# move the capture schema hash and fail the collector's identity gate.
+func _mounted_projectile_snapshot(proj) -> Dictionary:
+	var iid = proj.get_instance_id()
+	var pos = proj.global_position
+	var now = OS.get_ticks_msec()
+	var vel := Vector2.ZERO
+	if _pivot_prev.has(iid):
+		var prev = _pivot_prev[iid]
+		var dt := float(now - prev[2]) / 1000.0
+		# Guard against a zero/absurd dt: two gathers in the same millisecond
+		# would divide by ~0 and emit a nonsense velocity.
+		if dt > 0.0005:
+			vel = Vector2((pos.x - prev[0]) / dt, (pos.y - prev[1]) / dt)
+	_pivot_cur[iid] = [pos.x, pos.y, now]
+	return {"x": pos.x, "y": pos.y,
+		"vx": vel.x, "vy": vel.y,
+		"instance_id": iid,
+		"type_id": _node_script_path(proj),
+		"radius": _collision_radius(proj, 8.0),
+		"damage": proj.get_damage() if proj.has_method("get_damage") else 0}
 
 
 # DIAGNOSTIC ONLY. Recursive, depth- and count-bounded, mirrors the shape of
@@ -2161,6 +2236,7 @@ func _start_run() -> void:
 		"finale_heal_seek": finale_heal_seek,
 		"finale_range_keep": finale_range_keep,
 		"finale_projectile_priority": finale_projectile_priority,
+		"finale_pivot_projectiles": finale_pivot_projectiles,
 	}
 	if _telem != null:
 		_telem.begin_run(meta)
@@ -2431,6 +2507,8 @@ func _load_auto_config() -> void:
 		finale_projectile_priority = bool(cfg["finale_projectile_priority"])
 	if cfg.has("finale_scene_dump"):
 		finale_scene_dump = bool(cfg["finale_scene_dump"])
+	if cfg.has("finale_pivot_projectiles"):
+		finale_pivot_projectiles = bool(cfg["finale_pivot_projectiles"])
 
 func _record_finale_range_sample(state) -> void:
 	# Same state the controller already passed to the field: one source of truth
