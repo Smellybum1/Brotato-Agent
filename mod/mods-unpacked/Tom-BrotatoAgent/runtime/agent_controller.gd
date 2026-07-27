@@ -50,7 +50,9 @@ var _scene_dump_tick: int = 0
 var _scene_dump_visited: int = 0
 # 0.5 s at 60 Hz. The walk is O(tree); this keeps it off the per-tick path.
 const SCENE_DUMP_EVERY := 30
-const SCENE_DUMP_MAX_NODES := 400
+# Raised from 400 when unit nodes became candidates: truncation silently caps
+# counts, and a wave-20 swarm is the case where it would bite.
+const SCENE_DUMP_MAX_NODES := 800
 const SCENE_DUMP_MAX_DEPTH := 14
 var _resume_done: bool = false
 var _resume_ticks: int = 0
@@ -62,7 +64,7 @@ var policy_version: String = "teacher_v1-0.1.128-gun-wp1"
 # Single source of truth for the deployed mod identity: stamped into every run's
 # meta AND into the mod-ready sentinel, so the collector cannot accept a build
 # whose identity disagrees with what it asked for.
-const MOD_VERSION := "0.2.42-wp2-capture"
+const MOD_VERSION := "0.2.44-wp2-capture"
 const _MOD_READY_PATH := "user://brotato_agent/mod_ready.json"
 var last_move_debug: Dictionary = {}
 var last_meta_debug: Dictionary = {}
@@ -662,8 +664,13 @@ func _scene_dump_walk(node: Node, path: String, depth: int, out: Array) -> void:
 	# has_method() is a pure query and calls nothing. Whether get_damage() is
 	# actually INVOKED is decided separately below.
 	var is_candidate := node.has_method("get_damage")
-	var is_projectile_like := script_path.to_lower().find("projectile") >= 0
-	if is_projectile_like:
+	var lscript := script_path.to_lower()
+	var is_projectile_like := lscript.find("projectile") >= 0
+	# Unit nodes are candidates in their OWN right, so an enemy's instance id can
+	# be compared against the collected enemy list directly. Reading it off a
+	# hitbox CHILD would compare the hitbox's id, which is never in any state.
+	var is_unit_like := lscript.find("entities/units/") >= 0
+	if is_projectile_like or is_unit_like:
 		is_candidate = true
 	if lname.find("projectile") >= 0 or lname.find("hitbox") >= 0:
 		is_candidate = true
@@ -687,6 +694,11 @@ func _scene_dump_walk(node: Node, path: String, depth: int, out: Array) -> void:
 			"has_gp": ("global_position" in node),
 			"has_get_damage": node.has_method("get_damage"),
 			"damage": dmg,
+			# Collection skips `if e.dead: continue`, so a dead-but-still-in-tree
+			# enemy is CORRECTLY absent from the state. Without this field an
+			# uncollected enemy row cannot be told apart from a real blind spot.
+			"dead": bool(node.dead) if "dead" in node else false,
+			"has_dead": ("dead" in node),
 		}
 		if "global_position" in node:
 			rec["x"] = node.global_position.x
@@ -710,6 +722,14 @@ func _emit_scene_dump(main, state, wave: int) -> void:
 	var collected := []
 	for pr in state.get("projectiles", []):
 		collected.append(pr.get("instance_id", 0))
+	# Enemy/boss ids are emitted SEPARATELY. Comparing every candidate against the
+	# projectile ids alone made enemy nodes read "not in state" by construction --
+	# a vacuous denominator that inflated the first dump's headline.
+	var collected_units := []
+	for u in state.get("enemies", []):
+		collected_units.append(u.get("instance_id", 0))
+	for u in state.get("bosses", []):
+		collected_units.append(u.get("instance_id", 0))
 	var main_children := []
 	for c in main.get_children():
 		main_children.append(str(c.name))
@@ -720,6 +740,8 @@ func _emit_scene_dump(main, state, wave: int) -> void:
 		"truncated": found.size() >= SCENE_DUMP_MAX_NODES,
 		"collected_count": collected.size(),
 		"collected_iids": collected,
+		"collected_unit_count": collected_units.size(),
+		"collected_unit_iids": collected_units,
 		"candidates": found,
 		"main_children": main_children,
 	})
