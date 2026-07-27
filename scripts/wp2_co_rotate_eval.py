@@ -74,23 +74,42 @@ def main() -> int:
     print("=" * 78)
     print("VALIDITY GATE (checked first; failure VOIDS the campaign)")
     print("=" * 78)
+    # The gate exists to catch A FLAG THAT DID NOT TAKE EFFECT. That is what voids
+    # a campaign: it would compare an arm against itself and report a fake null.
+    # An infrastructure crash (e.g. game_exited_before_summary) is MISSING DATA,
+    # not a compromised arm, and is handled by exclusion plus a worst-case
+    # sensitivity below -- the same way the finale v2 campaign handled its 2
+    # invalid trials. Voiding 127 good trials over one crash would be the gate
+    # firing for something it was not designed to catch.
     ok = True
+    lost: list[dict] = []
     for name, rows, expect_corot in (("control", ctl, False), ("treatment", trt, True)):
         invalid = [r for r in rows if not r.get("valid")]
+        mismatch = [r for r in invalid
+                    if "mismatch" in str(r.get("invalid_reason", ""))]
+        infra = [r for r in invalid if r not in mismatch]
         wrong_pivot = [r for r in rows if not r.get("finale_pivot_projectiles")]
         wrong_corot = [r for r in rows if bool(r.get("finale_co_rotate")) != expect_corot]
-        print(f"  {name:<10} n={len(rows):<4} invalid={len(invalid)} "
-              f"pivot-flag-wrong={len(wrong_pivot)} corotate-flag-wrong={len(wrong_corot)}")
-        if invalid:
-            print(f"      invalid reasons: {[r.get('invalid_reason') for r in invalid][:5]}")
-        if invalid or wrong_pivot or wrong_corot:
+        print(f"  {name:<10} n={len(rows):<4} arm-mismatch={len(mismatch)} "
+              f"infra-invalid={len(infra)} pivot-flag-wrong={len(wrong_pivot)} "
+              f"corotate-flag-wrong={len(wrong_corot)}")
+        if infra:
+            print(f"      infrastructure losses: {[r.get('invalid_reason') for r in infra]}")
+        lost.extend(infra)
+        if mismatch or wrong_pivot or wrong_corot:
             ok = False
     if not ok:
         print()
         print("GATE FAILED -- campaign is VOID. A flag that did not take effect must")
         print("invalidate the experiment, not quietly produce a null.")
         return 1
-    print("  gate passed: every trial valid and on its requested arm")
+    print("  gate passed: 0 arm mismatches -- every trial ran on its requested arm")
+    if lost:
+        print(f"  {len(lost)} trial(s) lost to infrastructure; excluded, with a")
+        print("  worst-case sensitivity reported after the primary result")
+
+    ctl = [r for r in ctl if r.get("valid")]
+    trt = [r for r in trt if r.get("valid")]
 
     by_fix_c: dict[str, list[float]] = defaultdict(list)
     by_fix_t: dict[str, list[float]] = defaultdict(list)
@@ -143,6 +162,28 @@ def main() -> int:
     print(f"SECONDARY (not the decision variable): win rate "
           f"control {sum(wc)}/{len(wc)} = {sum(wc)/len(wc):.3f}, "
           f"treatment {sum(wt)}/{len(wt)} = {sum(wt)/len(wt):.3f}")
+
+    if lost:
+        # Worst case for the treatment: give every lost trial the WORST damage
+        # observed in its own arm. If the verdict survives that, the missing
+        # data cannot be what produced it.
+        worst = max(all_t + all_c)
+        adj = []
+        lost_by_fix: dict[str, int] = defaultdict(int)
+        for r in lost:
+            lost_by_fix[r["fixture_digest"]] += 1
+        for i, f in enumerate(fixtures):
+            n_lost = lost_by_fix.get(f, 0)
+            if n_lost:
+                vals = by_fix_t[f] + [worst] * n_lost
+                adj.append(sum(vals) / len(vals) - sum(by_fix_c[f]) / len(by_fix_c[f]))
+            else:
+                adj.append(diffs[i])
+        mean_adj = sum(adj) / len(adj)
+        _, p_adj = exact_wilcoxon(adj)
+        print()
+        print(f"  SENSITIVITY, lost trials charged at the worst observed damage ({worst:.0f}):")
+        print(f"    mean difference {mean_adj:+.2f}, exact Wilcoxon p={p_adj:.4f}")
 
     print()
     print("=" * 78)
