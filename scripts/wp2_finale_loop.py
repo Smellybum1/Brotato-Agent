@@ -85,13 +85,18 @@ def write_agent_config(
     path: Path,
     auto_start: bool,
     resume_from_save: bool,
-    finale_v2: bool,
+    finale_v2: bool = False,
     finale_rate_full: bool = False,
     finale_no_panic: bool = False,
     finale_heal_seek: bool = False,
     finale_range_keep: bool = False,
     finale_projectile_priority: bool = False,
-    finale_pivot_projectiles: bool = False,
+    # TRACKS THE SHIPPED DEFAULT, which is ON. Every other flag here is an
+    # experimental arm and defaults OFF; this one shipped, so a caller that does
+    # not mention it must get the build that is actually deployed. With the old
+    # False default, wp2_fixture_campaign.py would have played full runs WITHOUT
+    # the shipped fix while looking like an ordinary run.
+    finale_pivot_projectiles: bool = True,
     finale_co_rotate: bool = False,
     finale_ring_radius: bool = False,
 ) -> None:
