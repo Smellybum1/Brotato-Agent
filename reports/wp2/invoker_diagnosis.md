@@ -105,6 +105,85 @@ The predator's 84-91% was measured with the correct instrument and is unaffected
 - All attribution is proximity inference: `player_damage` carries only
   `{amount, hp}` — no position, no attacker id.
 
+## ⛔ PRE-IMPLEMENTATION GATE: NO-GO. A local avoidance term will not help.
+
+Run before writing any fix, per the standing rule that a real defect is not
+automatically load-bearing — *show the decision flips first*. It does not.
+
+**The term already exists and is already the command.**
+`teacher/potential_field.gd` carries a full projectile-avoidance stage
+(`_projectile_escape` / `_projectile_clearance_context` / `_threatening_bullets` /
+`_dir_clearance`), invoked as `_finale_projectile_safety` at wave 20, and it
+treats stationary projectiles as a first-class case:
+
+```gdscript
+var speed_sq = p_vel.x * p_vel.x + p_vel.y * p_vel.y
+if speed_sq < 1.0:
+    if rel.length() < margin:
+        out.append([p_pos, p_vel])
+```
+
+`_dir_clearance` even records a v116 fix for this exact case ("the player passed
+through a stationary radius-23 bullet at t=0.056").
+
+At the 135 causal ticks: **`projectile_safety_active` 121/121 = 1.000**, and
+**`projectile_safety_urgency` is SATURATED at 1.0** (p10 = med = p90 = 1.0). At
+urgency 1.0 the blend `desire*(1−u) + escape*u` means **the command IS the escape
+direction — there is no other term left to outweigh it.** Clearance improves
+monotonically through the tail (input 16.1 → escape 25.7 → blended 25.2 → final
+29.6) with zero downstream overrides (`wall_replan` 0/105, `blend_repair` 0/102,
+`body_emergency` 0/81).
+
+**The agent is enclosed.** Over 24 headings at `ESCAPE_HORIZON` 0.60 s, with the
+threshold *calibrated* to one capture-interval of travel (25.4 u = median speed
+499 × 0.051 s, not a round number):
+
+| threshold | some heading clear | commanded clear |
+|---|---|---|
+| 0 u | 118/135 = 0.874 | 104/135 = 0.770 |
+| 12 u | 76/135 = 0.563 | 49/135 = 0.363 |
+| **25.4 u** | **24/135 = 0.178** | 12/135 = 0.089 |
+| 40 u | 1/135 = 0.007 | 0/135 = 0.000 |
+
+**82.2% of hits were enclosed** — no heading anywhere on the circle bought a
+capture-interval of clearance — and in **84/135 = 62%** the agent was already
+commanding the single best of the 24 headings (best-minus-commanded gap: median
+**0.0**).
+
+**Addressable ceiling: 16/135 = 11.9% of hits, 11.5% of that damage.** Threshold
+sweep 0-30 u puts it at 10-20% throughout, and those 16 rows concentrate in 10
+runs (4 in one run). That is a ceiling assuming a *perfect* selector, not an
+achievable delta.
+
+**This is the v128 pattern.** The defect is real and measurable — 73-82% of
+lead-in ticks command toward the field, against a 0.408 random-tick baseline —
+and it is **not load-bearing**, because by the time it matters the agent is
+inside a 24-30 projectile volley where every exit is equally bad.
+
+**The only remaining lever is upstream: not being in that position 0.6 s
+earlier.** That is a different and much larger intervention, and nothing here
+justifies it yet.
+
+Incidental: `PROJECTILE_REPULSION := 1000.0` and
+`PROJECTILE_INFLUENCE_RADIUS := 300.0` in `config.gd` are **dead constants**,
+referenced nowhere in the mod.
+
+## ⚠️ UNRECONCILED — median surface distance, 3.1 u vs 13.0 u
+
+The gate analysis reproduces the attribution shape above but gets **median
+surface distance 13.0 u** at the causal tick, not the **3.1 u** recorded earlier
+in this file. Not a radius convention (radii are exactly 23.0 for all 978,460
+stationary observations and 17.03 for moving ones). Both analyses claim to use
+the lag-corrected tick.
+
+The gate's own lag sweep over the 180 events is the better-evidenced instrument —
+median min surface distance 28.8 (lag −2), **18.7 (lag −1)**, 59.8 (drop tick),
+59.5 (lag +1), against a random-tick baseline of 114.4 — establishing the capture
+*before* the HP drop as causal.
+
+**No decision depends on which figure is right** (both say "at or inside the
+field edge"), so it is recorded rather than chased.
+
 ## Not determined
 
 Arena-wide accumulation *outside* the player's neighbourhood is not excluded by
