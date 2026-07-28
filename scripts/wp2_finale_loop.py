@@ -193,23 +193,51 @@ def validate_trial(
     expected_finale_pivot_projectiles: bool = False,
     expected_finale_co_rotate: bool = False,
     expected_finale_ring_radius: bool = False,
+    target_wave: int = 20,
 ) -> str:
-    """Return "" when the trial is a valid finale observation, else a reason code."""
+    """Return "" when the trial is a valid finale observation, else a reason code.
+
+    The wave guard exists because a FAILED fixture resume produces a full run
+    from wave 1 whose summary.json is indistinguishable from a valid trial. So
+    the run must START at target_wave and continue contiguously; any wave below
+    the target is the signature of the mod walking waves 1..N after a bad
+    resume. Wave 20 ends the run, so a target of 20 admits exactly [20]; a
+    lower target also admits the survival tail (e.g. [17, 18, 19, 20]).
+    """
     waves = list(analysis.get("waves") or [])
     if not waves:
         return "no_combat_captures"
-    if any(w < 20 for w in waves):
+    if any(w < target_wave for w in waves):
         # The resume failed and the mod started a FRESH run from wave 1. Without
-        # this check a full 20-wave run would be recorded as a finale trial.
+        # this check a full run would be recorded as a finale trial.
         return "resume_failed_fresh_run"
-    if waves != [20]:
+    if target_wave not in waves:
         return f"unexpected_waves:{waves}"
+    if waves != list(range(target_wave, max(waves) + 1)):
+        # A hole in the wave sequence means captures went missing.
+        return f"wave_gap:{waves}"
     boss_paths = analysis.get("boss_paths") or {}
-    if len(boss_paths) != 1:
-        return f"boss_path_count:{len(boss_paths)}"
-    entity = analysis.get("boss_entity")
-    if entity != expected_boss:
-        return f"boss_mismatch:{entity}"
+    if 20 in waves:
+        if target_wave == 20:
+            # The boss fight IS the measurement: identity must match the arm.
+            if len(boss_paths) != 1:
+                return f"boss_path_count:{len(boss_paths)}"
+            entity = analysis.get("boss_entity")
+            if entity != expected_boss:
+                return f"boss_mismatch:{entity}"
+        else:
+            # target_wave < 20: wave 20 is only the SURVIVAL TAIL of a lower-wave
+            # trial, run over a fixture set with mixed bosses. Enforcing boss
+            # identity here would reject exactly the trials that SURVIVED -- a
+            # non-random subset -- and bias the primary outcome. Only structural
+            # sanity is checked: more than one distinct boss path means the
+            # capture stream is confused. The observed entity is recorded on the
+            # trial row (analysis["boss_entity"]) so the data stays self-describing.
+            if len(boss_paths) > 1:
+                return f"boss_path_count:{len(boss_paths)}"
+    elif boss_paths:
+        # Bosses only exist at wave 20; one here means something is wrong.
+        return f"unexpected_boss:{sorted(boss_paths)}"
     result = str(summary.get("result", "")).lower()
     if result not in {"victory", "defeat"}:
         return f"unexpected_result:{summary.get('result')}"
@@ -355,6 +383,8 @@ def run_trial(
         "finale_pivot_projectiles": bool(args.finale_pivot_projectiles),
         "finale_co_rotate": bool(args.finale_co_rotate),
         "finale_ring_radius": bool(args.finale_ring_radius),
+        # Which wave this trial measured; makes trials.jsonl self-describing.
+        "target_wave": int(getattr(args, "target_wave", 20)),
         "fixture_file": fixture.name,
         "fixture_digest": fixture_digest,
         "run_id": "",
@@ -452,6 +482,7 @@ def run_trial(
             bool(args.finale_pivot_projectiles),
             bool(args.finale_co_rotate),
             bool(args.finale_ring_radius),
+            target_wave=int(getattr(args, "target_wave", 20)),
         )
         row["valid"] = reason == ""
         row["invalid_reason"] = reason
@@ -465,6 +496,7 @@ def main() -> int:
     ap.add_argument("--fixture", type=Path, action="append", default=None)
     ap.add_argument("--fixture-dir", type=Path, default=Path(".tmp/snapshots"))
     ap.add_argument("--boss", type=str, default="predator")
+    ap.add_argument("--target-wave", type=int, default=20)
     ap.add_argument("--trials", type=int, required=True)
     ap.add_argument("--label", type=str, required=True)
     ap.add_argument("--out", type=Path, required=True)
