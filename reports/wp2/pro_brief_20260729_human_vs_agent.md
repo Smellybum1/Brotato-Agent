@@ -147,23 +147,41 @@ against a null band of [0.370, 0.630]), while wave 17 separates strongly on offe
 17 is a 60-second timed clear; wave 20 is a boss fight. A prediction that could have failed, and
 did not.
 
-### 3.7 The result that cuts AGAINST the thesis — total damage taken
+### 3.7 An apparent counter-result that DISSOLVED on inspection — and took a standing metric with it
 
-Over the **full 20-wave run**, the human took **251 damage**. The agent archive, 36 full runs:
-**median 83**, p10 18, p90 208. Among agent *victories* only: median 82.
+Over the **full 20-wave run** the human took **251 damage** against an agent archive median of
+**83** (p10 18, p90 208; victories-only median 82) — ~3x the median and above the 90th percentile.
+I initially recorded this as the main evidence against the "copy the human's aggression" thesis.
 
-**So on a full run the human took ~3x the agent's median damage, above its 90th percentile.**
+**It does not survive.** `damage_taken` is a **gross cumulative counter**: it sums damage events and
+never subtracts healing. Measuring risk exposure directly instead:
 
-This sits awkwardly beside §3.1, where on the hard saved state the human's minimum HP was *far
-better* (0.61 vs 0.13). Candidate readings, which I cannot separate:
-- the aggression buys materials at a real cost in exposure, and that cost is only worth paying when
-  the build is weak enough that collection dominates;
-- the agent is superhuman at frame-level dodging over 20 waves, and the human's advantage is
-  strategic (where to be) rather than tactical (how to dodge);
-- total damage across runs of differing length and outcome is a confounded comparison.
+| | human | agent median (n=6 full runs) |
+|---|---|---|
+| fraction of ticks below 70% HP | **0.022** | 0.033 |
+| fraction of ticks below 50% HP | 0.013 | 0.004 |
+| fraction of ticks below 30% HP | 0.003 | 0.000 |
+| median HP ratio | 1.00 | 1.00 |
+| minimum HP ratio | 0.19 | range 0.10-0.72 |
+| **HP healed back over the run** | **120** | **38** |
 
-I am flagging this prominently rather than burying it because it is the main evidence *against* the
-"copy the human's aggression" conclusion, and the operator and I both have a prior in favour.
+The human took more gross damage **and healed 3.2x more of it back**, spending *less* time below
+70% HP than the typical agent run and landing inside the agent's own range on the deeper bands.
+The operator's account — "I traded health for collection because I knew consumables were there to
+recover it" — is supported: it is a **deliberate policy of spending a recoverable resource**, not
+recklessness. Net risk was comparable or better.
+
+**The wider consequence, which matters more than this run.** `damage_taken` is this project's
+**standing primary endpoint for paired campaigns** — the whole sizing table (32 trials detects 19
+damage, 64 detects 13, 128 detects 9) rests on it. Healing varied **15 to 171** across the six
+agent runs checked. So any intervention that shifts healing — more collection, more consumable
+pickup, more lifesteal — moves the endpoint without moving actual risk, or masks a real change.
+That is the same family as a treatment-rescaled outcome. **Question 8 below asks whether the
+endpoint should be replaced.**
+
+Honest note on how this was found: the operator supplied the explanation, and it prompted a
+measurement I would not otherwise have run. The gross-vs-net distinction was invisible in the
+summary statistic.
 
 ### 3.8 Control: is the agent's behaviour intrinsic, or an artifact of human-visited states?
 
@@ -290,6 +308,19 @@ objective". Note every one of those imitated the *teacher*, whose ceiling is the
 
 7. **What have I got wrong or over-claimed in §§3-4?** In particular: is the crowd-matched control
    in §3.4 sufficient to rule out endogeneity, or is "enemies alive" the wrong thing to match on?
+
+8. **Should `damage_taken` be replaced as the primary paired-campaign endpoint (§3.7)?** It is a
+   gross counter, healing varies 15-171 across runs, and the project's entire power/sizing table is
+   built on it. Candidates: time-below-HP-threshold, an integral of HP deficit, net HP lost, or the
+   already-validated terminal-win-from-landmark endpoint. What would you use, and does the existing
+   sizing table need redoing? Note the same concern may apply to any past result that used damage
+   taken as its outcome.
+
+9. **The human's stated policy is "spend HP because consumables can recover it."** The agent has no
+   such notion — it treats HP purely as a thing to conserve, and the loot-dash is suppressed when HP
+   is low (`suppressed_survival`, 21.7% of late ticks). Is "treat HP as a spendable resource priced
+   against available recovery" a sound policy principle to encode here, and if so how would you
+   express it without producing the reckless behaviour that got a previous greed change rejected?
 
 Please deliver your answer as a **markdown file**.
 
