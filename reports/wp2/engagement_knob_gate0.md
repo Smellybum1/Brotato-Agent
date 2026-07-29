@@ -1,5 +1,28 @@
 # The engagement knob: named, scalar, dose-able — and it clears Gate 0 offline
 
+> ## ⛔ CORRECTION 2026-07-29 — THE LEVER IN THIS FILE IS REFUTED
+>
+> **What was claimed:** the standoff is set by the shortest weapon range, so dosing the engage
+> distance is a Gate 0-cleared lever. The evidence was a source comment plus Pearson **r = 0.377**
+> across 272 trials, monotone by bin.
+>
+> **What is now known:** that correlation is **between builds, not within one**, and a dosed
+> experiment refutes it. Dosing the `engage` spring over a 6.7x range (0.30-2.00) moved the standoff
+> **2.2%** with no monotone response. Re-pointing the knob at the `at_weapon_range` boundary —
+> which looked conclusive, since the "kill residual charge" block strips 82% of inward force at
+> `weapon_max * 1.02` and that matches the measured 1.062 exactly — **also produced no
+> dose-response**: predicted ratio 0.41 at dose 0.40, observed 0.902 and 1.045 on two trials of the
+> same dose.
+>
+> **What survives:** the DIAGNOSIS. The agent converts 1.7x less of the pack into targets
+> (in-range fraction 0.2801 vs 0.4417, perfectly separated) and stands at 1.062x its shortest weapon
+> range against a human's 0.631x. That is measurement and it is unaffected.
+>
+> **What does not:** the LEVER. The standoff is **emergent, not commanded** — we have no knob that
+> moves it. The dose ladder proposed at the bottom of this file must not be run as written.
+>
+> **Evidence:** `reports/wp2/engage_knob_refuted.md`.
+
 **Date:** 2026-07-29. Closes the loop opened by `engagement_distance_lead.md` and
 `in_range_fraction_mediator.md`. No new machine time.
 

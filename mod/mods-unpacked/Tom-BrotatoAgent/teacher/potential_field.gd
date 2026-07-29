@@ -71,6 +71,10 @@ var finale_co_rotate_enabled: bool = false
 # with co-rotation -- direction without radius cannot outrun anything, since at
 # the agent's usual 566 u it out-rotates only 7% of the time.
 var finale_ring_radius_enabled: bool = false
+# Dev knob: multiply the engagement standoff distance after the shipped DPS
+# scale. Larger holds farther from enemies, smaller closes in. Pure multiplier,
+# so 1.0 is exactly inert -- no clamp or floor is added here on purpose.
+var engage_distance_scale: float = 1.0
 
 
 func compute_movement(state, profile) -> Vector2:
@@ -1516,13 +1520,24 @@ func _build_desire(pos, enemies, bosses, loot, consumables, trees, weapons, aren
 	var engage = _engage_distance(profile, player, weapons)
 	# Whole-run DPS band: sit inside shortest weapon range (slightly tight).
 	engage *= BotConfig.DPS_ENGAGE_SCALE
+	# Dev knob: dose the standoff distance. 1.0 (default) is inert.
+	engage *= engage_distance_scale
 	# Late swarms: hold a bit farther so we can skate the border without diving.
 	if edge_kite:
 		engage *= BotConfig.EDGE_ENGAGE_SCALE
 	var nearest_d = _nearest_threat_dist(pos, enemies, bosses)
 	var out_of_range = nearest_d > engage * BotConfig.OUT_OF_RANGE_PULL_THRESH
 	# Reached shortest-weapon max range → stop charging; orbit the clear flank.
-	var at_weapon_range = (not enemies.empty() or not bosses.empty()) and nearest_d <= weapon_max * 1.02
+	#
+	# THIS is the absorbing boundary that actually sets the standoff, not the
+	# `engage` spring above. Inside it, the block at "Kill residual charge"
+	# strips (1 - ENGAGE_STRAFE_INWARD_DAMP) = 82% of any inward component, so
+	# the agent parks just outside weapon_max * 1.02. Measured: the realised
+	# nearest-threat / shortest-weapon-range ratio is 1.062 across 272 trials,
+	# against 0.631 for a human on the same fixture. Dosing `engage` alone was
+	# verified INERT (scale 0.30 vs 2.00 moved the standoff 2.2%), which is why
+	# the dev knob is applied here as well.
+	var at_weapon_range = (not enemies.empty() or not bosses.empty()) and nearest_d <= weapon_max * 1.02 * engage_distance_scale
 	var force = _enemy_engagement_force(pos, enemies, bosses, engage, profile, false, early, edge_kite)
 	var tree_focus = (wave <= BotConfig.TREE_PRIORITY_WAVE and not trees.empty()
 		and nearby <= BotConfig.SPARSE_LOOT_ENEMIES)

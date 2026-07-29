@@ -34,7 +34,7 @@ func begin_run(meta: Dictionary) -> void:
 		"endless": meta.get("endless", false),
 		"wave_retry": meta.get("wave_retry", false),
 		"game_version": meta.get("game_version", ""),
-		"mod_version": meta.get("mod_version", "0.2.50-wp2-capture"),
+		"mod_version": meta.get("mod_version", "0.2.52-wp2-capture"),
 		"config_id": meta.get("config_id", "well_rounded_d0_smg"),
 		# Which finale controller actually ran. policy_version cannot carry this:
 		# the flag lives in agent_config.json, so a v2 run and a v1 run of the
@@ -58,6 +58,10 @@ func begin_run(meta: Dictionary) -> void:
 		"finale_co_rotate": meta.get("finale_co_rotate", false),
 		# Ring-radius targeting. Behaviour-changing, so same reasoning again.
 		"finale_ring_radius": meta.get("finale_ring_radius", false),
+		# Engagement standoff dose (float, 1.0 = inert). This dict is an
+		# ALLOWLIST: without this line the value never reaches telemetry and
+		# arm validation would silently pass on every trial.
+		"engage_distance_scale": meta.get("engage_distance_scale", 1.0),
 		# Movement handed to a human at the keyboard while the agent keeps shop
 		# and level-up control. This is the most behaviour-changing arm there is
 		# -- the movement policy is not running at all -- so a trial MUST record

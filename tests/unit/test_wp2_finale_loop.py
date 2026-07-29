@@ -56,6 +56,11 @@ def _summary(**overrides):
         "duration_ms": 60000,
         "finale_v2": False,
         "finale_rate_full": False,
+        # Unlike the bool arms, this one has no safe default: 1.0 is a LEGITIMATE
+        # dose, so falling back to it on a missing key would let a build that
+        # cannot report the dose validate clean on every control arm. A valid
+        # summary must carry it, so the fixture carries it too.
+        "engage_distance_scale": 1.0,
     }
     base.update(overrides)
     return base

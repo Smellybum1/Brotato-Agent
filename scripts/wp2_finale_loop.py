@@ -100,6 +100,8 @@ def write_agent_config(
     finale_co_rotate: bool = False,
     finale_ring_radius: bool = False,
     human_movement: bool = False,
+    # Float dose, not a bool arm: 1.0 is the inert default.
+    engage_distance_scale: float = 1.0,
 ) -> None:
     """Set auto_start/resume_from_save and the finale arm flags, PRESERVING other keys.
 
@@ -134,6 +136,9 @@ def write_agent_config(
     # finale arms: a stale True left behind by a takeover session would silently
     # record an agent trial as one the agent did not actually steer.
     payload["human_movement"] = human_movement
+    # Written EVERY time for the same reason as the arms above: a stale non-1.0
+    # dose left behind by an earlier campaign would silently shift the standoff.
+    payload["engage_distance_scale"] = float(engage_distance_scale)
     atomic_json(path, payload)
 
 
@@ -199,6 +204,7 @@ def validate_trial(
     expected_finale_co_rotate: bool = False,
     expected_finale_ring_radius: bool = False,
     expected_human_movement: bool = False,
+    expected_engage_distance_scale: float = 1.0,
     target_wave: int = 20,
 ) -> str:
     """Return "" when the trial is a valid finale observation, else a reason code.
@@ -273,6 +279,19 @@ def validate_trial(
         return f"finale_ring_radius_mismatch:{summary.get('finale_ring_radius')}"
     if bool(summary.get("human_movement", False)) != expected_human_movement:
         return f"human_movement_mismatch:{summary.get('human_movement')}"
+    # Float dose: compare with a tolerance, never with != on floats.
+    #
+    # ABSENCE IS A FAILURE, NOT A DEFAULT. Falling back to 1.0 when the key is
+    # missing would let a build that PREDATES this flag validate clean on every
+    # control arm while failing only the treatment arms -- which reads exactly
+    # like "the treatment crashed" instead of "the deploy never landed". The
+    # installed build and the harness must agree for the whole campaign, so a
+    # summary without the key invalidates regardless of which arm we asked for.
+    if "engage_distance_scale" not in summary:
+        return "engage_distance_scale_absent:stale_build"
+    recorded_scale = float(summary["engage_distance_scale"])
+    if abs(recorded_scale - float(expected_engage_distance_scale)) > 1e-6:
+        return f"engage_distance_scale_mismatch:{summary.get('engage_distance_scale')}"
     return ""
 
 
@@ -355,6 +374,7 @@ def run_trial(
         finale_co_rotate=args.finale_co_rotate,
         finale_ring_radius=args.finale_ring_radius,
         human_movement=args.human_movement,
+        engage_distance_scale=args.engage_distance_scale,
     )
 
     rd = runs_dir()
@@ -393,6 +413,7 @@ def run_trial(
         "finale_co_rotate": bool(args.finale_co_rotate),
         "finale_ring_radius": bool(args.finale_ring_radius),
         "human_movement": bool(args.human_movement),
+        "engage_distance_scale": float(args.engage_distance_scale),
         # Which wave this trial measured; makes trials.jsonl self-describing.
         "target_wave": int(getattr(args, "target_wave", 20)),
         "fixture_file": fixture.name,
@@ -493,6 +514,7 @@ def run_trial(
             bool(args.finale_co_rotate),
             bool(args.finale_ring_radius),
             bool(args.human_movement),
+            expected_engage_distance_scale=float(args.engage_distance_scale),
             target_wave=int(getattr(args, "target_wave", 20)),
         )
         row["valid"] = reason == ""
@@ -540,6 +562,16 @@ def main() -> int:
             "on a build the agent itself produced."
         ),
     )
+    ap.add_argument(
+        "--engage-distance-scale",
+        type=float,
+        default=1.0,
+        help=(
+            "Multiply the engagement standoff distance the field holds from "
+            "enemies. Pure multiplier applied after the shipped DPS scale, so "
+            "the default 1.0 is exactly inert."
+        ),
+    )
     args = ap.parse_args()
 
     # Resolve the shipped default ONCE, here, so every downstream use (config
@@ -573,7 +605,8 @@ def main() -> int:
         f"finale_pivot_projectiles={bool(args.finale_pivot_projectiles)}, "
         f"finale_co_rotate={bool(args.finale_co_rotate)}, "
         f"finale_ring_radius={bool(args.finale_ring_radius)}, "
-        f"human_movement={bool(args.human_movement)}"
+        f"human_movement={bool(args.human_movement)}, "
+        f"engage_distance_scale={float(args.engage_distance_scale)}"
     )
     for path, digest in fixtures:
         print(f"  fixture {path.name} digest={digest}")
@@ -632,6 +665,7 @@ def main() -> int:
                 finale_co_rotate=False,
                 finale_ring_radius=False,
                 human_movement=False,
+                engage_distance_scale=1.0,
             )
         except Exception as exc:  # noqa: BLE001
             print(f"WARNING: could not restore agent_config: {exc}", file=sys.stderr)
@@ -672,7 +706,8 @@ def main() -> int:
         f"finale_pivot_projectiles={bool(args.finale_pivot_projectiles)}, "
         f"finale_co_rotate={bool(args.finale_co_rotate)}, "
         f"finale_ring_radius={bool(args.finale_ring_radius)}, "
-        f"human_movement={bool(args.human_movement)}"
+        f"human_movement={bool(args.human_movement)}, "
+        f"engage_distance_scale={float(args.engage_distance_scale)}"
     )
     print(f"valid trials: {len(valid)}/{len(rows)}")
     if valid:
