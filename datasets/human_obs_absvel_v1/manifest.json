@@ -1,0 +1,721 @@
+{
+  "schema_id": "human_obs_absvel_v1",
+  "observation_schema_hash": "19078CB750D1B79B1FD8890BCE5CAC043328B10950FE7E5A6206F22D68E1EC80",
+  "source_capture_schema_hash": "95B6444796A21FD44E94113B75BA2097BC381D5F72ED784F9B9A4A99DD46D951",
+  "encoder_path": "trainer/observation/encoder_v1.py",
+  "repo_head_commit": "a84c69520fd909ec4d0014431edbc6e810f76279",
+  "runs_root": "C:\\Users\\moxhe\\AppData\\Roaming\\Brotato\\brotato_agent\\runs",
+  "capture_schema_compatibility": {
+    "pinned_hash": "95B6444796A21FD44E94113B75BA2097BC381D5F72ED784F9B9A4A99DD46D951",
+    "accepted_hashes": [
+      "2823CB7E7D6A6DDB7F805A76D0CD674BA7A2A908058771B66B4A8FEFF9BC1174"
+    ],
+    "observed_hashes": [
+      "2823CB7E7D6A6DDB7F805A76D0CD674BA7A2A908058771B66B4A8FEFF9BC1174"
+    ],
+    "reason": "every human_movement run is v127+; v127's capture-schema move is purely additive (player.materials, player.bonus_materials, entities.materials[].value), none of which the encoder reads. Proven per-run at build time by re-encoding with the fields stripped and requiring an identical canonical digest. encoder_v1.py is UNCHANGED.",
+    "inertness_spot_checks": 11000
+  },
+  "label_path": "payload.teacher.contributions.human",
+  "label_fields": [
+    "x",
+    "y"
+  ],
+  "run_count": 12,
+  "human_runs_found": 22,
+  "excluded_runs": [
+    {
+      "run_id": "run_1785292468_624",
+      "mod_version": "0.2.50-wp2-capture",
+      "captures": 579,
+      "reason": "every capture lacked the teacher.contributions.human block (579/579 captures) -- pre-0.2.56 build"
+    },
+    {
+      "run_id": "run_1785293060_85066",
+      "mod_version": "0.2.50-wp2-capture",
+      "captures": 4708,
+      "reason": "every capture lacked the teacher.contributions.human block (4,708/4,708 captures) -- pre-0.2.56 build"
+    },
+    {
+      "run_id": "run_1785293349_67067",
+      "mod_version": "0.2.50-wp2-capture",
+      "captures": 4552,
+      "reason": "every capture lacked the teacher.contributions.human block (4,552/4,552 captures) -- pre-0.2.56 build"
+    },
+    {
+      "run_id": "run_1785293625_21570",
+      "mod_version": "0.2.50-wp2-capture",
+      "captures": 4392,
+      "reason": "every capture lacked the teacher.contributions.human block (4,392/4,392 captures) -- pre-0.2.56 build"
+    },
+    {
+      "run_id": "run_1785294095_28250",
+      "mod_version": "0.2.50-wp2-capture",
+      "captures": 4972,
+      "reason": "every capture lacked the teacher.contributions.human block (4,972/4,972 captures) -- pre-0.2.56 build"
+    },
+    {
+      "run_id": "run_1785294383_41236",
+      "mod_version": "0.2.50-wp2-capture",
+      "captures": 3624,
+      "reason": "every capture lacked the teacher.contributions.human block (3,624/3,624 captures) -- pre-0.2.56 build"
+    },
+    {
+      "run_id": "run_1785294604_91856",
+      "mod_version": "0.2.50-wp2-capture",
+      "captures": 3574,
+      "reason": "every capture lacked the teacher.contributions.human block (3,574/3,574 captures) -- pre-0.2.56 build"
+    },
+    {
+      "run_id": "run_1785294826_52730",
+      "mod_version": "0.2.50-wp2-capture",
+      "captures": 2025,
+      "reason": "every capture lacked the teacher.contributions.human block (2,025/2,025 captures) -- pre-0.2.56 build"
+    },
+    {
+      "run_id": "run_1785296333_7237",
+      "mod_version": "0.2.50-wp2-capture",
+      "captures": 20576,
+      "reason": "every capture lacked the teacher.contributions.human block (20,576/20,576 captures) -- pre-0.2.56 build"
+    },
+    {
+      "run_id": "run_1785322980_39550",
+      "mod_version": "0.2.55-wp2-capture",
+      "captures": 3348,
+      "reason": "every capture lacked the teacher.contributions.human block (3,348/3,348 captures) -- pre-0.2.56 build"
+    }
+  ],
+  "split": {
+    "train_ids": [
+      "run_1785334810_44476",
+      "run_1785334499_75976",
+      "run_1785329874_94751",
+      "run_1785330160_33134",
+      "run_1785330775_74275",
+      "run_1785331111_60809",
+      "run_1785331403_7981",
+      "run_1785331666_82193",
+      "run_1785334012_15712",
+      "run_1785332630_89699"
+    ],
+    "val_ids": [
+      "run_1785334264_36513",
+      "run_1785333345_28303"
+    ],
+    "train_fixtures": [
+      "112a331720633b8a",
+      "359e272ac1d603cb",
+      "7f124906e6bb49cb",
+      "a6227734c5850b25",
+      "ea8e819957f83f3b"
+    ],
+    "val_fixtures": [
+      "881b35244be74181",
+      "fd3db2b0a5d75e35"
+    ],
+    "selection_rule": "explicit --val-fixture",
+    "fixture_table": [
+      {
+        "fixture_digest": "112a331720633b8a",
+        "fixture_file": "w16_invoker_20260728_122715_112a331720633b8a.json",
+        "boss_entity": "invoker",
+        "split": "train",
+        "run_count": 1,
+        "run_ids": [
+          "run_1785334810_44476"
+        ],
+        "rows": 4570
+      },
+      {
+        "fixture_digest": "359e272ac1d603cb",
+        "fixture_file": "w16_invoker_20260728_120747_359e272ac1d603cb.json",
+        "boss_entity": "invoker",
+        "split": "train",
+        "run_count": 1,
+        "run_ids": [
+          "run_1785334499_75976"
+        ],
+        "rows": 4006
+      },
+      {
+        "fixture_digest": "881b35244be74181",
+        "fixture_file": "w16_invoker_20260728_120745_881b35244be74181.json",
+        "boss_entity": "invoker",
+        "split": "validation",
+        "run_count": 1,
+        "run_ids": [
+          "run_1785334264_36513"
+        ],
+        "rows": 3973
+      },
+      {
+        "fixture_digest": "7f124906e6bb49cb",
+        "fixture_file": "w16_predator_20260728_112824_7f124906e6bb49cb.json",
+        "boss_entity": "predator",
+        "split": "train",
+        "run_count": 6,
+        "run_ids": [
+          "run_1785329874_94751",
+          "run_1785330160_33134",
+          "run_1785330775_74275",
+          "run_1785331111_60809",
+          "run_1785331403_7981",
+          "run_1785331666_82193"
+        ],
+        "rows": 26643
+      },
+      {
+        "fixture_digest": "a6227734c5850b25",
+        "fixture_file": "w16_predator_20260728_114824_a6227734c5850b25.json",
+        "boss_entity": "predator",
+        "split": "train",
+        "run_count": 1,
+        "run_ids": [
+          "run_1785334012_15712"
+        ],
+        "rows": 4299
+      },
+      {
+        "fixture_digest": "ea8e819957f83f3b",
+        "fixture_file": "w16_predator_20260728_112820_ea8e819957f83f3b.json",
+        "boss_entity": "predator",
+        "split": "train",
+        "run_count": 1,
+        "run_ids": [
+          "run_1785332630_89699"
+        ],
+        "rows": 4292
+      },
+      {
+        "fixture_digest": "fd3db2b0a5d75e35",
+        "fixture_file": "w16_predator_20260728_114816_fd3db2b0a5d75e35.json",
+        "boss_entity": "predator",
+        "split": "validation",
+        "run_count": 1,
+        "run_ids": [
+          "run_1785333345_28303"
+        ],
+        "rows": 4025
+      }
+    ],
+    "total_rows": 51808,
+    "train_rows": 43810,
+    "val_rows": 7998,
+    "val_row_fraction": 0.15437770228536132,
+    "val_run_fraction": 0.16666666666666666,
+    "train_bosses": [
+      "invoker",
+      "predator"
+    ],
+    "val_bosses": [
+      "invoker",
+      "predator"
+    ]
+  },
+  "aggregate": {
+    "captures": 105847,
+    "unparseable_lines": 1414,
+    "dropped_no_human_block": 52350,
+    "dropped_zero_samples": 1640,
+    "dropped_encoding_fault": 0,
+    "dropped_invalid": 0,
+    "dropped_temporal_invalid": 49,
+    "kept": 51808,
+    "kept_aliased": 7802,
+    "kept_zero_vector": 2820
+  },
+  "runs": [
+    {
+      "run_id": "run_1785329874_94751",
+      "mod_version": "0.2.56-wp2-capture",
+      "fixture_digest": "7f124906e6bb49cb",
+      "fixture_file": "w16_predator_20260728_112824_7f124906e6bb49cb.json",
+      "boss_entity": "predator",
+      "split": "train",
+      "shard_file": "run_1785329874_94751.npz",
+      "shard_sha256": "9D44E01F6AB636BAB4CE358C6468AB95D076AFF24D5C2C69407E91432789A229",
+      "shard_bytes": 7089647,
+      "counts": {
+        "captures": 4994,
+        "unparseable_lines": 0,
+        "dropped_no_human_block": 0,
+        "dropped_zero_samples": 137,
+        "dropped_encoding_fault": 0,
+        "dropped_invalid": 0,
+        "dropped_temporal_invalid": 4,
+        "kept": 4853,
+        "kept_aliased": 790,
+        "kept_zero_vector": 218
+      },
+      "per_wave_kept": {
+        "17": 1198,
+        "18": 1199,
+        "19": 1200,
+        "20": 1256
+      },
+      "direction_counts": {
+        "ZERO": 218,
+        "N": 384,
+        "NE": 649,
+        "E": 586,
+        "NW": 684,
+        "W": 618,
+        "SW": 647,
+        "S": 396,
+        "SE": 671
+      },
+      "fault_count": 0
+    },
+    {
+      "run_id": "run_1785330160_33134",
+      "mod_version": "0.2.56-wp2-capture",
+      "fixture_digest": "7f124906e6bb49cb",
+      "fixture_file": "w16_predator_20260728_112824_7f124906e6bb49cb.json",
+      "boss_entity": "predator",
+      "split": "train",
+      "shard_file": "run_1785330160_33134.npz",
+      "shard_sha256": "3C9706C9C41844F6AF098A0E7A0841A2ECEA47D4B2085614EC75F674C2A2544A",
+      "shard_bytes": 5430682,
+      "counts": {
+        "captures": 4478,
+        "unparseable_lines": 0,
+        "dropped_no_human_block": 0,
+        "dropped_zero_samples": 136,
+        "dropped_encoding_fault": 0,
+        "dropped_invalid": 0,
+        "dropped_temporal_invalid": 4,
+        "kept": 4338,
+        "kept_aliased": 677,
+        "kept_zero_vector": 220
+      },
+      "per_wave_kept": {
+        "17": 1199,
+        "18": 1199,
+        "19": 1200,
+        "20": 740
+      },
+      "direction_counts": {
+        "ZERO": 220,
+        "S": 379,
+        "E": 533,
+        "NE": 610,
+        "N": 368,
+        "SE": 521,
+        "W": 504,
+        "NW": 596,
+        "SW": 607
+      },
+      "fault_count": 0
+    },
+    {
+      "run_id": "run_1785330775_74275",
+      "mod_version": "0.2.56-wp2-capture",
+      "fixture_digest": "7f124906e6bb49cb",
+      "fixture_file": "w16_predator_20260728_112824_7f124906e6bb49cb.json",
+      "boss_entity": "predator",
+      "split": "train",
+      "shard_file": "run_1785330775_74275.npz",
+      "shard_sha256": "BD41F4BDDD1E6D0FD96644FAEA8C14B44C50CDB16A0557E09CDC13447B794968",
+      "shard_bytes": 6071859,
+      "counts": {
+        "captures": 4591,
+        "unparseable_lines": 0,
+        "dropped_no_human_block": 0,
+        "dropped_zero_samples": 142,
+        "dropped_encoding_fault": 0,
+        "dropped_invalid": 0,
+        "dropped_temporal_invalid": 5,
+        "kept": 4444,
+        "kept_aliased": 628,
+        "kept_zero_vector": 148
+      },
+      "per_wave_kept": {
+        "17": 1198,
+        "18": 1200,
+        "19": 1200,
+        "20": 846
+      },
+      "direction_counts": {
+        "ZERO": 148,
+        "NE": 585,
+        "E": 595,
+        "N": 313,
+        "SE": 571,
+        "S": 423,
+        "SW": 556,
+        "W": 530,
+        "NW": 723
+      },
+      "fault_count": 0
+    },
+    {
+      "run_id": "run_1785331111_60809",
+      "mod_version": "0.2.56-wp2-capture",
+      "fixture_digest": "7f124906e6bb49cb",
+      "fixture_file": "w16_predator_20260728_112824_7f124906e6bb49cb.json",
+      "boss_entity": "predator",
+      "split": "train",
+      "shard_file": "run_1785331111_60809.npz",
+      "shard_sha256": "DBCAC06A238344887155C054085E61E4C3813125723C2A014EF4D58A8DFA2500",
+      "shard_bytes": 5356404,
+      "counts": {
+        "captures": 4322,
+        "unparseable_lines": 0,
+        "dropped_no_human_block": 0,
+        "dropped_zero_samples": 146,
+        "dropped_encoding_fault": 0,
+        "dropped_invalid": 0,
+        "dropped_temporal_invalid": 4,
+        "kept": 4172,
+        "kept_aliased": 598,
+        "kept_zero_vector": 172
+      },
+      "per_wave_kept": {
+        "17": 1198,
+        "18": 1200,
+        "19": 1200,
+        "20": 574
+      },
+      "direction_counts": {
+        "ZERO": 172,
+        "E": 484,
+        "SE": 577,
+        "SW": 520,
+        "W": 535,
+        "NW": 620,
+        "S": 360,
+        "N": 330,
+        "NE": 574
+      },
+      "fault_count": 0
+    },
+    {
+      "run_id": "run_1785331403_7981",
+      "mod_version": "0.2.56-wp2-capture",
+      "fixture_digest": "7f124906e6bb49cb",
+      "fixture_file": "w16_predator_20260728_112824_7f124906e6bb49cb.json",
+      "boss_entity": "predator",
+      "split": "train",
+      "shard_file": "run_1785331403_7981.npz",
+      "shard_sha256": "619A86468E115EE91E802EF2B2733ACD58D10EDFA8A74FC5211D0C6C9EB18E1D",
+      "shard_bytes": 6265260,
+      "counts": {
+        "captures": 4532,
+        "unparseable_lines": 0,
+        "dropped_no_human_block": 0,
+        "dropped_zero_samples": 143,
+        "dropped_encoding_fault": 0,
+        "dropped_invalid": 0,
+        "dropped_temporal_invalid": 3,
+        "kept": 4386,
+        "kept_aliased": 659,
+        "kept_zero_vector": 254
+      },
+      "per_wave_kept": {
+        "17": 1199,
+        "18": 1199,
+        "19": 1200,
+        "20": 788
+      },
+      "direction_counts": {
+        "ZERO": 254,
+        "S": 399,
+        "SW": 563,
+        "W": 574,
+        "N": 357,
+        "NE": 525,
+        "E": 576,
+        "SE": 544,
+        "NW": 594
+      },
+      "fault_count": 0
+    },
+    {
+      "run_id": "run_1785331666_82193",
+      "mod_version": "0.2.56-wp2-capture",
+      "fixture_digest": "7f124906e6bb49cb",
+      "fixture_file": "w16_predator_20260728_112824_7f124906e6bb49cb.json",
+      "boss_entity": "predator",
+      "split": "train",
+      "shard_file": "run_1785331666_82193.npz",
+      "shard_sha256": "8201DCF6860C8857C24C5C33F2D1D352E0B7B25E0855BD76A758F7BD2286AD3E",
+      "shard_bytes": 6255215,
+      "counts": {
+        "captures": 4590,
+        "unparseable_lines": 0,
+        "dropped_no_human_block": 0,
+        "dropped_zero_samples": 136,
+        "dropped_encoding_fault": 0,
+        "dropped_invalid": 0,
+        "dropped_temporal_invalid": 4,
+        "kept": 4450,
+        "kept_aliased": 644,
+        "kept_zero_vector": 108
+      },
+      "per_wave_kept": {
+        "17": 1198,
+        "18": 1200,
+        "19": 1200,
+        "20": 852
+      },
+      "direction_counts": {
+        "ZERO": 108,
+        "N": 423,
+        "NE": 554,
+        "E": 572,
+        "SE": 624,
+        "S": 376,
+        "NW": 634,
+        "W": 497,
+        "SW": 662
+      },
+      "fault_count": 0
+    },
+    {
+      "run_id": "run_1785332630_89699",
+      "mod_version": "0.2.56-wp2-capture",
+      "fixture_digest": "ea8e819957f83f3b",
+      "fixture_file": "w16_predator_20260728_112820_ea8e819957f83f3b.json",
+      "boss_entity": "predator",
+      "split": "train",
+      "shard_file": "run_1785332630_89699.npz",
+      "shard_sha256": "5BECBE25C5A9F08D871D88D7F3C3278D6FA734FE9B3C03E69B0A559C7FA998C3",
+      "shard_bytes": 5702195,
+      "counts": {
+        "captures": 4439,
+        "unparseable_lines": 0,
+        "dropped_no_human_block": 0,
+        "dropped_zero_samples": 141,
+        "dropped_encoding_fault": 0,
+        "dropped_invalid": 0,
+        "dropped_temporal_invalid": 6,
+        "kept": 4292,
+        "kept_aliased": 589,
+        "kept_zero_vector": 190
+      },
+      "per_wave_kept": {
+        "17": 1199,
+        "18": 1199,
+        "19": 1199,
+        "20": 695
+      },
+      "direction_counts": {
+        "ZERO": 190,
+        "E": 445,
+        "NE": 656,
+        "W": 471,
+        "NW": 594,
+        "SW": 590,
+        "N": 346,
+        "SE": 577,
+        "S": 423
+      },
+      "fault_count": 0
+    },
+    {
+      "run_id": "run_1785333345_28303",
+      "mod_version": "0.2.56-wp2-capture",
+      "fixture_digest": "fd3db2b0a5d75e35",
+      "fixture_file": "w16_predator_20260728_114816_fd3db2b0a5d75e35.json",
+      "boss_entity": "predator",
+      "split": "validation",
+      "shard_file": "run_1785333345_28303.npz",
+      "shard_sha256": "F83A529B90364999ABE72AD5275A18E7B57D07A6E6AD884321229787FAF8D1DB",
+      "shard_bytes": 4471290,
+      "counts": {
+        "captures": 4162,
+        "unparseable_lines": 0,
+        "dropped_no_human_block": 0,
+        "dropped_zero_samples": 131,
+        "dropped_encoding_fault": 0,
+        "dropped_invalid": 0,
+        "dropped_temporal_invalid": 6,
+        "kept": 4025,
+        "kept_aliased": 649,
+        "kept_zero_vector": 223
+      },
+      "per_wave_kept": {
+        "17": 1198,
+        "18": 1199,
+        "19": 1199,
+        "20": 429
+      },
+      "direction_counts": {
+        "ZERO": 223,
+        "NE": 529,
+        "E": 495,
+        "N": 349,
+        "NW": 563,
+        "W": 436,
+        "S": 358,
+        "SW": 580,
+        "SE": 492
+      },
+      "fault_count": 0
+    },
+    {
+      "run_id": "run_1785334012_15712",
+      "mod_version": "0.2.56-wp2-capture",
+      "fixture_digest": "a6227734c5850b25",
+      "fixture_file": "w16_predator_20260728_114824_a6227734c5850b25.json",
+      "boss_entity": "predator",
+      "split": "train",
+      "shard_file": "run_1785334012_15712.npz",
+      "shard_sha256": "9DC347882723444B29BCEE1913EE2ED8A0CBB8033E3207EBAD434F946E053B45",
+      "shard_bytes": 5202530,
+      "counts": {
+        "captures": 4438,
+        "unparseable_lines": 0,
+        "dropped_no_human_block": 0,
+        "dropped_zero_samples": 136,
+        "dropped_encoding_fault": 0,
+        "dropped_invalid": 0,
+        "dropped_temporal_invalid": 3,
+        "kept": 4299,
+        "kept_aliased": 697,
+        "kept_zero_vector": 309
+      },
+      "per_wave_kept": {
+        "17": 1199,
+        "18": 1200,
+        "19": 1200,
+        "20": 700
+      },
+      "direction_counts": {
+        "ZERO": 309,
+        "N": 380,
+        "NW": 587,
+        "S": 391,
+        "SW": 526,
+        "SE": 581,
+        "E": 497,
+        "W": 494,
+        "NE": 534
+      },
+      "fault_count": 0
+    },
+    {
+      "run_id": "run_1785334264_36513",
+      "mod_version": "0.2.56-wp2-capture",
+      "fixture_digest": "881b35244be74181",
+      "fixture_file": "w16_invoker_20260728_120745_881b35244be74181.json",
+      "boss_entity": "invoker",
+      "split": "validation",
+      "shard_file": "run_1785334264_36513.npz",
+      "shard_sha256": "5FD7FFDBF5683EDD08005873AC5867A5B390D0462ADFEE753B2AF4E01613E4C6",
+      "shard_bytes": 4489470,
+      "counts": {
+        "captures": 4112,
+        "unparseable_lines": 0,
+        "dropped_no_human_block": 0,
+        "dropped_zero_samples": 136,
+        "dropped_encoding_fault": 0,
+        "dropped_invalid": 0,
+        "dropped_temporal_invalid": 3,
+        "kept": 3973,
+        "kept_aliased": 574,
+        "kept_zero_vector": 234
+      },
+      "per_wave_kept": {
+        "17": 1200,
+        "18": 1199,
+        "19": 1200,
+        "20": 374
+      },
+      "direction_counts": {
+        "ZERO": 234,
+        "E": 470,
+        "NE": 552,
+        "N": 265,
+        "W": 484,
+        "SW": 579,
+        "NW": 560,
+        "S": 274,
+        "SE": 555
+      },
+      "fault_count": 0
+    },
+    {
+      "run_id": "run_1785334499_75976",
+      "mod_version": "0.2.56-wp2-capture",
+      "fixture_digest": "359e272ac1d603cb",
+      "fixture_file": "w16_invoker_20260728_120747_359e272ac1d603cb.json",
+      "boss_entity": "invoker",
+      "split": "train",
+      "shard_file": "run_1785334499_75976.npz",
+      "shard_sha256": "2C05BB41731303E7933431260B69A8769976803603BD4270BBA4BBA33C8D1467",
+      "shard_bytes": 4265376,
+      "counts": {
+        "captures": 4135,
+        "unparseable_lines": 0,
+        "dropped_no_human_block": 0,
+        "dropped_zero_samples": 125,
+        "dropped_encoding_fault": 0,
+        "dropped_invalid": 0,
+        "dropped_temporal_invalid": 4,
+        "kept": 4006,
+        "kept_aliased": 548,
+        "kept_zero_vector": 269
+      },
+      "per_wave_kept": {
+        "17": 1199,
+        "18": 1199,
+        "19": 1200,
+        "20": 408
+      },
+      "direction_counts": {
+        "ZERO": 269,
+        "E": 471,
+        "NE": 598,
+        "N": 237,
+        "SE": 560,
+        "S": 285,
+        "NW": 576,
+        "W": 435,
+        "SW": 575
+      },
+      "fault_count": 0
+    },
+    {
+      "run_id": "run_1785334810_44476",
+      "mod_version": "0.2.56-wp2-capture",
+      "fixture_digest": "112a331720633b8a",
+      "fixture_file": "w16_invoker_20260728_122715_112a331720633b8a.json",
+      "boss_entity": "invoker",
+      "split": "train",
+      "shard_file": "run_1785334810_44476.npz",
+      "shard_sha256": "33A0C5743C92B169966B532170A878FD845971B667C0BE8D2D90E63814CE4C9F",
+      "shard_bytes": 4536766,
+      "counts": {
+        "captures": 4704,
+        "unparseable_lines": 0,
+        "dropped_no_human_block": 0,
+        "dropped_zero_samples": 131,
+        "dropped_encoding_fault": 0,
+        "dropped_invalid": 0,
+        "dropped_temporal_invalid": 3,
+        "kept": 4570,
+        "kept_aliased": 749,
+        "kept_zero_vector": 475
+      },
+      "per_wave_kept": {
+        "17": 1199,
+        "18": 1200,
+        "19": 1200,
+        "20": 971
+      },
+      "direction_counts": {
+        "ZERO": 475,
+        "E": 483,
+        "N": 302,
+        "NW": 675,
+        "NE": 589,
+        "SE": 622,
+        "S": 379,
+        "SW": 545,
+        "W": 500
+      },
+      "fault_count": 0
+    }
+  ]
+}

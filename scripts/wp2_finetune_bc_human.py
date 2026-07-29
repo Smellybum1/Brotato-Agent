@@ -151,21 +151,23 @@ def warm_start(model, ckpt_path: Path, dataset_names: list[str], parent_dir: Pat
     return payload
 
 
-def val_globals_columns(split_config_path: Path, cols: tuple[int, int]) -> np.ndarray:
+def val_globals_columns(split_config_path: Path, cols: tuple[int, int],
+                        dataset_dir: Path = DATASET_DIR) -> np.ndarray:
     """Two raw encoder-global columns for the val rows, in split order."""
     import yaml
 
     cfg = yaml.safe_load(split_config_path.read_text(encoding="utf-8"))
     chunks = []
     for entry in cfg["validation"]:
-        with np.load(DATASET_DIR / entry["shard_file"]) as data:
+        with np.load(dataset_dir / entry["shard_file"]) as data:
             chunks.append(data["global_features"][:, list(cols)].astype(np.float64))
     return np.concatenate(chunks, axis=0)
 
 
-def val_teacher_actions(split_config_path: Path) -> np.ndarray:
+def val_teacher_actions(split_config_path: Path,
+                        dataset_dir: Path = DATASET_DIR) -> np.ndarray:
     """teacher_action_x/y for the val rows (excluded from the student input)."""
-    return val_globals_columns(split_config_path, TEACHER_ACTION_IDX)
+    return val_globals_columns(split_config_path, TEACHER_ACTION_IDX, dataset_dir)
 
 
 def agreement_report(name: str, pred: np.ndarray, label_cls: np.ndarray, zero_threshold: float):
@@ -212,6 +214,12 @@ def main(argv: list[str] | None = None) -> int:
                              "splits, e.g. '2,3,11,12,13' to ablate the relative-velocity "
                              "leak (ch 2,3 are entity.v MINUS player.v; ch 11,12,13 are "
                              "contact_risk/time_sec/closest, all derived from it)")
+    parser.add_argument("--dataset-dir", default=str(DATASET_DIR),
+                        help="shard directory (default: datasets/human_obs_v1). "
+                             "An encoder VARIANT dataset must be paired with its "
+                             "own --split-config, --schema and --input-config.")
+    parser.add_argument("--split-config", default=str(SPLIT_CONFIG))
+    parser.add_argument("--schema", default=str(SCHEMA))
     parser.add_argument("--parent-dir", default=str(PARENT_DIR),
                         help="warm-start checkpoint dir (must hold best.pt + "
                              "normalization_manifest.json)")
@@ -219,6 +227,9 @@ def main(argv: list[str] | None = None) -> int:
 
     input_config = Path(args.input_config)
     parent_dir = Path(args.parent_dir)
+    dataset_dir = Path(args.dataset_dir)
+    split_config = Path(args.split_config)
+    schema_path = Path(args.schema)
 
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -233,14 +244,16 @@ def main(argv: list[str] | None = None) -> int:
         early_stopping_patience=args.patience,
         device="cpu",
         data_on_device=True,
-        dataset_dir=DATASET_DIR,
-        split_config=SPLIT_CONFIG,
+        dataset_dir=dataset_dir,
+        split_config=split_config,
         input_config=input_config,
-        schema=SCHEMA,
+        schema=schema_path,
         output_root=out_dir,
     )
 
-    dataset = load_human_bc_dataset(DATASET_DIR, SPLIT_CONFIG, input_config, SCHEMA)
+    dataset = load_human_bc_dataset(dataset_dir, split_config, input_config, schema_path)
+    print(f"dataset: {dataset_dir.name}  split: {split_config.name}  "
+          f"schema: {schema_path.name}")
     print(f"input config: {input_config.name}")
     print(f"human dataset: train={dataset.train.size} val={dataset.val.size} "
           f"total={dataset.train.size + dataset.val.size} "
@@ -304,7 +317,7 @@ def main(argv: list[str] | None = None) -> int:
     with torch.no_grad():
         pred = trainer._predict(trainer.val_split).cpu().numpy().astype(np.float64)
     label = trainer.val_split.actions.cpu().numpy().astype(np.float64)
-    teacher = val_teacher_actions(SPLIT_CONFIG)
+    teacher = val_teacher_actions(split_config, dataset_dir)
     if teacher.shape[0] != label.shape[0]:
         raise SystemExit(f"teacher rows {teacher.shape[0]} != val rows {label.shape[0]}")
 
@@ -319,7 +332,7 @@ def main(argv: list[str] | None = None) -> int:
     # tick later. Reported as a baseline so the student's score can be read
     # against the trivial copy-velocity predictor it can reach without learning
     # anything about the human's policy.
-    velocity = val_globals_columns(SPLIT_CONFIG, (6, 7))
+    velocity = val_globals_columns(split_config, (6, 7), dataset_dir)
 
     agreement_report("student", pred, label_cls, args.zero_threshold)
     agreement_report("teacher", teacher, label_cls, args.zero_threshold)

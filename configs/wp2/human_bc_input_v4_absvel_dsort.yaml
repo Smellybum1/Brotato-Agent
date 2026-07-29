@@ -1,0 +1,47 @@
+# WP2 — HUMAN-labelled BC input mask, ABSOLUTE-VELOCITY + VELOCITY-FREE-SORT variant (v4).
+#
+# Pairs with configs/wp2/observation_v1_absvel_dsort.yaml and
+# trainer/observation/encoder_v1_absvel.py, over datasets/human_obs_absvel_dsort_v1.
+#
+# Same exclusion list as human_bc_input_v2_novel.yaml (38 student globals); the
+# ONLY difference is observation_schema_hash, which pins the absvel sibling
+# schema instead of the frozen observation_v1.yaml.
+#
+# The leak this file is one half of:
+#   * globals 6,7 (player_vx/_vy) ARE the human label one tick delayed -> excluded
+#     here, as in v2_novel;
+#   * the entity SORT ORDER was ranked by contact_risk, which for a static object
+#     is a function of -player.v, so the slot permutation leaked the label
+#     (0.2791 agreement from a probe with no velocity channel at all)
+#     -> closed by entity_sort: distance in the paired schema;
+#   * entity channels 2,3 were velocity RELATIVE to the player, so a static object
+#     encoded -player.v verbatim (measured cosine 0.9857 on the static-group pool)
+#     -> closed by the encoder variant, NOT by an exclusion, because ablating them
+#     also destroys genuine enemy-motion state.
+#
+# previous_action_x/_y (globals 17,18) STAY IN, for the reason given in
+# human_bc_input_v2_novel.yaml: they track the TEACHER's intent
+# (cos to human_action -0.0771, to teacher_action +0.8587), not the human's.
+schema_id: human_obs_absvel_dsort_v1
+observation_schema_hash: 773D650D098C00EF7BBCC68188B86A4D630DAF74AF1786A01EDF06BF09C221F3
+
+# Excluded from the student input (10 features -> student global dim 38).
+excluded_global_features:
+  - player_vx
+  - player_vy
+  - teacher_action_x
+  - teacher_action_y
+  - teacher_enemy_count
+  - teacher_projectile_count
+  - finale_commit_distance
+  - finale_commit_ticks
+  - finale_commit_x
+  - finale_commit_y
+
+# Labels come from the shard array named here, NOT from the globals.
+label_source: human_action
+label_dim: 2
+
+row_flag_arrays:
+  - human_aliased
+  - human_samples

@@ -1,0 +1,951 @@
+{
+  "schema_id": "human_obs_absvel_v1",
+  "observation_schema_hash": "19078CB750D1B79B1FD8890BCE5CAC043328B10950FE7E5A6206F22D68E1EC80",
+  "encoder_path": "trainer/observation/encoder_v1.py",
+  "repo_head_commit": "a84c69520fd909ec4d0014431edbc6e810f76279",
+  "human_runs_found": 22,
+  "contributing_run_count": 12,
+  "zero_row_run_count": 10,
+  "zero_row_runs": [
+    {
+      "run_id": "run_1785292468_624",
+      "mod_version": "0.2.50-wp2-capture",
+      "captures": 579,
+      "reason": "every capture lacked the teacher.contributions.human block (579/579 captures) -- pre-0.2.56 build"
+    },
+    {
+      "run_id": "run_1785293060_85066",
+      "mod_version": "0.2.50-wp2-capture",
+      "captures": 4708,
+      "reason": "every capture lacked the teacher.contributions.human block (4,708/4,708 captures) -- pre-0.2.56 build"
+    },
+    {
+      "run_id": "run_1785293349_67067",
+      "mod_version": "0.2.50-wp2-capture",
+      "captures": 4552,
+      "reason": "every capture lacked the teacher.contributions.human block (4,552/4,552 captures) -- pre-0.2.56 build"
+    },
+    {
+      "run_id": "run_1785293625_21570",
+      "mod_version": "0.2.50-wp2-capture",
+      "captures": 4392,
+      "reason": "every capture lacked the teacher.contributions.human block (4,392/4,392 captures) -- pre-0.2.56 build"
+    },
+    {
+      "run_id": "run_1785294095_28250",
+      "mod_version": "0.2.50-wp2-capture",
+      "captures": 4972,
+      "reason": "every capture lacked the teacher.contributions.human block (4,972/4,972 captures) -- pre-0.2.56 build"
+    },
+    {
+      "run_id": "run_1785294383_41236",
+      "mod_version": "0.2.50-wp2-capture",
+      "captures": 3624,
+      "reason": "every capture lacked the teacher.contributions.human block (3,624/3,624 captures) -- pre-0.2.56 build"
+    },
+    {
+      "run_id": "run_1785294604_91856",
+      "mod_version": "0.2.50-wp2-capture",
+      "captures": 3574,
+      "reason": "every capture lacked the teacher.contributions.human block (3,574/3,574 captures) -- pre-0.2.56 build"
+    },
+    {
+      "run_id": "run_1785294826_52730",
+      "mod_version": "0.2.50-wp2-capture",
+      "captures": 2025,
+      "reason": "every capture lacked the teacher.contributions.human block (2,025/2,025 captures) -- pre-0.2.56 build"
+    },
+    {
+      "run_id": "run_1785296333_7237",
+      "mod_version": "0.2.50-wp2-capture",
+      "captures": 20576,
+      "reason": "every capture lacked the teacher.contributions.human block (20,576/20,576 captures) -- pre-0.2.56 build"
+    },
+    {
+      "run_id": "run_1785322980_39550",
+      "mod_version": "0.2.55-wp2-capture",
+      "captures": 3348,
+      "reason": "every capture lacked the teacher.contributions.human block (3,348/3,348 captures) -- pre-0.2.56 build"
+    }
+  ],
+  "build_wall_seconds": 69.1,
+  "split": {
+    "train_ids": [
+      "run_1785334810_44476",
+      "run_1785334499_75976",
+      "run_1785329874_94751",
+      "run_1785330160_33134",
+      "run_1785330775_74275",
+      "run_1785331111_60809",
+      "run_1785331403_7981",
+      "run_1785331666_82193",
+      "run_1785334012_15712",
+      "run_1785332630_89699"
+    ],
+    "val_ids": [
+      "run_1785334264_36513",
+      "run_1785333345_28303"
+    ],
+    "train_fixtures": [
+      "112a331720633b8a",
+      "359e272ac1d603cb",
+      "7f124906e6bb49cb",
+      "a6227734c5850b25",
+      "ea8e819957f83f3b"
+    ],
+    "val_fixtures": [
+      "881b35244be74181",
+      "fd3db2b0a5d75e35"
+    ],
+    "selection_rule": "explicit --val-fixture",
+    "fixture_table": [
+      {
+        "fixture_digest": "112a331720633b8a",
+        "fixture_file": "w16_invoker_20260728_122715_112a331720633b8a.json",
+        "boss_entity": "invoker",
+        "split": "train",
+        "run_count": 1,
+        "run_ids": [
+          "run_1785334810_44476"
+        ],
+        "rows": 4570
+      },
+      {
+        "fixture_digest": "359e272ac1d603cb",
+        "fixture_file": "w16_invoker_20260728_120747_359e272ac1d603cb.json",
+        "boss_entity": "invoker",
+        "split": "train",
+        "run_count": 1,
+        "run_ids": [
+          "run_1785334499_75976"
+        ],
+        "rows": 4006
+      },
+      {
+        "fixture_digest": "881b35244be74181",
+        "fixture_file": "w16_invoker_20260728_120745_881b35244be74181.json",
+        "boss_entity": "invoker",
+        "split": "validation",
+        "run_count": 1,
+        "run_ids": [
+          "run_1785334264_36513"
+        ],
+        "rows": 3973
+      },
+      {
+        "fixture_digest": "7f124906e6bb49cb",
+        "fixture_file": "w16_predator_20260728_112824_7f124906e6bb49cb.json",
+        "boss_entity": "predator",
+        "split": "train",
+        "run_count": 6,
+        "run_ids": [
+          "run_1785329874_94751",
+          "run_1785330160_33134",
+          "run_1785330775_74275",
+          "run_1785331111_60809",
+          "run_1785331403_7981",
+          "run_1785331666_82193"
+        ],
+        "rows": 26643
+      },
+      {
+        "fixture_digest": "a6227734c5850b25",
+        "fixture_file": "w16_predator_20260728_114824_a6227734c5850b25.json",
+        "boss_entity": "predator",
+        "split": "train",
+        "run_count": 1,
+        "run_ids": [
+          "run_1785334012_15712"
+        ],
+        "rows": 4299
+      },
+      {
+        "fixture_digest": "ea8e819957f83f3b",
+        "fixture_file": "w16_predator_20260728_112820_ea8e819957f83f3b.json",
+        "boss_entity": "predator",
+        "split": "train",
+        "run_count": 1,
+        "run_ids": [
+          "run_1785332630_89699"
+        ],
+        "rows": 4292
+      },
+      {
+        "fixture_digest": "fd3db2b0a5d75e35",
+        "fixture_file": "w16_predator_20260728_114816_fd3db2b0a5d75e35.json",
+        "boss_entity": "predator",
+        "split": "validation",
+        "run_count": 1,
+        "run_ids": [
+          "run_1785333345_28303"
+        ],
+        "rows": 4025
+      }
+    ],
+    "total_rows": 51808,
+    "train_rows": 43810,
+    "val_rows": 7998,
+    "val_row_fraction": 0.15437770228536132,
+    "val_run_fraction": 0.16666666666666666,
+    "train_bosses": [
+      "invoker",
+      "predator"
+    ],
+    "val_bosses": [
+      "invoker",
+      "predator"
+    ]
+  },
+  "build_comparison": [
+    {
+      "mod_version": "0.2.56-wp2-capture",
+      "runs": 12,
+      "run_ids": [
+        "run_1785329874_94751",
+        "run_1785330160_33134",
+        "run_1785330775_74275",
+        "run_1785331111_60809",
+        "run_1785331403_7981",
+        "run_1785331666_82193",
+        "run_1785332630_89699",
+        "run_1785333345_28303",
+        "run_1785334012_15712",
+        "run_1785334264_36513",
+        "run_1785334499_75976",
+        "run_1785334810_44476"
+      ],
+      "captures": 53497,
+      "kept": 51808,
+      "no_label": 1640,
+      "no_label_rate": 0.030655924631287735,
+      "dropped_no_human_block": 0,
+      "dropped_zero_samples": 1640,
+      "zero_samples_rate": 0.030655924631287735,
+      "kept_aliased": 7802,
+      "aliasing_rate": 0.15059450277949352,
+      "kept_zero_vector": 2820,
+      "zero_vector_rate": 0.054431747992588014,
+      "direction_counts": {
+        "ZERO": 2820,
+        "N": 4054,
+        "NE": 6955,
+        "E": 6207,
+        "NW": 7406,
+        "W": 6078,
+        "SW": 6950,
+        "S": 4443,
+        "SE": 6895
+      },
+      "direction_shares": {
+        "E": 0.11980775169857937,
+        "W": 0.1173177887584929,
+        "S": 0.08575895614576899,
+        "N": 0.07825046324891909,
+        "SE": 0.13308755404570724,
+        "SW": 0.13414916615194564,
+        "NE": 0.13424567634342185,
+        "NW": 0.1429508956145769,
+        "ZERO": 0.054431747992588014
+      }
+    }
+  ],
+  "batch_comparison": [
+    {
+      "trials_file": "human_bc2_v256.jsonl",
+      "runs": 6,
+      "run_ids": [
+        "run_1785332630_89699",
+        "run_1785333345_28303",
+        "run_1785334012_15712",
+        "run_1785334264_36513",
+        "run_1785334499_75976",
+        "run_1785334810_44476"
+      ],
+      "captures": 25990,
+      "kept": 25165,
+      "no_label": 800,
+      "no_label_rate": 0.030781069642170065,
+      "dropped_no_human_block": 0,
+      "dropped_zero_samples": 800,
+      "zero_samples_rate": 0.030781069642170065,
+      "kept_aliased": 3806,
+      "aliasing_rate": 0.1512418040929863,
+      "kept_zero_vector": 1700,
+      "zero_vector_rate": 0.0675541426584542,
+      "direction_counts": {
+        "ZERO": 1700,
+        "E": 2861,
+        "NE": 3458,
+        "W": 2820,
+        "NW": 3555,
+        "SW": 3395,
+        "N": 1879,
+        "SE": 3387,
+        "S": 2110
+      },
+      "direction_shares": {
+        "E": 0.11368964832108086,
+        "W": 0.11206040135108285,
+        "S": 0.08384661235843434,
+        "N": 0.07466719650307968,
+        "SE": 0.13459169481422611,
+        "SW": 0.1349095966620306,
+        "NE": 0.13741307371349096,
+        "NW": 0.1412676336181204,
+        "ZERO": 0.0675541426584542
+      }
+    },
+    {
+      "trials_file": "human_bc_v256.jsonl",
+      "runs": 6,
+      "run_ids": [
+        "run_1785329874_94751",
+        "run_1785330160_33134",
+        "run_1785330775_74275",
+        "run_1785331111_60809",
+        "run_1785331403_7981",
+        "run_1785331666_82193"
+      ],
+      "captures": 27507,
+      "kept": 26643,
+      "no_label": 840,
+      "no_label_rate": 0.030537681317482822,
+      "dropped_no_human_block": 0,
+      "dropped_zero_samples": 840,
+      "zero_samples_rate": 0.030537681317482822,
+      "kept_aliased": 3996,
+      "aliasing_rate": 0.149983110010134,
+      "kept_zero_vector": 1120,
+      "zero_vector_rate": 0.04203730811094847,
+      "direction_counts": {
+        "ZERO": 1120,
+        "N": 2175,
+        "NE": 3497,
+        "E": 3346,
+        "NW": 3851,
+        "W": 3258,
+        "SW": 3555,
+        "S": 2333,
+        "SE": 3508
+      },
+      "direction_shares": {
+        "E": 0.12558645798145854,
+        "W": 0.12228352662988402,
+        "S": 0.08756521412753819,
+        "N": 0.08163495101902939,
+        "SE": 0.13166685433322073,
+        "SW": 0.13343091994144804,
+        "NE": 0.13125398791427392,
+        "NW": 0.1445407799421987,
+        "ZERO": 0.04203730811094847
+      }
+    }
+  ],
+  "train_runs": [
+    "run_1785334810_44476",
+    "run_1785334499_75976",
+    "run_1785329874_94751",
+    "run_1785330160_33134",
+    "run_1785330775_74275",
+    "run_1785331111_60809",
+    "run_1785331403_7981",
+    "run_1785331666_82193",
+    "run_1785334012_15712",
+    "run_1785332630_89699"
+  ],
+  "val_runs": [
+    "run_1785334264_36513",
+    "run_1785333345_28303"
+  ],
+  "train_rows": 43810,
+  "val_rows": 7998,
+  "direction_counts": {
+    "train": {
+      "ZERO": 2363,
+      "E": 5242,
+      "N": 3440,
+      "NW": 6283,
+      "NE": 5874,
+      "SE": 5848,
+      "S": 3811,
+      "SW": 5791,
+      "W": 5158
+    },
+    "validation": {
+      "ZERO": 457,
+      "E": 965,
+      "NE": 1081,
+      "N": 614,
+      "W": 920,
+      "SW": 1159,
+      "NW": 1123,
+      "S": 632,
+      "SE": 1047
+    }
+  },
+  "runs": [
+    {
+      "run_id": "run_1785292468_624",
+      "mod_version": "0.2.50-wp2-capture",
+      "fixture_digest": null,
+      "boss_entity": null,
+      "trials_file": "unknown",
+      "counts": {
+        "captures": 579,
+        "unparseable_lines": 0,
+        "dropped_no_human_block": 579,
+        "dropped_zero_samples": 0,
+        "dropped_encoding_fault": 0,
+        "dropped_invalid": 0,
+        "dropped_temporal_invalid": 0,
+        "kept": 0,
+        "kept_aliased": 0,
+        "kept_zero_vector": 0
+      },
+      "direction_counts": {}
+    },
+    {
+      "run_id": "run_1785293060_85066",
+      "mod_version": "0.2.50-wp2-capture",
+      "fixture_digest": null,
+      "boss_entity": null,
+      "trials_file": "unknown",
+      "counts": {
+        "captures": 4708,
+        "unparseable_lines": 0,
+        "dropped_no_human_block": 4708,
+        "dropped_zero_samples": 0,
+        "dropped_encoding_fault": 0,
+        "dropped_invalid": 0,
+        "dropped_temporal_invalid": 0,
+        "kept": 0,
+        "kept_aliased": 0,
+        "kept_zero_vector": 0
+      },
+      "direction_counts": {}
+    },
+    {
+      "run_id": "run_1785293349_67067",
+      "mod_version": "0.2.50-wp2-capture",
+      "fixture_digest": null,
+      "boss_entity": null,
+      "trials_file": "unknown",
+      "counts": {
+        "captures": 4552,
+        "unparseable_lines": 0,
+        "dropped_no_human_block": 4552,
+        "dropped_zero_samples": 0,
+        "dropped_encoding_fault": 0,
+        "dropped_invalid": 0,
+        "dropped_temporal_invalid": 0,
+        "kept": 0,
+        "kept_aliased": 0,
+        "kept_zero_vector": 0
+      },
+      "direction_counts": {}
+    },
+    {
+      "run_id": "run_1785293625_21570",
+      "mod_version": "0.2.50-wp2-capture",
+      "fixture_digest": null,
+      "boss_entity": null,
+      "trials_file": "unknown",
+      "counts": {
+        "captures": 4392,
+        "unparseable_lines": 0,
+        "dropped_no_human_block": 4392,
+        "dropped_zero_samples": 0,
+        "dropped_encoding_fault": 0,
+        "dropped_invalid": 0,
+        "dropped_temporal_invalid": 0,
+        "kept": 0,
+        "kept_aliased": 0,
+        "kept_zero_vector": 0
+      },
+      "direction_counts": {}
+    },
+    {
+      "run_id": "run_1785294095_28250",
+      "mod_version": "0.2.50-wp2-capture",
+      "fixture_digest": null,
+      "boss_entity": null,
+      "trials_file": "unknown",
+      "counts": {
+        "captures": 4972,
+        "unparseable_lines": 0,
+        "dropped_no_human_block": 4972,
+        "dropped_zero_samples": 0,
+        "dropped_encoding_fault": 0,
+        "dropped_invalid": 0,
+        "dropped_temporal_invalid": 0,
+        "kept": 0,
+        "kept_aliased": 0,
+        "kept_zero_vector": 0
+      },
+      "direction_counts": {}
+    },
+    {
+      "run_id": "run_1785294383_41236",
+      "mod_version": "0.2.50-wp2-capture",
+      "fixture_digest": null,
+      "boss_entity": null,
+      "trials_file": "unknown",
+      "counts": {
+        "captures": 3624,
+        "unparseable_lines": 0,
+        "dropped_no_human_block": 3624,
+        "dropped_zero_samples": 0,
+        "dropped_encoding_fault": 0,
+        "dropped_invalid": 0,
+        "dropped_temporal_invalid": 0,
+        "kept": 0,
+        "kept_aliased": 0,
+        "kept_zero_vector": 0
+      },
+      "direction_counts": {}
+    },
+    {
+      "run_id": "run_1785294604_91856",
+      "mod_version": "0.2.50-wp2-capture",
+      "fixture_digest": null,
+      "boss_entity": null,
+      "trials_file": "unknown",
+      "counts": {
+        "captures": 3574,
+        "unparseable_lines": 0,
+        "dropped_no_human_block": 3574,
+        "dropped_zero_samples": 0,
+        "dropped_encoding_fault": 0,
+        "dropped_invalid": 0,
+        "dropped_temporal_invalid": 0,
+        "kept": 0,
+        "kept_aliased": 0,
+        "kept_zero_vector": 0
+      },
+      "direction_counts": {}
+    },
+    {
+      "run_id": "run_1785294826_52730",
+      "mod_version": "0.2.50-wp2-capture",
+      "fixture_digest": null,
+      "boss_entity": null,
+      "trials_file": "unknown",
+      "counts": {
+        "captures": 2025,
+        "unparseable_lines": 0,
+        "dropped_no_human_block": 2025,
+        "dropped_zero_samples": 0,
+        "dropped_encoding_fault": 0,
+        "dropped_invalid": 0,
+        "dropped_temporal_invalid": 0,
+        "kept": 0,
+        "kept_aliased": 0,
+        "kept_zero_vector": 0
+      },
+      "direction_counts": {}
+    },
+    {
+      "run_id": "run_1785296333_7237",
+      "mod_version": "0.2.50-wp2-capture",
+      "fixture_digest": null,
+      "boss_entity": null,
+      "trials_file": "unknown",
+      "counts": {
+        "captures": 20576,
+        "unparseable_lines": 0,
+        "dropped_no_human_block": 20576,
+        "dropped_zero_samples": 0,
+        "dropped_encoding_fault": 0,
+        "dropped_invalid": 0,
+        "dropped_temporal_invalid": 0,
+        "kept": 0,
+        "kept_aliased": 0,
+        "kept_zero_vector": 0
+      },
+      "direction_counts": {}
+    },
+    {
+      "run_id": "run_1785322980_39550",
+      "mod_version": "0.2.55-wp2-capture",
+      "fixture_digest": "7f124906e6bb49cb",
+      "boss_entity": "unknown",
+      "trials_file": "human_17to20_v255.jsonl",
+      "counts": {
+        "captures": 3348,
+        "unparseable_lines": 1414,
+        "dropped_no_human_block": 3348,
+        "dropped_zero_samples": 0,
+        "dropped_encoding_fault": 0,
+        "dropped_invalid": 0,
+        "dropped_temporal_invalid": 0,
+        "kept": 0,
+        "kept_aliased": 0,
+        "kept_zero_vector": 0
+      },
+      "direction_counts": {}
+    },
+    {
+      "run_id": "run_1785329874_94751",
+      "mod_version": "0.2.56-wp2-capture",
+      "fixture_digest": "7f124906e6bb49cb",
+      "boss_entity": "predator",
+      "trials_file": "human_bc_v256.jsonl",
+      "counts": {
+        "captures": 4994,
+        "unparseable_lines": 0,
+        "dropped_no_human_block": 0,
+        "dropped_zero_samples": 137,
+        "dropped_encoding_fault": 0,
+        "dropped_invalid": 0,
+        "dropped_temporal_invalid": 4,
+        "kept": 4853,
+        "kept_aliased": 790,
+        "kept_zero_vector": 218
+      },
+      "direction_counts": {
+        "ZERO": 218,
+        "N": 384,
+        "NE": 649,
+        "E": 586,
+        "NW": 684,
+        "W": 618,
+        "SW": 647,
+        "S": 396,
+        "SE": 671
+      }
+    },
+    {
+      "run_id": "run_1785330160_33134",
+      "mod_version": "0.2.56-wp2-capture",
+      "fixture_digest": "7f124906e6bb49cb",
+      "boss_entity": "predator",
+      "trials_file": "human_bc_v256.jsonl",
+      "counts": {
+        "captures": 4478,
+        "unparseable_lines": 0,
+        "dropped_no_human_block": 0,
+        "dropped_zero_samples": 136,
+        "dropped_encoding_fault": 0,
+        "dropped_invalid": 0,
+        "dropped_temporal_invalid": 4,
+        "kept": 4338,
+        "kept_aliased": 677,
+        "kept_zero_vector": 220
+      },
+      "direction_counts": {
+        "ZERO": 220,
+        "S": 379,
+        "E": 533,
+        "NE": 610,
+        "N": 368,
+        "SE": 521,
+        "W": 504,
+        "NW": 596,
+        "SW": 607
+      }
+    },
+    {
+      "run_id": "run_1785330775_74275",
+      "mod_version": "0.2.56-wp2-capture",
+      "fixture_digest": "7f124906e6bb49cb",
+      "boss_entity": "predator",
+      "trials_file": "human_bc_v256.jsonl",
+      "counts": {
+        "captures": 4591,
+        "unparseable_lines": 0,
+        "dropped_no_human_block": 0,
+        "dropped_zero_samples": 142,
+        "dropped_encoding_fault": 0,
+        "dropped_invalid": 0,
+        "dropped_temporal_invalid": 5,
+        "kept": 4444,
+        "kept_aliased": 628,
+        "kept_zero_vector": 148
+      },
+      "direction_counts": {
+        "ZERO": 148,
+        "NE": 585,
+        "E": 595,
+        "N": 313,
+        "SE": 571,
+        "S": 423,
+        "SW": 556,
+        "W": 530,
+        "NW": 723
+      }
+    },
+    {
+      "run_id": "run_1785331111_60809",
+      "mod_version": "0.2.56-wp2-capture",
+      "fixture_digest": "7f124906e6bb49cb",
+      "boss_entity": "predator",
+      "trials_file": "human_bc_v256.jsonl",
+      "counts": {
+        "captures": 4322,
+        "unparseable_lines": 0,
+        "dropped_no_human_block": 0,
+        "dropped_zero_samples": 146,
+        "dropped_encoding_fault": 0,
+        "dropped_invalid": 0,
+        "dropped_temporal_invalid": 4,
+        "kept": 4172,
+        "kept_aliased": 598,
+        "kept_zero_vector": 172
+      },
+      "direction_counts": {
+        "ZERO": 172,
+        "E": 484,
+        "SE": 577,
+        "SW": 520,
+        "W": 535,
+        "NW": 620,
+        "S": 360,
+        "N": 330,
+        "NE": 574
+      }
+    },
+    {
+      "run_id": "run_1785331403_7981",
+      "mod_version": "0.2.56-wp2-capture",
+      "fixture_digest": "7f124906e6bb49cb",
+      "boss_entity": "predator",
+      "trials_file": "human_bc_v256.jsonl",
+      "counts": {
+        "captures": 4532,
+        "unparseable_lines": 0,
+        "dropped_no_human_block": 0,
+        "dropped_zero_samples": 143,
+        "dropped_encoding_fault": 0,
+        "dropped_invalid": 0,
+        "dropped_temporal_invalid": 3,
+        "kept": 4386,
+        "kept_aliased": 659,
+        "kept_zero_vector": 254
+      },
+      "direction_counts": {
+        "ZERO": 254,
+        "S": 399,
+        "SW": 563,
+        "W": 574,
+        "N": 357,
+        "NE": 525,
+        "E": 576,
+        "SE": 544,
+        "NW": 594
+      }
+    },
+    {
+      "run_id": "run_1785331666_82193",
+      "mod_version": "0.2.56-wp2-capture",
+      "fixture_digest": "7f124906e6bb49cb",
+      "boss_entity": "predator",
+      "trials_file": "human_bc_v256.jsonl",
+      "counts": {
+        "captures": 4590,
+        "unparseable_lines": 0,
+        "dropped_no_human_block": 0,
+        "dropped_zero_samples": 136,
+        "dropped_encoding_fault": 0,
+        "dropped_invalid": 0,
+        "dropped_temporal_invalid": 4,
+        "kept": 4450,
+        "kept_aliased": 644,
+        "kept_zero_vector": 108
+      },
+      "direction_counts": {
+        "ZERO": 108,
+        "N": 423,
+        "NE": 554,
+        "E": 572,
+        "SE": 624,
+        "S": 376,
+        "NW": 634,
+        "W": 497,
+        "SW": 662
+      }
+    },
+    {
+      "run_id": "run_1785332630_89699",
+      "mod_version": "0.2.56-wp2-capture",
+      "fixture_digest": "ea8e819957f83f3b",
+      "boss_entity": "predator",
+      "trials_file": "human_bc2_v256.jsonl",
+      "counts": {
+        "captures": 4439,
+        "unparseable_lines": 0,
+        "dropped_no_human_block": 0,
+        "dropped_zero_samples": 141,
+        "dropped_encoding_fault": 0,
+        "dropped_invalid": 0,
+        "dropped_temporal_invalid": 6,
+        "kept": 4292,
+        "kept_aliased": 589,
+        "kept_zero_vector": 190
+      },
+      "direction_counts": {
+        "ZERO": 190,
+        "E": 445,
+        "NE": 656,
+        "W": 471,
+        "NW": 594,
+        "SW": 590,
+        "N": 346,
+        "SE": 577,
+        "S": 423
+      }
+    },
+    {
+      "run_id": "run_1785333345_28303",
+      "mod_version": "0.2.56-wp2-capture",
+      "fixture_digest": "fd3db2b0a5d75e35",
+      "boss_entity": "predator",
+      "trials_file": "human_bc2_v256.jsonl",
+      "counts": {
+        "captures": 4162,
+        "unparseable_lines": 0,
+        "dropped_no_human_block": 0,
+        "dropped_zero_samples": 131,
+        "dropped_encoding_fault": 0,
+        "dropped_invalid": 0,
+        "dropped_temporal_invalid": 6,
+        "kept": 4025,
+        "kept_aliased": 649,
+        "kept_zero_vector": 223
+      },
+      "direction_counts": {
+        "ZERO": 223,
+        "NE": 529,
+        "E": 495,
+        "N": 349,
+        "NW": 563,
+        "W": 436,
+        "S": 358,
+        "SW": 580,
+        "SE": 492
+      }
+    },
+    {
+      "run_id": "run_1785334012_15712",
+      "mod_version": "0.2.56-wp2-capture",
+      "fixture_digest": "a6227734c5850b25",
+      "boss_entity": "predator",
+      "trials_file": "human_bc2_v256.jsonl",
+      "counts": {
+        "captures": 4438,
+        "unparseable_lines": 0,
+        "dropped_no_human_block": 0,
+        "dropped_zero_samples": 136,
+        "dropped_encoding_fault": 0,
+        "dropped_invalid": 0,
+        "dropped_temporal_invalid": 3,
+        "kept": 4299,
+        "kept_aliased": 697,
+        "kept_zero_vector": 309
+      },
+      "direction_counts": {
+        "ZERO": 309,
+        "N": 380,
+        "NW": 587,
+        "S": 391,
+        "SW": 526,
+        "SE": 581,
+        "E": 497,
+        "W": 494,
+        "NE": 534
+      }
+    },
+    {
+      "run_id": "run_1785334264_36513",
+      "mod_version": "0.2.56-wp2-capture",
+      "fixture_digest": "881b35244be74181",
+      "boss_entity": "invoker",
+      "trials_file": "human_bc2_v256.jsonl",
+      "counts": {
+        "captures": 4112,
+        "unparseable_lines": 0,
+        "dropped_no_human_block": 0,
+        "dropped_zero_samples": 136,
+        "dropped_encoding_fault": 0,
+        "dropped_invalid": 0,
+        "dropped_temporal_invalid": 3,
+        "kept": 3973,
+        "kept_aliased": 574,
+        "kept_zero_vector": 234
+      },
+      "direction_counts": {
+        "ZERO": 234,
+        "E": 470,
+        "NE": 552,
+        "N": 265,
+        "W": 484,
+        "SW": 579,
+        "NW": 560,
+        "S": 274,
+        "SE": 555
+      }
+    },
+    {
+      "run_id": "run_1785334499_75976",
+      "mod_version": "0.2.56-wp2-capture",
+      "fixture_digest": "359e272ac1d603cb",
+      "boss_entity": "invoker",
+      "trials_file": "human_bc2_v256.jsonl",
+      "counts": {
+        "captures": 4135,
+        "unparseable_lines": 0,
+        "dropped_no_human_block": 0,
+        "dropped_zero_samples": 125,
+        "dropped_encoding_fault": 0,
+        "dropped_invalid": 0,
+        "dropped_temporal_invalid": 4,
+        "kept": 4006,
+        "kept_aliased": 548,
+        "kept_zero_vector": 269
+      },
+      "direction_counts": {
+        "ZERO": 269,
+        "E": 471,
+        "NE": 598,
+        "N": 237,
+        "SE": 560,
+        "S": 285,
+        "NW": 576,
+        "W": 435,
+        "SW": 575
+      }
+    },
+    {
+      "run_id": "run_1785334810_44476",
+      "mod_version": "0.2.56-wp2-capture",
+      "fixture_digest": "112a331720633b8a",
+      "boss_entity": "invoker",
+      "trials_file": "human_bc2_v256.jsonl",
+      "counts": {
+        "captures": 4704,
+        "unparseable_lines": 0,
+        "dropped_no_human_block": 0,
+        "dropped_zero_samples": 131,
+        "dropped_encoding_fault": 0,
+        "dropped_invalid": 0,
+        "dropped_temporal_invalid": 3,
+        "kept": 4570,
+        "kept_aliased": 749,
+        "kept_zero_vector": 475
+      },
+      "direction_counts": {
+        "ZERO": 475,
+        "E": 483,
+        "N": 302,
+        "NW": 675,
+        "NE": 589,
+        "SE": 622,
+        "S": 379,
+        "SW": 545,
+        "W": 500
+      }
+    }
+  ],
+  "loader_train_rows": 43810,
+  "loader_val_rows": 7998,
+  "global_dim": 38
+}

@@ -64,6 +64,12 @@ REPORT_JSON = ROOT / "reports" / "wp2" / "human_obs_v1_dataset_report.json"
 SPLIT_ID = "human_dataset_split_v1"
 SCHEMA_ID = "human_obs_v1"
 
+# Input config used ONLY for the closing load-back verification (sha256 pins,
+# schema-hash agreement, row counts). Module-level so an encoder VARIANT build
+# (scripts/wp2_build_human_obs_absvel.py) can point it at its own sibling config;
+# the default build is unchanged.
+INPUT_CONFIG_FOR_LOADER = ROOT / "configs" / "wp2" / "human_bc_input_v1.yaml"
+
 # --- Fixture provenance -------------------------------------------------------
 # A run's FIXTURE is not in its summary.json; it is in the wp2_finale_loop trials
 # row that launched it (``fixture_file`` / ``fixture_digest``). The split is by
@@ -1018,7 +1024,7 @@ def main(argv: list[str] | None = None) -> int:
     dataset = load_human_bc_dataset(
         args.dataset_dir,
         args.split_config,
-        ROOT / "configs" / "wp2" / "human_bc_input_v1.yaml",
+        INPUT_CONFIG_FOR_LOADER,
         SCHEMA_PATH,
     )
     if dataset.train.size != report["train_rows"] or dataset.val.size != report["val_rows"]:
