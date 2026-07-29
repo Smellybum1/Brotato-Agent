@@ -55,6 +55,7 @@ datasets/**/*.npz
 models/bc_v1/
 models/bc_v2/
 models/bc_v3/
+models/bc_human/
 
 # Deploy markers
 .deploy_stamp

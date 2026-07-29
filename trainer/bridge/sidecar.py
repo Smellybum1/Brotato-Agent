@@ -157,6 +157,62 @@ class ModelService(abc.ABC):
 # ---------------------------------------------------------------------------
 # Shared preprocessing (encode -> kept-40 -> standardize -> entity/mask arrays)
 # ---------------------------------------------------------------------------
+def select_encoder(schema: dict[str, Any]) -> Any:
+    """Return the encoder module that can honour EVERY directive in ``schema``.
+
+    Two encoders exist and they are not interchangeable:
+
+    * ``encoder_v1`` writes entity channels 2,3 as velocity RELATIVE to the
+      player and always ranks a group by ``(-contact_risk, time_sec, closest,
+      distance, ...)``. It has no ``entity_sort`` handling at all.
+    * ``encoder_v1_absvel`` writes those channels as ABSOLUTE entity velocity
+      and honours ``entity_sort: distance``.
+
+    A schema declares which it was built for: ``entity_features[2:4]`` is either
+    ``relative_vx/relative_vy`` or ``entity_vx/entity_vy``.
+
+    This function RAISES rather than falling back to a default, because the
+    failure it prevents is invisible at every other layer. Serving a model
+    trained on absolute velocity + distance sort through ``encoder_v1`` feeds it
+    relative velocity in contact-risk slot order — the exact label-leak encoding
+    the variant was built to close — while the checkpoint sha256, the schema
+    hash, the normalization hash and the wire handshake all still agree, and the
+    mod's ``student_tick.source`` still reads ``"student"``. The policy would
+    serve perfectly and act on garbage, and nothing downstream could tell.
+    """
+    from trainer.observation import encoder_v1, encoder_v1_absvel
+
+    features = [str(name) for name in schema.get("entity_features", ())]
+    channels = features[2:4]
+    sort = str(schema.get("entity_sort", "contact_risk"))
+
+    if channels == ["entity_vx", "entity_vy"]:
+        # Honours both sort orders (encoder_v1_absvel:155).
+        #
+        # ⚠️ CONSTRAINT: ``encoder_v1_absvel.encode_capture`` swaps a module
+        # global on ``encoder_v1`` for the duration of the call and restores it
+        # in a ``finally``. That is safe here ONLY because the serving loop is
+        # single-threaded (one client, FIFO requests). If serving is ever made
+        # concurrent, two in-flight calls could interleave the swap and each
+        # would silently encode with the OTHER module's row function -- the
+        # exact corruption this selection exists to prevent, and just as
+        # invisible. Make the variant re-entrant before parallelising.
+        return encoder_v1_absvel
+    if channels == ["relative_vx", "relative_vy"]:
+        if sort != "contact_risk":
+            raise SidecarStartupError(
+                f"schema requests entity_sort={sort!r} but its entity_features declare "
+                "relative velocity, which selects encoder_v1 -- and encoder_v1 has no "
+                "entity_sort support, so the directive would be silently ignored"
+            )
+        return encoder_v1
+    raise SidecarStartupError(
+        "cannot identify an encoder for this schema: entity_features[2:4] is "
+        f"{channels!r}, expected ['relative_vx','relative_vy'] (encoder_v1) or "
+        "['entity_vx','entity_vy'] (encoder_v1_absvel)"
+    )
+
+
 def _encode_inputs(
     payload: Mapping[str, Any],
     schema: dict[str, Any],
@@ -168,25 +224,31 @@ def _encode_inputs(
     """Encode one raw capture payload into model-ready numpy inputs.
 
     Reproduces the ``bc_offline`` inference preprocessing exactly and is the
-    SINGLE source of that math for both serving backends:
+    SINGLE source of that math for every serving backend:
 
-        encode_capture -> 48 globals -> select kept-40 by index -> (x-mean)/std
-        (globals only) -> per-group entity ``[cap, 15]`` + mask ``[cap]`` f32.
+        encode_capture -> 48 globals -> select the kept globals by index ->
+        (x-mean)/std (globals only) -> per-group entity ``[cap, 15]`` + mask
+        ``[cap]`` f32.
 
-    Returns ``(standardized_globals [40] f32, entities{name->[cap,15] f32},
+    The kept count is set by the input config, not fixed: ``bc_input_v1`` keeps
+    40, ``human_bc_input_v4_absvel_dsort`` keeps 38.
+
+    The encoder is chosen from the schema by :func:`select_encoder` rather than
+    imported directly — see that function for why picking the wrong one is
+    undetectable downstream.
+
+    Returns ``(standardized_globals [kept] f32, entities{name->[cap,15] f32},
     masks{name->[cap] f32})``. Entities/masks pass through unnormalized — they
     are bounded by construction and standardizing padded rows would break their
     provable inertness.
     """
     import numpy as np
 
-    from trainer.observation import encoder_v1
+    obs = select_encoder(schema).encode_capture(dict(payload), schema)
 
-    obs = encoder_v1.encode_capture(dict(payload), schema)
-
-    globals48 = np.asarray(obs.global_features, dtype=np.float32)
-    globals40 = globals48[kept_indices]
-    standardized = ((globals40 - mean) / std).astype(np.float32)
+    all_globals = np.asarray(obs.global_features, dtype=np.float32)
+    kept_globals = all_globals[kept_indices]
+    standardized = ((kept_globals - mean) / std).astype(np.float32)
     entities = {
         name: np.asarray(obs.entities[name], dtype=np.float32) for name in group_names
     }
@@ -267,6 +329,12 @@ class TorchModelService(ModelService):
                 raise SidecarStartupError(
                     f"schema hash mismatch: file {schema_hash} != registry {registry['schema_hash']}"
                 )
+            # Resolve the encoder now so an unhonourable schema is a STARTUP
+            # failure. Deferring it to the first request would surface as a
+            # per-tick exception at 20 Hz, which the mod reports as an ordinary
+            # teacher fallback -- indistinguishable from a student that simply
+            # never learned anything.
+            select_encoder(schema)
 
             # 3. input config -> kept-40 indices by name; sha256 for hello_ack.
             input_config_path = Path(resolved["input_config"])

@@ -1,0 +1,98 @@
+{
+  "best_epoch": 14,
+  "best_val_metrics": {
+    "by_risk_stratum": {
+      "0.00-0.25": {
+        "mean_abs_magnitude_error": 0.26972320675849915,
+        "mean_angular_error_deg": 51.64055633544922,
+        "mean_cosine": 0.5232102274894714,
+        "median_angular_error_deg": 42.57815170288086,
+        "n": 7998,
+        "n_direction": 7541,
+        "saturation_fraction": 0.0
+      },
+      "0.25-0.50": {
+        "n": 0
+      },
+      "0.50-0.75": {
+        "n": 0
+      },
+      "0.75-inf": {
+        "n": 0
+      }
+    },
+    "by_wave_band": {
+      "1-5": {
+        "n": 0
+      },
+      "11-15": {
+        "n": 0
+      },
+      "16-19": {
+        "mean_abs_magnitude_error": 0.25440478324890137,
+        "mean_angular_error_deg": 51.95903778076172,
+        "mean_cosine": 0.519299328327179,
+        "median_angular_error_deg": 43.23185729980469,
+        "n": 7195,
+        "n_direction": 6988,
+        "saturation_fraction": 0.0
+      },
+      "20": {
+        "mean_abs_magnitude_error": 0.40697869658470154,
+        "mean_angular_error_deg": 47.616111755371094,
+        "mean_cosine": 0.5726301074028015,
+        "median_angular_error_deg": 32.63823318481445,
+        "n": 803,
+        "n_direction": 553,
+        "saturation_fraction": 0.0
+      },
+      "6-10": {
+        "n": 0
+      }
+    },
+    "val_direction_term": 0.47678980231285095,
+    "val_loss": 0.47861355543136597,
+    "val_magnitude_term": 0.05813439562916756,
+    "val_mean_abs_magnitude_error": 0.26972320675849915,
+    "val_mean_angular_error_deg": 51.64055633544922,
+    "val_mean_cosine": 0.5232102274894714,
+    "val_median_angular_error_deg": 42.57815170288086,
+    "val_n": 7998,
+    "val_n_direction": 7541,
+    "val_saturation_fraction": 0.0
+  },
+  "checkpoints": {
+    "best": {
+      "path": "C:\\Codex\\Brotato Agent\\models\\bc_human\\human_bd_s1\\best.pt",
+      "sha256": "B77C47894CDB94FFC14795097F7FA13BF22C35D1F88A3BA57E0853EF888B0AB3"
+    }
+  },
+  "device": "cpu",
+  "normalization_manifest_hash": "F724371E0E8181A41E647263F39719D14BC03F3649E96DA329A53265FC6D8F14",
+  "resolved_config": {
+    "batch_size": 1024,
+    "data_on_device": true,
+    "dataset_dir": "C:\\Codex\\Brotato Agent\\datasets\\human_obs_absvel_dsort_v1",
+    "device": "cpu",
+    "early_stopping_patience": 5,
+    "huber_delta": 0.5,
+    "input_config": "C:\\Codex\\Brotato Agent\\configs\\wp2\\human_bc_input_v4_absvel_dsort.yaml",
+    "lambda_mag": 0.5,
+    "lr": 5e-05,
+    "lr_min": 1e-05,
+    "mag_eps": 0.01,
+    "max_epochs": 40,
+    "output_root": "C:\\Codex\\Brotato Agent\\models\\bc_human",
+    "previous_action_dropout_p": 0.1,
+    "schema": "C:\\Codex\\Brotato Agent\\configs\\wp2\\observation_v1_absvel_dsort.yaml",
+    "seed": 1,
+    "split_config": "C:\\Codex\\Brotato Agent\\configs\\wp2\\human_absvel_dsort_split_v1.yaml",
+    "weight_decay": 0.0001
+  },
+  "run_name": "human_bd_s1",
+  "schema_hash": "773D650D098C00EF7BBCC68188B86A4D630DAF74AF1786A01EDF06BF09C221F3",
+  "seed": 1,
+  "smoke": false,
+  "split_id": "human_absvel_dsort_split_v1",
+  "timestamp": "20260730_000000"
+}

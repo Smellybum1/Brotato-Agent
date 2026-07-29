@@ -580,7 +580,23 @@ def test_onnx_service_identity_block_real(tmp_path):
 # ---------------------------------------------------------------------------
 # Real-artifact smoke test (marked; still fast)
 # ---------------------------------------------------------------------------
-def _find_real_payload(target_hash: str):
+def _find_real_payload(target_hash, predicate=None):
+    """Locate a real capture payload on disk.
+
+    ``target_hash`` may be a single hash or a collection of them. A schema pins
+    ONE ``source_capture_schema_hash`` but accepts several via the sibling
+    accept-list, so matching only the pinned value silently finds nothing once
+    the mod moves to a newer capture schema — and a test that skips is a test
+    that proves nothing.
+
+    ``predicate`` filters further. The first capture in a run is a wave-start
+    tick with an EMPTY arena, so a caller that needs to tell two entity encoders
+    apart must ask for a payload that actually has entities in it.
+    """
+    if isinstance(target_hash, str):
+        wanted = {target_hash.upper()}
+    else:
+        wanted = {str(h).upper() for h in target_hash}
     appdata = os.environ.get("APPDATA")
     if not appdata:
         return None
@@ -601,8 +617,11 @@ def _find_real_payload(target_hash: str):
                     if event.get("event") != "combat_capture":
                         continue
                     payload = event.get("payload", {})
-                    if payload.get("capture_schema_hash") == target_hash:
-                        return payload
+                    if str(payload.get("capture_schema_hash", "")).upper() not in wanted:
+                        continue
+                    if predicate is not None and not predicate(payload):
+                        continue
+                    return payload
         except OSError:
             continue
     return None
@@ -625,3 +644,119 @@ def test_real_artifact_predict_smoke():
     assert -1.0 <= ax <= 1.0
     assert -1.0 <= ay <= 1.0
     assert model_ms >= 0.0
+
+
+# ---------------------------------------------------------------------------
+# Encoder selection (select_encoder)
+#
+# The sidecar used to import encoder_v1 unconditionally. Serving a checkpoint
+# trained on the absolute-velocity / distance-sort variant through it produces a
+# student that passes every hash check, completes the handshake, and reports
+# student_tick.source == "student" while acting on the exact label-leak encoding
+# the variant exists to close. Nothing downstream can detect that, so it is
+# caught here instead.
+# ---------------------------------------------------------------------------
+PROD_SCHEMA = ROOT / "configs" / "wp2" / "observation_v1.yaml"
+ABSVEL_SCHEMA = ROOT / "configs" / "wp2" / "observation_v1_absvel_dsort.yaml"
+
+
+def _load(path: Path):
+    from trainer.observation import encoder_v1
+
+    if not path.is_file():
+        pytest.skip(f"schema not present: {path}")
+    return encoder_v1.load_schema(path)
+
+
+def test_production_schema_selects_encoder_v1():
+    """Default-inert: the shipped BC path must be untouched by this change."""
+    from trainer.bridge.sidecar import select_encoder
+    from trainer.observation import encoder_v1
+
+    assert select_encoder(_load(PROD_SCHEMA)) is encoder_v1
+
+
+def test_absvel_dsort_schema_selects_absvel_encoder():
+    from trainer.bridge.sidecar import select_encoder
+    from trainer.observation import encoder_v1_absvel
+
+    assert select_encoder(_load(ABSVEL_SCHEMA)) is encoder_v1_absvel
+
+
+def test_relative_velocity_plus_distance_sort_is_rejected():
+    """encoder_v1 has no entity_sort support, so honouring this is impossible.
+
+    Silently ignoring the directive is the failure this guard exists to stop.
+    """
+    from trainer.bridge.sidecar import SidecarStartupError, select_encoder
+
+    schema = dict(_load(PROD_SCHEMA))
+    schema["entity_sort"] = "distance"
+    with pytest.raises(SidecarStartupError, match="silently ignored"):
+        select_encoder(schema)
+
+
+def test_unknown_velocity_channels_are_rejected():
+    from trainer.bridge.sidecar import SidecarStartupError, select_encoder
+
+    schema = dict(_load(PROD_SCHEMA))
+    features = list(schema["entity_features"])
+    features[2] = "something_else"
+    schema["entity_features"] = features
+    with pytest.raises(SidecarStartupError, match="cannot identify an encoder"):
+        select_encoder(schema)
+
+
+def test_the_two_encoders_actually_disagree_on_a_real_capture():
+    """The test that gives the selection teeth.
+
+    If encoder_v1 and encoder_v1_absvel produced the same tensors, picking the
+    wrong one would be harmless and this whole guard would be theatre. Encode
+    ONE real payload under the B' schema through both and require a difference
+    in the entity block -- that difference is exactly what would have been fed
+    to the student under the old hard-coded import.
+    """
+    from trainer.observation import encoder_v1, encoder_v1_absvel
+
+    from trainer.observation.encoder_v1 import accepted_capture_hashes
+
+    def has_moving_entities(payload):
+        # Needs entities to compare at all, and at least one with nonzero
+        # velocity: a fully static arena reads identically under both encoders
+        # in channels 2,3 only if the player is also still, so require motion
+        # somewhere to guarantee the comparison can discriminate.
+        groups = payload.get("entities", {})
+        if not isinstance(groups, dict):
+            return False
+        rows = [row for group in groups.values() if isinstance(group, list) for row in group]
+        if len(rows) < 2:
+            return False
+        player = payload.get("player", {})
+        moving_player = any(
+            abs(float(player.get(key, 0) or 0)) > 1.0 for key in ("measured_vx", "measured_vy")
+        )
+        return moving_player
+
+    schema = _load(ABSVEL_SCHEMA)
+    payload = _find_real_payload(accepted_capture_hashes(schema), has_moving_entities)
+    if payload is None:
+        pytest.skip("no matching combat_capture payload accessible")
+
+    wrong = encoder_v1.encode_capture(dict(payload), schema)
+    right = encoder_v1_absvel.encode_capture(dict(payload), schema)
+
+    # Globals are shared between the encoders; only entities should move.
+    assert list(wrong.global_features) == list(right.global_features)
+
+    populated = [
+        name for name in right.entities if any(m > 0.0 for m in right.masks[name])
+    ]
+    assert populated, "payload had no entities in any group; cannot discriminate"
+
+    differing = [
+        name for name in populated if list(wrong.entities[name]) != list(right.entities[name])
+    ]
+    assert differing, (
+        "encoder_v1 and encoder_v1_absvel produced identical entity blocks on a real "
+        f"capture across populated groups {populated!r} -- selection would be a no-op"
+    )
