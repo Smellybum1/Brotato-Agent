@@ -96,6 +96,54 @@ The shop/item channel is no better: across 495 runs, 4,416 buys, only **391 carr
 (109 at −3, 61 at −2, 23 at −1) against 195 positive. Net **+391 points over 495 runs =
 +0.79 per run**. The agent is not accumulating speed through purchases either.
 
+## 4a. ⚠️ CORRECTION — §4 below was written before the archive pass, and half of it is wrong
+
+The archive pass ran immediately after §4 was committed. It **confirms the naming finding
+and refutes the arithmetic argument attached to it.** Both corrections are recorded here
+rather than by editing §4, so the error is visible.
+
+**CONFIRMED, from code:** `player.speed` is `p.max_stats.speed`
+(`runtime/agent_controller.gd:616`) — Brotato's derived **movement speed in units/second**,
+not `stat_speed`. Measured trajectories confirm the semantics: it is **constant within a
+wave** (first capture == last capture, every wave, every run) and steps only at shop/level-up
+boundaries. Base for Well Rounded is **472** at wave 1 in all three full runs sampled.
+
+**REFUTED — my own claim that the channels are "short by more than an order of magnitude".**
+Observed steps are ±13 and ±27 units, so a level-up option of `value v` is worth roughly
+`4.5v` movement units. Level-up speed picks have **mean value 7.26** (distribution 3:2, 6:16,
+9:11, 12:2), i.e. **+27 to +40 movement speed each**. Stage A's died-vs-survived gap is
+**32**. **One speed pick is the entire gap.** The channel is magnitudinally sufficient.
+
+**The error:** I compared a *population mean* (0.455 points/run) against a *between-group
+difference* (32 units). Those are different quantities. A mean of 0.455 across all runs is
+perfectly consistent with a 32-unit subgroup gap when the trait is concentrated in a
+minority — and it is: **28/240 runs (11.6%) take any speed pick at all**, distribution
+{0: 213, 1: 25, 2: 3}. Same family as the project's recurring one-step-short failure.
+
+### The association test — which is what actually closes the channel
+
+On the **36 current-era full runs** (`duration_ms >= 900000`, so fixture trials cannot
+contaminate — the trap that corrupted the headline win rate for weeks):
+
+| group | n | wins | died at 17 |
+|---|---|---|---|
+| took >=1 speed level-up pick | 16 | **13/16 = 0.812** | 1 (0.062) |
+| took NO speed pick | 20 | **14/20 = 0.700** | 2 (0.100) |
+
+**Runs that took a speed pick won MORE often, not less. The sign is opposite to the
+hypothesis.** The doomed fixture source `run_1785214891_49265` did take one (value 6) and
+died at 17 — but so did 15 other runs, 13 of which won.
+
+**Two honest limits on that table.** It is underpowered (16 vs 20), so it establishes a
+*direction*, not an effect size. And it carries a **survivorship confound in exactly the
+direction of the result**: longer-surviving runs receive more level-ups and therefore more
+chances to be offered speed, which alone could manufacture the positive association.
+Conditioning on level-up count would fix it, and has not been done.
+
+**So the channel closes on the VOLUME bound — 31 picks across 240 runs, 11.6% of runs — and
+the association is, at worst for the hypothesis, unsupportive.** The magnitude argument in
+§4 should not be relied on.
+
 ## 4. ⚠️ THE PREMISE IS PROBABLY A SAME-NAME CONFLATION — verify before spending anything else
 
 Stage A's headline was `speed` **531 (died) vs 499 (survived)**, read as "dying builds
