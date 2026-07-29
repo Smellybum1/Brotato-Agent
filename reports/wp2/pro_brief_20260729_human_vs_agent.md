@@ -147,6 +147,50 @@ against a null band of [0.370, 0.630]), while wave 17 separates strongly on offe
 17 is a 60-second timed clear; wave 20 is a boss fight. A prediction that could have failed, and
 did not.
 
+### 3.7 The result that cuts AGAINST the thesis — total damage taken
+
+Over the **full 20-wave run**, the human took **251 damage**. The agent archive, 36 full runs:
+**median 83**, p10 18, p90 208. Among agent *victories* only: median 82.
+
+**So on a full run the human took ~3x the agent's median damage, above its 90th percentile.**
+
+This sits awkwardly beside §3.1, where on the hard saved state the human's minimum HP was *far
+better* (0.61 vs 0.13). Candidate readings, which I cannot separate:
+- the aggression buys materials at a real cost in exposure, and that cost is only worth paying when
+  the build is weak enough that collection dominates;
+- the agent is superhuman at frame-level dodging over 20 waves, and the human's advantage is
+  strategic (where to be) rather than tactical (how to dodge);
+- total damage across runs of differing length and outcome is a confounded comparison.
+
+I am flagging this prominently rather than burying it because it is the main evidence *against* the
+"copy the human's aggression" conclusion, and the operator and I both have a prior in favour.
+
+### 3.8 Control: is the agent's behaviour intrinsic, or an artifact of human-visited states?
+
+§3.3-3.5 measure the agent's *intent* on states the **human** created. That is the right
+counterfactual for "what would the agent do here", but it does not show the behaviour is intrinsic.
+Re-measured on **5 agent runs the agent itself drove, 95,630 ticks**:
+
+| | agent, own runs | agent, on human-visited states |
+|---|---|---|
+| waves 1-6 | 32.5° | 38.5° |
+| waves 7-12 | 56.7° | 54.9° |
+| waves 13-16 | 58.9° | 58.8° |
+| waves 17-20 | **77.3°** | 85.2° |
+| 0-4 enemies | 31.1° | 29.6° |
+| 5-9 | 51.5° | 56.2° |
+| 10-14 | 65.3° | 67.7° |
+| 15-19 | 77.1° | 83.5° |
+| 20-29 | **85.7°** | 98.4° |
+
+**The control passes** — same pattern, similar magnitudes. The disengagement is intrinsic.
+
+**And the distribution is bimodal, which the medians hide.** In the agent's own runs at waves
+17-20: **p10 = 10.7°, median 77.3°, p90 = 158.6°**. The agent is either heading almost straight at
+loot or almost straight away from it — not smoothly trading off. That is the signature a **binary
+veto** would produce, and it corroborates the mechanism in §4. (This project has previously been
+burned by a median taken over a mixture, so the percentiles are given throughout.)
+
 ---
 
 ## 4. The mechanism, located in the code
@@ -248,3 +292,57 @@ objective". Note every one of those imitated the *teacher*, whose ceiling is the
    in §3.4 sufficient to rule out endogeneity, or is "enemies alive" the wrong thing to match on?
 
 Please deliver your answer as a **markdown file**.
+
+---
+
+## Appendix A — raw per-wave tables
+
+### A1. The human's full run, per wave (pre-sweep instant)
+
+`gained` = materials collected during the wave; `bag in` = Material Bag carried in;
+`stranded` = bag still unredeemed at wave end; `gnd` = material value left on the floor.
+
+| wave | gained | bag in | stranded | gnd | | wave | gained | bag in | stranded | gnd |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | 26 | 0 | 0 | 3 | | 11 | 302 | 39 | 0 | 13 |
+| 2 | 42 | 3 | 0 | 2 | | 12 | 303 | 13 | 0 | 29 |
+| 3 | 60 | 2 | 0 | 7 | | 13 | 270 | 29 | 0 | 25 |
+| 4 | 93 | 7 | 0 | 4 | | 14 | 238 | 23 | 0 | 26 |
+| 5 | 120 | 4 | 0 | 16 | | 15 | 355 | 27 | 0 | 38 |
+| 6 | 158 | 16 | 0 | 11 | | 16 | 359 | 38 | 0 | 20 |
+| 7 | 185 | 11 | 0 | 16 | | 17 | 316 | 20 | 0 | 23 |
+| 8 | 193 | 16 | 0 | 20 | | 18 | 296 | 23 | 0 | 22 |
+| 9 | 401 | 19 | 0 | 24 | | 19 | 481 | 22 | 0 | 30 |
+| 10 | 337 | 24 | 0 | 39 | | 20 | 57 | 29 | 0 | 37 |
+
+### A2. Agent baseline, 36 full runs, per wave
+
+| wave | n | drained | gnd left (median) | | wave | n | drained | gnd left (median) |
+|---|---|---|---|---|---|---|---|---|
+| 1 | 36 | 1.000 | 2 | | 11 | 36 | 0.944 | 28 |
+| 2 | 36 | 1.000 | 6 | | 12 | 36 | 1.000 | 34 |
+| 3 | 36 | 1.000 | 8 | | 13 | 36 | 1.000 | 38 |
+| 4 | 36 | 1.000 | 3 | | 14 | 36 | 1.000 | 56 |
+| 5 | 36 | 1.000 | 14 | | 15 | 36 | 1.000 | **116** |
+| 6 | 36 | 1.000 | 16 | | 16 | 36 | 0.889 | 38 |
+| 7 | 36 | 1.000 | 28 | | 17 | 36 | 0.917 | 67 |
+| 8 | 36 | 1.000 | 18 | | 18 | 33 | 0.879 | 65 |
+| 9 | 36 | 1.000 | 28 | | 19 | 33 | **0.697** | **126** |
+| 10 | 36 | 1.000 | 56 | | 20 | 31 | **0.548** | 34 |
+
+The bag-redemption failure is monotone from wave 16 and worst at 19-20. Note the human's
+corresponding `stranded` column is 0 at **every** wave, and its `gnd left` never exceeds 39.
+
+### A3. Raw series behind the headline fixture comparison (one saved state)
+
+Material Bag stranded per trial, bag carried in = 239 for all:
+- **agent (n=21):** 0, 3, 5, 9, 22, 36, 46, 54, 65, 67, 69, 70, 73, 79, 79, 86, 86, 93, 95, 99, 173
+- **human (n=5):** 0, 0, 0, 0, 0
+
+Terminal wave per trial:
+- **agent (n=21):** 17 x17, 19 x4
+- **human (n=5):** 20, 20, 19, 19, 18
+
+Materials gained during wave 17:
+- **agent:** 32, 45, 59, 61, 61, 73, 77, 78, 78, 82, 90, 118, 129, 133, 152, 179, 185, 337, 339, 368, 496
+- **human:** 328, 406, 441, 461, 468
