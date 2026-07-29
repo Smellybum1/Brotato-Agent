@@ -1,5 +1,23 @@
 # Consultation brief: a game-playing agent whose remaining loss has gone diffuse, and whose measuring instrument can no longer see it
 
+> ## ⚠️ CORRECTION 2026-07-29 — two claims this brief asserts are now retracted
+>
+> This is a dated record of what we asked, kept as sent. Two of its premises are wrong:
+>
+> **1. §9(a) / §9(i): "Wave 17 — understood, and NOT actionable", "build-limited, not
+> movement-limited".** A human given **movement only** rescued the same doomed entry build
+> **5/5 vs the agent's 4/21, p=0.0019**. Wave 17 is **reopened as movement-actionable**.
+> **Exploratory only** — the predeclared endpoint was terminal win and it **FAILED at
+> 1/5**. The model is an interaction (weak build → crowd pressure → movement defect
+> becomes consequential), not a competition. See `reports/wp2/wave17_conclusion.md`.
+>
+> **2. §"Paired campaign sizing is calibrated… 32 trials detects a 19-damage effect, 64
+> detects 13, 128 detects 9."** `damage_taken` is a **gross** counter that never subtracts
+> healing (healing varied 15-171 across six runs). It is **retired as primary endpoint**
+> and **the sizing table does not transfer**. See `reports/wp2/campaign_sizing.md`.
+>
+> **Evidence:** `reports/wp2/NEXT_SESSION_PLAN.md`.
+
 You are being asked for **strategic and methodological advice**. Everything you need is in
 this document; there are no external references, and no file paths you are expected to
 open. Please **write your answer as a single self-contained markdown (`.md`) file** so it

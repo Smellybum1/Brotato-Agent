@@ -1,5 +1,35 @@
 # Wave 17: understood, and NOT currently actionable
 
+> ## ⛔ CORRECTION 2026-07-29 — THE CLOSURE IN THIS FILE IS REOPENED
+>
+> **What was claimed:** wave 17 is build-limited, movement is "refuted on its own sign",
+> and wave-17 work should stop for want of a lever.
+>
+> **What is now known:** a human given **movement only** (mod `0.2.50` `human_movement`
+> flag) rescued a build the agent loses 17/21 times, **on the same entry build** —
+> **5/5 wave-17 survival vs 4/21, p=0.0019**. Movement is a live lever on this wave.
+>
+> **This is EXPLORATORY, not confirmatory.** The predeclared endpoint was **terminal win**
+> and it **FAILED at 1/5** against a bar of ≥2/5. Wave-17 survival was recorded but was
+> not the frozen decision rule, so the 0.0019 is hypothesis-generating.
+>
+> **The correct model is an interaction, not a competition:** weak build → higher crowd
+> pressure → enters the controller's failure stratum → the movement/arbitration defect
+> becomes consequential. Build strength and movement are interacting causes. This
+> reconciles §"the number that matters" (the enemy-health dose response) with the human
+> result: both rescue the same fixture. The dose-response table below stands as measured.
+>
+> **Evidence:** `reports/wp2/NEXT_SESSION_PLAN.md`,
+> `reports/wp2/pro_answer_20260729_human_vs_agent.md`.
+>
+> **AUDITED — `reports/wp2/human_handover_trial_audit.md`.** Matched on the full entry
+> fingerprint *and* the enemy-health dose, the figure reproduces exactly (Fisher one-sided
+> **p = 0.00192**). But it is bounded three ways that were not recorded at the time: the
+> human ran **three fixtures**, their **first ever attempt DIED** (on a fixture with no
+> agent control arm), and the 5/5 is **post-practice**, preceded by 3 trials. A second
+> fixture (agent 11/11) is non-discriminating and must not be cited as support.
+> **"The human never failed" is false.**
+
 Closing summary of the 2026-07-28/29 wave-17 investigation. Four preregistered
 experiments, 232 trials, plus a 50-run observational sweep. Every rule was frozen before
 its data existed and none was relaxed afterwards.

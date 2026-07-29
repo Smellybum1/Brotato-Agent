@@ -6,6 +6,25 @@ Archive-only sweep (no game launched, nothing deployed). Sources:
 Scripts: `scripts/wp2_stagea_scan.py`, `scripts/wp2_stagea_metrics.py`,
 `scripts/wp2_stagea_analyze.py`. Per-run output: `.tmp/stageA/wave17_metrics.jsonl`.
 
+> ## ⚠️ CORRECTION 2026-07-29 — the measurements stand, the verdict line does not
+>
+> **What was claimed:** "BUILD-limited, not movement-limited"; the movement hypothesis is
+> refuted on its own sign.
+>
+> **What is now known:** an interventional test beats this observational one. A human
+> given **movement only** rescued the same doomed entry build **5/5 vs the agent's 4/21,
+> p=0.0019** — so wave 17 IS movement-actionable. **Exploratory only:** the predeclared
+> endpoint was terminal win and it **FAILED at 1/5**.
+>
+> Why both can be true: this sweep's proxies are **coverage and uptime_engaged**, and the
+> file already records that it contains **no measured-velocity metric**. The defect the
+> human exposed is in *movement/arbitration under crowd pressure*, which coverage and
+> uptime do not measure. The build separator (`nominal_dps` 28.26 vs 35.25) is unaffected
+> and still holds — the model is an **interaction**: weak build → higher crowd pressure →
+> the movement defect becomes consequential.
+>
+> **Evidence:** `reports/wp2/NEXT_SESSION_PLAN.md`, `reports/wp2/wave17_conclusion.md`.
+
 ## Verdict
 
 **BUILD-limited, not movement-limited** — with the caveat below.

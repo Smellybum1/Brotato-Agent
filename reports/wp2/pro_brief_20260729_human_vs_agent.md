@@ -1,5 +1,30 @@
 # Consultation brief: a human outplayed our agent on identical game states, and we logged both decisions on every tick
 
+> ## ⛔ CORRECTION 2026-07-29 — two claims in this brief are retracted
+>
+> This is a dated record of what we asked, kept as sent. Two of its assertions are wrong:
+>
+> **1. §3.1: "the human collected 5x more while taking a quarter of the damage" — RETRACTED,
+> and the error is mine.** The damage half was inferred from **minimum HP ratio** (0.61 vs
+> 0.13), which is not a damage statistic. Measured on the same fixture: **agent median 80,
+> human median 156 — the human took 1.95x MORE gross damage.** The defensible statement is
+> that the human reached **more waves (2-4 vs 1)** and took **less damage per wave reached
+> (53 vs 74)** with a far healthier HP floor. (External review flagged exactly this; see
+> `pro_answer_20260729_human_vs_agent.md` §4.)
+>
+> **2. §4: "under crowding, the density veto zeroes the loot attraction term" — REFUTED at
+> observed doses.** The veto (`nearby >= PACK_DENSITY_SOFT = 8`) fires on **0.03%** of
+> wave-17-19 ticks; loot attraction is **LIVE on 89%** of them; and the loot-abandonment
+> gap lives **entirely inside the unvetoed regime** (median angle 47.6° → 89.1° across
+> crowd bands with nothing suppressed). The crowd variable that produced the finding is
+> **total enemies on the map**, a different variable from the veto's local count.
+> The phenomenon is real; this mechanism is not its cause. **Do not build the proposed
+> safety-constrained tie-break intervention.** Full result:
+> `reports/wp2/density_veto_verdict.md`.
+>
+> The `damage_taken` retirement raised in §3.2 of this brief was **accepted** and is now
+> standing — see `reports/wp2/campaign_sizing.md`.
+
 You are being asked for a **diagnostic and experimental-design opinion**. Everything you need is
 in this document; there are no external references. Please **write your answer as a single
 self-contained markdown (`.md`) file**.

@@ -63,3 +63,6 @@ models/bc_v3/
 # Claude Code local state (agent definitions in .claude/agents ARE tracked)
 .claude/worktrees/
 .claude/settings.local.json
+
+# Derived analysis caches (regenerate with --refresh)
+reports/wp2/_hp_endpoint_cache/

@@ -1,5 +1,34 @@
 # How long should a campaign be?
 
+> ## ⛔ CORRECTION 2026-07-29 — THE SIZING TABLE BELOW DOES NOT TRANSFER
+>
+> **What was claimed:** paired `damage_taken` is the standing primary endpoint, and
+> 32 trials detects 19 damage / 64 detects 13 / 128 detects 9 against a control mean ~20.7.
+>
+> **What is now known:** `damage_taken` is a **GROSS** counter — it sums `player_damage`
+> and **never subtracts healing**. Healing varied **15 to 171** across six agent runs
+> checked. Any treatment that shifts healing, consumable pickup, lifesteal, or willingness
+> to spend HP moves this endpoint without moving actual risk (or masks a real change). The
+> variance structure in §"Measured variance" is therefore the variance of a contaminated
+> quantity, and **every number in the sizing table rests on it**.
+>
+> **Replacement:**
+> - **Terminal win from the wave-16 landmark** — confirmatory primary for run-to-terminal
+>   campaigns. Variance components already measured: `sigma2_between = 0.0418`,
+>   `sigma2_within = 0.1437`, **ICC 0.225** (`reports/wp2/landmark_continuation_pilot.md`).
+> - **Death-adjusted HP-deficit AUC** — for fixed-wave mechanism screens.
+>   `h(t) = HP(t)/max_HP(t)` while alive, `h(t) = 0` after death for the rest of the
+>   horizon; `HP_deficit_AUC = (1/T)·∫₀ᵀ (1 − h(t)) dt`, lower is better.
+> - **Gross damage is retained as a reported component only, never as primary.**
+>
+> **The power table must be rebuilt from scratch for the new endpoints. Do not size a
+> campaign from the table below.** The structural guidance that survives is
+> qualitative: pairing is not optional, precision depends on F × k, and the budget goes to
+> **more fixtures, not more repeats**.
+>
+> **Evidence:** `reports/wp2/NEXT_SESSION_PLAN.md`,
+> `reports/wp2/pro_answer_20260729_human_vs_agent.md`.
+
 Standing guidance, derived from measured variance rather than habit. Written after
 noticing that campaigns were being sized by precedent (128, then 64) instead of by the
 effect they needed to detect.

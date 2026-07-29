@@ -1,5 +1,27 @@
 # External consultation — human versus agent movement, late-wave loot disengagement, and the next experiment
 
+> ## ⛔ CORRECTION 2026-07-29 (same day, after this answer) — the density-veto premise is REFUTED
+>
+> **What this answer assumes** (carried over from our brief, so the error is ours, not the
+> reviewer's): "under crowding, the density veto removes ordinary loot attraction", and its
+> headline recommendation is to **replace the veto-plus-dash patchwork with a
+> safety-constrained resource tie-break**.
+>
+> **What is now known:** the veto fires on **0.03%** of wave-17-19 ticks; loot attraction is
+> **LIVE on 89%** of them; and the loot-abandonment gap lives **entirely inside the unvetoed
+> regime**. The proposed intervention targets a branch that effectively never runs.
+> **Do not build the tie-break intervention.** The specified ablation set
+> (`NO_DENSITY_ZERO` / `NO_STALL_REQUIREMENT` / `NO_HP_SUPPRESSION`) has a combined ceiling
+> of 1.68% of ticks and **cannot return a positive regardless of the data**.
+>
+> **Unaffected and adopted:** the wave-17 interaction reframing (§"build strength and
+> movement are interacting causes"), the `damage_taken` retirement and endpoint replacement
+> (§5, §8), and the retraction of our "quarter of the damage" claim (§4). The *phenomenon*
+> — the crowd-scaled loot-directedness gap — is real and unchanged; only the mechanism is
+> dead. The remaining candidate is **force balance, not suppression**.
+>
+> **Evidence:** `reports/wp2/density_veto_verdict.md`.
+
 ## Executive verdict
 
 This is the strongest actionable movement finding the project has produced, but the current causal story is still one step too long.
