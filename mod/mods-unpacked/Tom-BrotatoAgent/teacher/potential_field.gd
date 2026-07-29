@@ -79,6 +79,18 @@ var engage_distance_scale: float = 1.0
 # 1.0 (default) is exactly inert. Below 1.0 the agent respects a walking enemy
 # less and can close on it, while a charging enemy keeps full weight.
 var calm_threat_mult: float = 1.0
+# Dev knob: scale the avoid/critical clearance THRESHOLDS applied to enemies that
+# are NOT currently charging, inside the safety tail's enemy path penalty
+# (_finale_enemy_path_penalty and _predictive_enemy_path_penalty). 1.0 (default)
+# is exactly inert and the charge test is not even evaluated. Below 1.0 a walking
+# enemy has to be closer before it costs anything, while a charging enemy keeps
+# the shipped thresholds. Deliberately SEPARATE from the desire-level
+# calm_threat_mult so the two layers stay attributable.
+var tail_calm_penalty_mult: float = 1.0
+# Dev knob: grant non-charging ENEMIES (never bosses) a clearance credit inside
+# _predictive_body_path_clearance. 1.0 (default) makes the credit exactly 0.0 and
+# the charge test is not evaluated at all.
+var tail_calm_clearance_mult: float = 1.0
 
 
 func compute_movement(state, profile) -> Vector2:
@@ -566,6 +578,85 @@ func desire_debug() -> Dictionary:
 	}
 
 
+# ── safety-tail lane-score decomposition (v0.2.55) ────────────────────────────
+# Same contract as the desire decomposition above: the per-tick path assigns
+# scalars only and tail_debug() builds the dict when a consumer asks.
+#
+# _tail_seq is ESSENTIAL: _best_finale_interior_lane is NOT called every tick
+# (it runs only on the wall-recovery / projectile-replan paths), so without it a
+# stale decomposition is indistinguishable from a fresh one. The desire
+# instrument hit exactly this. It advances once per _best_finale_interior_lane
+# call.
+#
+# _lane_record is scratch, written by _finale_lane_score ONLY when its trailing
+# `record` param is true. _tail_selected / _tail_alt hold the ten-element rows
+# for the chosen lane and the runner-up; both are [] when no lane was admitted
+# (the center fallback), which is how a fallback tick is identified.
+var _lane_record: Array = []
+var _tail_seq := 0
+var _tail_selected: Array = []
+var _tail_alt: Array = []
+var _tail_sampled := 0
+# _tail_pool is the DENOMINATOR for the two pass counters below. It is NOT
+# _tail_sampled: the pass counters iterate candidate_rows, which is the
+# wall-progress pool (or the hard-safe pool under relief), and that is usually
+# far smaller than the 24 sampled headings. Reading "n of 24 passed" off
+# _tail_sampled would overstate the eligible set -- the vacuous-denominator trap.
+var _tail_pool := 0
+var _tail_body_floor_passed := 0
+var _tail_enemy_filter_passed := 0
+var _tail_body_floor := 0.0
+var _tail_highest_body_clearance := 0.0
+var _tail_body_floor_regime := ""
+var _tail_lowest_enemy_penalty := 0.0
+var _tail_penalty_min := 0.0
+var _tail_penalty_median := 0.0
+var _tail_penalty_max := 0.0
+# NOTE: no wall_recovery_active here on purpose. _best_finale_interior_lane is
+# only ever reached with the latch already set, so the field would be constant
+# true and carry no information -- and finale_translation_debug already reports
+# the real latch alongside projectile_safety_active and body_safety_active. The
+# owning sub-path is derived offline from those three plus this block's seq
+# delta (seq unchanged => the interior lane did not run this tick).
+
+
+func _lane_terms(rec: Array) -> Dictionary:
+	if rec.size() < 10:
+		return {}
+	return {
+		"wall": rec[0],
+		"boss": rec[1],
+		"projectile": rec[2],
+		"center": rec[3],
+		"desire": rec[4],
+		"continuity": rec[5],
+		"enemy_penalty_term": rec[6],
+		"total": rec[7],
+		"wall_clear": rec[8],
+		"current_wall_clear": rec[9],
+	}
+
+
+func tail_debug() -> Dictionary:
+	# Built only when a consumer calls it — the per-tick path assigns scalars only.
+	return {
+		"seq": _tail_seq,
+		"selected": _lane_terms(_tail_selected),
+		"alt": _lane_terms(_tail_alt),
+		"sampled": _tail_sampled,
+		"pool": _tail_pool,
+		"body_floor_passed": _tail_body_floor_passed,
+		"enemy_filter_passed": _tail_enemy_filter_passed,
+		"body_floor": _tail_body_floor,
+		"highest_body_clearance": _tail_highest_body_clearance,
+		"body_floor_regime": _tail_body_floor_regime,
+		"lowest_enemy_penalty": _tail_lowest_enemy_penalty,
+		"penalty_min": _tail_penalty_min,
+		"penalty_median": _tail_penalty_median,
+		"penalty_max": _tail_penalty_max,
+	}
+
+
 func _best_loot_cluster(pos: Vector2, loot) -> Array:
 	# Returns [centroid, count] of the densest material cluster within the
 	# dash scan radius, or [Vector2.ZERO, 0].
@@ -766,6 +857,22 @@ func _is_finale_sampled_direction(direction: Vector2) -> bool:
 	return false
 
 
+func _is_calm_enemy(e) -> bool:
+	# Same test as _enemy_engagement_force's shipped inline version, reused by the
+	# safety tail. DEFENSIVE: two state builders exist and game_adapter's carries
+	# no vx/vy, so a MISSING velocity reads as CHARGING (returns false) -- an
+	# absent signal must never make the agent bolder than the shipped policy.
+	# Only ever called on entries from the `enemies` array; bosses are never
+	# discounted.
+	if not (e.has("vx") and e.has("vy")):
+		return false
+	var esp := float(e.get("speed", 0.0))
+	if esp <= 0.0:
+		return false
+	var ev := Vector2(float(e.get("vx", 0.0)), float(e.get("vy", 0.0))).length()
+	return ev / esp <= BotConfig.CHARGE_RATIO_THRESH
+
+
 func _finale_enemy_path_penalty(pos: Vector2, direction: Vector2, enemies,
 		player_speed: float, lookahead: float, samples: int) -> float:
 	if enemies.empty():
@@ -774,6 +881,9 @@ func _finale_enemy_path_penalty(pos: Vector2, direction: Vector2, enemies,
 	if safe_direction == Vector2.ZERO:
 		return 1.0e18
 	var safe_speed := max(player_speed, 1.0)
+	# Guarded so the default path neither changes behaviour nor pays for the
+	# charge test: at 1.0 avoid_i/critical_i are the shipped constants exactly.
+	var scale_calm := tail_calm_penalty_mult != 1.0
 	var penalty := 0.0
 	for i in range(1, samples + 1):
 		var fraction := float(i) / float(samples)
@@ -785,14 +895,18 @@ func _finale_enemy_path_penalty(pos: Vector2, direction: Vector2, enemies,
 			var enemy_vel := Vector2(
 				float(enemy.get("vx", 0.0)), float(enemy.get("vy", 0.0)))
 			var enemy_radius := max(float(enemy.get("radius", 18.0)), 0.0)
+			var avoid_i := float(BotConfig.BOSS_FINALE_WALL_ENEMY_AVOID_CLEARANCE)
+			var critical_i := float(
+				BotConfig.BOSS_FINALE_WALL_ENEMY_CRITICAL_CLEARANCE)
+			if scale_calm and _is_calm_enemy(enemy):
+				avoid_i = avoid_i * tail_calm_penalty_mult
+				critical_i = critical_i * tail_calm_penalty_mult
 			var clearance := path_pos.distance_to(
 				enemy_pos + enemy_vel * future_sec) - enemy_radius
-			if clearance < BotConfig.BOSS_FINALE_WALL_ENEMY_AVOID_CLEARANCE:
-				penalty += (
-					BotConfig.BOSS_FINALE_WALL_ENEMY_AVOID_CLEARANCE - clearance)
-				if clearance < BotConfig.BOSS_FINALE_WALL_ENEMY_CRITICAL_CLEARANCE:
-					var critical_gap := (
-						BotConfig.BOSS_FINALE_WALL_ENEMY_CRITICAL_CLEARANCE - clearance)
+			if clearance < avoid_i:
+				penalty += (avoid_i - clearance)
+				if clearance < critical_i:
+					var critical_gap := (critical_i - clearance)
 					penalty += (critical_gap * critical_gap
 						* BotConfig.BOSS_FINALE_WALL_ENEMY_CRITICAL_WEIGHT)
 	return penalty / float(max(samples, 1))
@@ -805,11 +919,27 @@ func _predictive_body_path_clearance(pos: Vector2, direction: Vector2,
 		return -1.0e18
 	if enemies.empty() and bosses.empty():
 		return 1000000.0
+	# Dev knob: a non-charging ENEMY (never a boss) gets a positive credit added to
+	# its own computed clearance before the min(). DELIBERATE SCALE CHANGE: when
+	# tail_calm_clearance_mult != 1.0 the value this function RETURNS is inflated
+	# relative to the true geometric clearance, so every body-clearance
+	# diagnostic derived from it (wall_best/selected_body_clearance, the body
+	# floor, _finale_body_* fields) is on a different scale in a dosed arm and
+	# must not be compared against a control arm's numbers. At 1.0 the credit is
+	# exactly 0.0 and the charge test is not evaluated.
+	var credit_calm := tail_calm_clearance_mult != 1.0
+	var calm_credit: float = ((1.0 - tail_calm_clearance_mult)
+		* float(BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE))
+	# is_enemy[i] tags which threats came from `enemies`; the two arrays are
+	# merged below and bosses must keep the unscaled clearance.
 	var threats: Array = []
+	var threat_is_enemy: Array = []
 	for enemy in enemies:
 		threats.append(enemy)
+		threat_is_enemy.append(true)
 	for boss in bosses:
 		threats.append(boss)
+		threat_is_enemy.append(false)
 	# v116: relative motion is linear over the hold, so the minimum clearance
 	# has a closed form. The v115 smoke proved that sampling only at 120 ms
 	# steps let a 940 u/s charge (capture 19557) cross the player's path
@@ -824,13 +954,17 @@ func _predictive_body_path_clearance(pos: Vector2, direction: Vector2,
 	var t_lo: float = min(BotConfig.ESCAPE_CLEARANCE_MIN_TIME, horizon)
 	var player_vel: Vector2 = safe_direction * max(player_speed, 1.0)
 	var clearance: float = 1000000.0
-	for threat in threats:
+	for tix in range(threats.size()):
+		var threat = threats[tix]
 		var threat_pos: Vector2 = Vector2(
 			float(threat.get("x", 0.0)), float(threat.get("y", 0.0)))
 		var threat_vel: Vector2 = Vector2(
 			float(threat.get("vx", 0.0)), float(threat.get("vy", 0.0)))
 		var threat_radius: float = max(
 			float(threat.get("radius", 18.0)), 0.0)
+		var credit: float = 0.0
+		if credit_calm and bool(threat_is_enemy[tix]) and _is_calm_enemy(threat):
+			credit = calm_credit
 		var rel_pos: Vector2 = pos - threat_pos
 		var rel_vel: Vector2 = player_vel - threat_vel
 		var speed_sq: float = rel_vel.length_squared()
@@ -839,15 +973,16 @@ func _predictive_body_path_clearance(pos: Vector2, direction: Vector2,
 			closest_sec = clamp(
 				-rel_pos.dot(rel_vel) / speed_sq, t_lo, horizon)
 		clearance = min(clearance,
-			(rel_pos + rel_vel * closest_sec).length() - threat_radius)
+			(rel_pos + rel_vel * closest_sec).length() - threat_radius + credit)
 		clearance = min(clearance,
-			(rel_pos + rel_vel * horizon).length() - threat_radius)
+			(rel_pos + rel_vel * horizon).length() - threat_radius + credit)
 	return clearance
 
 
 func _finale_lane_score(pos: Vector2, direction: Vector2, desired: Vector2,
 		arena, bosses, projectiles, player_speed: float,
-		enemy_path_penalty: float, require_wall_progress := true) -> float:
+		enemy_path_penalty: float, require_wall_progress := true,
+		record := false) -> float:
 	var w := float(arena.get("width", 2048.0))
 	var h := float(arena.get("height", 1536.0))
 	var lookahead := BotConfig.BOSS_FINALE_WALL_LOOKAHEAD
@@ -891,23 +1026,60 @@ func _finale_lane_score(pos: Vector2, direction: Vector2, desired: Vector2,
 			projectile_clear = min(projectile_clear,
 				path_pos.distance_to(projectile_pos + projectile_vel * future_sec)
 				- projectile_radius)
-	var score := (
+	# Each term hoisted into a local so it can be recorded; the accumulation order
+	# and the operands are unchanged, so the returned score is identical.
+	var term_wall := (
 		min(wall_clear, BotConfig.BOSS_FINALE_WALL_RECOVERY_RELEASE)
 		* BotConfig.BOSS_FINALE_WALL_CLEAR_WEIGHT)
-	score += max(boss_clear, -100.0) * BotConfig.BOSS_FINALE_WALL_BOSS_WEIGHT
-	score += (
+	var term_boss := max(boss_clear, -100.0) * BotConfig.BOSS_FINALE_WALL_BOSS_WEIGHT
+	var term_projectile := (
 		max(projectile_clear, -100.0)
 		* BotConfig.BOSS_FINALE_WALL_PROJECTILE_WEIGHT)
-	score += direction.dot(center_dir) * BotConfig.BOSS_FINALE_WALL_CENTER_WEIGHT
-	score += direction.dot(desired) * BotConfig.BOSS_FINALE_WALL_DESIRE_WEIGHT
-	score += direction.dot(_prev_move) * BotConfig.BOSS_FINALE_WALL_CONTINUITY_WEIGHT
-	score -= (enemy_path_penalty
+	var term_center := (
+		direction.dot(center_dir) * BotConfig.BOSS_FINALE_WALL_CENTER_WEIGHT)
+	var term_desire := (
+		direction.dot(desired) * BotConfig.BOSS_FINALE_WALL_DESIRE_WEIGHT)
+	var term_continuity := (
+		direction.dot(_prev_move) * BotConfig.BOSS_FINALE_WALL_CONTINUITY_WEIGHT)
+	var term_enemy := (enemy_path_penalty
 		* BotConfig.BOSS_FINALE_WALL_ENEMY_SCORE_WEIGHT)
+	var score := term_wall
+	score += term_boss
+	score += term_projectile
+	score += term_center
+	score += term_desire
+	score += term_continuity
+	score -= term_enemy
+	if record:
+		# Fresh Array every time, so the caller can keep a reference without
+		# aliasing the next call's scratch.
+		_lane_record = [
+			term_wall, term_boss, term_projectile, term_center, term_desire,
+			term_continuity, term_enemy, score, wall_clear, current_wall_clear,
+		]
 	return score
 
 
 func _best_finale_interior_lane(pos: Vector2, desired: Vector2, arena,
 		enemies, bosses, projectiles, player_speed: float) -> Vector2:
+	# Instrument only: every _tail_* write below is debug state, never read back
+	# by any decision. Cleared here so a fallback tick cannot present last call's
+	# decomposition as fresh; _tail_seq advances once per call.
+	_tail_seq += 1
+	_tail_selected = []
+	_tail_alt = []
+	_tail_sampled = BotConfig.ESCAPE_DIRECTIONS
+	_tail_pool = 0
+	_tail_body_floor_passed = 0
+	_tail_enemy_filter_passed = 0
+	_tail_body_floor = 0.0
+	_tail_highest_body_clearance = 0.0
+	_tail_body_floor_regime = ""
+	_tail_lowest_enemy_penalty = 0.0
+	_tail_penalty_min = 0.0
+	_tail_penalty_median = 0.0
+	_tail_penalty_max = 0.0
+	var all_penalties := []
 	var lookahead := BotConfig.BOSS_FINALE_WALL_LOOKAHEAD
 	var samples := BotConfig.BOSS_FINALE_WALL_PATH_SAMPLES
 	var desired_n := _normalize(desired)
@@ -929,6 +1101,7 @@ func _best_finale_interior_lane(pos: Vector2, desired: Vector2, arena,
 		var candidate := Vector2(cos(angle), sin(angle))
 		var enemy_penalty := _finale_enemy_path_penalty(
 			pos, candidate, enemies, player_speed, lookahead, samples)
+		all_penalties.append(enemy_penalty)
 		var score := _finale_lane_score(
 			pos, candidate, desired_n, arena, bosses, projectiles, player_speed,
 			enemy_penalty)
@@ -988,8 +1161,40 @@ func _best_finale_interior_lane(pos: Vector2, desired: Vector2, arena,
 			lowest_enemy_penalty = min(lowest_enemy_penalty, float(row[2]))
 	_finale_wall_best_enemy_penalty = (
 		lowest_enemy_penalty if lowest_enemy_penalty < INF else -1.0)
+	# Instrument: the three floor/regime readings the campaign needs to decide
+	# WHICH term binds. Written before the selection loop; none is read by it.
+	_tail_pool = candidate_rows.size()
+	_tail_body_floor = body_clearance_floor
+	_tail_highest_body_clearance = (
+		highest_body_clearance if highest_body_clearance > -INF else -1.0)
+	if _finale_wall_body_relief_active:
+		_tail_body_floor_regime = "relief"
+	elif highest_body_clearance >= BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE:
+		_tail_body_floor_regime = "critical"
+	else:
+		_tail_body_floor_regime = "degraded"
+	_tail_lowest_enemy_penalty = (
+		lowest_enemy_penalty if lowest_enemy_penalty < INF else -1.0)
+	if not all_penalties.empty():
+		var sorted_penalties := []
+		for p in all_penalties:
+			sorted_penalties.append(float(p))
+		sorted_penalties.sort()
+		_tail_penalty_min = float(sorted_penalties[0])
+		_tail_penalty_max = float(sorted_penalties[sorted_penalties.size() - 1])
+		var mid := int(sorted_penalties.size() / 2)
+		if sorted_penalties.size() % 2 == 1:
+			_tail_penalty_median = float(sorted_penalties[mid])
+		else:
+			_tail_penalty_median = (
+				(float(sorted_penalties[mid - 1]) + float(sorted_penalties[mid]))
+				* 0.5)
 	var best_dir := Vector2.ZERO
 	var best_score := -1.0e18
+	# Instrument-only mirrors of the winner and the runner-up.
+	var best_row = []
+	var alt_row = []
+	var alt_score := -1.0e18
 	for row in candidate_rows:
 		var candidate: Vector2 = row[0]
 		var score: float = row[1]
@@ -997,14 +1202,53 @@ func _best_finale_interior_lane(pos: Vector2, desired: Vector2, arena,
 		var body_clearance: float = row[3]
 		if body_clearance < body_clearance_floor:
 			continue
+		_tail_body_floor_passed += 1
 		if (enemy_penalty > lowest_enemy_penalty
 				+ BotConfig.BOSS_FINALE_ENEMY_PENALTY_SLACK):
 			continue
+		_tail_enemy_filter_passed += 1
 		if score > best_score:
+			alt_score = best_score
+			alt_row = best_row
+			best_row = row
 			best_score = score
 			best_dir = candidate
 			_finale_wall_selected_enemy_penalty = enemy_penalty
 			_finale_wall_selected_body_clearance = body_clearance
+		elif score > alt_score:
+			alt_score = score
+			alt_row = row
+	# Re-score the winner and the runner-up with recording on. _finale_lane_score
+	# reads only its arguments, BotConfig and _prev_move, and writes nothing but
+	# _lane_record when `record` is true -- so these extra calls cannot change the
+	# decision, which has already been made above. The require_wall_progress
+	# retry mirrors the sampling loop exactly: an admitted row scored above
+	# -1.0e17 under one of the two branches, so _lane_record is always written.
+	if not best_row.empty():
+		# Clear the scratch FIRST. _finale_lane_score returns early (before the
+		# record block) when a candidate fails the hard wall margin, and on that
+		# path _lane_record would keep the PREVIOUS call's terms -- a stale
+		# decomposition presented as fresh, which is exactly what seq exists to
+		# prevent one level up. Cleared, a non-write shows as {} in tail_debug.
+		_lane_record = []
+		var sel_score := _finale_lane_score(
+			pos, best_row[0], desired_n, arena, bosses, projectiles, player_speed,
+			float(best_row[2]), true, true)
+		if sel_score <= -1.0e17:
+			_finale_lane_score(
+				pos, best_row[0], desired_n, arena, bosses, projectiles,
+				player_speed, float(best_row[2]), false, true)
+		_tail_selected = _lane_record
+	if not alt_row.empty():
+		_lane_record = []
+		var alt_rec_score := _finale_lane_score(
+			pos, alt_row[0], desired_n, arena, bosses, projectiles, player_speed,
+			float(alt_row[2]), true, true)
+		if alt_rec_score <= -1.0e17:
+			_finale_lane_score(
+				pos, alt_row[0], desired_n, arena, bosses, projectiles,
+				player_speed, float(alt_row[2]), false, true)
+		_tail_alt = _lane_record
 	if best_dir == Vector2.ZERO:
 		var w := float(arena.get("width", 2048.0))
 		var h := float(arena.get("height", 1536.0))
@@ -2437,31 +2681,46 @@ func _predictive_enemy_path_penalty(pos, d, player_speed, times, enemies,
 		bosses, caution = 1.0) -> float:
 	if enemies.empty() and bosses.empty():
 		return 0.0
+	# threat_is_enemy tags which merged entries came from `enemies`; bosses keep
+	# the unscaled thresholds.
 	var threats: Array = []
+	var threat_is_enemy: Array = []
 	for enemy in enemies:
 		threats.append(enemy)
+		threat_is_enemy.append(true)
 	for boss in bosses:
 		threats.append(boss)
+		threat_is_enemy.append(false)
 	var avoid: float = float(BotConfig.ENEMY_AVOID_DIST) * float(caution)
 	var critical: float = (
 		float(BotConfig.BOSS_FINALE_WALL_ENEMY_CRITICAL_CLEARANCE)
 		* float(caution))
+	# Guarded so the default path neither changes behaviour nor pays for the
+	# charge test.
+	var scale_calm := tail_calm_penalty_mult != 1.0
 	var penalty: float = 0.0
 	for ti in range(times.size()):
 		var future_sec: float = float(times[ti])
 		var player_pos: Vector2 = pos + d * (player_speed * future_sec)
-		for threat in threats:
+		for tix in range(threats.size()):
+			var threat = threats[tix]
 			var threat_pos: Vector2 = Vector2(
 				float(threat.get("x", 0.0)), float(threat.get("y", 0.0)))
 			var threat_vel: Vector2 = Vector2(
 				float(threat.get("vx", 0.0)), float(threat.get("vy", 0.0)))
 			var threat_radius: float = max(float(threat.get("radius", 18.0)), 0.0)
+			var avoid_i: float = avoid
+			var critical_i: float = critical
+			if (scale_calm and bool(threat_is_enemy[tix])
+					and _is_calm_enemy(threat)):
+				avoid_i = avoid * tail_calm_penalty_mult
+				critical_i = critical * tail_calm_penalty_mult
 			var clearance: float = player_pos.distance_to(
 				threat_pos + threat_vel * future_sec) - threat_radius
-			if clearance < avoid:
-				penalty += avoid - clearance
-				if clearance < critical:
-					var critical_gap: float = critical - clearance
+			if clearance < avoid_i:
+				penalty += avoid_i - clearance
+				if clearance < critical_i:
+					var critical_gap: float = critical_i - clearance
 					penalty += (critical_gap * critical_gap
 						* BotConfig.BOSS_FINALE_WALL_ENEMY_CRITICAL_WEIGHT)
 	return (penalty / float(max(times.size(), 1))

@@ -19,6 +19,12 @@ func get_movement() -> Vector2:
 	# `get()` on an absent property returns null in Godot 3, so an older runner
 	# without this flag falls through to the unchanged path rather than erroring.
 	if runner.get("human_movement"):
+		# `human` IS the keyboard vector. Log it as the real behaviour-cloning
+		# label -- teacher.action is the AGENT's intended vector on this arm.
+		# Guarded exactly like on_manual_override below so an older runner
+		# without the method falls through instead of erroring.
+		if runner.has_method("note_human_movement"):
+			runner.note_human_movement(human)
 		return human
 	if human.length() > 0.05:
 		runner.set("active", false)

@@ -371,6 +371,249 @@ def load_bc_dataset(
     )
 
 
+# --------------------------------------------------------------------------- #
+# HUMAN-labelled variant (human_obs_v1)
+# --------------------------------------------------------------------------- #
+@dataclass(frozen=True)
+class HumanBCSplit:
+    """One split of the human-labelled dataset.
+
+    Identical observation content to :class:`BCSplit` (same encoder, same input
+    mask), but ``actions`` is the HUMAN keyboard vector from the shard's
+    ``human_action`` array rather than columns of the encoder globals, and the
+    per-row provenance flags travel alongside so training can ablate on them.
+    """
+
+    globals: np.ndarray  # [N, 40] f32
+    actions: np.ndarray  # [N, 2] f32, human keyboard vector
+    entities: dict[str, np.ndarray]
+    masks: dict[str, np.ndarray]
+    wave: np.ndarray  # [N] i32
+    run_index: np.ndarray  # [N] i32
+    run_ids: list[str]
+    aliased: np.ndarray  # [N] bool, input changed inside the capture interval
+    samples: np.ndarray  # [N] i32, 60 Hz input samples in the interval (>0)
+
+    @property
+    def size(self) -> int:
+        return int(self.globals.shape[0])
+
+
+@dataclass(frozen=True)
+class HumanBCDataset:
+    """Assembled human-labelled BC dataset: train + val + train-only norm stats."""
+
+    train: HumanBCSplit
+    val: HumanBCSplit
+    normalization: NormalizationStats
+    schema_hash: str
+    split_id: str
+    global_feature_names: list[str]
+    input_config_hash: str
+    split_config_hash: str
+
+    save_normalization_manifest = BCDataset.save_normalization_manifest
+
+
+def _load_human_shard_split(
+    entries: list[dict[str, Any]],
+    dataset_dir: Path,
+    manifest_hashes: dict[str, str],
+    kept_indices: list[int],
+    label_source: str,
+) -> HumanBCSplit:
+    kept_arr = np.asarray(kept_indices, dtype=np.intp)
+    run_ids: list[str] = []
+    globals_parts: list[np.ndarray] = []
+    actions_parts: list[np.ndarray] = []
+    entity_parts: dict[str, list[np.ndarray]] = {g: [] for g, _ in ENTITY_GROUPS}
+    mask_parts: dict[str, list[np.ndarray]] = {g: [] for g, _ in ENTITY_GROUPS}
+    wave_parts: list[np.ndarray] = []
+    run_index_parts: list[np.ndarray] = []
+    alias_parts: list[np.ndarray] = []
+    samples_parts: list[np.ndarray] = []
+
+    for run_index, entry in enumerate(entries):
+        run_id = str(entry["run_id"])
+        expected_hash = str(entry["shard_sha256"]).upper()
+        shard_path = dataset_dir / str(entry.get("shard_file", f"{run_id}.npz"))
+        if not shard_path.is_file():
+            raise BCDatasetError(f"shard file missing: {shard_path}")
+        manifest_hash = manifest_hashes.get(run_id)
+        if manifest_hash is not None and manifest_hash != expected_hash:
+            raise BCDatasetError(f"split-config hash for {run_id} disagrees with manifest")
+        actual_hash = _sha256_upper(shard_path)
+        if actual_hash != expected_hash:
+            raise BCDatasetError(
+                f"shard sha256 mismatch for {run_id}: expected {expected_hash}, got {actual_hash}"
+            )
+
+        with np.load(shard_path) as shard:
+            raw_globals = np.asarray(shard["global_features"], dtype=np.float32)
+            if raw_globals.ndim != 2 or raw_globals.shape[1] != 48:
+                raise BCDatasetError(
+                    f"{run_id} global_features has shape {raw_globals.shape}, expected [N, 48]"
+                )
+            n_rows = raw_globals.shape[0]
+            if n_rows == 0:
+                raise BCDatasetError(f"{run_id} has no rows")
+
+            if label_source not in shard.files:
+                raise BCDatasetError(f"{run_id} shard has no label array {label_source!r}")
+            actions = np.asarray(shard[label_source], dtype=np.float32)
+            if actions.shape != (n_rows, 2):
+                raise BCDatasetError(
+                    f"{run_id} {label_source} has shape {actions.shape}, expected [{n_rows}, 2]"
+                )
+
+            samples = np.asarray(shard["human_samples"], dtype=np.int32)
+            aliased = np.asarray(shard["human_aliased"], dtype=bool)
+            # Shards are built already filtered; re-assert the invariants here
+            # so a stale or hand-edited shard cannot smuggle unlabelled rows in.
+            if int((samples <= 0).sum()):
+                raise BCDatasetError(f"{run_id} shard contains rows with samples <= 0")
+            if not np.isfinite(actions).all():
+                raise BCDatasetError(f"{run_id} shard contains non-finite labels")
+
+            globals_parts.append(raw_globals[:, kept_arr])
+            actions_parts.append(actions)
+            for group, capacity in ENTITY_GROUPS:
+                ent = np.asarray(shard[f"entities_{group}"], dtype=np.float32)
+                msk = np.asarray(shard[f"mask_{group}"], dtype=np.float32)
+                if ent.shape[1:] != (capacity, ENTITY_FEATURE_DIM):
+                    raise BCDatasetError(
+                        f"{run_id} entities_{group} has shape {ent.shape}, "
+                        f"expected [N, {capacity}, {ENTITY_FEATURE_DIM}]"
+                    )
+                if msk.shape[1:] != (capacity,):
+                    raise BCDatasetError(
+                        f"{run_id} mask_{group} has shape {msk.shape}, expected [N, {capacity}]"
+                    )
+                entity_parts[group].append(ent)
+                mask_parts[group].append(msk)
+
+            wave_parts.append(np.asarray(shard["wave"], dtype=np.int32))
+            run_index_parts.append(np.full(n_rows, run_index, dtype=np.int32))
+            alias_parts.append(aliased)
+            samples_parts.append(samples)
+        run_ids.append(run_id)
+
+    return HumanBCSplit(
+        globals=np.concatenate(globals_parts, axis=0),
+        actions=np.concatenate(actions_parts, axis=0),
+        entities={g: np.concatenate(entity_parts[g], axis=0) for g, _ in ENTITY_GROUPS},
+        masks={g: np.concatenate(mask_parts[g], axis=0) for g, _ in ENTITY_GROUPS},
+        wave=np.concatenate(wave_parts, axis=0),
+        run_index=np.concatenate(run_index_parts, axis=0),
+        run_ids=run_ids,
+        aliased=np.concatenate(alias_parts, axis=0),
+        samples=np.concatenate(samples_parts, axis=0),
+    )
+
+
+def load_human_bc_dataset(
+    dataset_dir: str | Path,
+    split_config_path: str | Path,
+    input_config_path: str | Path,
+    schema_path: str | Path,
+) -> HumanBCDataset:
+    """Assemble the HUMAN-labelled BC dataset with the same verification suite.
+
+    Row filtering (human block present, ``samples > 0``, encoder ``valid`` and
+    ``temporal_valid``) is applied at BUILD time by
+    ``scripts/wp2_build_human_obs_v1.py``; this loader re-asserts the label
+    invariants and enforces the whole-run split, sha256 pins and schema-hash
+    agreement exactly as :func:`load_bc_dataset` does.
+    """
+    dataset_dir = Path(dataset_dir)
+    manifest_path = dataset_dir / "manifest.json"
+    if not manifest_path.is_file():
+        raise BCDatasetError(f"manifest missing: {manifest_path}")
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+
+    schema = yaml.safe_load(Path(schema_path).read_text(encoding="utf-8"))
+    if not isinstance(schema, dict):
+        raise BCDatasetError("schema is not a mapping")
+    schema_hash = _schema_hash(Path(schema_path))
+    feature_names = _global_feature_names(schema)
+    if len(feature_names) != 48:
+        raise BCDatasetError(f"expected 48 global features, schema has {len(feature_names)}")
+
+    input_config, input_config_hash = _load_yaml(Path(input_config_path))
+    split_config, split_config_hash = _load_yaml(Path(split_config_path))
+
+    for label, cfg in (("input", input_config), ("split", split_config)):
+        cfg_hash = str(cfg.get("observation_schema_hash", "")).upper()
+        if cfg_hash != schema_hash:
+            raise BCDatasetError(
+                f"{label} config observation_schema_hash {cfg_hash} != schema hash {schema_hash}"
+            )
+    if str(manifest.get("observation_schema_hash", "")).upper() != schema_hash:
+        raise BCDatasetError("manifest observation_schema_hash != schema hash")
+
+    label_source = str(input_config.get("label_source", ""))
+    if not label_source:
+        raise BCDatasetError("input config label_source missing (human dataset labels are an array)")
+
+    excluded = [str(name) for name in input_config.get("excluded_global_features", [])]
+    kept_indices, kept_names, _ = _resolve_indices(feature_names, excluded, [])
+
+    manifest_runs = manifest.get("runs")
+    if not isinstance(manifest_runs, list) or not manifest_runs:
+        raise BCDatasetError("manifest runs missing or empty")
+    manifest_hashes = {str(r["run_id"]): str(r["shard_sha256"]).upper() for r in manifest_runs}
+
+    train_entries = _run_entries(split_config, "train")
+    val_entries = _run_entries(split_config, "validation")
+    train_runs = [str(e["run_id"]) for e in train_entries]
+    val_runs = [str(e["run_id"]) for e in val_entries]
+    train_set, val_set = set(train_runs), set(val_runs)
+    if len(train_set) != len(train_runs) or len(val_set) != len(val_runs):
+        raise BCDatasetError("duplicate run_id within a split")
+    overlap = train_set & val_set
+    if overlap:
+        raise BCDatasetError(f"train/val run sets overlap: {sorted(overlap)}")
+    union = train_set | val_set
+    if union != set(manifest_hashes):
+        missing = set(manifest_hashes) - union
+        extra = union - set(manifest_hashes)
+        raise BCDatasetError(
+            f"split run set != manifest run set (missing={sorted(missing)}, extra={sorted(extra)})"
+        )
+
+    train = _load_human_shard_split(
+        train_entries, dataset_dir, manifest_hashes, kept_indices, label_source
+    )
+    val = _load_human_shard_split(
+        val_entries, dataset_dir, manifest_hashes, kept_indices, label_source
+    )
+
+    split_id = str(split_config.get("split_id", "unknown"))
+    # TRAIN split only — val must never contribute to the normalization stats.
+    mean = train.globals.mean(axis=0).astype(np.float32)
+    std = np.maximum(train.globals.std(axis=0).astype(np.float32), np.float32(STD_FLOOR))
+    normalization = NormalizationStats(
+        feature_names=list(kept_names),
+        mean=mean,
+        std=std,
+        split_id=split_id,
+        schema_hash=schema_hash,
+        input_config_hash=input_config_hash,
+        split_config_hash=split_config_hash,
+    )
+
+    return HumanBCDataset(
+        train=train,
+        val=val,
+        normalization=normalization,
+        schema_hash=schema_hash,
+        split_id=split_id,
+        global_feature_names=kept_names,
+        input_config_hash=input_config_hash,
+        split_config_hash=split_config_hash,
+    )
+
+
 def _default_paths() -> dict[str, Path]:
     root = Path(__file__).resolve().parents[2]
     return {

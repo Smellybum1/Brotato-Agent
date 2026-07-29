@@ -1,0 +1,136 @@
+# WP2 — HUMAN-labelled BC dataset split (human_obs_v1)
+#
+# Split by FIXTURE, at whole-run granularity.
+#
+# Whole-run is NECESSARY: adjacent captures are 50 ms apart and nearly
+# identical, so a row-level split leaks train into val and makes val loss
+# meaningless.  It is NOT SUFFICIENT: the previous split held out 2 runs
+# of the SAME fixture the 4 train runs came from, so val measured
+# memorisation of one enemy layout, not generalisation.  No fixture may
+# now appear on both sides.
+#
+# selection rule: smallest-first, round-robin over bosses, stop at val_rows >= 0.15 of rows
+# train fixtures: 112a331720633b8a, 359e272ac1d603cb, 7f124906e6bb49cb, a6227734c5850b25, ea8e819957f83f3b
+# val   fixtures: 881b35244be74181, fd3db2b0a5d75e35
+# train bosses: invoker, predator | val bosses: invoker, predator
+# rows train/val: 43810/7998  (val row fraction 0.1544)
+#
+# Per-run shard_sha256 is copied from datasets/human_obs_v1/manifest.json;
+# the loader hard-errors if any shard on disk disagrees.
+split_id: human_dataset_split_v1
+schema_id: human_obs_v1
+observation_schema_hash: C653D836F3EBC821A51AFC70482D3772FC7B7B927D393A6B9BBADC2718BB9B2A
+split_by: fixture
+split_granularity: run
+
+validation:
+  - run_id: run_1785334264_36513
+    shard_file: run_1785334264_36513.npz
+    shard_sha256: 5A6BCE8A6901E3DB0F99FC58DABD9E61BF5083B47D39AE2D479FDD20F432C7B0
+    mod_version: 0.2.56-wp2-capture
+    fixture_digest: 881b35244be74181
+    fixture_file: w16_invoker_20260728_120745_881b35244be74181.json
+    boss_entity: invoker
+    last_wave: 20
+    rows: 3973
+  - run_id: run_1785333345_28303
+    shard_file: run_1785333345_28303.npz
+    shard_sha256: F597427DAD6BF4BD8EB9270F9E12A873A509CE769287F552E39065AA468374A6
+    mod_version: 0.2.56-wp2-capture
+    fixture_digest: fd3db2b0a5d75e35
+    fixture_file: w16_predator_20260728_114816_fd3db2b0a5d75e35.json
+    boss_entity: predator
+    last_wave: 20
+    rows: 4025
+
+train:
+  - run_id: run_1785334810_44476
+    shard_file: run_1785334810_44476.npz
+    shard_sha256: B034C1240C133373017210BE81B76E472FF161BE70CA96EFCA3DBB42D1B6DE68
+    mod_version: 0.2.56-wp2-capture
+    fixture_digest: 112a331720633b8a
+    fixture_file: w16_invoker_20260728_122715_112a331720633b8a.json
+    boss_entity: invoker
+    last_wave: 20
+    rows: 4570
+  - run_id: run_1785334499_75976
+    shard_file: run_1785334499_75976.npz
+    shard_sha256: B67E372E62687290A6C8608681A06D7CC6D76E1D6FDE21D425D0AA3B63B02275
+    mod_version: 0.2.56-wp2-capture
+    fixture_digest: 359e272ac1d603cb
+    fixture_file: w16_invoker_20260728_120747_359e272ac1d603cb.json
+    boss_entity: invoker
+    last_wave: 20
+    rows: 4006
+  - run_id: run_1785329874_94751
+    shard_file: run_1785329874_94751.npz
+    shard_sha256: 27A73CB0650CBBA1553CDA31D80AAFFF9F59D4D56AA8B3BBDE129954E4AB5BBE
+    mod_version: 0.2.56-wp2-capture
+    fixture_digest: 7f124906e6bb49cb
+    fixture_file: w16_predator_20260728_112824_7f124906e6bb49cb.json
+    boss_entity: predator
+    last_wave: 20
+    rows: 4853
+  - run_id: run_1785330160_33134
+    shard_file: run_1785330160_33134.npz
+    shard_sha256: 0C7650798A5C36F7AFD31486151DE309BCF626F146FD7581CCB656CEAAEE8BD0
+    mod_version: 0.2.56-wp2-capture
+    fixture_digest: 7f124906e6bb49cb
+    fixture_file: w16_predator_20260728_112824_7f124906e6bb49cb.json
+    boss_entity: predator
+    last_wave: 20
+    rows: 4338
+  - run_id: run_1785330775_74275
+    shard_file: run_1785330775_74275.npz
+    shard_sha256: 1E9E7E3AED06B22A0AD0E67763B0DBBB80E1EE73BCF1676A981D15381ECAE25E
+    mod_version: 0.2.56-wp2-capture
+    fixture_digest: 7f124906e6bb49cb
+    fixture_file: w16_predator_20260728_112824_7f124906e6bb49cb.json
+    boss_entity: predator
+    last_wave: 20
+    rows: 4444
+  - run_id: run_1785331111_60809
+    shard_file: run_1785331111_60809.npz
+    shard_sha256: E15BBC26C580B9E679A486F12A4BB91289125739210EDEE9FA09BC732DD5DF72
+    mod_version: 0.2.56-wp2-capture
+    fixture_digest: 7f124906e6bb49cb
+    fixture_file: w16_predator_20260728_112824_7f124906e6bb49cb.json
+    boss_entity: predator
+    last_wave: 20
+    rows: 4172
+  - run_id: run_1785331403_7981
+    shard_file: run_1785331403_7981.npz
+    shard_sha256: CCABF7BE323CDCA5D1A243003CA8A4417CF2A2493D9885D6585332A684CF109F
+    mod_version: 0.2.56-wp2-capture
+    fixture_digest: 7f124906e6bb49cb
+    fixture_file: w16_predator_20260728_112824_7f124906e6bb49cb.json
+    boss_entity: predator
+    last_wave: 20
+    rows: 4386
+  - run_id: run_1785331666_82193
+    shard_file: run_1785331666_82193.npz
+    shard_sha256: A19DC297254E4269654F2E21C9218D9CBDA510A7558278BAD6410787DEE1BCE6
+    mod_version: 0.2.56-wp2-capture
+    fixture_digest: 7f124906e6bb49cb
+    fixture_file: w16_predator_20260728_112824_7f124906e6bb49cb.json
+    boss_entity: predator
+    last_wave: 20
+    rows: 4450
+  - run_id: run_1785334012_15712
+    shard_file: run_1785334012_15712.npz
+    shard_sha256: 8AFC63C6C97371F3AC5FCC8607DED7243F574892628F40927AA4394CEFC1DCBC
+    mod_version: 0.2.56-wp2-capture
+    fixture_digest: a6227734c5850b25
+    fixture_file: w16_predator_20260728_114824_a6227734c5850b25.json
+    boss_entity: predator
+    last_wave: 20
+    rows: 4299
+  - run_id: run_1785332630_89699
+    shard_file: run_1785332630_89699.npz
+    shard_sha256: 7D2D3913FA4632775FAD7BFFC499536B2F0B61E3922CB50A6804EE94B40C182E
+    mod_version: 0.2.56-wp2-capture
+    fixture_digest: ea8e819957f83f3b
+    fixture_file: w16_predator_20260728_112820_ea8e819957f83f3b.json
+    boss_entity: predator
+    last_wave: 20
+    rows: 4292

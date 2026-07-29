@@ -133,12 +133,12 @@ def test_wp2_capture_build_versions_the_v122_crossing_tier_policy():
     # student-inference path (learned/ bridge, default-off) is unchanged —
     # deploy surface bumps together: manifest, controller meta, telemetry
     # default, and the collector identity gate.
-    assert '"version_number": "0.2.54"' in manifest
+    assert '"version_number": "0.2.57"' in manifest
     assert "v128 deterministic teacher" in manifest
     assert controller.count("teacher_v1-0.1.129-gun-wp1") == 1
-    assert controller.count("0.2.54-wp2-capture") == 1
+    assert controller.count("0.2.57-wp2-capture") == 1
     assert telemetry.count("teacher_v1-0.1.129-gun-wp1") == 1
-    assert telemetry.count("0.2.54-wp2-capture") == 1
+    assert telemetry.count("0.2.57-wp2-capture") == 1
 
 
 def test_v123_strength_signal_is_plumbed_through_controller_and_field():
@@ -803,7 +803,10 @@ def test_v104_recovery_and_wall_replan_require_measurable_clearance_gain():
         "wall_clear <= current_wall_clear + 0.001"
     )
     rejection = scorer.index("return -1.0e18", improvement_gate)
-    weighted_score = scorer.index("var score := (")
+    # v0.2.57 hoisted each weighted term into its own local so the tail
+    # decomposition instrument can record it; term_wall is the first of them and
+    # replaces the old `var score := (` accumulator start. Ordering is unchanged.
+    weighted_score = scorer.index("var term_wall := (")
     assert current < improvement_gate < rejection < weighted_score
 
     selector = potential.split("func _best_wall_safe_projectile_lane", 1)[1].split(
@@ -2186,3 +2189,214 @@ def test_v125_reroll_gate_replays_frozen_smoke_boards():
             dynamite_seen = dynamite_seen or "item_dynamite" in board["gate_clearing_ids"]
     assert kinds == {"paid", "free"}  # both budget regimes are gated
     assert dynamite_seen  # explosive-key gate item is covered
+
+
+# ── rare-gun lock persistence (flag `rare_gun_lock_persist`, default OFF) ──────
+
+FINALE_LOOP = ROOT / "scripts/wp2_finale_loop.py"
+
+
+def test_rare_gun_lock_persist_flag_exists_and_defaults_off():
+    config = CONFIG.read_text(encoding="utf-8")
+    strategy = STRATEGY.read_text(encoding="utf-8")
+    controller = CONTROLLER.read_text(encoding="utf-8")
+
+    assert "const RARE_GUN_LOCK_MAX_VISITS := 3" in config
+    assert "const RARE_GUN_LOCK_SHORTFALL_BAND := 150" in config
+    # The band MUST exceed the chain gun's best observed shortfall of 91, or the
+    # flag is structurally inert for the weapon that motivates it.
+    band = int(
+        config.split("const RARE_GUN_LOCK_SHORTFALL_BAND := ", 1)[1].split("\n", 1)[0]
+    )
+    assert band > 91
+    # And the cap must be a real backstop: finite, and strictly more than the
+    # shipped one-visit lifetime it replaces.
+    cap = int(
+        config.split("const RARE_GUN_LOCK_MAX_VISITS := ", 1)[1].split("\n", 1)[0]
+    )
+    assert 1 < cap < 20
+
+    assert "var rare_gun_lock_persist_enabled: bool = false" in strategy
+    assert "var rare_gun_lock_persist: bool = false" in controller
+
+
+def test_rare_gun_lock_persist_is_plumbed_end_to_end():
+    controller = CONTROLLER.read_text(encoding="utf-8")
+    telemetry = TELEMETRY.read_text(encoding="utf-8")
+    loop = FINALE_LOOP.read_text(encoding="utf-8")
+
+    # Controller: assignment onto the shop object, mod-ready sentinel, run meta,
+    # and the agent_config.json loader.
+    assert "_shop.rare_gun_lock_persist_enabled = rare_gun_lock_persist" in controller
+    assert controller.count('"rare_gun_lock_persist": rare_gun_lock_persist,') == 2
+    assert 'if cfg.has("rare_gun_lock_persist"):' in controller
+    assert 'rare_gun_lock_persist = bool(cfg["rare_gun_lock_persist"])' in controller
+    # The shop object is constructed before the flag is pushed onto it.
+    assert controller.index("_shop = _SHOP_SCRIPT.new()") < controller.index(
+        "_shop.rare_gun_lock_persist_enabled = rare_gun_lock_persist"
+    )
+
+    # begin_run's ALLOWLIST: without this line the arm never reaches the summary.
+    assert (
+        '"rare_gun_lock_persist": meta.get("rare_gun_lock_persist", false),'
+        in telemetry
+    )
+
+    # Harness: CLI arg, config write, trial row, and expected-value validation.
+    assert '"--rare-gun-lock-persist",' in loop
+    assert "rare_gun_lock_persist: bool = False," in loop
+    assert 'payload["rare_gun_lock_persist"] = rare_gun_lock_persist' in loop
+    assert "expected_rare_gun_lock_persist: bool = False," in loop
+    assert (
+        'bool(summary.get("rare_gun_lock_persist", False)) != expected_rare_gun_lock_persist'
+        in loop
+    )
+    assert (
+        "expected_rare_gun_lock_persist=bool(args.rare_gun_lock_persist)," in loop
+    )
+    # An interrupted loop must disarm the flag, exactly like the other arms.
+    assert "rare_gun_lock_persist=False," in loop
+
+
+def test_rare_gun_lock_persist_off_leaves_the_shipped_expiry_path_intact():
+    strategy = STRATEGY.read_text(encoding="utf-8")
+    rare = strategy.split("func _rare_gun_action", 1)[1].split(
+        "func _rare_gun_lock_persist", 1
+    )[0]
+
+    # The flag-off path is the ORIGINAL code, untouched and still last: the new
+    # behaviour lives entirely inside `if rare_gun_lock_persist_enabled:`.
+    assert "if rare_gun_lock_persist_enabled:" in rare
+    guard = rare.index("if rare_gun_lock_persist_enabled:")
+    original = rare.index(
+        "# An inherited lock got its purchase/sale attempt and remains unreachable."
+    )
+    assert guard < original
+    # The new keys are emitted ONLY inside the flag-on branch, so a flag-off
+    # decision record is byte-identical to today's.
+    off_path = rare[original:]
+    assert "rare_gun_lock_" not in off_path
+    # The unchanged shipped expiry: mark expired, then unlock through the guard.
+    assert "_session_expired_lock_item_ids[item_id] = true" in off_path
+    assert '"type": "shop_unlock"' in off_path and '"lock_expired": true' in off_path
+    # Run-scoped state is cleared ONLY when the wave counter goes backwards, never
+    # on the per-wave session reset that would flatten the visit counter to 1.
+    assert strategy.count("_run_rare_gun_lock_state = {}") == 1
+    reset = strategy.split("func _reset_session_if_new", 1)[1].split(
+        "func _guard_lock_transition", 1
+    )[0]
+    assert "if w < _session_wave:" in reset
+    assert reset.index("if w < _session_wave:") < reset.index(
+        "_run_rare_gun_lock_state = {}"
+    )
+
+
+def test_rare_gun_lock_persist_emits_its_decision_inputs():
+    strategy = STRATEGY.read_text(encoding="utf-8")
+    rare = strategy.split("func _rare_gun_action", 1)[1].split(
+        "func _rare_gun_lock_persist", 1
+    )[0]
+
+    # Both outcomes -- keep (shop_go) and expire (shop_unlock) -- must carry the
+    # shortfall, the visit count and the branch, or the change is un-auditable.
+    for field in (
+        '"rare_gun_lock_branch": str(persist.get("branch", ""))',
+        '"rare_gun_lock_visits": int(persist.get("visits", 0))',
+        '"rare_gun_lock_shortfall": int(persist.get("shortfall", 0))',
+        '"rare_gun_lock_prev_shortfall": int(persist.get("prev_shortfall", -1))',
+    ):
+        assert rare.count(field) == 2
+    # The keep path is the existing banking action, not a new action type.
+    assert '"type": "shop_go"' in rare and '"rare_gun_saved": true' in rare
+
+
+def test_rare_gun_lock_visit_cap_cannot_be_bypassed():
+    config = CONFIG.read_text(encoding="utf-8")
+    strategy = STRATEGY.read_text(encoding="utf-8")
+    helper = strategy.split("func _rare_gun_lock_persist", 1)[1].split(
+        "\n\nfunc ", 1
+    )[0]
+
+    # The cap is the FIRST branch of the if/elif chain, so no reachability test
+    # can be reached once it fires -- structurally, not by convention.
+    cap_branch = helper.index("if visits >= BotConfig.RARE_GUN_LOCK_MAX_VISITS:")
+    near_branch = helper.index("elif shortfall <= BotConfig.RARE_GUN_LOCK_SHORTFALL_BAND:")
+    closing_branch = helper.index("elif prev_shortfall >= 0 and shortfall < prev_shortfall:")
+    assert cap_branch < near_branch < closing_branch
+    # `keep` starts false and is only set inside the two reachability branches.
+    assert "var keep := false" in helper
+    assert helper.count("keep = true") == 2
+    assert "keep = true" not in helper[cap_branch:near_branch]
+    # The visit counter advances once per VISIT (wave), never once per decision,
+    # and only on visits where a lock was actually INHERITED.
+    assert 'if int(st.get("wave", -1)) != wave:' in helper
+    assert helper.count("visits += 1") == 1
+    assert helper.index('if int(st.get("wave", -1)) != wave:') < helper.index("visits += 1")
+    assert helper.index("if inherited_lock:") < helper.index("visits += 1")
+
+    # Shortfall history is recorded on every visit, BEFORE any early return, or
+    # the "strictly decreased" branch could never fire.
+    rare = strategy.split("func _rare_gun_action", 1)[1].split(
+        "func _rare_gun_lock_persist", 1
+    )[0]
+    assert rare.index("persist = _rare_gun_lock_persist(") < rare.index(
+        '"type": "shop_buy"'
+    )
+
+    cap = int(
+        config.split("const RARE_GUN_LOCK_MAX_VISITS := ", 1)[1].split("\n", 1)[0]
+    )
+    band = int(
+        config.split("const RARE_GUN_LOCK_SHORTFALL_BAND := ", 1)[1].split("\n", 1)[0]
+    )
+
+    # Independent Python mirror of the rule, driven per VISIT.
+    def decide(visits, shortfall, prev_shortfall):
+        if visits >= cap:
+            return "cap", False
+        if shortfall <= band:
+            return "near", True
+        if prev_shortfall >= 0 and shortfall < prev_shortfall:
+            return "closing", True
+        return "unreachable", False
+
+    # Visit 0 of a sequence is the offer that CREATES the lock (never inherited,
+    # always kept by the pre-existing same-visit branch); visits 1+ are inherited
+    # and are the only ones the cap counts. History is recorded on every visit.
+    def run(shortfalls):
+        visits, prev, out = 0, -1, []
+        for i, shortfall in enumerate(shortfalls):
+            if i == 0:
+                prev = shortfall
+                continue
+            visits += 1
+            branch, keep = decide(visits, shortfall, prev)
+            prev = shortfall
+            out.append((branch, keep))
+            if not keep:
+                break
+        return out
+
+    # A permanently affordable-looking gun is STILL released: the cap fires at the
+    # cap-th inherited visit no matter how reachable the item looks.
+    forever = run([10] * 50)
+    assert len(forever) == cap
+    assert [keep for _, keep in forever] == [True] * (cap - 1) + [False]
+    assert forever[-1][0] == "cap"
+
+    # A steadily closing but never-near gun is also released at the cap -- and the
+    # "closing" branch is genuinely reachable, which it is not unless the first
+    # (lock-creating) visit already recorded a shortfall.
+    closing = run([10_000 - 100 * i for i in range(50)])
+    assert [branch for branch, _ in closing] == ["closing"] * (cap - 1) + ["cap"]
+    assert len(closing) == cap and closing[-1] == ("cap", False)
+
+    # The expire branch is reachable BEFORE the cap: a gun that is far away and
+    # getting further is released on its first inherited visit.
+    assert run([band + 1, band + 1]) == [("unreachable", False)]
+    assert run([band + 100, band + 200]) == [("unreachable", False)]
+
+    # The two motivating cases keep the lock at least one visit longer than today.
+    assert decide(1, 72, -1) == ("near", True)     # median minigun shortfall
+    assert decide(1, 91, -1) == ("near", True)     # best chain-gun shortfall
+    assert decide(1, 128, -1) == ("near", True)    # observed chain-gun trajectory

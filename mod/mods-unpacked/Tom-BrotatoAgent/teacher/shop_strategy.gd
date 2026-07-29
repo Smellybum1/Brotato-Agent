@@ -36,6 +36,18 @@ var _session_expired_lock_item_ids := {}
 var _session_lock_transition_counts := {}
 var _session_cycle_blocked_item_ids := {}
 
+# Dev flag, default FALSE = byte-identical to the shipped one-visit rare-gun lock
+# lifetime. When true, an inherited rare-gun lock is kept while the gun still
+# looks REACHABLE (see _rare_gun_lock_persist) instead of expiring after a single
+# visit. Set by the controller from agent_config.json.
+var rare_gun_lock_persist_enabled: bool = false
+# RUN-scoped rare-gun lock bookkeeping: item_id -> {visits, wave, shortfall,
+# prev_shortfall}. Deliberately NOT one of the _session_* dictionaries above --
+# those are cleared on every wave, so a visit counter kept there could never
+# exceed 1 and the cap would be meaningless. Written only when
+# rare_gun_lock_persist_enabled is true.
+var _run_rare_gun_lock_state := {}
+
 
 # ────────────────────────────── value helpers ─────────────────────────────────
 
@@ -952,6 +964,15 @@ func _rare_gun_action(items: Array, weapons: Array, build: Dictionary, profile,
 	var item_id := str(best.get("id", ""))
 	var price := int(best.get("price", 0))
 	var affordable := bool(best.get("affordable", false))
+	# Shortfall history is recorded on EVERY visit that offers this gun, not only
+	# on the visits where a lock is inherited. Recording it later would make the
+	# "shortfall strictly decreased" test unreachable: the first inherited visit
+	# would have no previous shortfall to compare against, and every later visit
+	# is only reached by having already passed the band test.
+	var persist := {}
+	if rare_gun_lock_persist_enabled:
+		persist = _rare_gun_lock_persist(item_id, price - gold, wave,
+			bool(best.get("locked", false)) and not _session_new_lock_item_ids.has(item_id))
 	if affordable and best.get("can_buy", true):
 		return {"type": "shop_buy", "slot": best["slot"], "score": best_score,
 			"item_id": item_id, "rare_gun": true}
@@ -971,6 +992,26 @@ func _rare_gun_action(items: Array, weapons: Array, build: Dictionary, profile,
 		if _session_new_lock_item_ids.has(item_id):
 			# The lock was created this visit: bank the remaining gold for it.
 			return {"type": "shop_go", "score": best_score, "rare_gun_saved": true}
+		if rare_gun_lock_persist_enabled:
+			# Reachability-based lifetime instead of the one-visit expiry. Every
+			# decision input travels on the returned action so a keep and an
+			# expire can be told apart in the archive without re-deriving them.
+			if bool(persist.get("keep", false)):
+				return {"type": "shop_go", "score": best_score,
+					"rare_gun_saved": true,
+					"rare_gun_lock_item_id": item_id,
+					"rare_gun_lock_branch": str(persist.get("branch", "")),
+					"rare_gun_lock_visits": int(persist.get("visits", 0)),
+					"rare_gun_lock_shortfall": int(persist.get("shortfall", 0)),
+					"rare_gun_lock_prev_shortfall": int(persist.get("prev_shortfall", -1))}
+			_session_expired_lock_item_ids[item_id] = true
+			return _guard_lock_transition({"type": "shop_unlock", "slot": best["slot"],
+				"score": best_score, "item_id": item_id, "lock_expired": true,
+				"rare_gun": true,
+				"rare_gun_lock_branch": str(persist.get("branch", "")),
+				"rare_gun_lock_visits": int(persist.get("visits", 0)),
+				"rare_gun_lock_shortfall": int(persist.get("shortfall", 0)),
+				"rare_gun_lock_prev_shortfall": int(persist.get("prev_shortfall", -1))})
 		# An inherited lock got its purchase/sale attempt and remains unreachable.
 		_session_expired_lock_item_ids[item_id] = true
 		return _guard_lock_transition({"type": "shop_unlock", "slot": best["slot"],
@@ -983,6 +1024,50 @@ func _rare_gun_action(items: Array, weapons: Array, build: Dictionary, profile,
 		return _guard_lock_transition({"type": "shop_lock", "slot": best["slot"],
 			"score": best_score, "item_id": item_id, "rare_gun": true})
 	return {}
+
+
+func _rare_gun_lock_persist(item_id: String, shortfall: int, wave: int,
+		inherited_lock: bool) -> Dictionary:
+	# Records this visit's shortfall and decides whether an INHERITED rare-gun
+	# lock survives another visit. Reached only when rare_gun_lock_persist_enabled
+	# is true, and called on EVERY visit that offers the gun so the previous
+	# visit's shortfall is always available.
+	#
+	# Two inputs, both per item id and per RUN: how many visits the lock has
+	# already survived, and the shortfall (price - gold) recorded at the previous
+	# visit. A gun is "reachable" when the shortfall is inside the configured band
+	# OR strictly decreased since the previous visit (the bank is closing).
+	var st: Dictionary = _run_rare_gun_lock_state.get(item_id, {})
+	var visits := int(st.get("visits", 0))
+	var prev_shortfall := int(st.get("prev_shortfall", -1))
+	if int(st.get("wave", -1)) != wave:
+		# First rare-gun decision of this visit: age the record exactly once, so a
+		# shop visit that asks several times cannot inflate the visit counter. The
+		# counter measures LOCK SURVIVAL, so it advances only on the visits where a
+		# lock was actually inherited.
+		prev_shortfall = int(st.get("shortfall", -1))
+		if inherited_lock:
+			visits += 1
+		st["visits"] = visits
+		st["wave"] = wave
+		st["prev_shortfall"] = prev_shortfall
+		st["shortfall"] = shortfall
+		_run_rare_gun_lock_state[item_id] = st
+	var branch := "unreachable"
+	var keep := false
+	if visits >= BotConfig.RARE_GUN_LOCK_MAX_VISITS:
+		# HARD BACKSTOP. Evaluated FIRST, in its own branch, and never combined
+		# with a reachability test: a lock that could persist forever would starve
+		# the rest of the shop for the remainder of the run.
+		branch = "cap"
+	elif shortfall <= BotConfig.RARE_GUN_LOCK_SHORTFALL_BAND:
+		branch = "near"
+		keep = true
+	elif prev_shortfall >= 0 and shortfall < prev_shortfall:
+		branch = "closing"
+		keep = true
+	return {"keep": keep, "branch": branch, "visits": visits,
+		"shortfall": shortfall, "prev_shortfall": prev_shortfall}
 
 
 func _offense_first_item_action(items: Array, build: Dictionary, profile,
@@ -1111,6 +1196,13 @@ func _try_tier_replace_sell(items: Array, weapons: Array, build: Dictionary, pro
 func _reset_session_if_new(state: Dictionary) -> void:
 	var w: int = state.get("wave", 0)
 	if _session_wave != w:
+		if w < _session_wave:
+			# The wave counter went BACKWARDS, i.e. a new run started in the same
+			# process. The rare-gun lock bookkeeping is run-scoped and is cleared
+			# here and nowhere else -- clearing it per wave would reset the visit
+			# counter that the cap is built on. Inert while the flag is off: the
+			# dictionary is never written in that case.
+			_run_rare_gun_lock_state = {}
 		_session_wave = w
 		_session_rerolls = 0
 		_session_surplus_rerolls = 0

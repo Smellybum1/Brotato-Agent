@@ -13,6 +13,30 @@ var started_at_ms: int = 0
 var summary: Dictionary = {}
 var _last_phase: String = ""
 
+# ── non-finite JSON guard ────────────────────────────────────────────────────
+# Godot's JSON.print() writes INF/NAN as the literals `1.#INF` / `-1.#IND`,
+# which are NOT valid JSON: every downstream reader raises on the line and
+# silently drops the WHOLE capture. Measured at 8-18% of wave-17 captures on
+# mods 0.2.53/0.2.54/0.2.55, whose desire instrument publishes `nearest_d` =
+# INF whenever no threat is in range.
+#
+# _append() is the ONLY place a telemetry line is serialized (emit and
+# emit_versioned both funnel through _emit_with_schema -> _append), so
+# sanitizing here fixes the CLASS of bug: no future instrument can reintroduce
+# it by publishing a raw INF.
+#
+# The mapping preserves sign and is unambiguous -- no real quantity in this
+# telemetry approaches 1e18, so a consumer can recognise a substituted value.
+const NONFINITE_POS := 1.0e18
+const NONFINITE_NEG := -1.0e18
+const NONFINITE_NAN := 0.0
+
+# Cumulative over the run; per-line count rides each line as `nonfinite_fixed`.
+# A SILENT repair is barely better than a silent drop, so the count travels
+# with the data rather than being inferred from the 1e18 sentinel.
+var nonfinite_total: int = 0
+var _nonfinite_fixed: int = 0
+
 func begin_run(meta: Dictionary) -> void:
 	run_id = str(meta.get("run_id", _make_run_id()))
 	seq = 0
@@ -23,6 +47,7 @@ func begin_run(meta: Dictionary) -> void:
 	var d = Directory.new()
 	d.make_dir_recursive(dir)
 	path = dir + "/events.jsonl"
+	nonfinite_total = 0
 	summary = {
 		"run_id": run_id,
 		"schema_version": SCHEMA_VERSION,
@@ -34,7 +59,7 @@ func begin_run(meta: Dictionary) -> void:
 		"endless": meta.get("endless", false),
 		"wave_retry": meta.get("wave_retry", false),
 		"game_version": meta.get("game_version", ""),
-		"mod_version": meta.get("mod_version", "0.2.54-wp2-capture"),
+		"mod_version": meta.get("mod_version", "0.2.57-wp2-capture"),
 		"config_id": meta.get("config_id", "well_rounded_d0_smg"),
 		# Which finale controller actually ran. policy_version cannot carry this:
 		# the flag lives in agent_config.json, so a v2 run and a v1 run of the
@@ -65,6 +90,15 @@ func begin_run(meta: Dictionary) -> void:
 		# Calm-enemy threat weight dose (float, 1.0 = inert). Same ALLOWLIST
 		# reasoning as above: omit the line and arm validation passes blind.
 		"calm_threat_mult": meta.get("calm_threat_mult", 1.0),
+		# Safety-tail calm-enemy doses (floats, 1.0 = inert). Same ALLOWLIST
+		# reasoning again: omit the line and arm validation passes blind.
+		"tail_calm_penalty_mult": meta.get("tail_calm_penalty_mult", 1.0),
+		"tail_calm_clearance_mult": meta.get("tail_calm_clearance_mult", 1.0),
+		# Rare-gun lock persistence arm (bool, false = the shipped one-visit
+		# lifetime). Same ALLOWLIST reasoning: omit the line and the arm never
+		# reaches the summary, so a shop-behaviour change would be invisible in
+		# the archive and arm validation would pass blind on every trial.
+		"rare_gun_lock_persist": meta.get("rare_gun_lock_persist", false),
 		# Movement handed to a human at the keyboard while the agent keeps shop
 		# and level-up control. This is the most behaviour-changing arm there is
 		# -- the movement policy is not running at all -- so a trial MUST record
@@ -166,7 +200,44 @@ func _update_summary(event_type: String, payload: Dictionary) -> void:
 			if payload.has("wave"):
 				summary["last_wave"] = int(payload.get("wave", summary.get("last_wave", 0)))
 
+func _sanitize(value):
+	# Returns a COPY with every non-finite float replaced, counting the
+	# substitutions in _nonfinite_fixed. Never mutates the argument: payloads are
+	# live controller/teacher state here, not copies, so an in-place repair would
+	# feed a 1e18 sentinel back into the policy's own inputs.
+	match typeof(value):
+		TYPE_REAL:
+			if is_nan(value):
+				_nonfinite_fixed += 1
+				return NONFINITE_NAN
+			if is_inf(value):
+				_nonfinite_fixed += 1
+				return NONFINITE_POS if value > 0.0 else NONFINITE_NEG
+			return value
+		TYPE_DICTIONARY:
+			var out := {}
+			for k in value.keys():
+				out[k] = _sanitize(value[k])
+			return out
+		TYPE_ARRAY:
+			var arr := []
+			for item in value:
+				arr.append(_sanitize(item))
+			return arr
+		TYPE_VECTOR2:
+			# JSON.print writes a Vector2 as a string, but a non-finite component
+			# still prints as 1.#INF inside that string and breaks the line.
+			return Vector2(float(_sanitize(value.x)), float(_sanitize(value.y)))
+	return value
+
 func _append(ev: Dictionary) -> void:
+	_nonfinite_fixed = 0
+	var safe: Dictionary = _sanitize(ev)
+	# Emitted ALWAYS, including 0. A field that appeared only when non-zero could
+	# not distinguish "the sanitizer ran and found nothing" from "this build has
+	# no sanitizer at all", which is the readback this instrument exists for.
+	safe["nonfinite_fixed"] = _nonfinite_fixed
+	nonfinite_total += _nonfinite_fixed
 	var f = File.new()
 	var err = f.open(path, File.READ_WRITE)
 	if err != OK:
@@ -175,14 +246,18 @@ func _append(ev: Dictionary) -> void:
 		write_failures += 1
 		return
 	f.seek_end()
-	f.store_line(JSON.print(ev))
+	f.store_line(JSON.print(safe))
 	f.close()
 
 func _write_summary() -> void:
 	var f = File.new()
 	var p = path.get_base_dir() + "/summary.json"
+	_nonfinite_fixed = 0
+	var safe: Dictionary = _sanitize(summary)
+	safe["nonfinite_fixed"] = _nonfinite_fixed
+	safe["nonfinite_total"] = nonfinite_total
 	if f.open(p, File.WRITE) == OK:
-		f.store_string(JSON.print(summary))
+		f.store_string(JSON.print(safe))
 		f.close()
 
 func _make_run_id() -> String:

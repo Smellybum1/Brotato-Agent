@@ -1,0 +1,41 @@
+# WP2 — HUMAN-labelled behaviour-cloning input mask (human_obs_v1)
+#
+# Identical observation encoding and identical input mask to bc_input_v1: the
+# student input MUST be the same 40 global features the deployed student sees,
+# or the dataset is useless for fine-tuning the existing checkpoint.
+#
+# The ONLY difference from bc_input_v1 is the LABEL. bc_input_v1 regresses onto
+# teacher_action_x/y, so the student reproduces the teacher including its
+# confinement defect by construction. Here the label is the human player's real
+# keyboard vector, stored as its own NPZ array (`human_action`, [N, 2]) rather
+# than as columns of the 48 encoder globals.
+schema_id: human_obs_v1
+observation_schema_hash: C653D836F3EBC821A51AFC70482D3772FC7B7B927D393A6B9BBADC2718BB9B2A
+
+# Excluded from the student input (8 features -> student global dim 40).
+# Byte-identical to configs/wp2/bc_input_v1.yaml. teacher_action_x/_y stay
+# excluded even though they are no longer the label: the student must not see
+# the teacher's intended action at inference time.
+excluded_global_features:
+  - teacher_action_x
+  - teacher_action_y
+  - teacher_enemy_count
+  - teacher_projectile_count
+  - finale_commit_distance
+  - finale_commit_ticks
+  - finale_commit_x
+  - finale_commit_y
+
+# Labels come from the shard array named here, NOT from the globals.
+label_source: human_action
+label_dim: 2
+
+# Per-row provenance columns carried through so training can ablate on them.
+#   human_aliased  - true when the human's input changed inside the 50 ms
+#                    capture interval (~15% of rows). Kept, never silently
+#                    dropped; whether they help is an empirical question.
+#   human_samples  - number of 60 Hz input samples in the interval (rows with 0
+#                    are dropped at build time: no label exists).
+row_flag_arrays:
+  - human_aliased
+  - human_samples

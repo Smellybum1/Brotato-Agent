@@ -58,11 +58,54 @@ class EncodedObservation:
         )
 
 
+CAPTURE_ACCEPT_FILENAME = "capture_schema_accept_v1.yaml"
+
+
+def load_capture_accept_list(schema_path: Path) -> tuple[str, ...]:
+    """Read the sibling capture-schema accept-list, if present.
+
+    Kept OUT of ``observation_v1.yaml`` on purpose: the observation schema hash
+    is ``sha256`` of that file's bytes and every frozen dataset manifest pins it,
+    so editing it (even a comment) would make those datasets unloadable.
+    Returns ``()`` when the file is absent -- callers fall back to the single
+    pinned ``source_capture_schema_hash``.
+    """
+    accept_path = schema_path.with_name(CAPTURE_ACCEPT_FILENAME)
+    if not accept_path.is_file():
+        return ()
+    data = yaml.safe_load(accept_path.read_text(encoding="utf-8"))
+    if not isinstance(data, dict):
+        raise ObservationError(f"{CAPTURE_ACCEPT_FILENAME} is not a mapping")
+    raw = data.get("accepted_source_capture_schema_hashes") or []
+    if not isinstance(raw, list):
+        raise ObservationError("accepted_source_capture_schema_hashes is not a list")
+    return tuple(str(item).upper() for item in raw)
+
+
+def accepted_capture_hashes(schema: dict[str, Any]) -> tuple[str, ...]:
+    """The capture-schema hashes this schema will encode.
+
+    Always includes the pinned ``source_capture_schema_hash`` (backward
+    compatibility for anything still reading that single key), plus any extra
+    hashes from the sibling accept-list. Never empty for a valid schema.
+    """
+    pinned = schema.get("source_capture_schema_hash")
+    out: list[str] = []
+    if pinned is not None:
+        out.append(str(pinned).upper())
+    for value in schema.get("_accepted_capture_schema_hashes", ()) or ():
+        value = str(value).upper()
+        if value not in out:
+            out.append(value)
+    return tuple(out)
+
+
 def load_schema(path: Path) -> dict[str, Any]:
     schema = yaml.safe_load(path.read_text(encoding="utf-8"))
     if not isinstance(schema, dict) or schema.get("schema_id") != "combat_obs_v1":
         raise ObservationError("expected combat_obs_v1 schema")
     schema["_schema_hash"] = hashlib.sha256(path.read_bytes()).hexdigest().upper()
+    schema["_accepted_capture_schema_hashes"] = load_capture_accept_list(path)
     return schema
 
 
@@ -242,7 +285,8 @@ def _global_values(payload: dict[str, Any], schema: dict[str, Any], temporal_val
 
 
 def encode_capture(payload: dict[str, Any], schema: dict[str, Any]) -> EncodedObservation:
-    if payload.get("capture_schema_hash") != schema.get("source_capture_schema_hash"):
+    got = payload.get("capture_schema_hash")
+    if got is None or str(got).upper() not in accepted_capture_hashes(schema):
         raise ObservationError("capture schema hash mismatch")
     for field in ("player", "arena", "teacher", "entities"):
         if not isinstance(payload.get(field), dict):

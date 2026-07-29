@@ -1,0 +1,57 @@
+# WP2 — HUMAN-labelled BC input mask, VELOCITY-MASKED (human_obs_v1, v2)
+#
+# WHY THIS FILE EXISTS: causal confusion.
+#
+# In a `human_movement` run the player's measured velocity IS the human's
+# keyboard vector, one control tick delayed. Measured on the val split:
+#     cos(player_v, human_action) = 0.9857
+#     copy-velocity 9-way agreement = 0.9190
+# and the v1 fine-tuned student scored 0.9210 — i.e. +0.0023 over trivially
+# echoing an input feature. The student was not learning the human's policy; it
+# was learning to pass through globals 6 and 7.
+#
+# The standard remedy for an observation feature that is a near-copy of the
+# action is to REMOVE it from the input. This config is human_bc_input_v1.yaml
+# with player_vx / player_vy additionally excluded.
+#
+# `player_vx` / `player_vy` are the ONLY velocity features in the 48-wide
+# encoder globals. `measured_vx` / `measured_vy` are not separate features:
+# encoder_v1._global_values reads
+#     player.get("measured_vx", player.get("vx", 0)) / speed
+# into `player_vx` (same for y). Masking the two names masks the whole channel.
+#
+# previous_action_x / _y (globals 17,18) STAY IN. They are the TEACHER's prior
+# command, not the human's: measured on the same val rows,
+#     cos(previous_action, human_action) = -0.0771
+#     cos(previous_action, teacher_action) = +0.8587
+# so previous_action tracks the teacher's intent and is not a leak channel for
+# the human label. It is retained deliberately.
+schema_id: human_obs_v1
+observation_schema_hash: C653D836F3EBC821A51AFC70482D3772FC7B7B927D393A6B9BBADC2718BB9B2A
+
+# Excluded from the student input (10 features -> student global dim 38).
+#   player_vx / player_vy .................. LABEL LEAK (this file's reason)
+#   teacher_action_x / _y .................. the teacher's action; the student
+#                                            must not see it at inference time
+#   teacher_enemy_count / _projectile_count  teacher internals
+#   finale_commit_* ........................ teacher displacement-commitment
+#                                            state, unavailable to a student
+excluded_global_features:
+  - player_vx
+  - player_vy
+  - teacher_action_x
+  - teacher_action_y
+  - teacher_enemy_count
+  - teacher_projectile_count
+  - finale_commit_distance
+  - finale_commit_ticks
+  - finale_commit_x
+  - finale_commit_y
+
+# Labels come from the shard array named here, NOT from the globals.
+label_source: human_action
+label_dim: 2
+
+row_flag_arrays:
+  - human_aliased
+  - human_samples

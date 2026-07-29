@@ -64,6 +64,9 @@ def _summary(**overrides):
         # Same reasoning as above: 1.0 is a legitimate dose, so a missing-key
         # fallback would let a stale build validate clean.
         "calm_threat_mult": 1.0,
+        # Safety-tail doses: same "absence is a failure" contract as above.
+        "tail_calm_penalty_mult": 1.0,
+        "tail_calm_clearance_mult": 1.0,
     }
     base.update(overrides)
     return base

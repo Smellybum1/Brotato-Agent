@@ -145,6 +145,29 @@ def _load_probe_capture_schema(schema_path: Path) -> dict:
     return data
 
 
+def _load_probe_accept_list(schema_path: Path) -> tuple[str, ...]:
+    """Sibling capture-schema accept-list for the torch-free probe path.
+
+    Mirrors ``encoder_v1.load_capture_accept_list`` without importing torch-heavy
+    modules; missing file => empty tuple => primary pin only.
+    """
+    import yaml
+
+    accept_path = schema_path.with_name("capture_schema_accept_v1.yaml")
+    if not accept_path.is_file():
+        return ()
+    try:
+        data = yaml.safe_load(accept_path.read_text(encoding="utf-8"))
+    except OSError as exc:
+        raise SidecarStartupError(f"accept-list unreadable: {exc}") from exc
+    if not isinstance(data, dict):
+        raise SidecarStartupError(f"accept-list is not a mapping: {accept_path}")
+    raw = data.get("accepted_source_capture_schema_hashes") or []
+    if not isinstance(raw, list):
+        raise SidecarStartupError("accepted_source_capture_schema_hashes is not a list")
+    return tuple(str(item).upper() for item in raw)
+
+
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
     if args.host not in ("127.0.0.1", "localhost"):
@@ -162,6 +185,7 @@ def main(argv: list[str] | None = None) -> int:
                 seed=args.probe_seed,
                 capture_schema_hash=str(schema["source_capture_schema_hash"]),
                 schema_id=str(schema.get("schema_id", "combat_obs_v1")),
+                accepted_capture_schema_hashes=_load_probe_accept_list(Path(args.schema)),
             )
         except SidecarStartupError as exc:
             print(f"startup error: {exc}", file=sys.stderr)

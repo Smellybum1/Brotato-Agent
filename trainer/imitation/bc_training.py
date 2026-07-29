@@ -427,10 +427,20 @@ class BCTrainer:
             iy = names.index(PREV_ACTION_Y_NAME)
         except ValueError as exc:
             raise BCTrainingError(f"prev-action feature missing from globals: {exc}")
-        if ix != 15 or iy != 16:
+        # The real invariant is that the two columns are resolved BY NAME and
+        # remain adjacent. The literal (15, 16) is the position under the
+        # 40-wide production mask (bc_input_v1); the velocity-masked human
+        # mask legitimately shifts them to (13, 14) because player_vx/vy sit
+        # before previous_action_x/y in the 48-wide schema order.
+        if iy != ix + 1:
             raise BCTrainingError(
-                f"prev_action indices must be (15, 16); got ({ix}, {iy}) — "
+                f"prev_action indices must be adjacent; got ({ix}, {iy}) — "
                 "feature order disagrees with the frozen schema"
+            )
+        if len(names) == 40 and ix != 15:
+            raise BCTrainingError(
+                f"prev_action indices must be (15, 16) under the 40-wide production "
+                f"mask; got ({ix}, {iy}) — feature order disagrees with the frozen schema"
             )
         self.prev_action_indices = (ix, iy)
         self.group_names = tuple(spec.name for spec in BCPolicyConfig().group_specs)

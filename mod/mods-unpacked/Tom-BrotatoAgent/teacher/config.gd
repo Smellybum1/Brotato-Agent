@@ -24,6 +24,24 @@ const RARE_GUN_MIN_TIERS := {
 	"weapon_chain_gun": 3,
 	"weapon_minigun": 2,
 }
+# Rare-gun lock lifetime under the `rare_gun_lock_persist` flag (default OFF; with
+# the flag off neither constant is read). Sized from 300 archived runs:
+#   minigun   169 qualifying offers in 70 runs -- shop_lock in 14 runs, shop_buy in
+#             21, but shop_unlock in 47. Median shortfall 72; 106/169 offers within
+#             150 of affordable; 29 already affordable.
+#   chain gun 19 offers in 5 runs, 0 affordable, 0 bought. BEST shortfall 91.
+# Band 150: it must exceed the chain gun's best shortfall of 91, or the flag would
+# be structurally inert for the weapon that motivates it, and it is exactly the
+# threshold at which 106/169 (63%) of minigun offers are still live. The median
+# minigun shortfall of 72 sits comfortably inside it.
+# Cap 3: today a lock survives exactly ONE visit. The observed chain-gun gold
+# trajectory in one run was 108 -> 711 -> 730 (128 short) -> 497 -> 406: the bank
+# peaks on the third visit and is already being spent back down afterwards, so a
+# fourth banked visit buys no reachability and only starves the rest of the shop
+# for another wave. This cap is a HARD backstop -- a lock can never persist for a
+# whole run.
+const RARE_GUN_LOCK_MAX_VISITS := 3
+const RARE_GUN_LOCK_SHORTFALL_BAND := 150
 # Soft penalties for non-priority guns (when priority wave is active).
 const EXPERIMENT_NON_PRIORITY_WEAPON_PENALTY := 10.0
 const EXPERIMENT_NEW_TRASH_FAMILY_PENALTY := 8.0

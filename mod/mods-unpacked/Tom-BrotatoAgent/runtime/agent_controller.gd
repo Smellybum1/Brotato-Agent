@@ -79,6 +79,18 @@ var engage_distance_scale: float = 1.0
 # Dev knob: threat weight applied to enemies that are NOT currently charging.
 # 1.0 (default) is exactly inert.
 var calm_threat_mult: float = 1.0
+# Dev knob: scale the safety tail's avoid/critical clearance thresholds for
+# enemies that are NOT currently charging. 1.0 (default) is exactly inert.
+var tail_calm_penalty_mult: float = 1.0
+# Dev knob: clearance credit for non-charging enemies inside the safety tail's
+# predictive body-clearance test. 1.0 (default) makes the credit exactly 0.0.
+var tail_calm_clearance_mult: float = 1.0
+# SHOP dev flag (not a movement knob): replace the rare-gun lock's one-visit
+# lifetime with a reachability test (shortfall inside a band, or a shortfall that
+# strictly decreased since the previous visit), capped at
+# BotConfig.RARE_GUN_LOCK_MAX_VISITS so a locked slot can never persist for a
+# whole run. Default false -- byte-identical to the shipped lifetime.
+var rare_gun_lock_persist: bool = false
 # Dev instrument, NOT a policy flag: hand MOVEMENT ONLY to a human at the keyboard
 # while the agent keeps shop, level-up and telemetry control. Measures movement
 # headroom on a build the agent itself produced, which no uptime proxy can do --
@@ -92,6 +104,22 @@ var calm_threat_mult: float = 1.0
 #
 # Inert when false: the seam returns runner.current_move_vector exactly as before.
 var human_movement: bool = false
+# ── human input label (only meaningful when human_movement is true) ───────────
+# During a handover run `teacher.action` is the AGENT's intended vector, not what
+# the human did, so a behaviour-cloning label had to be reconstructed from
+# player.measured_vx/vy -- a displacement derivative that blows up at low dt and
+# is 8-way quantized. These three fields carry the RAW keyboard vector instead,
+# fed by player_movement_behavior.gd via note_human_movement().
+#
+# get_movement() runs at physics rate (~60 Hz) and captures are ~20 Hz, so a
+# capture samples only the LATEST of ~3 inputs. `samples` and `all_identical`
+# exist so a consumer can tell "the human held one direction" from "we aliased
+# away two of three inputs" -- without them the label cannot be checked for
+# aliasing and is not trustworthy. Reset once per CAPTURE (not per recompute:
+# choose_movement runs every physics tick, which would pin samples at 1).
+var _human_move_latest: Vector2 = Vector2.ZERO
+var _human_move_samples: int = 0
+var _human_move_all_identical: bool = true
 # Previous-tick world positions, keyed by instance id, for finite-difference
 # velocity. These nodes DO expose `velocity` and it reads 0 -- their motion
 # comes from the parent Pivot's rotation, so reading the property would model
@@ -134,7 +162,7 @@ var policy_version: String = "teacher_v1-0.1.129-gun-wp1"
 # Single source of truth for the deployed mod identity: stamped into every run's
 # meta AND into the mod-ready sentinel, so the collector cannot accept a build
 # whose identity disagrees with what it asked for.
-const MOD_VERSION := "0.2.54-wp2-capture"
+const MOD_VERSION := "0.2.57-wp2-capture"
 const _MOD_READY_PATH := "user://brotato_agent/mod_ready.json"
 var last_move_debug: Dictionary = {}
 var last_meta_debug: Dictionary = {}
@@ -296,6 +324,10 @@ func _ready() -> void:
 		_field.finale_ring_radius_enabled = finale_ring_radius
 		_field.engage_distance_scale = engage_distance_scale
 		_field.calm_threat_mult = calm_threat_mult
+		_field.tail_calm_penalty_mult = tail_calm_penalty_mult
+		_field.tail_calm_clearance_mult = tail_calm_clearance_mult
+	if _shop != null:
+		_shop.rare_gun_lock_persist_enabled = rare_gun_lock_persist
 	if student_enabled:
 		_bridge = _COMBAT_BRIDGE_SCRIPT.new()
 		_bridge.name = "CombatBridge"
@@ -353,6 +385,9 @@ func _write_mod_ready() -> void:
 		"finale_ring_radius": finale_ring_radius,
 		"engage_distance_scale": engage_distance_scale,
 		"calm_threat_mult": calm_threat_mult,
+		"tail_calm_penalty_mult": tail_calm_penalty_mult,
+		"tail_calm_clearance_mult": tail_calm_clearance_mult,
+		"rare_gun_lock_persist": rare_gun_lock_persist,
 		"human_movement": human_movement,
 		"time_scale": time_scale,
 	}))
@@ -1014,6 +1049,12 @@ func _emit_wp2_combat_capture(main, state: Dictionary, teacher_action_fresh: boo
 		_wp2_previous_action = current_move_vector
 	_wp2_last_capture_player_pos = player_pos
 	_wp2_last_capture_ts_ms = now_ms
+	# Human-label counters are per CAPTURE INTERVAL, so they reset HERE and not in
+	# choose_movement (which runs ~3x per capture and would pin samples at 1). The
+	# block was built by choose_movement earlier on THIS tick, so what the capture
+	# carries is the interval that just closed.
+	_human_move_samples = 0
+	_human_move_all_identical = true
 	return payload
 
 
@@ -2230,6 +2271,14 @@ func choose_movement(combat_observation: Dictionary) -> Dictionary:
 	var desire_debug: Dictionary = {}
 	if _field.has_method("desire_debug"):
 		desire_debug = _field.desire_debug()
+	# Per-term decomposition of the safety tail's lane score plus the
+	# candidate-pool statistics. Same free-form debug bag, so no capture-schema
+	# or hash change. `seq` advances once per _best_finale_interior_lane call --
+	# that function does NOT run every tick, so a repeated seq means the block is
+	# stale, exactly as with desire above.
+	var tail_debug: Dictionary = {}
+	if _field.has_method("tail_debug"):
+		tail_debug = _field.tail_debug()
 	return {
 		"vector": vec,
 		"reason": "potential_field",
@@ -2240,6 +2289,11 @@ func choose_movement(combat_observation: Dictionary) -> Dictionary:
 			"finale_translation": translation_debug,
 			"loot_dash": loot_dash_debug,
 			"desire": desire_debug,
+			"tail": tail_debug,
+			# Raw human keyboard vector for the handover arm. Same free-form debug
+			# bag as desire/tail, so no capture-schema or hash change; capture path
+			# is teacher.contributions.human. Empty dict when human_movement is off.
+			"human": human_debug(),
 		},
 	}
 
@@ -2286,6 +2340,28 @@ func on_benchmark_activated(danger_value: int) -> void:
 	if _hud != null:
 		_hud.set_status("enabled", "true")
 		_hud.set_status("policy", policy_version)
+
+func note_human_movement(v: Vector2) -> void:
+	# Called from player_movement_behavior.gd at PHYSICS rate on the handover
+	# branch, with the keyboard vector it is about to return. Exact inequality is
+	# the right test: repeated identical input produces a bit-identical vector,
+	# so any difference here is a real input change, not float noise.
+	if _human_move_samples > 0 and v != _human_move_latest:
+		_human_move_all_identical = false
+	_human_move_latest = v
+	_human_move_samples += 1
+
+func human_debug() -> Dictionary:
+	# EMPTY unless the handover is armed. An agent vector must never be
+	# mistakable for a human label, so there is no zero-filled off-state.
+	if not human_movement:
+		return {}
+	return {
+		"x": _human_move_latest.x,
+		"y": _human_move_latest.y,
+		"samples": _human_move_samples,
+		"all_identical": _human_move_all_identical,
+	}
 
 func on_manual_override() -> void:
 	_restore_pre_combine_mouse_mode()
@@ -2347,6 +2423,9 @@ func _start_run() -> void:
 		"finale_ring_radius": finale_ring_radius,
 		"engage_distance_scale": engage_distance_scale,
 		"calm_threat_mult": calm_threat_mult,
+		"tail_calm_penalty_mult": tail_calm_penalty_mult,
+		"tail_calm_clearance_mult": tail_calm_clearance_mult,
+		"rare_gun_lock_persist": rare_gun_lock_persist,
 		"human_movement": human_movement,
 		"time_scale": time_scale,
 	}
@@ -2633,6 +2712,12 @@ func _load_auto_config() -> void:
 		engage_distance_scale = float(cfg["engage_distance_scale"])
 	if cfg.has("calm_threat_mult"):
 		calm_threat_mult = float(cfg["calm_threat_mult"])
+	if cfg.has("tail_calm_penalty_mult"):
+		tail_calm_penalty_mult = float(cfg["tail_calm_penalty_mult"])
+	if cfg.has("tail_calm_clearance_mult"):
+		tail_calm_clearance_mult = float(cfg["tail_calm_clearance_mult"])
+	if cfg.has("rare_gun_lock_persist"):
+		rare_gun_lock_persist = bool(cfg["rare_gun_lock_persist"])
 	if cfg.has("human_movement"):
 		human_movement = bool(cfg["human_movement"])
 

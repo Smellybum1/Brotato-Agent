@@ -100,9 +100,14 @@ def write_agent_config(
     finale_co_rotate: bool = False,
     finale_ring_radius: bool = False,
     human_movement: bool = False,
+    # SHOP arm: reachability-based rare-gun lock lifetime. Default False is the
+    # shipped one-visit lifetime.
+    rare_gun_lock_persist: bool = False,
     # Float dose, not a bool arm: 1.0 is the inert default.
     engage_distance_scale: float = 1.0,
     calm_threat_mult: float = 1.0,
+    tail_calm_penalty_mult: float = 1.0,
+    tail_calm_clearance_mult: float = 1.0,
 ) -> None:
     """Set auto_start/resume_from_save and the finale arm flags, PRESERVING other keys.
 
@@ -137,12 +142,19 @@ def write_agent_config(
     # finale arms: a stale True left behind by a takeover session would silently
     # record an agent trial as one the agent did not actually steer.
     payload["human_movement"] = human_movement
+    # Written EVERY time for the same reason as the arms above: a stale True left
+    # behind by an earlier campaign would silently change how the agent SHOPS,
+    # which changes the build a later trial plays.
+    payload["rare_gun_lock_persist"] = rare_gun_lock_persist
     # Written EVERY time for the same reason as the arms above: a stale non-1.0
     # dose left behind by an earlier campaign would silently shift the standoff.
     payload["engage_distance_scale"] = float(engage_distance_scale)
     # Same reasoning: written EVERY time so a stale calm-enemy dose cannot leak
     # into a later campaign that never asked for it.
     payload["calm_threat_mult"] = float(calm_threat_mult)
+    # Same reasoning again for the two safety-tail doses.
+    payload["tail_calm_penalty_mult"] = float(tail_calm_penalty_mult)
+    payload["tail_calm_clearance_mult"] = float(tail_calm_clearance_mult)
     atomic_json(path, payload)
 
 
@@ -208,8 +220,11 @@ def validate_trial(
     expected_finale_co_rotate: bool = False,
     expected_finale_ring_radius: bool = False,
     expected_human_movement: bool = False,
+    expected_rare_gun_lock_persist: bool = False,
     expected_engage_distance_scale: float = 1.0,
     expected_calm_threat_mult: float = 1.0,
+    expected_tail_calm_penalty_mult: float = 1.0,
+    expected_tail_calm_clearance_mult: float = 1.0,
     target_wave: int = 20,
 ) -> str:
     """Return "" when the trial is a valid finale observation, else a reason code.
@@ -284,6 +299,15 @@ def validate_trial(
         return f"finale_ring_radius_mismatch:{summary.get('finale_ring_radius')}"
     if bool(summary.get("human_movement", False)) != expected_human_movement:
         return f"human_movement_mismatch:{summary.get('human_movement')}"
+    # Bool arm, so the *_absent:stale_build treatment used for the float doses is
+    # deliberately NOT applied here: this change ships WITHOUT a MOD_VERSION bump,
+    # so the currently installed build has no such key and a fail-closed absence
+    # check would invalidate every control trial of an in-flight campaign. A
+    # missing key therefore reads as the shipped default (False), which is exactly
+    # the behaviour a build predating the flag has. The treatment arm still fails
+    # loudly on a stale build, because the requested True can never be recorded.
+    if bool(summary.get("rare_gun_lock_persist", False)) != expected_rare_gun_lock_persist:
+        return f"rare_gun_lock_persist_mismatch:{summary.get('rare_gun_lock_persist')}"
     # Float dose: compare with a tolerance, never with != on floats.
     #
     # ABSENCE IS A FAILURE, NOT A DEFAULT. Falling back to 1.0 when the key is
@@ -305,6 +329,28 @@ def validate_trial(
     recorded_calm = float(summary["calm_threat_mult"])
     if abs(recorded_calm - float(expected_calm_threat_mult)) > 1e-6:
         return f"calm_threat_mult_mismatch:{summary.get('calm_threat_mult')}"
+    # ABSENCE IS A FAILURE, NOT A DEFAULT -- identical reasoning again. NOTE for
+    # the operator: these two keys first exist in the build that ships the
+    # safety-tail knobs, so until that build is deployed EVERY trial invalidates
+    # with *_absent:stale_build. That is the intended fail-closed behaviour (the
+    # installed build and the harness must agree for a campaign's duration), not
+    # a silent pass.
+    if "tail_calm_penalty_mult" not in summary:
+        return "tail_calm_penalty_mult_absent:stale_build"
+    recorded_tail_penalty = float(summary["tail_calm_penalty_mult"])
+    if abs(recorded_tail_penalty - float(expected_tail_calm_penalty_mult)) > 1e-6:
+        return (
+            "tail_calm_penalty_mult_mismatch:"
+            f"{summary.get('tail_calm_penalty_mult')}"
+        )
+    if "tail_calm_clearance_mult" not in summary:
+        return "tail_calm_clearance_mult_absent:stale_build"
+    recorded_tail_clearance = float(summary["tail_calm_clearance_mult"])
+    if abs(recorded_tail_clearance - float(expected_tail_calm_clearance_mult)) > 1e-6:
+        return (
+            "tail_calm_clearance_mult_mismatch:"
+            f"{summary.get('tail_calm_clearance_mult')}"
+        )
     return ""
 
 
@@ -387,8 +433,11 @@ def run_trial(
         finale_co_rotate=args.finale_co_rotate,
         finale_ring_radius=args.finale_ring_radius,
         human_movement=args.human_movement,
+        rare_gun_lock_persist=args.rare_gun_lock_persist,
         engage_distance_scale=args.engage_distance_scale,
         calm_threat_mult=args.calm_threat_mult,
+        tail_calm_penalty_mult=args.tail_calm_penalty_mult,
+        tail_calm_clearance_mult=args.tail_calm_clearance_mult,
     )
 
     rd = runs_dir()
@@ -427,8 +476,11 @@ def run_trial(
         "finale_co_rotate": bool(args.finale_co_rotate),
         "finale_ring_radius": bool(args.finale_ring_radius),
         "human_movement": bool(args.human_movement),
+        "rare_gun_lock_persist": bool(args.rare_gun_lock_persist),
         "engage_distance_scale": float(args.engage_distance_scale),
         "calm_threat_mult": float(args.calm_threat_mult),
+        "tail_calm_penalty_mult": float(args.tail_calm_penalty_mult),
+        "tail_calm_clearance_mult": float(args.tail_calm_clearance_mult),
         # Which wave this trial measured; makes trials.jsonl self-describing.
         "target_wave": int(getattr(args, "target_wave", 20)),
         "fixture_file": fixture.name,
@@ -529,8 +581,11 @@ def run_trial(
             bool(args.finale_co_rotate),
             bool(args.finale_ring_radius),
             bool(args.human_movement),
+            expected_rare_gun_lock_persist=bool(args.rare_gun_lock_persist),
             expected_engage_distance_scale=float(args.engage_distance_scale),
             expected_calm_threat_mult=float(args.calm_threat_mult),
+            expected_tail_calm_penalty_mult=float(args.tail_calm_penalty_mult),
+            expected_tail_calm_clearance_mult=float(args.tail_calm_clearance_mult),
             target_wave=int(getattr(args, "target_wave", 20)),
         )
         row["valid"] = reason == ""
@@ -579,6 +634,18 @@ def main() -> int:
         ),
     )
     ap.add_argument(
+        "--rare-gun-lock-persist",
+        action="store_true",
+        help=(
+            "SHOP arm: keep a rare-gun shop lock while the gun still looks "
+            "REACHABLE (shortfall within RARE_GUN_LOCK_SHORTFALL_BAND, or a "
+            "shortfall that strictly decreased since the previous visit) instead "
+            "of expiring it after a single visit. Hard-capped at "
+            "RARE_GUN_LOCK_MAX_VISITS so a locked slot cannot persist for a run. "
+            "Off (default) is byte-identical to the shipped lifetime."
+        ),
+    )
+    ap.add_argument(
         "--engage-distance-scale",
         type=float,
         default=1.0,
@@ -597,6 +664,28 @@ def main() -> int:
             "(instantaneous speed <= CHARGE_RATIO_THRESH x their speed stat). "
             "Below 1.0 the agent closes on a walking enemy while a charging one "
             "keeps full weight. The default 1.0 is exactly inert."
+        ),
+    )
+    ap.add_argument(
+        "--tail-calm-penalty-mult",
+        type=float,
+        default=1.0,
+        help=(
+            "SAFETY TAIL knob: scale the avoid/critical clearance thresholds "
+            "applied to non-charging ENEMIES (never bosses) in the tail's enemy "
+            "path penalty. The default 1.0 is exactly inert."
+        ),
+    )
+    ap.add_argument(
+        "--tail-calm-clearance-mult",
+        type=float,
+        default=1.0,
+        help=(
+            "SAFETY TAIL knob: clearance credit granted to non-charging ENEMIES "
+            "in the predictive body-clearance test. Below 1.0 the credit is "
+            "positive, which INFLATES the returned clearance -- body-clearance "
+            "diagnostics are on a different scale in a dosed arm. Default 1.0 "
+            "makes the credit exactly 0.0."
         ),
     )
     args = ap.parse_args()
@@ -633,8 +722,11 @@ def main() -> int:
         f"finale_co_rotate={bool(args.finale_co_rotate)}, "
         f"finale_ring_radius={bool(args.finale_ring_radius)}, "
         f"human_movement={bool(args.human_movement)}, "
+        f"rare_gun_lock_persist={bool(args.rare_gun_lock_persist)}, "
         f"engage_distance_scale={float(args.engage_distance_scale)}, "
-        f"calm_threat_mult={float(args.calm_threat_mult)}"
+        f"calm_threat_mult={float(args.calm_threat_mult)}, "
+        f"tail_calm_penalty_mult={float(args.tail_calm_penalty_mult)}, "
+        f"tail_calm_clearance_mult={float(args.tail_calm_clearance_mult)}"
     )
     for path, digest in fixtures:
         print(f"  fixture {path.name} digest={digest}")
@@ -693,8 +785,11 @@ def main() -> int:
                 finale_co_rotate=False,
                 finale_ring_radius=False,
                 human_movement=False,
+                rare_gun_lock_persist=False,
                 engage_distance_scale=1.0,
                 calm_threat_mult=1.0,
+                tail_calm_penalty_mult=1.0,
+                tail_calm_clearance_mult=1.0,
             )
         except Exception as exc:  # noqa: BLE001
             print(f"WARNING: could not restore agent_config: {exc}", file=sys.stderr)
@@ -736,8 +831,11 @@ def main() -> int:
         f"finale_co_rotate={bool(args.finale_co_rotate)}, "
         f"finale_ring_radius={bool(args.finale_ring_radius)}, "
         f"human_movement={bool(args.human_movement)}, "
+        f"rare_gun_lock_persist={bool(args.rare_gun_lock_persist)}, "
         f"engage_distance_scale={float(args.engage_distance_scale)}, "
-        f"calm_threat_mult={float(args.calm_threat_mult)}"
+        f"calm_threat_mult={float(args.calm_threat_mult)}, "
+        f"tail_calm_penalty_mult={float(args.tail_calm_penalty_mult)}, "
+        f"tail_calm_clearance_mult={float(args.tail_calm_clearance_mult)}"
     )
     print(f"valid trials: {len(valid)}/{len(rows)}")
     if valid:

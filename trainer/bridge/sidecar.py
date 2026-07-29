@@ -86,6 +86,16 @@ class ServiceIdentity:
     registry_run_name: str
     source_capture_schema_hash: str
     backend: str = protocol.BACKEND_TORCH_CPU
+    # Extra capture-schema hashes accepted at handshake alongside the primary
+    # ``source_capture_schema_hash``. Empty tuple => primary only. The guard
+    # stays strict: anything outside this set is still rejected.
+    accepted_capture_schema_hashes: tuple[str, ...] = ()
+
+    def accepts_capture_hash(self, value: str) -> bool:
+        got = str(value).upper()
+        if got == str(self.source_capture_schema_hash).upper():
+            return True
+        return got in {str(h).upper() for h in self.accepted_capture_schema_hashes}
 
     def hello_ack(self, pid: int) -> dict[str, Any]:
         return protocol.build_hello_ack(
@@ -108,6 +118,7 @@ class ServiceIdentity:
             "normalization_sha256": self.normalization_sha256,
             "registry_run_name": self.registry_run_name,
             "source_capture_schema_hash": self.source_capture_schema_hash,
+            "accepted_capture_schema_hashes": list(self.accepted_capture_schema_hashes),
             "backend": self.backend,
         }
 
@@ -236,7 +247,7 @@ class TorchModelService(ModelService):
         from trainer.imitation.bc_training import _sha256_file, load_checkpoint
         from trainer.models.bc_policy_v1 import BCPolicyV1
         from trainer.observation import encoder_v1
-        from trainer.observation.encoder_v1 import ObservationError
+        from trainer.observation.encoder_v1 import ObservationError, accepted_capture_hashes
 
         try:
             registry = load_registry(registry_path)
@@ -298,6 +309,7 @@ class TorchModelService(ModelService):
             source_capture_schema_hash=str(schema["source_capture_schema_hash"]).upper()
             if schema.get("source_capture_schema_hash")
             else str(schema.get("source_capture_schema_hash")),
+            accepted_capture_schema_hashes=accepted_capture_hashes(schema),
         )
         return cls(
             model=model,
@@ -550,6 +562,7 @@ class ResidualProbeService(ModelService):
         seed: int,
         capture_schema_hash: str,
         schema_id: str = "combat_obs_v1",
+        accepted_capture_schema_hashes: tuple[str, ...] = (),
     ) -> None:
         # numpy only (no torch): deferred import keeps the module torch-free.
         import numpy as np
@@ -566,6 +579,9 @@ class ResidualProbeService(ModelService):
             normalization_sha256="residual-probe",
             registry_run_name=f"residual_probe_theta{self._theta_max_deg:g}_seed{self._seed}",
             source_capture_schema_hash=str(capture_schema_hash).upper(),
+            accepted_capture_schema_hashes=tuple(
+                str(h).upper() for h in accepted_capture_schema_hashes
+            ),
             backend=BACKEND_RESIDUAL_PROBE,
         )
 
@@ -946,7 +962,7 @@ class StudentSidecar:
 
         identity = self._service.identity
         got_capture = str(message.get("capture_schema_hash", "")).upper()
-        if got_capture != str(identity.source_capture_schema_hash).upper():
+        if not identity.accepts_capture_hash(got_capture):
             self._send(conn, protocol.build_error(seq=None, reason="capture_schema_hash_mismatch"))
             self._log_event("handshake_rejected", cause="capture_schema_hash_mismatch")
             return False

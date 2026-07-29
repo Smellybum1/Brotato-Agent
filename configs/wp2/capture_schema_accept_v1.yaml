@@ -1,0 +1,38 @@
+# Capture-schema ACCEPT-LIST for combat_obs_v1.
+#
+# WHY THIS IS A SEPARATE FILE
+# ---------------------------
+# ``encoder_v1.load_schema`` derives the observation schema hash as
+# ``sha256(observation_v1.yaml bytes)``, and every frozen dataset manifest
+# (datasets/combat_obs_v1/manifest.json, datasets/human_obs_v1, the dagger sets)
+# pins that value; ``trainer/data/bc_dataset.py`` hard-errors on a mismatch.
+# ANY byte added to observation_v1.yaml -- including a comment -- would change
+# the hash and make those datasets unloadable. So the accept-list lives here and
+# is merged into the schema dict at load time WITHOUT entering the hash.
+# ``observation_v1.yaml`` keeps ``source_capture_schema_hash`` unchanged as the
+# canonical/primary pin for everything that already reads it.
+#
+# WHY ACCEPTING BOTH HASHES IS SAFE
+# ---------------------------------
+# 95B64447... is the PRE-v127 capture schema; the frozen teacher dataset
+# datasets/combat_obs_v1 (388,067 samples) was captured under it.
+# 2823CB7E... is the v127+ capture schema the DEPLOYED mod sends. Without it in
+# the accept-list the sidecar handshake rejects the live mod with
+# ``capture_schema_hash_mismatch`` and every tick silently falls back to the
+# teacher -- a student that never serves looks exactly like a student that
+# learned nothing.
+#
+# The v127 change was purely ADDITIVE: ``player.materials``,
+# ``player.bonus_materials`` and ``entities.materials[].value``. The encoder
+# reads NONE of them -- ``materials`` appears only as a pre-existing entity-group
+# COUNT (encoder_v1.py, ``count_names``). This is proven empirically, not
+# asserted: ``scripts/wp2_verify_capture_accept_list.py`` strips those three
+# fields from real v127 captures, re-encodes, and requires an identical
+# ``canonical_digest``. See that script's output for the current run's numbers.
+#
+# The guard is NOT permissive in general: any hash outside this list is still
+# rejected by both ``encode_capture`` and the sidecar handshake.
+schema_id: combat_obs_v1
+accepted_source_capture_schema_hashes:
+  - 95B6444796A21FD44E94113B75BA2097BC381D5F72ED784F9B9A4A99DD46D951
+  - 2823CB7E7D6A6DDB7F805A76D0CD674BA7A2A908058771B66B4A8FEFF9BC1174
