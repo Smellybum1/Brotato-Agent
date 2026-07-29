@@ -72,6 +72,19 @@ var finale_co_rotate: bool = false
 # (~300 u). Also depends on finale_pivot_projectiles, and pairs with
 # finale_co_rotate -- direction without radius cannot outrun anything.
 var finale_ring_radius: bool = false
+# Dev instrument, NOT a policy flag: hand MOVEMENT ONLY to a human at the keyboard
+# while the agent keeps shop, level-up and telemetry control. Measures movement
+# headroom on a build the agent itself produced, which no uptime proxy can do --
+# the wave-17 uptime analysis refuted only the "enemies kept out of weapon range"
+# mechanism and never measured movement EXECUTION at all.
+#
+# Distinct from the pre-existing E-stop: any human input normally sets active=false
+# and disables the agent for the whole run (player_movement_behavior.gd), which
+# would hand over shopping too and confound the comparison. This flag suppresses
+# that takeover so ONLY the movement vector changes hands.
+#
+# Inert when false: the seam returns runner.current_move_vector exactly as before.
+var human_movement: bool = false
 # Previous-tick world positions, keyed by instance id, for finite-difference
 # velocity. These nodes DO expose `velocity` and it reads 0 -- their motion
 # comes from the parent Pivot's rotation, so reading the property would model
@@ -114,7 +127,7 @@ var policy_version: String = "teacher_v1-0.1.129-gun-wp1"
 # Single source of truth for the deployed mod identity: stamped into every run's
 # meta AND into the mod-ready sentinel, so the collector cannot accept a build
 # whose identity disagrees with what it asked for.
-const MOD_VERSION := "0.2.49-wp2-capture"
+const MOD_VERSION := "0.2.50-wp2-capture"
 const _MOD_READY_PATH := "user://brotato_agent/mod_ready.json"
 var last_move_debug: Dictionary = {}
 var last_meta_debug: Dictionary = {}
@@ -329,6 +342,7 @@ func _write_mod_ready() -> void:
 		"finale_pivot_projectiles": finale_pivot_projectiles,
 		"finale_co_rotate": finale_co_rotate,
 		"finale_ring_radius": finale_ring_radius,
+		"human_movement": human_movement,
 		"time_scale": time_scale,
 	}))
 	f.close()
@@ -2312,6 +2326,7 @@ func _start_run() -> void:
 		"finale_pivot_projectiles": finale_pivot_projectiles,
 		"finale_co_rotate": finale_co_rotate,
 		"finale_ring_radius": finale_ring_radius,
+		"human_movement": human_movement,
 		"time_scale": time_scale,
 	}
 	if _telem != null:
@@ -2593,6 +2608,8 @@ func _load_auto_config() -> void:
 		finale_co_rotate = bool(cfg["finale_co_rotate"])
 	if cfg.has("finale_ring_radius"):
 		finale_ring_radius = bool(cfg["finale_ring_radius"])
+	if cfg.has("human_movement"):
+		human_movement = bool(cfg["human_movement"])
 
 func _record_finale_range_sample(state) -> void:
 	# Same state the controller already passed to the field: one source of truth

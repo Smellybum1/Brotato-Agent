@@ -99,6 +99,7 @@ def write_agent_config(
     finale_pivot_projectiles: bool = True,
     finale_co_rotate: bool = False,
     finale_ring_radius: bool = False,
+    human_movement: bool = False,
 ) -> None:
     """Set auto_start/resume_from_save and the finale arm flags, PRESERVING other keys.
 
@@ -129,6 +130,10 @@ def write_agent_config(
     payload["finale_pivot_projectiles"] = finale_pivot_projectiles
     payload["finale_co_rotate"] = finale_co_rotate
     payload["finale_ring_radius"] = finale_ring_radius
+    # Movement handed to a human. Written EVERY time for the same reason as the
+    # finale arms: a stale True left behind by a takeover session would silently
+    # record an agent trial as one the agent did not actually steer.
+    payload["human_movement"] = human_movement
     atomic_json(path, payload)
 
 
@@ -193,6 +198,7 @@ def validate_trial(
     expected_finale_pivot_projectiles: bool = False,
     expected_finale_co_rotate: bool = False,
     expected_finale_ring_radius: bool = False,
+    expected_human_movement: bool = False,
     target_wave: int = 20,
 ) -> str:
     """Return "" when the trial is a valid finale observation, else a reason code.
@@ -265,6 +271,8 @@ def validate_trial(
         return f"finale_co_rotate_mismatch:{summary.get('finale_co_rotate')}"
     if bool(summary.get("finale_ring_radius", False)) != expected_finale_ring_radius:
         return f"finale_ring_radius_mismatch:{summary.get('finale_ring_radius')}"
+    if bool(summary.get("human_movement", False)) != expected_human_movement:
+        return f"human_movement_mismatch:{summary.get('human_movement')}"
     return ""
 
 
@@ -346,6 +354,7 @@ def run_trial(
         finale_pivot_projectiles=args.finale_pivot_projectiles,
         finale_co_rotate=args.finale_co_rotate,
         finale_ring_radius=args.finale_ring_radius,
+        human_movement=args.human_movement,
     )
 
     rd = runs_dir()
@@ -383,6 +392,7 @@ def run_trial(
         "finale_pivot_projectiles": bool(args.finale_pivot_projectiles),
         "finale_co_rotate": bool(args.finale_co_rotate),
         "finale_ring_radius": bool(args.finale_ring_radius),
+        "human_movement": bool(args.human_movement),
         # Which wave this trial measured; makes trials.jsonl self-describing.
         "target_wave": int(getattr(args, "target_wave", 20)),
         "fixture_file": fixture.name,
@@ -482,6 +492,7 @@ def run_trial(
             bool(args.finale_pivot_projectiles),
             bool(args.finale_co_rotate),
             bool(args.finale_ring_radius),
+            bool(args.human_movement),
             target_wave=int(getattr(args, "target_wave", 20)),
         )
         row["valid"] = reason == ""
@@ -520,6 +531,15 @@ def main() -> int:
                     help="disable the shipped default (control arms only)")
     ap.add_argument("--finale-co-rotate", action="store_true")
     ap.add_argument("--finale-ring-radius", action="store_true")
+    ap.add_argument(
+        "--human-movement",
+        action="store_true",
+        help=(
+            "Hand MOVEMENT ONLY to a human at the keyboard; the agent keeps shop "
+            "and level-up control. Dev instrument for measuring movement headroom "
+            "on a build the agent itself produced."
+        ),
+    )
     args = ap.parse_args()
 
     # Resolve the shipped default ONCE, here, so every downstream use (config
@@ -552,7 +572,8 @@ def main() -> int:
         f"finale_projectile_priority={bool(args.finale_projectile_priority)}, "
         f"finale_pivot_projectiles={bool(args.finale_pivot_projectiles)}, "
         f"finale_co_rotate={bool(args.finale_co_rotate)}, "
-        f"finale_ring_radius={bool(args.finale_ring_radius)}"
+        f"finale_ring_radius={bool(args.finale_ring_radius)}, "
+        f"human_movement={bool(args.human_movement)}"
     )
     for path, digest in fixtures:
         print(f"  fixture {path.name} digest={digest}")
@@ -610,6 +631,7 @@ def main() -> int:
                 finale_pivot_projectiles=True,
                 finale_co_rotate=False,
                 finale_ring_radius=False,
+                human_movement=False,
             )
         except Exception as exc:  # noqa: BLE001
             print(f"WARNING: could not restore agent_config: {exc}", file=sys.stderr)
@@ -649,7 +671,8 @@ def main() -> int:
         f"finale_projectile_priority={bool(args.finale_projectile_priority)}, "
         f"finale_pivot_projectiles={bool(args.finale_pivot_projectiles)}, "
         f"finale_co_rotate={bool(args.finale_co_rotate)}, "
-        f"finale_ring_radius={bool(args.finale_ring_radius)}"
+        f"finale_ring_radius={bool(args.finale_ring_radius)}, "
+        f"human_movement={bool(args.human_movement)}"
     )
     print(f"valid trials: {len(valid)}/{len(rows)}")
     if valid:

@@ -34,7 +34,7 @@ func begin_run(meta: Dictionary) -> void:
 		"endless": meta.get("endless", false),
 		"wave_retry": meta.get("wave_retry", false),
 		"game_version": meta.get("game_version", ""),
-		"mod_version": meta.get("mod_version", "0.2.49-wp2-capture"),
+		"mod_version": meta.get("mod_version", "0.2.50-wp2-capture"),
 		"config_id": meta.get("config_id", "well_rounded_d0_smg"),
 		# Which finale controller actually ran. policy_version cannot carry this:
 		# the flag lives in agent_config.json, so a v2 run and a v1 run of the
@@ -58,6 +58,13 @@ func begin_run(meta: Dictionary) -> void:
 		"finale_co_rotate": meta.get("finale_co_rotate", false),
 		# Ring-radius targeting. Behaviour-changing, so same reasoning again.
 		"finale_ring_radius": meta.get("finale_ring_radius", false),
+		# Movement handed to a human at the keyboard while the agent keeps shop
+		# and level-up control. This is the most behaviour-changing arm there is
+		# -- the movement policy is not running at all -- so a trial MUST record
+		# it or an agent trial and a takeover trial are indistinguishable in the
+		# archive. Same failure mode as the fixture-vs-full-run contamination
+		# that corrupted the headline win rate for weeks.
+		"human_movement": meta.get("human_movement", false),
 		# Direct proof of the rate that actually ran: the ratio is 1.0 for a
 		# full-rate arm and ~0.333 for the v1 1-in-3 schedule. Overwritten by
 		# end_run's extra dict; zeros here mean the run never reached wave 20.

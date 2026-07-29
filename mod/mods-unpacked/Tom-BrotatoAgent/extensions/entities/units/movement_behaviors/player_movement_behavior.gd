@@ -10,6 +10,16 @@ func get_movement() -> Vector2:
 	var runner := _get_bot_runner()
 	if runner == null or not runner.get("active"):
 		return human
+	# Movement-only handover (dev instrument). The agent stays ACTIVE -- it keeps
+	# shop, level-up, capture and telemetry control -- and only the movement
+	# vector comes from the keyboard. Without this branch the E-stop below fires
+	# on the first keypress and disables the agent for the whole run, handing
+	# over shopping too and confounding a movement comparison with a build one.
+	#
+	# `get()` on an absent property returns null in Godot 3, so an older runner
+	# without this flag falls through to the unchanged path rather than erroring.
+	if runner.get("human_movement"):
+		return human
 	if human.length() > 0.05:
 		runner.set("active", false)
 		if runner.has_method("on_manual_override"):
