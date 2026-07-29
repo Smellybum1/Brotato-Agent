@@ -158,7 +158,7 @@ def test_launch_preserves_healthy_profile(tmp_path: Path, monkeypatch):
 def test_summary_fault_accepts_clean_current_terminal_summary():
     summary = {
         "policy_version": "teacher_v1-0.1.129-gun-wp1",
-        "mod_version": "0.2.52-wp2-capture",
+        "mod_version": "0.2.53-wp2-capture",
         "telemetry_complete": True,
         "errors": 0,
         "hangs": 0,

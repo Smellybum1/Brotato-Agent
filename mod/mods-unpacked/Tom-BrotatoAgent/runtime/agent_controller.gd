@@ -131,7 +131,7 @@ var policy_version: String = "teacher_v1-0.1.129-gun-wp1"
 # Single source of truth for the deployed mod identity: stamped into every run's
 # meta AND into the mod-ready sentinel, so the collector cannot accept a build
 # whose identity disagrees with what it asked for.
-const MOD_VERSION := "0.2.52-wp2-capture"
+const MOD_VERSION := "0.2.53-wp2-capture"
 const _MOD_READY_PATH := "user://brotato_agent/mod_ready.json"
 var last_move_debug: Dictionary = {}
 var last_meta_debug: Dictionary = {}
@@ -2218,6 +2218,13 @@ func choose_movement(combat_observation: Dictionary) -> Dictionary:
 	var loot_dash_debug: Dictionary = {}
 	if _field.has_method("loot_dash_debug"):
 		loot_dash_debug = _field.loot_dash_debug()
+	# Per-term decomposition of the desire vector. Rides the same free-form debug
+	# bag as loot_dash, so it costs no capture-schema/hash change. `seq` advances
+	# once per _build_desire call — the finale and late-survival paths never call
+	# it, so a repeated seq means the block is stale, not that nothing moved.
+	var desire_debug: Dictionary = {}
+	if _field.has_method("desire_debug"):
+		desire_debug = _field.desire_debug()
 	return {
 		"vector": vec,
 		"reason": "potential_field",
@@ -2227,6 +2234,7 @@ func choose_movement(combat_observation: Dictionary) -> Dictionary:
 			"projectiles": combat_observation.get("projectiles", []).size(),
 			"finale_translation": translation_debug,
 			"loot_dash": loot_dash_debug,
+			"desire": desire_debug,
 		},
 	}
 

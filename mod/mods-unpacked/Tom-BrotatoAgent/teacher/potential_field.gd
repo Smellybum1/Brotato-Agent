@@ -439,6 +439,129 @@ func loot_dash_debug() -> Dictionary:
 	}
 
 
+# ───────────────────── desire decomposition (pure instrumentation) ─────────────
+# The standoff question: the agent parks at ~1.0x its shortest weapon range and two
+# dosed constants were both inert, so the term that actually holds it out is still
+# unidentified. _build_desire sums ~12 separately-computed vectors; only the
+# normalized total was ever observable. These record each term's RAW (x, y)
+# contribution for the tick so a consumer can project them onto arbitrary reference
+# directions offline (magnitudes alone cannot answer "which term pushes outward").
+#
+# Same discipline as the loot-dash block above: the 60 Hz path assigns plain floats
+# only, and desire_debug() builds the dict when a consumer asks. Every field is
+# zeroed at the top of _build_desire so a term whose branch did not run reads 0
+# rather than last tick's value.
+#
+# _desire_seq is ESSENTIAL: _build_desire is NOT called on the finale or
+# late-survival paths, so without it a consumer cannot distinguish a fresh
+# decomposition from a stale one. It advances once per _build_desire call.
+var _desire_seq := 0
+var _t_enemy_engagement_x := 0.0
+var _t_enemy_engagement_y := 0.0
+var _t_early_hunt_x := 0.0
+var _t_early_hunt_y := 0.0
+var _t_edge_kite_x := 0.0
+var _t_edge_kite_y := 0.0
+var _t_pack_density_x := 0.0
+var _t_pack_density_y := 0.0
+var _t_engage_strafe_x := 0.0
+var _t_engage_strafe_y := 0.0
+var _t_inward_damp_x := 0.0
+var _t_inward_damp_y := 0.0
+var _t_circling_x := 0.0
+var _t_circling_y := 0.0
+var _t_loot_x := 0.0
+var _t_loot_y := 0.0
+var _t_consumable_x := 0.0
+var _t_consumable_y := 0.0
+var _t_tree_x := 0.0
+var _t_tree_y := 0.0
+var _t_wall_x := 0.0
+var _t_wall_y := 0.0
+var _t_center_x := 0.0
+var _t_center_y := 0.0
+# enemy_engagement is recorded BEFORE the early-branch `force *= EARLY_LOOT_VS_HUNT`
+# rescale; _d_early_force_mult carries that multiplier (1.0 when it did not apply)
+# so the realised contribution is recoverable offline.
+var _d_early_force_mult := 1.0
+var _d_early := false
+var _d_edge_kite := false
+var _d_out_of_range := false
+var _d_at_weapon_range := false
+var _d_engage := 0.0
+var _d_weapon_max := 0.0
+var _d_nearest_d := 0.0
+var _d_total_x := 0.0
+var _d_total_y := 0.0
+
+
+func _reset_desire_debug() -> void:
+	_desire_seq += 1
+	_t_enemy_engagement_x = 0.0
+	_t_enemy_engagement_y = 0.0
+	_t_early_hunt_x = 0.0
+	_t_early_hunt_y = 0.0
+	_t_edge_kite_x = 0.0
+	_t_edge_kite_y = 0.0
+	_t_pack_density_x = 0.0
+	_t_pack_density_y = 0.0
+	_t_engage_strafe_x = 0.0
+	_t_engage_strafe_y = 0.0
+	_t_inward_damp_x = 0.0
+	_t_inward_damp_y = 0.0
+	_t_circling_x = 0.0
+	_t_circling_y = 0.0
+	_t_loot_x = 0.0
+	_t_loot_y = 0.0
+	_t_consumable_x = 0.0
+	_t_consumable_y = 0.0
+	_t_tree_x = 0.0
+	_t_tree_y = 0.0
+	_t_wall_x = 0.0
+	_t_wall_y = 0.0
+	_t_center_x = 0.0
+	_t_center_y = 0.0
+	_d_early_force_mult = 1.0
+	_d_early = false
+	_d_edge_kite = false
+	_d_out_of_range = false
+	_d_at_weapon_range = false
+	_d_engage = 0.0
+	_d_weapon_max = 0.0
+	_d_nearest_d = 0.0
+	_d_total_x = 0.0
+	_d_total_y = 0.0
+
+
+func desire_debug() -> Dictionary:
+	# Built only when a consumer calls it — the per-tick path assigns scalars only.
+	return {
+		"seq": _desire_seq,
+		"enemy_engagement": [_t_enemy_engagement_x, _t_enemy_engagement_y],
+		"early_hunt": [_t_early_hunt_x, _t_early_hunt_y],
+		"edge_kite": [_t_edge_kite_x, _t_edge_kite_y],
+		"pack_density": [_t_pack_density_x, _t_pack_density_y],
+		"engage_strafe": [_t_engage_strafe_x, _t_engage_strafe_y],
+		"inward_damp": [_t_inward_damp_x, _t_inward_damp_y],
+		"circling": [_t_circling_x, _t_circling_y],
+		"loot": [_t_loot_x, _t_loot_y],
+		"consumable": [_t_consumable_x, _t_consumable_y],
+		"tree": [_t_tree_x, _t_tree_y],
+		"wall": [_t_wall_x, _t_wall_y],
+		"center": [_t_center_x, _t_center_y],
+		"early_force_mult": _d_early_force_mult,
+		"early": _d_early,
+		"edge_kite_branch": _d_edge_kite,
+		"out_of_range": _d_out_of_range,
+		"at_weapon_range": _d_at_weapon_range,
+		"engage": _d_engage,
+		"weapon_max": _d_weapon_max,
+		"nearest_d": _d_nearest_d,
+		"total_x": _d_total_x,
+		"total_y": _d_total_y,
+	}
+
+
 func _best_loot_cluster(pos: Vector2, loot) -> Array:
 	# Returns [centroid, count] of the densest material cluster within the
 	# dash scan radius, or [Vector2.ZERO, 0].
@@ -1511,6 +1634,7 @@ func _effective_dash_window_clearance(wave: int) -> float:
 
 
 func _build_desire(pos, enemies, bosses, loot, consumables, trees, weapons, arena, profile, player, wave = 1) -> Vector2:
+	_reset_desire_debug()
 	var early = wave <= BotConfig.EARLY_HUNT_WAVE
 	var nearby = _count_nearby_enemies(pos, enemies, bosses)
 	var sparse = nearby <= BotConfig.SPARSE_LOOT_ENEMIES
@@ -1538,7 +1662,16 @@ func _build_desire(pos, enemies, bosses, loot, consumables, trees, weapons, aren
 	# verified INERT (scale 0.30 vs 2.00 moved the standoff 2.2%), which is why
 	# the dev knob is applied here as well.
 	var at_weapon_range = (not enemies.empty() or not bosses.empty()) and nearest_d <= weapon_max * 1.02 * engage_distance_scale
+	_d_early = early
+	_d_edge_kite = edge_kite
+	_d_out_of_range = out_of_range
+	_d_at_weapon_range = at_weapon_range
+	_d_engage = engage
+	_d_weapon_max = weapon_max
+	_d_nearest_d = nearest_d
 	var force = _enemy_engagement_force(pos, enemies, bosses, engage, profile, false, early, edge_kite)
+	_t_enemy_engagement_x = force.x
+	_t_enemy_engagement_y = force.y
 	var tree_focus = (wave <= BotConfig.TREE_PRIORITY_WAVE and not trees.empty()
 		and nearby <= BotConfig.SPARSE_LOOT_ENEMIES)
 	if early:
@@ -1549,19 +1682,34 @@ func _build_desire(pos, enemies, bosses, loot, consumables, trees, weapons, aren
 		if loot_safe:
 			hunt *= BotConfig.EARLY_LOOT_HUNT_SCALE
 			force *= BotConfig.EARLY_LOOT_VS_HUNT
+			_d_early_force_mult = BotConfig.EARLY_LOOT_VS_HUNT
 		# Yield hunt toward trees so we chop them while farming waves 1–10.
 		if tree_focus:
 			hunt *= BotConfig.TREE_HUNT_YIELD
+		_t_early_hunt_x = hunt.x
+		_t_early_hunt_y = hunt.y
 		force += hunt
 	elif edge_kite:
-		force += _edge_kite_force(pos, enemies, bosses, arena, loot, wave)
-		force += (_pack_density_repulsion(pos, enemies, bosses)
+		var ek = _edge_kite_force(pos, enemies, bosses, arena, loot, wave)
+		_t_edge_kite_x = ek.x
+		_t_edge_kite_y = ek.y
+		force += ek
+		var pd_edge = (_pack_density_repulsion(pos, enemies, bosses)
 			* BotConfig.EDGE_PACK_SHOVE * _strength_pack_mult())
+		_t_pack_density_x = pd_edge.x
+		_t_pack_density_y = pd_edge.y
+		force += pd_edge
 	elif not out_of_range:
 		# Only shove off dense packs once already in DPS range.
-		force += _pack_density_repulsion(pos, enemies, bosses) * _strength_pack_mult()
+		var pd = _pack_density_repulsion(pos, enemies, bosses) * _strength_pack_mult()
+		_t_pack_density_x = pd.x
+		_t_pack_density_y = pd.y
+		force += pd
 	if at_weapon_range and not edge_kite:
-		force += _engage_strafe_force(pos, enemies, bosses, arena, nearest_d, loot, wave)
+		var strafe = _engage_strafe_force(pos, enemies, bosses, arena, nearest_d, loot, wave)
+		_t_engage_strafe_x = strafe.x
+		_t_engage_strafe_y = strafe.y
+		force += strafe
 		# Kill residual charge into the pack once inside weapon max range.
 		var nearest_target = _nearest_threat_pos(pos, enemies, bosses)
 		if nearest_target != null:
@@ -1570,7 +1718,12 @@ func _build_desire(pos, enemies, bosses, loot, consumables, trees, weapons, aren
 			var dir_in = to_enemy / td
 			var inward = force.dot(dir_in)
 			if inward > 0.0:
-				force -= dir_in * inward * (1.0 - BotConfig.ENGAGE_STRAFE_INWARD_DAMP)
+				var damp = dir_in * inward * (1.0 - BotConfig.ENGAGE_STRAFE_INWARD_DAMP)
+				# Recorded SIGNED, as the vector actually subtracted, so it sums
+				# with the other terms rather than needing a sign convention.
+				_t_inward_damp_x = -damp.x
+				_t_inward_damp_y = -damp.y
+				force -= damp
 	elif force.length() > 0.01:
 		var perp = Vector2(-force.y, force.x)
 		var circle = BotConfig.CIRCLING_STRENGTH
@@ -1578,23 +1731,49 @@ func _build_desire(pos, enemies, bosses, loot, consumables, trees, weapons, aren
 			circle *= 0.35
 		elif edge_kite:
 			circle *= 1.60
-		force += perp * circle
+		var circ = perp * circle
+		_t_circling_x = circ.x
+		_t_circling_y = circ.y
+		force += circ
 	# During edge-kite, deprioritize loot vacuum so we don't run through the pack.
 	if not edge_kite:
-		force += _loot_attraction(pos, enemies, bosses, loot, wave)
-		force += _consumable_attraction(pos, consumables, player, enemies, bosses, wave)
-		force += _tree_attraction(pos, enemies, bosses, trees, wave)
+		var lf = _loot_attraction(pos, enemies, bosses, loot, wave)
+		_t_loot_x = lf.x
+		_t_loot_y = lf.y
+		force += lf
+		var cf = _consumable_attraction(pos, consumables, player, enemies, bosses, wave)
+		_t_consumable_x = cf.x
+		_t_consumable_y = cf.y
+		force += cf
+		var tf = _tree_attraction(pos, enemies, bosses, trees, wave)
+		_t_tree_x = tf.x
+		_t_tree_y = tf.y
+		force += tf
 	else:
 		# Still grab nearby crates/boxes if safe; skip gold vacuum mid-swarm.
-		force += _consumable_attraction(pos, consumables, player, enemies, bosses, wave) * 0.45
+		var cf_edge = _consumable_attraction(pos, consumables, player, enemies, bosses, wave) * 0.45
+		_t_consumable_x = cf_edge.x
+		_t_consumable_y = cf_edge.y
+		force += cf_edge
 	# Soften wall shove while intentionally skating the rail.
 	if edge_kite:
-		force += _wall_repulsion(pos, arena) * 0.35
+		var wf_edge = _wall_repulsion(pos, arena) * 0.35
+		_t_wall_x = wf_edge.x
+		_t_wall_y = wf_edge.y
+		force += wf_edge
 	else:
-		force += _wall_repulsion(pos, arena)
+		var wf = _wall_repulsion(pos, arena)
+		_t_wall_x = wf.x
+		_t_wall_y = wf.y
+		force += wf
 	# Don't center-hug while out of range or edge-kiting late swarms.
 	if not edge_kite and not out_of_range and not (early and (not loot.empty() or not enemies.empty())):
-		force += _center_pull(pos, arena, enemies, bosses)
+		var cp = _center_pull(pos, arena, enemies, bosses)
+		_t_center_x = cp.x
+		_t_center_y = cp.y
+		force += cp
+	_d_total_x = force.x
+	_d_total_y = force.y
 	return _normalize(force)
 
 
