@@ -61,6 +61,9 @@ def _summary(**overrides):
         # cannot report the dose validate clean on every control arm. A valid
         # summary must carry it, so the fixture carries it too.
         "engage_distance_scale": 1.0,
+        # Same reasoning as above: 1.0 is a legitimate dose, so a missing-key
+        # fallback would let a stale build validate clean.
+        "calm_threat_mult": 1.0,
     }
     base.update(overrides)
     return base

@@ -370,6 +370,11 @@ const BULL_CLUSTER_RADIUS := 250.0
 
 # ── Movement smoothing & misc ──────────────────────────────────────────────────
 const BOSS_WEIGHT := 2.5
+# An enemy is CHARGING when its instantaneous speed exceeds its own speed stat by
+# this factor. Measured wave-17: `pursuer` sits at median 1.38 / p99 2.91 and is the
+# ONLY type that ever exceeds 1.0; every other type is exactly 1.00 with zero
+# variance. 1.5 matches the threshold the offline analysis used.
+const CHARGE_RATIO_THRESH := 1.5
 const MOVE_SMOOTHING := 0.30
 
 # ── Stop-and-shoot (Soldier) ───────────────────────────────────────────────────

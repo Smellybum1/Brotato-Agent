@@ -75,6 +75,10 @@ var finale_ring_radius_enabled: bool = false
 # scale. Larger holds farther from enemies, smaller closes in. Pure multiplier,
 # so 1.0 is exactly inert -- no clamp or floor is added here on purpose.
 var engage_distance_scale: float = 1.0
+# Dev knob: threat weight applied to enemies that are NOT currently charging.
+# 1.0 (default) is exactly inert. Below 1.0 the agent respects a walking enemy
+# less and can close on it, while a charging enemy keeps full weight.
+var calm_threat_mult: float = 1.0
 
 
 func compute_movement(state, profile) -> Vector2:
@@ -2094,7 +2098,18 @@ func _enemy_engagement_force(pos, enemies, bosses, engage, profile, flee_only, e
 	var nearest_target = Vector2.ZERO
 	var threats = []
 	for e in enemies:
-		threats.append([e, 1.0])
+		var w := 1.0
+		if calm_threat_mult != 1.0:
+			# DEFENSIVE: two state builders exist. agent_controller's rich
+			# observation (the live path) carries vx/vy; game_adapter's does NOT.
+			# Treat a missing velocity as CHARGING so an absent signal never makes
+			# the agent bolder than the shipped policy.
+			if e.has("vx") and e.has("vy"):
+				var esp := float(e.get("speed", 0.0))
+				var ev := Vector2(float(e.get("vx", 0.0)), float(e.get("vy", 0.0))).length()
+				if esp > 0.0 and ev / esp <= BotConfig.CHARGE_RATIO_THRESH:
+					w = calm_threat_mult
+		threats.append([e, w])
 	for b in bosses:
 		threats.append([b, BotConfig.BOSS_WEIGHT])
 	var caution = max(float(profile.dodge_caution), 0.5)

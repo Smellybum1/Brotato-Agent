@@ -102,6 +102,7 @@ def write_agent_config(
     human_movement: bool = False,
     # Float dose, not a bool arm: 1.0 is the inert default.
     engage_distance_scale: float = 1.0,
+    calm_threat_mult: float = 1.0,
 ) -> None:
     """Set auto_start/resume_from_save and the finale arm flags, PRESERVING other keys.
 
@@ -139,6 +140,9 @@ def write_agent_config(
     # Written EVERY time for the same reason as the arms above: a stale non-1.0
     # dose left behind by an earlier campaign would silently shift the standoff.
     payload["engage_distance_scale"] = float(engage_distance_scale)
+    # Same reasoning: written EVERY time so a stale calm-enemy dose cannot leak
+    # into a later campaign that never asked for it.
+    payload["calm_threat_mult"] = float(calm_threat_mult)
     atomic_json(path, payload)
 
 
@@ -205,6 +209,7 @@ def validate_trial(
     expected_finale_ring_radius: bool = False,
     expected_human_movement: bool = False,
     expected_engage_distance_scale: float = 1.0,
+    expected_calm_threat_mult: float = 1.0,
     target_wave: int = 20,
 ) -> str:
     """Return "" when the trial is a valid finale observation, else a reason code.
@@ -292,6 +297,14 @@ def validate_trial(
     recorded_scale = float(summary["engage_distance_scale"])
     if abs(recorded_scale - float(expected_engage_distance_scale)) > 1e-6:
         return f"engage_distance_scale_mismatch:{summary.get('engage_distance_scale')}"
+    # ABSENCE IS A FAILURE, NOT A DEFAULT -- identical reasoning to the block
+    # above: 1.0 is a legitimate dose, so a missing-key fallback would let a
+    # build predating this flag validate clean on every control arm.
+    if "calm_threat_mult" not in summary:
+        return "calm_threat_mult_absent:stale_build"
+    recorded_calm = float(summary["calm_threat_mult"])
+    if abs(recorded_calm - float(expected_calm_threat_mult)) > 1e-6:
+        return f"calm_threat_mult_mismatch:{summary.get('calm_threat_mult')}"
     return ""
 
 
@@ -375,6 +388,7 @@ def run_trial(
         finale_ring_radius=args.finale_ring_radius,
         human_movement=args.human_movement,
         engage_distance_scale=args.engage_distance_scale,
+        calm_threat_mult=args.calm_threat_mult,
     )
 
     rd = runs_dir()
@@ -414,6 +428,7 @@ def run_trial(
         "finale_ring_radius": bool(args.finale_ring_radius),
         "human_movement": bool(args.human_movement),
         "engage_distance_scale": float(args.engage_distance_scale),
+        "calm_threat_mult": float(args.calm_threat_mult),
         # Which wave this trial measured; makes trials.jsonl self-describing.
         "target_wave": int(getattr(args, "target_wave", 20)),
         "fixture_file": fixture.name,
@@ -515,6 +530,7 @@ def run_trial(
             bool(args.finale_ring_radius),
             bool(args.human_movement),
             expected_engage_distance_scale=float(args.engage_distance_scale),
+            expected_calm_threat_mult=float(args.calm_threat_mult),
             target_wave=int(getattr(args, "target_wave", 20)),
         )
         row["valid"] = reason == ""
@@ -572,6 +588,17 @@ def main() -> int:
             "the default 1.0 is exactly inert."
         ),
     )
+    ap.add_argument(
+        "--calm-threat-mult",
+        type=float,
+        default=1.0,
+        help=(
+            "Threat weight applied to enemies that are NOT currently charging "
+            "(instantaneous speed <= CHARGE_RATIO_THRESH x their speed stat). "
+            "Below 1.0 the agent closes on a walking enemy while a charging one "
+            "keeps full weight. The default 1.0 is exactly inert."
+        ),
+    )
     args = ap.parse_args()
 
     # Resolve the shipped default ONCE, here, so every downstream use (config
@@ -606,7 +633,8 @@ def main() -> int:
         f"finale_co_rotate={bool(args.finale_co_rotate)}, "
         f"finale_ring_radius={bool(args.finale_ring_radius)}, "
         f"human_movement={bool(args.human_movement)}, "
-        f"engage_distance_scale={float(args.engage_distance_scale)}"
+        f"engage_distance_scale={float(args.engage_distance_scale)}, "
+        f"calm_threat_mult={float(args.calm_threat_mult)}"
     )
     for path, digest in fixtures:
         print(f"  fixture {path.name} digest={digest}")
@@ -666,6 +694,7 @@ def main() -> int:
                 finale_ring_radius=False,
                 human_movement=False,
                 engage_distance_scale=1.0,
+                calm_threat_mult=1.0,
             )
         except Exception as exc:  # noqa: BLE001
             print(f"WARNING: could not restore agent_config: {exc}", file=sys.stderr)
@@ -707,7 +736,8 @@ def main() -> int:
         f"finale_co_rotate={bool(args.finale_co_rotate)}, "
         f"finale_ring_radius={bool(args.finale_ring_radius)}, "
         f"human_movement={bool(args.human_movement)}, "
-        f"engage_distance_scale={float(args.engage_distance_scale)}"
+        f"engage_distance_scale={float(args.engage_distance_scale)}, "
+        f"calm_threat_mult={float(args.calm_threat_mult)}"
     )
     print(f"valid trials: {len(valid)}/{len(rows)}")
     if valid:
