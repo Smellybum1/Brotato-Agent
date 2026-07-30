@@ -55,11 +55,16 @@ func begin_run(meta: Dictionary) -> void:
 		"start_timestamp": _iso_now(),
 		"character": meta.get("character", ""),
 		"weapon": meta.get("weapon", ""),
-		"danger": meta.get("danger", 0),
+		# OBSERVED danger, read from the game by the caller. Default -1, never 0:
+		# a 0 meaning "unknown" is indistinguishable from a genuine Danger 0 run.
+		"danger": meta.get("danger", -1),
+		# What was ASKED for, so a mismatch is visible in the summary alone. This
+		# dict is an allowlist -- a key absent here is silently dropped.
+		"requested_danger": meta.get("requested_danger", -1),
 		"endless": meta.get("endless", false),
 		"wave_retry": meta.get("wave_retry", false),
 		"game_version": meta.get("game_version", ""),
-		"mod_version": meta.get("mod_version", "0.2.57-wp2-capture"),
+		"mod_version": meta.get("mod_version", "0.2.59-wp2-capture"),
 		"config_id": meta.get("config_id", "well_rounded_d0_smg"),
 		# Which finale controller actually ran. policy_version cannot carry this:
 		# the flag lives in agent_config.json, so a v2 run and a v1 run of the

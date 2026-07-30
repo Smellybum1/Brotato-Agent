@@ -48,7 +48,7 @@ func _load_icon() -> Texture:
 	return null
 
 func _on_bot_button_pressed() -> void:
-	_activate_and_select_danger(0)
+	_activate_and_select_danger(_requested_danger())
 
 func _maybe_auto_start() -> void:
 	if _auto_attempted or difficulty_selected:
@@ -59,21 +59,40 @@ func _maybe_auto_start() -> void:
 	# Auto when agent flag set (batch / config).
 	if runner.get("auto_start_benchmark") == true and runner.get("active") != true:
 		_auto_attempted = true
-		_activate_and_select_danger(0)
+		_activate_and_select_danger(_requested_danger())
+
+func _requested_danger() -> int:
+	# The configured danger, NOT a literal. Both call sites above used to pass a
+	# hardcoded 0, which silently discarded agent_config.json's `danger` key --
+	# so every run ever recorded was Danger 0 regardless of what was requested.
+	var runner = _find_bot_runner()
+	if runner != null and runner.has_method("get_requested_danger"):
+		return int(runner.get_requested_danger())
+	printerr("[%s] cannot read requested danger; refusing to guess" % LOG_NAME)
+	return -1
 
 func _activate_and_select_danger(danger_value: int) -> void:
 	if difficulty_selected:
 		return
-	var runner = _find_bot_runner()
-	if runner != null:
-		runner.set("active", true)
-		if runner.has_method("on_benchmark_activated"):
-			runner.on_benchmark_activated(danger_value)
-	else:
-		printerr("[%s] BotRunner not found" % LOG_NAME)
+	# FAIL CLOSED. Resolve the target element BEFORE switching the agent on: if
+	# the requested difficulty is not selectable we must not start at a
+	# different one. A run that quietly begins at Danger 0 when Danger 5 was
+	# requested looks completely valid and measures the wrong game.
+	if danger_value < 0:
+		printerr("[%s] requested danger unavailable - REFUSING to start" % LOG_NAME)
+		return
 	var el = _find_difficulty_element(danger_value)
-	if el != null:
-		_on_element_pressed(el, 0)
+	if el == null:
+		printerr("[%s] danger %d is not selectable (locked or absent) - REFUSING to start" % [LOG_NAME, danger_value])
+		return
+	var runner = _find_bot_runner()
+	if runner == null:
+		printerr("[%s] BotRunner not found - REFUSING to start" % LOG_NAME)
+		return
+	runner.set("active", true)
+	if runner.has_method("on_benchmark_activated"):
+		runner.on_benchmark_activated(danger_value)
+	_on_element_pressed(el, 0)
 
 func _find_bot_runner() -> Node:
 	var root := get_tree().get_root()

@@ -162,7 +162,7 @@ var policy_version: String = "teacher_v1-0.1.129-gun-wp1"
 # Single source of truth for the deployed mod identity: stamped into every run's
 # meta AND into the mod-ready sentinel, so the collector cannot accept a build
 # whose identity disagrees with what it asked for.
-const MOD_VERSION := "0.2.57-wp2-capture"
+const MOD_VERSION := "0.2.59-wp2-capture"
 const _MOD_READY_PATH := "user://brotato_agent/mod_ready.json"
 var last_move_debug: Dictionary = {}
 var last_meta_debug: Dictionary = {}
@@ -611,6 +611,16 @@ func _handle_combat(main) -> void:
 			0.0, 2.0)
 		_build_strength = _build_strength * 0.75 + strength_raw * 0.25
 		_update_build_metrics_hud(build_metrics)
+		# AUTHORITATIVE difficulty readback, latched on the first combat tick.
+		# It cannot be taken at _start_run(): on_benchmark_activated() starts the
+		# run BEFORE difficulty_selection presses the difficulty element, so an
+		# early read returns the pre-selection value and reports a false mismatch.
+		# Observed once in the first Danger 5 smoke: the event said
+		# observed_danger 0 while the save already said current_difficulty 5.
+		if not _danger_latched and _telem != null:
+			_danger_latched = true
+			_danger_observed_latched = observed_danger()
+			_telem.emit("difficulty_readback", difficulty_readback())
 		if _telem != null:
 			_telem.emit("combat_tick", {
 				"wave": state.get("wave", 0),
@@ -2323,6 +2333,59 @@ func choose_meta_action(run_observation: Dictionary, legal_actions) -> Dictionar
 		"profile": profile.name if profile != null else "",
 	}
 
+var _danger_latched: bool = false
+var _danger_observed_latched: int = -1
+
+
+func get_requested_danger() -> int:
+	# The danger the OPERATOR asked for, from agent_config.json via the
+	# orchestrator. difficulty_selection.gd needs this: it used to pass a
+	# hardcoded 0, which silently discarded the configured value.
+	if _orch == null:
+		return 0
+	return int(_orch.target_danger)
+
+
+func observed_danger() -> int:
+	# The danger the GAME reports, read live. Never the requested value.
+	# Returns -1 when it cannot be read, which must be treated as a failure and
+	# never coerced to 0 -- a 0 that means "unknown" is indistinguishable from a
+	# genuine Danger 0 run, and that is exactly how the record came to contain
+	# 1,873 runs whose `danger` field was a hardcoded literal.
+	if RunData == null:
+		return -1
+	if RunData.get("current_difficulty") != null:
+		return int(RunData.current_difficulty)
+	if RunData.get("difficulty") != null:
+		return int(RunData.difficulty)
+	return -1
+
+
+func difficulty_readback() -> Dictionary:
+	# Everything needed to prove which difficulty actually ran. Emitted as its
+	# own telemetry event AND folded into the run summary, because a campaign
+	# that cannot prove its own arm measures nothing.
+	var requested = get_requested_danger()
+	var observed = observed_danger()
+	var out = {
+		"requested_danger": requested,
+		"observed_danger": observed,
+		"danger_ok": observed == requested,
+	}
+	# The scaling dial is a separate mechanism from danger and is probed
+	# defensively -- absent properties record as null rather than as 1.0, so a
+	# missing readback cannot masquerade as an inert dial.
+	if RunData != null:
+		var scaling = RunData.get("enemy_scaling")
+		if scaling != null:
+			out["enemy_scaling"] = scaling
+		for prop in ["current_difficulty", "difficulty", "current_run_accessibility_settings"]:
+			var v = RunData.get(prop)
+			if v != null:
+				out["rundata_" + prop] = v
+	return out
+
+
 func on_benchmark_activated(danger_value: int) -> void:
 	active = true
 	_manual_override = false
@@ -2392,6 +2455,8 @@ func _start_run() -> void:
 	_last_wave_peak_density = 0.0
 	_shop_transition_wave = -1
 	_shop_transition_item_id = ""
+	_danger_latched = false
+	_danger_observed_latched = -1
 	_shop_transition_count = 0
 	_last_shop_conversion = 1.0
 	_shop_conversion_wave = -1
@@ -2405,7 +2470,11 @@ func _start_run() -> void:
 		"run_id": "run_%d_%d" % [OS.get_unix_time(), randi() % 100000],
 		"character": _character_id(),
 		"weapon": _starting_weapon_id(),
-		"danger": 0,
+		# `danger` is DELIBERATELY not read here. At _start_run the difficulty
+		# element has not been pressed yet, so any read is pre-selection. The
+		# authoritative value is latched on the first combat tick and written into
+		# the summary by _finish_run via end_run's extras.
+		"requested_danger": get_requested_danger(),
 		"endless": false,
 		"wave_retry": false,
 		"game_version": "1.1.15.4",
@@ -2446,6 +2515,11 @@ func _finish_run(result_phase: String) -> void:
 		# dict is an allowlist and would drop these), so the recompute ratio is
 		# recorded directly.
 		_telem.end_run(result, {
+			# The authoritative difficulty, latched on the first combat tick.
+			# -1 means no combat tick ever ran, which is a technical failure and
+			# must NOT be read as Danger 0.
+			"danger": _danger_observed_latched,
+			"danger_ok": _danger_observed_latched == get_requested_danger(),
 			"last_wave": RunData.current_wave,
 			"waves_completed": RunData.current_wave,
 			"finale_combat_ticks": finale_combat_ticks,
