@@ -68,6 +68,12 @@ func begin_run(meta: Dictionary) -> void:
 		# What was ASKED for, so a mismatch is visible in the summary alone. This
 		# dict is an allowlist -- a key absent here is silently dropped.
 		"requested_danger": meta.get("requested_danger", -1),
+		# Requested character. Default "" (not a real character id) so a run
+		# recorded before this field existed cannot read as a matching arm.
+		"requested_character": meta.get("requested_character", ""),
+		# Era stamp for the shop pool. Empty dict (not zeros) when absent, so a run
+		# from before this field existed cannot be read as "an empty pool".
+		"unlock_pool": meta.get("unlock_pool", {}),
 		"endless": meta.get("endless", false),
 		"wave_retry": meta.get("wave_retry", false),
 		"game_version": meta.get("game_version", ""),

@@ -639,6 +639,11 @@ func _handle_combat(main) -> void:
 		if not _danger_latched and _telem != null:
 			_danger_latched = true
 			_danger_observed_latched = observed_danger()
+			# Character latches at the SAME instant. Unlike difficulty it is already
+			# settled before the run starts (the character screen precedes the danger
+			# screen), so an early read would be safe -- but sharing the latch keeps
+			# one definition of "the arm this run actually ran" instead of two.
+			_character_observed_latched = _character_id()
 			_telem.emit("difficulty_readback", difficulty_readback())
 		if _telem != null:
 			_telem.emit("combat_tick", {
@@ -2354,6 +2359,61 @@ func choose_meta_action(run_observation: Dictionary, legal_actions) -> Dictionar
 
 var _danger_latched: bool = false
 var _danger_observed_latched: int = -1
+# Observed character, latched at the same instant as the difficulty readback.
+# Sentinel is a string that CANNOT be produced by a real read, so "never latched"
+# can never be mistaken for a genuine value -- the same reason danger latches to
+# -1 rather than 0.
+var _character_observed_latched: String = "(never-read)"
+
+
+func _unlock_pool_fingerprint() -> Dictionary:
+	# THE SHOP POOL IS PART OF THE GAME BEING MEASURED. item_service.init_unlocked_pool()
+	# builds each tier's offer pool by filtering ProgressData.items_unlocked /
+	# weapons_unlocked, then draws uniformly. So unlocking ANYTHING changes the
+	# distribution every later run samples from, and a run collected before an unlock
+	# is not comparable to one collected after. Nothing in the archive recorded that,
+	# which is the same era-blindness that let a 47-point win-rate collapse run ~20
+	# versions unnoticed.
+	#
+	# Counts alone cannot separate two same-size sets, so a hash of each sorted list
+	# goes alongside. -1 means "never read", never a real empty pool.
+	var out := {"items": -1, "weapons": -1, "items_hash": "", "weapons_hash": ""}
+	if ProgressData == null:
+		return out
+	var it := []
+	for v in ProgressData.items_unlocked:
+		it.append(str(v))
+	it.sort()
+	var wp := []
+	for v in ProgressData.weapons_unlocked:
+		wp.append(str(v))
+	wp.sort()
+	# Built with an explicit loop rather than a join helper: mod GDScript is never
+	# parsed by any test, so a wrong API name here surfaces as the game sitting on
+	# the title screen.
+	var its := ""
+	for s in it:
+		its += s + ","
+	var wps := ""
+	for s in wp:
+		wps += s + ","
+	out["items"] = it.size()
+	out["weapons"] = wp.size()
+	out["items_hash"] = str(its.hash())
+	out["weapons_hash"] = str(wps.hash())
+	return out
+
+
+func get_requested_character() -> String:
+	# The character the OPERATOR asked for, from agent_config.json via the
+	# orchestrator. Exists for the same reason get_requested_danger() does: the
+	# summary recorded only the OBSERVED character, so a selection that silently
+	# landed on a different one could not be detected from a run's own record.
+	# Returns "" when there is no orchestrator, which `character_ok` treats as a
+	# mismatch rather than a pass.
+	if _orch == null:
+		return ""
+	return str(_orch.target_character_id)
 
 
 func get_requested_danger() -> int:
@@ -2492,6 +2552,7 @@ func _start_run() -> void:
 	_shop_transition_item_id = ""
 	_danger_latched = false
 	_danger_observed_latched = -1
+	_character_observed_latched = "(never-read)"
 	_shop_transition_count = 0
 	_last_shop_conversion = 1.0
 	_shop_conversion_wave = -1
@@ -2510,6 +2571,14 @@ func _start_run() -> void:
 		# authoritative value is latched on the first combat tick and written into
 		# the summary by _finish_run via end_run's extras.
 		"requested_danger": get_requested_danger(),
+		# What character was ASKED for, so a mismatch is visible in the summary
+		# alone. A multi-character campaign cannot otherwise certify its own arm:
+		# `character` below is the OBSERVED value, and without this there is
+		# nothing in the record to compare it against.
+		"requested_character": get_requested_character(),
+		# Era stamp. Makes "which item pool did this run sample from" a mechanical
+		# check instead of something a future session has to remember.
+		"unlock_pool": _unlock_pool_fingerprint(),
 		"endless": false,
 		"wave_retry": false,
 		"game_version": "1.1.15.4",
@@ -2558,6 +2627,12 @@ func _finish_run(result_phase: String) -> void:
 			# must NOT be read as Danger 0.
 			"danger": _danger_observed_latched,
 			"danger_ok": _danger_observed_latched == get_requested_danger(),
+			# Arm certification for character campaigns, same shape as danger_ok.
+			# "(never-read)" means no combat tick ever ran -- a technical failure,
+			# NOT a character mismatch, and never silently a pass.
+			"character_observed": _character_observed_latched,
+			"character_ok": (_character_observed_latched == get_requested_character()
+				and get_requested_character() != ""),
 			"last_wave": RunData.current_wave,
 			"waves_completed": RunData.current_wave,
 			"finale_combat_ticks": finale_combat_ticks,
