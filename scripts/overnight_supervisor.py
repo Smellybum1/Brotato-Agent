@@ -127,7 +127,15 @@ def deploy_and_launch(root: Path, deploy: bool = True) -> None:
         subprocess.check_call(
             [sys.executable, str(root / "scripts" / "deploy_mod.py"), "--target", "agent", "--close-game"]
         )
-        time.sleep(2)
+    else:
+        # kill_game() is a force-kill, so ModLoader latches "Mods are currently
+        # disabled" and empties the profile's mod_list; the next launch would run
+        # VANILLA and idle on the title screen. A deploy clears both as a side
+        # effect, so skipping the deploy has to restore them explicitly.
+        subprocess.check_call(
+            [sys.executable, str(root / "scripts" / "deploy_mod.py"), "--repair-launch"]
+        )
+    time.sleep(2)
     subprocess.check_call([sys.executable, str(root / "scripts" / "launch_benchmark.py")])
     time.sleep(15)
 

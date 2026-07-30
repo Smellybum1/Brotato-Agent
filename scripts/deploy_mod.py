@@ -179,16 +179,48 @@ def restore_upstream() -> Path:
     return z
 
 
+def repair_launch(root: Path) -> Path:
+    """Make the INSTALLED build loadable again without redeploying it.
+
+    An unclean shutdown (a force-kill, a crash) makes ModLoader latch "Mods are
+    currently disabled" AND empty the profile's mod_list, so the next launch runs
+    vanilla and the game idles on the title screen with a stale mod_ready.json.
+    A normal deploy happens to fix both, which is why this never needed its own
+    path before --no-deploy existed.
+
+    Deliberately does NOT rezip and does NOT touch agent_config.json: a campaign
+    that freezes the installed build must be repairable without changing either
+    the build or the arm.
+    """
+    zip_path = steam_workshop_content() / SUBSCRIBED_WORKSHOP_ID / "Tom-BrotatoAgent.zip"
+    if not zip_path.is_file():
+        raise SystemExit(f"repair-launch: no installed mod zip at {zip_path}; deploy first")
+    clear_mods_disabled_latch(root)
+    write_profile_agent(zip_path)
+    print(f"Repaired launch state for installed zip {zip_path}")
+    return zip_path
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--target", choices=["agent", "upstream"], default="agent")
     ap.add_argument("--no-auto-start", action="store_true")
     ap.add_argument("--no-clear-latch", action="store_true")
     ap.add_argument("--close-game", action="store_true", help="Close Brotato before deploy")
+    ap.add_argument(
+        "--repair-launch",
+        action="store_true",
+        help="Clear the mods-disabled latch and restore the mod profile for the "
+        "already-installed zip, then exit. Does not rezip and does not rewrite "
+        "agent_config.json, so it is safe mid-campaign.",
+    )
     args = ap.parse_args()
     root = Path(__file__).resolve().parents[1]
     if args.close_game:
         close_brotato()
+    if args.repair_launch:
+        repair_launch(root)
+        return 0
     if args.target == "upstream":
         z = restore_upstream()
     else:
