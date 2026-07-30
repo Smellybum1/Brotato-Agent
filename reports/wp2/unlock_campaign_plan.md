@@ -118,6 +118,79 @@ That question is answerable offline, for free, before any machine time is spent.
 
 ---
 
+## 2c. ⭐ MEASURED 2026-07-30 — THIS SUPERSEDES §2.4's "tier 3 is the strongest argument"
+
+Measured with `scripts/wp2_item_offer_ledger.py` over **600 runs / 15,519 boards / 51,320 offer
+slots / 5,680 buys**, `buys_unmatched_to_board = 0`. Verified in the primary session against the raw
+JSON, not taken from a delegate's summary.
+
+First, a correction to a scare of my own: the ledger reports 66 distinct tier-3 ids, which looked like
+it contradicted the 31-item tier-3 pool in §2.4. It does not — that figure pools items and weapons
+(**22 tier-3 items + 44 tier-3 weapons**). And the `.tres` `tier` field is trustworthy for items:
+**148 of 149 ids agree** with the observed offer tier (only `item_tyler`, 2 vs 1). §2.4's table stands.
+
+**But splitting purchases by category kills the tier-3 argument.**
+
+| category / tier | offer slots | bought | buy rate |
+|---|---|---|---|
+| item t0 | 13,922 | 1,592 | 11.4% |
+| item t1 | 10,874 | 1,153 | 10.6% |
+| item t2 | 6,593 | 479 | 7.3% |
+| **item t3** | **759** | **50** | **6.6%** |
+
+Tier-3 items are bought **50 times per 600 runs = 0.083 per run.** Adding 11 items to a ~22-item pool
+makes ~1/3 of tier-3 item offers new, yielding **~0.03 new legendary purchases per run — one every
+~36 runs.** I called this the strongest argument for the campaign. It is nearly irrelevant.
+
+Expected effect of unlocking **all 28** items, per run:
+
+| tier | new / pool | share of offers | slots/run | × buy rate | new purchases/run |
+|---|---|---|---|---|---|
+| 1 | 7 / 55 | 12.7% | 18.1 | 10.6% | 0.24 |
+| 2 | 10 / 54 | 18.5% | 11.0 | 7.3% | 0.15 |
+| 3 | 11 / 33 | 33% | 1.27 | 6.6% | 0.03 |
+| | | | | **total** | **≈0.42** |
+
+**⛔⛔ AND THE DECISIVE FRAMING: unlocking SUBSTITUTES, it does not ADD.** The pool change does not
+create extra purchases — the shop buys about 9.5 items per run either way. It only changes *which*
+item fills a slot. So the benefit is not 0.42 items/run, it is **0.42 substitutions/run × the marginal
+quality gain of the new item over the one it displaced.** Unless the locked items are dramatically
+better than what they replace, the effect on D5 survival is very small.
+
+**Consequence for experiment design — this is a design-time kill, not a result.** A treatment worth
+~0.42 substitutions per run has no chance of moving a D5 terminal-wave endpoint whose own baseline
+spread is **sd 2.65 waves** (n=9). No feasible campaign detects it. Running the broad §7 option-C pool
+experiment would have been a statistic that cannot return the positive — the 11(c) family. **Do not
+run it.**
+
+### Revised recommendation: ONE character win, not 28
+
+The only locked item with a specific, externally-argued case is **`item_fairy`** — the D5 guide's
+first-named S-tier universal item. It is **tier 2**, and a single tier-2 item in a 54-item pool is
+offered **~0.20 times per run (~1 run in 5)**. Its reward character, **Renegade, is already unlocked.**
+
+So: **win one D0 run as Renegade (~48 min expected at the 0.395 baseline) to unlock Fairy.** That
+captures the single highest-value item on the board for ~1/50th of the 40-60 h the full grind costs.
+Everything else on the item list should wait for a reason better than "it is an unlock".
+
+### ⭐ The honest answer to the original question
+
+**Measured, unlocking is NOT a viable lever for making Danger 5 easier.** The remaining unlocks are
+substitutions inside a pool the policy already buys from ~9.5 times a run, concentrated at tiers 1-2,
+worth ~0.42 substitutions per run, against an endpoint with sd 2.65 waves. The premise does not
+survive contact with the offer/buy data.
+
+What the unlock campaign IS good for, and these are real:
+- **The stated learning goal** — playing and getting good with each character. 64 build profiles
+  already cover all 50 roster characters.
+- **The 7 locked characters**, which are access rather than power, and `ghost`/`speedy` are cheap
+  in-run stat gates needing no win at all.
+- **Variety and completeness** as ends in themselves.
+
+If the goal is specifically *beat Danger 5*, the leverage is elsewhere — the guide's own #1 failure
+point ("neglecting dodge/armor → one-shot deaths mid-run") against our 9 deaths at median wave 11 is
+a far better lead than any unlock.
+
 ## 3. Gate 0 — free, offline, blocking
 
 Per standing practice ("prove a candidate changes a real decision at a reachable dose BEFORE
