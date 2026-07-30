@@ -191,6 +191,89 @@ If the goal is specifically *beat Danger 5*, the leverage is elsewhere — the g
 point ("neglecting dodge/armor → one-shot deaths mid-run") against our 9 deaths at median wave 11 is
 a far better lead than any unlock.
 
+## 2d. ⭐⭐ GATE 0 **RESULT** — the scorer's own allowlist answers it for free
+
+§3 planned Gate 0 as a campaign. It did not need one. The scorer carries an **embedded community tier
+list** and a hard allowlist veto:
+
+- `config.gd:55-56` — **`EXPERIMENT_ROGUERANKER_ITEMS_ONLY := true`**,
+  **`ROGUERANKER_ITEMS_ONLY_FROM_WAVE := 11`**.
+- `rogueranker_item_allowed()` (`config.gd:1051-1058`): for **waves 11-20**, an item not on
+  `ROGUERANKER_ITEM_TIERS` (68) or `WIKI_USEFUL_ITEM_TIERS` (98) — union **166** — returns false, and
+  `shop_strategy.gd:543` turns that into **`-1e9`**, a hard veto.
+- `rogueranker_item_bonus()` adds **S +28.0 / A +18.0 / B +10.0 / C +3.0 / D −12.0**
+  (`config.gd:736-742`).
+
+The veto is **not vacuous**: off-list items are still bought **128 times (3.9% of item buys)**,
+consistent with the waves-1-10 window where `allowed` returns true.
+
+### The 28 locked items against that allowlist
+
+| verdict | items |
+|---|---|
+| **S** (+28) | `anvil`, `explosive_shells`, `giant_belt` |
+| **A** (+18) | `big_arms`, `fin`, `focus`, `improved_tools`, `lure`, `octopus`, `ritual`, `robot_arm`, `spider`, `stone_skin`, `tentacle` |
+| **B** (+10) | `community_support`, `hunting_trophy`, `lucky_charm`, `medikit`, `panda`, `snail`, `wheat`, `whetstone` |
+| **⛔ OFF-LIST — hard-vetoed waves 11-20** | `bowler_hat`, `compass`, **`fairy`**, `gnome`, `rip_and_tear`, `spicy_sauce` |
+
+**⛔ THIS KILLS §2c's RECOMMENDATION. `item_fairy` is OFF the allowlist.** I had picked it as the one
+item worth grinding, on the D5 guide's say-so, without checking whether our own scorer would buy it.
+It would be hard-vetoed from wave 11 — and our D5 runs die at **median wave 11**. Grinding Renegade
+would have bought almost nothing. *This is the Piggy Bank failure exactly: an item entering the pool
+that the scorer refuses. The allowlist check is what made the difference, and it cost nothing.*
+
+### Pool composition — measured against what is actually offered today
+
+| tier letter | available now | locked | after | change |
+|---|---|---|---|---|
+| **S** | **8** | **3** | 11 | **+38%** |
+| **A** | 30 | 11 | 41 | **+37%** |
+| B | 51 | 8 | 59 | +16% |
+| C | 27 | 0 | 27 | — |
+| D | 4 | 0 | 4 | — |
+
+What the agent buys today (3,274 item purchases over 600 runs): **S 4.2% · A 22.4% · B 55.8% ·
+C 13.7% · D 0.0% · off-list 3.9%.** It lives on B-tier because **the S pool is only 8 items wide.**
+
+### Corrected verdict — sign yes, magnitude still small
+
+§2c concluded "unlocking is not a viable lever". That was **too strong on sign and right on
+magnitude**, and the two must be separated:
+
+- **Sign: now clearly positive.** Before, the substitutions could not be signed. Now we know they run
+  toward items the scorer itself ranks **+18 to +28** above the B-tier median it currently buys, and
+  S-tier availability rises **38%**.
+- **Magnitude: unchanged and still small.** The substitution cap from §2c stands — ~**0.42** new-item
+  purchases per run against ~5.5 item buys per run (7.7%). Against a D5 terminal-wave endpoint with
+  **sd 2.65 waves**, that is still very unlikely to be detectable at feasible n. **Do not promise a
+  measurable D5 improvement from this.**
+
+### ⭐ The actionable plan: THREE runs, not 28 and not 1
+
+The three locked **S-tier** items map to characters that are **all already unlocked**:
+
+| item | tier | character to win with |
+|---|---|---|
+| `item_anvil` | **S** | **Arms Dealer** |
+| `item_explosive_shells` | **S** | **Artificer** |
+| `item_giant_belt` | **S** | **Jack** |
+
+**Three D0 wins (~2.4 h at the 0.395 baseline) for a 38% widening of the S-tier pool.** Then the 11
+A-tier items in descending order of convenience if the appetite is there.
+
+**Actively SKIP the 6 off-list ones** — Entrepreneur (bowler_hat), Explorer (compass), Renegade
+(fairy), Bull (gnome), Loud (rip_and_tear), Glutton (spicy_sauce). For the D5 goal those grinds are
+worth ~nothing, and unlocking them **dilutes** the pool with items the scorer will not buy after
+wave 10. Same for the 5 melee weapons in §3's G0-b.
+
+### ⚠️ A real open divergence, not resolvable from our data
+
+The D5 guide names **Fairy its first S-tier universal item**; our scorer's allowlist **does not
+contain it at all**. Both cannot be right. The guide author plays Danger 5 specifically, while the
+Rogue Ranker list is a general ranking — so this may be a genuine blind spot in the allowlist that
+**also affects already-unlocked items**, which would be a much larger finding than any unlock. Worth
+its own investigation; do not resolve it by picking the source that agrees with the current plan.
+
 ## 3. Gate 0 — free, offline, blocking
 
 Per standing practice ("prove a candidate changes a real decision at a reachable dose BEFORE
