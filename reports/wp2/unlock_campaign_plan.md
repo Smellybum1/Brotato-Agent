@@ -274,6 +274,79 @@ Rogue Ranker list is a general ranking — so this may be a genuine blind spot i
 **also affects already-unlocked items**, which would be a much larger finding than any unlock. Worth
 its own investigation; do not resolve it by picking the source that agrees with the current plan.
 
+## 2e. ⛔ CORRECTION — §2c's PER-RUN RATE WAS FIXTURE-CONTAMINATED BY 5.5x
+
+**The 600-run ledger sample is 91.3% NOT full runs.** Classified by the wave of each run's FIRST
+`purchase_decision`:
+
+| first shop at wave | runs | what it is |
+|---|---|---|
+| 1 | **52** | full runs |
+| 16 | 318 | wave-17 fixture trials |
+| 19 | 230 | wave-20 fixture trials |
+
+This is the **fixture-vs-full-run contamination** memory already records as having corrupted a
+headline win rate for weeks. It surfaced only because an allowlist measurement returned a suspicious
+zero — exactly one `shop_go` per run, always at wave 19, 100% a single exit reason — and a zero got
+checked instead of believed.
+
+### What it broke, and what survived
+
+| quantity | contaminated value | **full runs only (n=52)** |
+|---|---|---|
+| item buys per run | 5.46 | **30.21** (**5.5x**) |
+| buy mix S/A/B/C | 4.2 / 22.4 / 55.8 / 13.7% | 4.1 / 19.0 / 55.4 / 13.3% |
+| off-list buys | 3.9% | 8.1% |
+
+**SURVIVED — the pool table.** Recomputed EXACTLY as `save.items_unlocked` (djb2 membership) ∩ the
+scorer allowlist, with no sampling: **S 8 → 11 (+38%), A 30 → 41 (+37%)**, S+A 38 → 52. Identical to
+the observed-offer derivation. The allowlist decomposes as 166 = 120 unlocked + 22 of the locked-28 +
+24 neither. §2d's headline stands, now for the right reason.
+
+**BROKEN — the magnitude claim.** §2c's "~0.42 new purchases/run" rested on 5.46 buys/run. At the true
+**30.21 item buys per run**, and with newly unlocked items making up 15% of tier-1, 21% of tier-2 and
+36% of tier-3 offers, the expectation is **on the order of 2-4 new-item purchases per full run**, not
+0.42.
+
+### Verdict, third revision — and I have now moved twice in the same direction
+
+- **Sign: positive** (unchanged from §2d) — substitutions run toward items the scorer ranks +18/+28
+  above the B-tier median that is **55.4%** of what it currently buys.
+- **Magnitude: revised UP ~5.5x.** §2c's "not a viable lever" rested on a contaminated denominator.
+  A few new-item purchases per run out of ~30 is **no longer obviously below the noise floor**.
+- **Still NOT established:** that any of this moves the D5 terminal wave. Sign and volume are not an
+  effect size. The §2d three-run plan (Arms Dealer / Artificer / Jack → the 3 S-tier items) remains
+  the right first step precisely because it is cheap enough not to need one.
+
+## 2f. The allowlist's cost — measured where it can actually fire
+
+Full runs only, `shop_go` exits at waves 11-20 (**denominator 343**):
+
+| | count | share |
+|---|---|---|
+| exits with ANY affordable item | 57 | 16.6% |
+| **exits with an affordable OFF-LIST item** | **32** | **9.3%** |
+
+| exit_reason | share |
+|---|---|
+| `EXIT_NO_SURPLUS` | 44.9% |
+| `EXIT_LOCKED_RESERVE` | 30.9% |
+| `EXIT_MATERIAL_VALUE_RESERVE` | 19.2% |
+| `EXIT_NO_SAFE_POSITIVE_ITEM` | 3.8% |
+
+So the allowlist **is** potentially binding, on ~9.3% of late-game exits — an **upper bound**, since
+this cannot show whether the blocked item would have won the scorer's ranking (`legal_alternatives`
+carries no per-alternative scores, and no offline port of the scorer exists).
+
+**And the blocked items argue FOR the allowlist, not against it:** most-blocked are `item_charcoal`,
+`item_plastic_explosive`, `item_snake`, **`item_riposte`** — which the D5 guide itself rates **F-tier**
+— `item_boiling_water`, and `item_goat_skull`, a known **0-buy-in-600-runs** item. The veto is mostly
+excluding things we would want excluded.
+
+That narrows §2d's open divergence considerably: the allowlist is not broadly miscalibrated. The
+`item_fairy` omission remains a specific, unexplained gap rather than evidence of a systemic blind
+spot.
+
 ## 3. Gate 0 — free, offline, blocking
 
 Per standing practice ("prove a candidate changes a real decision at a reachable dose BEFORE
