@@ -114,12 +114,20 @@ def kill_game() -> None:
     time.sleep(2)
 
 
-def deploy_and_launch(root: Path) -> None:
+def deploy_and_launch(root: Path, deploy: bool = True) -> None:
+    """Relaunch the game, optionally redeploying the mod first.
+
+    `deploy=False` is for campaigns that freeze the installed build: deploy_mod.py
+    rewrites agent_config.json from a hardcoded dict (danger 0, and no
+    movement_estop_enabled key at all), so redeploying mid-campaign silently
+    changes the arm as well as the build.
+    """
     kill_game()
-    subprocess.check_call(
-        [sys.executable, str(root / "scripts" / "deploy_mod.py"), "--target", "agent", "--close-game"]
-    )
-    time.sleep(2)
+    if deploy:
+        subprocess.check_call(
+            [sys.executable, str(root / "scripts" / "deploy_mod.py"), "--target", "agent", "--close-game"]
+        )
+        time.sleep(2)
     subprocess.check_call([sys.executable, str(root / "scripts" / "launch_benchmark.py")])
     time.sleep(15)
 
@@ -191,9 +199,22 @@ def main() -> int:
     ap.add_argument("--report-prefix", default="batch_overnight")
     ap.add_argument("--state-file", type=Path)
     ap.add_argument("--redeploy", action="store_true")
+    ap.add_argument(
+        "--no-deploy",
+        action="store_true",
+        help="Never run deploy_mod.py; relaunch only. Required for campaigns that "
+        "freeze the installed build, since deploying rewrites agent_config.json "
+        "(danger -> 0, movement_estop_enabled dropped).",
+    )
     args = ap.parse_args()
+    if args.redeploy and args.no_deploy:
+        ap.error("--redeploy and --no-deploy are mutually exclusive")
 
     root = Path(__file__).resolve().parents[1]
+
+    def relaunch() -> None:
+        deploy_and_launch(root, deploy=not args.no_deploy)
+
     src = Path(os.environ["APPDATA"]) / "Brotato" / "brotato_agent" / "runs"
     current_summaries = list_summaries(src)
     resumed = False
@@ -230,8 +251,8 @@ def main() -> int:
         return 2
 
     if (args.redeploy and not resumed) or not game_running():
-        print("Deploy + launch...", flush=True)
-        deploy_and_launch(root)
+        print("Launch..." if args.no_deploy else "Deploy + launch...", flush=True)
+        relaunch()
 
     # Fresh overlay counter for this overnight gate attempt.
     hud = Path(os.environ["APPDATA"]) / "Brotato" / "brotato_agent" / "batch_hud.json"
@@ -324,7 +345,7 @@ def main() -> int:
 
         if not game_running():
             print("Game exited; redeploy+launch", flush=True)
-            deploy_and_launch(root)
+            relaunch()
             last_progress = time.time()
             continue
 
@@ -332,7 +353,7 @@ def main() -> int:
         if last_summary_at is not None and not run_started_after_summary:
             if time.time() - last_summary_at > args.rearm_sec:
                 print(f"No re-arm within {args.rearm_sec}s; restarting", flush=True)
-                deploy_and_launch(root)
+                relaunch()
                 last_summary_at = time.time()
                 last_progress = time.time()
                 continue
@@ -352,7 +373,7 @@ def main() -> int:
                 pass
         if dead_stuck:
             print("Death screen stuck (hp=0); restarting", flush=True)
-            deploy_and_launch(root)
+            relaunch()
             last_progress = time.time()
             last_summary_at = time.time()
             run_started_after_summary = False
@@ -360,7 +381,7 @@ def main() -> int:
 
         if time.time() - last_progress > args.stall_sec:
             print(f"Telemetry stall {args.stall_sec}s; restarting", flush=True)
-            deploy_and_launch(root)
+            relaunch()
             last_progress = time.time()
             last_summary_at = time.time()
             run_started_after_summary = False
@@ -369,7 +390,7 @@ def main() -> int:
         # Hard per-run timeout from last progress
         if time.time() - last_progress > args.run_timeout_sec:
             print(f"Run timeout {args.run_timeout_sec}s; restarting", flush=True)
-            deploy_and_launch(root)
+            relaunch()
             last_progress = time.time()
             continue
 
