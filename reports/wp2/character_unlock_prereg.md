@@ -98,8 +98,38 @@ changes the distribution all later runs sample from.
 
 ## 8. Order
 
-Arms Dealer → Artificer → Jack. Re-verify the pool fingerprint after each, and treat any change in
-`items` other than **+1 per win** as a defect to investigate before continuing.
+Arms Dealer → Artificer → Jack. Re-verify the pool fingerprint after each.
+
+### 8b. AMENDMENT 2026-07-30, recorded BEFORE any campaign attempt is collected
+
+Three corrections, all forced by evidence found during the pre-campaign smoke. Dated ahead of
+collection deliberately; the §5 stopping rule is untouched.
+
+**(a) The version pin moves to `0.2.63-wp2-capture`.** §3 and §4 pinned `0.2.62`. The smoke exposed a
+weapon-select stall that made two of the three target characters unplayable (see (c)); fixing it
+required a deploy. Everything in §4 otherwise stands, with `mod_version == 0.2.63-wp2-capture`.
+
+**(b) "+1 per win" IS WRONG — items unlock on DEFEATS, via challenges.** Measured across six Arms
+Dealer runs, every one a defeat: `unlock_pool.items` went **171 → 172 → 173** with matching hash
+changes. Root cause read from the game source: `ChallengeService.unlock_reward` appends to
+`ProgressData.items_unlocked` when a **challenge** completes, and challenges are conditions like waves
+reached — they do not require a victory. **So the shop pool drifts from ordinary play, and a 24-attempt
+campaign will change its own sampling distribution several times.** The rule is replaced: **record the
+stamp on every run and era-match on it; never assert an expected delta.** A change is data, not a
+defect. Verified against the save file that **none of `item_anvil` / `item_explosive_shells` /
+`item_giant_belt` is unlocked**, so all three targets remain genuinely locked and the campaign stands.
+
+**(c) Four already-collected Arms Dealer runs COUNT as attempts 1-4.** After each smoke driver exited,
+`auto_start` stayed true in `agent_config.json` and the game kept starting runs unsupervised, producing
+six Arms Dealer defeats — two on `0.2.62` and **four on `0.2.63`** (terminal waves 5, 11, 15, 17). The
+four on `0.2.63` are arm-identical and era-matched to this campaign, and **all four are known
+defeats**. Counting them spends budget rather than flattering the result; discarding known-defeat
+attempts and replacing them with fresh ones would select on outcome, which §4 forbids. **Arms Dealer
+therefore has 4 attempts remaining, not 8.** The two `0.2.62` runs are excluded by the version pin and
+recorded here rather than deleted.
+
+**Operational rule added:** `auto_start` must be disarmed **when a driver exits**, not only when a
+campaign ends — a finished driver does not stop the game.
 
 ## 9. First action when the D5 baseline completes
 

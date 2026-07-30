@@ -206,6 +206,13 @@ def main() -> int:
         "freeze the installed build, since deploying rewrites agent_config.json "
         "(danger -> 0, movement_estop_enabled dropped).",
     )
+    ap.add_argument(
+        "--stop-on-win",
+        action="store_true",
+        help="Stop as soon as one run is a victory. For acquisition tasks where the "
+        "reward is granted by the first win and further runs only cost time and "
+        "drift the unlock pool.",
+    )
     args = ap.parse_args()
     if args.redeploy and args.no_deploy:
         ap.error("--redeploy and --no-deploy are mutually exclusive")
@@ -274,7 +281,8 @@ def main() -> int:
     run_started_after_summary = True
 
     print(f"Overnight supervisor targeting {args.runs} new summaries", flush=True)
-    while len(collected) < args.runs:
+    won_and_stopping = False
+    while len(collected) < args.runs and not won_and_stopping:
         # Collect new summaries
         now_sums = list_summaries(src)
         for rid, path in now_sums.items():
@@ -294,6 +302,12 @@ def main() -> int:
                 f"wave={data.get('last_wave')} fail={data.get('failure_category', '')}",
                 flush=True,
             )
+            if args.stop_on_win and str(data.get("result", "")).lower() == "victory":
+                # The reward is granted by the first win; further runs only cost
+                # time and drift the unlock pool, which every later run samples from.
+                print(f"STOP ON WIN: {rid} was a victory after {len(collected)} runs", flush=True)
+                won_and_stopping = True
+                break
             # Early abort: too many losses to hit min_wins in remaining runs.
             # e.g. 20 runs / 18 wins → max 2 losses; 3rd loss makes gate impossible.
             wins_so_far = sum(
