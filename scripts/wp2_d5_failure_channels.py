@@ -45,9 +45,11 @@ STRUCTURAL LIMITATIONS (stated, not papered over)
 * `hp_regeneration` raises HP between hits; a decrease is still damage, but two hits
   inside one capture interval read as one drop.
 * A proximity label is an OPPORTUNITY, not a proof of causation.
-* MEASURED IN THIS SAMPLE, NOT ASSUMED: the FATAL drop is NOT in the telemetry. In all 12
-  runs the last capture still shows hp > 0 and the capture stream stops ~90-210 ms before
-  `run_end`. What this script calls `last_observed_hp_drop` is exactly that -- the last
+* MEASURED IN THIS SAMPLE, NOT ASSUMED: the FATAL drop is NOT in the telemetry. Every
+  run's last capture still shows hp > 0, and the capture stream stops a short interval
+  before `run_end` -- that interval is COMPUTED per run into `capture_to_run_end_gap_ms`
+  and its range is printed in the LIMITATIONS block, rather than quoted from memory here.
+  What this script calls `last_observed_hp_drop` is exactly that -- the last
   HP drop that was captured -- and it is NOT the killing blow. The killing blow lands in
   the ~2-4 uncaptured ticks after the final capture and CANNOT BE ATTRIBUTED AT ALL.
   The field `fatal_drop_captured` records this per run rather than hiding it.
@@ -109,11 +111,25 @@ def _split_projectiles(items: list[dict[str, Any]]) -> tuple[list, list]:
     return moving, still
 
 
-def load_series(path: Path) -> tuple[list[dict[str, Any]], dict[str, int]]:
+def load_series(path: Path) -> tuple[list[dict[str, Any]], dict[str, int], float | None]:
     rows: list[dict[str, Any]] = []
     diag = Counter()
+    run_end_ts: float | None = None
     with path.open(encoding="utf-8") as fh:
         for line in fh:
+            if '"run_end"' in line:
+                # Needed to MEASURE the capture-stream-to-run_end gap rather than
+                # quoting a remembered range for it.
+                try:
+                    ev = json.loads(line)
+                except json.JSONDecodeError:
+                    diag["unparseable_lines"] += 1
+                    continue
+                if ev.get("event") == "run_end":
+                    ts = ev.get("ts_ms")
+                    if isinstance(ts, (int, float)):
+                        run_end_ts = float(ts)
+                continue
             if '"combat_capture"' not in line:
                 continue
             try:
@@ -151,6 +167,7 @@ def load_series(path: Path) -> tuple[list[dict[str, Any]], dict[str, int]]:
 
             rows.append({
                 "seq": p.get("capture_seq"),
+                "ts_ms": ev.get("ts_ms"),
                 "wave": int(p.get("wave", 0)),
                 "hp": float(hp),
                 "n_enemies": len(enemies),
@@ -165,7 +182,7 @@ def load_series(path: Path) -> tuple[list[dict[str, Any]], dict[str, int]]:
                 "d_obstacles": _min_surface(px, py, obstacles),
             })
     rows.sort(key=lambda r: (r["wave"], r["seq"] if r["seq"] is not None else 0))
-    return rows, dict(diag)
+    return rows, dict(diag), run_end_ts
 
 
 def _at(rows, i, lag, key):
@@ -232,7 +249,7 @@ def analyse_run(rid: str, root: Path, t: float) -> dict[str, Any]:
     f = root / rid / "events.jsonl"
     if not f.is_file():
         return {"run_id": rid, "error": "missing events.jsonl"}
-    rows, diag = load_series(f)
+    rows, diag, run_end_ts = load_series(f)
     if not rows:
         return {"run_id": rid, "error": "no usable captures", "diagnostics": diag}
 
@@ -285,6 +302,13 @@ def analyse_run(rid: str, root: Path, t: float) -> dict[str, Any]:
         "last_observed_hp_drop": last_drop,
         "fatal_drop_captured": hp_reached_zero,
         "hp_at_last_capture": tw_rows[-1]["hp"],
+        # MEASURED, not remembered: how long the capture stream stops before run_end.
+        # The killing blow lands inside this window, which is why it is unattributable.
+        "capture_to_run_end_gap_ms": (
+            round(run_end_ts - tw_rows[-1]["ts_ms"], 1)
+            if run_end_ts is not None and isinstance(tw_rows[-1].get("ts_ms"), (int, float))
+            else None
+        ),
         "per_channel_counts": dict(per_channel),
         "drops": labelled,
         "diagnostics": diag,
@@ -437,9 +461,20 @@ def main() -> None:
     A("    self-damage, burn/DoT, and any two-hits-in-one-capture-interval merge.")
     A("  * Boss lag was NOT established by the D5 derivation (n=13, medians above baseline);")
     A("    boss-bearing terminal waves are flagged, not asserted.")
-    A("  * THE FATAL DROP IS NOT IN THE TELEMETRY: hp > 0 at the last capture in every run,")
-    A("    and captures stop ~90-210 ms before run_end. The killing blow is UNATTRIBUTABLE.")
-    A("    'last observed HP drop' below is the last CAPTURED drop, not the killing blow.")
+    n_alive = sum(1 for r in ok if not r["fatal_drop_captured"])
+    gaps = sorted(r["capture_to_run_end_gap_ms"] for r in ok
+                  if r.get("capture_to_run_end_gap_ms") is not None)
+    A(f"  * THE FATAL DROP IS NOT IN THE TELEMETRY: hp > 0 at the last capture in"
+      f" {n_alive} / {len(ok)} runs,")
+    if gaps:
+        med = (gaps[len(gaps) // 2] if len(gaps) % 2
+               else (gaps[len(gaps) // 2 - 1] + gaps[len(gaps) // 2]) / 2)
+        A(f"    and captures stop {gaps[0]:.0f}-{gaps[-1]:.0f} ms before run_end"
+          f" (median {med:.0f}, n={len(gaps)}). MEASURED, not assumed.")
+    else:
+        A("    and the capture-to-run_end gap could NOT be measured (no run_end ts_ms).")
+    A("    The killing blow is UNATTRIBUTABLE. 'last observed HP drop' below is the last")
+    A("    CAPTURED drop, not the killing blow.")
     A("  * Projectile instance_id is POOLED/REUSED and is not a stable identity.")
     A("  * nearest_d is never used as a distance (INF sentinel = 'no target'); see diagnostics.")
     (outdir / "report.txt").write_text("\n".join(lines) + "\n", encoding="utf-8")
