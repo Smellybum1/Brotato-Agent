@@ -37,6 +37,11 @@ const NONFINITE_NAN := 0.0
 var nonfinite_total: int = 0
 var _nonfinite_fixed: int = 0
 
+# Cursor for deriving `materials_spent` from the gold_before series. Per-wave,
+# because gold rising between shops is wave income rather than a refund.
+var _spend_cursor: int = -1
+var _spend_wave: int = -1
+
 func begin_run(meta: Dictionary) -> void:
 	run_id = str(meta.get("run_id", _make_run_id()))
 	seq = 0
@@ -48,6 +53,8 @@ func begin_run(meta: Dictionary) -> void:
 	d.make_dir_recursive(dir)
 	path = dir + "/events.jsonl"
 	nonfinite_total = 0
+	_spend_cursor = -1
+	_spend_wave = -1
 	summary = {
 		"run_id": run_id,
 		"schema_version": SCHEMA_VERSION,
@@ -64,7 +71,7 @@ func begin_run(meta: Dictionary) -> void:
 		"endless": meta.get("endless", false),
 		"wave_retry": meta.get("wave_retry", false),
 		"game_version": meta.get("game_version", ""),
-		"mod_version": meta.get("mod_version", "0.2.59-wp2-capture"),
+		"mod_version": meta.get("mod_version", "0.2.60-wp2-capture"),
 		"config_id": meta.get("config_id", "well_rounded_d0_smg"),
 		# Which finale controller actually ran. policy_version cannot carry this:
 		# the flag lives in agent_config.json, so a v2 run and a v1 run of the
@@ -191,10 +198,40 @@ func _update_summary(event_type: String, payload: Dictionary) -> void:
 			summary["errors"] = int(summary.get("errors", 0)) + 1
 		"purchase_decision":
 			summary["purchases"].append(payload)
-			if payload.get("type", "") == "shop_reroll":
+			# The action type is NESTED under `action`, not top-level. Reading
+			# payload["type"] returned "" on every event, so `rerolls` and `locks`
+			# were 0 in EVERY summary ever written while the event stream plainly
+			# showed shop_reroll and shop_lock actions. Three analysis scripts
+			# consume these fields and were reading vacuous zeros.
+			var action: Dictionary = payload.get("action", {})
+			var atype := str(action.get("type", payload.get("type", "")))
+			if atype == "shop_reroll":
 				summary["rerolls"] = int(summary.get("rerolls", 0)) + 1
-			if payload.get("type", "") == "shop_lock":
+			if atype == "shop_lock":
 				summary["locks"] = int(summary.get("locks", 0)) + 1
+			# `materials_spent` was initialised to 0 and NEVER accumulated
+			# anywhere -- a field that could not report what it claimed.
+			#
+			# Derived from the recorded `gold_before` series rather than from item
+			# prices, because the buy path presses a UI button and does not carry a
+			# price. Within one shop visit gold only falls (buys, rerolls) or rises
+			# (sells), so summing the falls is the materials OUTFLOW.
+			#
+			# SEMANTICS, stated because they are not obvious:
+			#  * includes REROLL spend as well as purchases -- it is materials out,
+			#    not items bought;
+			#  * excludes sells (gold rises; the cursor follows without accruing);
+			#  * resets across waves, since gold rising between shops is wave
+			#    income, not a refund.
+			var wave := int(payload.get("wave", -1))
+			var gold := int(payload.get("gold_before", -1))
+			if gold >= 0:
+				if wave == _spend_wave and gold < _spend_cursor:
+					summary["materials_spent"] = (
+						int(summary.get("materials_spent", 0)) + (_spend_cursor - gold))
+				if wave != _spend_wave:
+					_spend_wave = wave
+				_spend_cursor = gold
 		"level_up_decision":
 			summary["level_ups"].append(payload)
 		"crate_decision":

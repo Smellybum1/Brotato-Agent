@@ -34,7 +34,7 @@ against Danger 0 risks another precise answer to the wrong question.
 ## 3. Frozen for the campaign's duration
 
 ```
-mod version            0.2.58-wp2-capture (installed == repo; NO deploy mid-campaign)
+mod version            0.2.60-wp2-capture (installed == repo; NO deploy mid-campaign)
 policy version         teacher_v1-0.1.129-gun-wp1
 character              character_well_rounded
 starting weapons       weapon_smg, weapon_stick
@@ -58,7 +58,7 @@ A run counts as a valid **gameplay attempt** only if all of these hold:
 requested_danger == 5
 observed_danger  == 5      (latched from RunData on the FIRST COMBAT TICK)
 danger_ok        == true
-mod_version      == 0.2.58-wp2-capture
+mod_version      == 0.2.60-wp2-capture
 policy_version   == teacher_v1-0.1.129-gun-wp1
 mod_ready sentinel observed for this build
 capture stream structurally complete (parses to EOF)
