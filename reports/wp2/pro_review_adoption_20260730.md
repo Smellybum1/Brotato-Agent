@@ -65,6 +65,30 @@ not in the brief.** The ±5° cap and the near-zero action diversity are real; t
 timescale is an invention. It is plausible and worth measuring — but it is a hypothesis, and it must
 not be quoted as established. Everything else in that section checks out against the brief.
 
+## ⛔ CORRECTION TO MY OWN BRIEF — "all 1,873 runs were at Danger 0" was NOT a measurement
+
+Found while implementing Step 0, and it invalidates the *evidence* for the headline fact I gave Pro
+(which Pro then listed first under "established by the supplied evidence").
+
+**`agent_controller.gd` built the run meta with `"danger": 0` — a hardcoded literal.** The telemetry
+writer then copied it into the summary. So the summary field could not have reported anything else,
+and my audit of 1,873 summaries was reading a constant. This is the structurally-uninformative-field
+trap already on record three times in `brotato-measurement-discipline`.
+
+I checked for any independent runtime read and there is **none in the historical record**:
+`combat_capture` carries no danger field, and neither does `combat_tick`. (`game_adapter.gd` does
+compute a real `_danger()` from `RunData`, but its result never reaches a serialized payload.)
+
+**The conclusion still stands, on CODE-PATH grounds rather than measurement:** both fresh-run
+selection paths called `_activate_and_select_danger(0)` with a literal, there is no other path that
+selects a difficulty for a fresh run, and `agent_config.json` carried `"danger": 0`. Three
+independent hardcodes agreeing is strong — but it is inspection, not telemetry, and it should have
+been labelled that way.
+
+**Fixed from `0.2.58`:** the summary's `danger` is the value latched from `RunData` on the first
+combat tick, `requested_danger` is recorded beside it, and both default to **-1, never 0**, so
+"unknown" can no longer masquerade as a genuine Danger 0 run.
+
 ## Cost caveat carried forward
 Pro's fixture costs assume a wave-17-like 4.3 min trial. **The dominant D5 failure wave is unknown**;
 if D5 kills the agent early, trials are cheaper and the whole plan gets faster. Pro acknowledges this.
