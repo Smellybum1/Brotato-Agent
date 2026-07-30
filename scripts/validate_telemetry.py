@@ -115,18 +115,51 @@ def validate_run(events_path: Path) -> dict:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--runs-dir", type=Path, default=None)
+    ap.add_argument(
+        "--run-ids-file",
+        type=Path,
+        default=None,
+        help="Validate ONLY these run ids (one per line, or a JSON list, or a state "
+        "file with collected_run_ids). Without it every run in --runs-dir is walked, "
+        "which is the whole archive and takes hours.",
+    )
+    ap.add_argument("--out", type=Path, default=None)
     args = ap.parse_args()
     root = Path(__file__).resolve().parents[1]
     runs_dir = args.runs_dir or (root / "runs")
+
+    run_ids: list[str] | None = None
+    if args.run_ids_file:
+        raw = args.run_ids_file.read_text(encoding="utf-8-sig")
+        try:
+            parsed = json.loads(raw)
+        except json.JSONDecodeError:
+            run_ids = [ln.strip() for ln in raw.splitlines() if ln.strip()]
+        else:
+            if isinstance(parsed, dict):
+                run_ids = [str(x) for x in parsed.get("collected_run_ids", [])]
+            elif isinstance(parsed, list):
+                run_ids = [str(x) for x in parsed]
+            else:
+                raise SystemExit(f"--run-ids-file: unsupported shape {type(parsed).__name__}")
+        if not run_ids:
+            raise SystemExit(f"--run-ids-file {args.run_ids_file} yielded no run ids")
+
     results = []
-    for events in runs_dir.glob("*/events.jsonl"):
-        results.append(validate_run(events))
-    out = root / "reports" / "telemetry_validation.json"
+    if run_ids is None:
+        for events in runs_dir.glob("*/events.jsonl"):
+            results.append(validate_run(events))
+    else:
+        for rid in run_ids:
+            results.append(validate_run(runs_dir / rid / "events.jsonl"))
+    out = args.out or (root / "reports" / "telemetry_validation.json")
     out.parent.mkdir(parents=True, exist_ok=True)
     payload = {
         "runs": len(results),
         "passed": sum(1 for r in results if r["ok"]),
         "failed": sum(1 for r in results if not r["ok"]),
+        "scope": "run_ids_file" if run_ids is not None else "whole_runs_dir",
+        "runs_dir": str(runs_dir),
         "details": results,
     }
     out.write_text(json.dumps(payload, indent=2), encoding="utf-8")

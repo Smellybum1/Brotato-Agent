@@ -92,6 +92,28 @@ def newest_events(src: Path) -> tuple[Path | None, int, float]:
     return best, n, best_mtime
 
 
+def disarm_auto_start() -> None:
+    """Set auto_start false and PROVE it by reading the file back.
+
+    Must run the moment the RUNS finish, not when the process exits. The
+    supervisor's tail (collect_results, validate_telemetry) can block it for a
+    long time, and the game keeps starting runs for the whole of that window --
+    which is how unsupervised runs leaked into a finished campaign and drifted
+    the unlock pool that every later run samples from.
+    """
+    cfg_path = Path(os.environ["APPDATA"]) / "Brotato" / "brotato_agent" / "agent_config.json"
+    if not cfg_path.is_file():
+        print(f"WARN: cannot disarm, no config at {cfg_path}", flush=True)
+        return
+    cfg = json.loads(cfg_path.read_text(encoding="utf-8-sig"))
+    cfg["auto_start"] = False
+    cfg_path.write_text(json.dumps(cfg, indent=2), encoding="utf-8")
+    back = json.loads(cfg_path.read_text(encoding="utf-8-sig"))
+    if back.get("auto_start") is not False:
+        raise RuntimeError(f"DISARM READBACK FAILED: auto_start={back.get('auto_start')!r}")
+    print("Disarmed auto_start (readback verified false)", flush=True)
+
+
 def game_running() -> bool:
     try:
         r = subprocess.run(
@@ -220,6 +242,13 @@ def main() -> int:
         help="Stop as soon as one run is a victory. For acquisition tasks where the "
         "reward is granted by the first win and further runs only cost time and "
         "drift the unlock pool.",
+    )
+    ap.add_argument(
+        "--disarm-on-finish",
+        action="store_true",
+        help="Set auto_start false (with readback) the moment the runs finish, before "
+        "the slow reporting tail. Without it the game keeps starting unsupervised "
+        "runs while this process is still blocked in validation.",
     )
     args = ap.parse_args()
     if args.redeploy and args.no_deploy:
@@ -418,9 +447,23 @@ def main() -> int:
 
         time.sleep(10)
 
+    # FIRST, before anything slow: the game is still running and still armed.
+    if args.disarm_on_finish:
+        disarm_auto_start()
+
     # Validate + report
     subprocess.call([sys.executable, str(root / "scripts" / "collect_results.py")])
-    subprocess.call([sys.executable, str(root / "scripts" / "validate_telemetry.py")])
+    validate_cmd = [sys.executable, str(root / "scripts" / "validate_telemetry.py")]
+    if args.state_file:
+        # Scope validation to THIS batch. Unscoped it walks the entire archive
+        # (thousands of runs, tens of GB) and blocks here for hours, and its
+        # verdict is then about the archive's history rather than these runs.
+        validate_cmd += ["--runs-dir", str(src), "--run-ids-file", str(args.state_file)]
+    rc = subprocess.call(validate_cmd)
+    if rc != 0:
+        # subprocess.call's return value was previously discarded, so a failing
+        # validation reached nobody.
+        print(f"WARN: validate_telemetry exited {rc} for this batch", flush=True)
     code = write_report(root, args.report_prefix, collected, args.min_wins)
     wins = sum(1 for r in collected if str(r.get("result", "")).lower() == "victory")
     print(f"DONE runs={len(collected)} wins={wins} gate={args.min_wins} exit={code}", flush=True)
