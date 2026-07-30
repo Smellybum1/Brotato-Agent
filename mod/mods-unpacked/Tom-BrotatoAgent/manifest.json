@@ -1,7 +1,7 @@
 {
     "name": "BrotatoAgent",
     "namespace": "Tom",
-    "version_number": "0.2.62",
+    "version_number": "0.2.63",
     "website_url": "https://github.com/local/BrotatoAgent",
     "description": "WP2 combat-capture build using the v128 deterministic teacher. Derived from BlackTriangle Full Auto Bot (GPL-3.0) with adapter, orchestrator, telemetry, HUD, and D0 auto-run support.",
     "dependencies": [],

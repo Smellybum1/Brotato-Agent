@@ -12,6 +12,7 @@ PROFILES = ROOT / "mod/mods-unpacked/Tom-BrotatoAgent/teacher/build_profiles.gd"
 MANIFEST = ROOT / "mod/mods-unpacked/Tom-BrotatoAgent/manifest.json"
 TELEMETRY = ROOT / "mod/mods-unpacked/Tom-BrotatoAgent/telemetry/telemetry_writer.gd"
 ADAPTER = ROOT / "mod/mods-unpacked/Tom-BrotatoAgent/adapter/game_adapter.gd"
+ORCHESTRATOR = ROOT / "mod/mods-unpacked/Tom-BrotatoAgent/orchestrator/run_orchestrator.gd"
 HUD = ROOT / "mod/mods-unpacked/Tom-BrotatoAgent/ui/agent_hud.gd"
 POTENTIAL_FIELD = ROOT / "mod/mods-unpacked/Tom-BrotatoAgent/teacher/potential_field.gd"
 COMBAT_MODEL = ROOT / "mod/mods-unpacked/Tom-BrotatoAgent/teacher/combat_model.gd"
@@ -133,12 +134,39 @@ def test_wp2_capture_build_versions_the_v122_crossing_tier_policy():
     # student-inference path (learned/ bridge, default-off) is unchanged —
     # deploy surface bumps together: manifest, controller meta, telemetry
     # default, and the collector identity gate.
-    assert '"version_number": "0.2.62"' in manifest
+    assert '"version_number": "0.2.63"' in manifest
     assert "v128 deterministic teacher" in manifest
     assert controller.count("teacher_v1-0.1.129-gun-wp1") == 1
-    assert controller.count("0.2.62-wp2-capture") == 1
+    assert controller.count("0.2.63-wp2-capture") == 1
     assert telemetry.count("teacher_v1-0.1.129-gun-wp1") == 1
-    assert telemetry.count("0.2.62-wp2-capture") == 1
+    assert telemetry.count("0.2.63-wp2-capture") == 1
+
+
+def test_starting_weapon_select_cannot_stall_on_any_character():
+    """A character offering none of the configured weapon prefixes must not stall.
+
+    Measured in the game's own character data: arms_dealer's starting_weapons is
+    [pistol] alone and artificer's is [plank, screwdriver, wrench, shredder], so
+    neither matches the defaults (smg, stick). well_rounded matches both, which
+    is why every campaign up to 0.2.62 ran clean and this stayed invisible.
+    Falling through STARTING_WEAPON_SELECT returns {"acted": false} and nothing
+    else advances that screen, so the run never starts and an unattended
+    campaign looks dead rather than misconfigured.
+
+    Mod GDScript is never parsed by any test, so this is a source-level guard.
+    """
+    orch = ORCHESTRATOR.read_text(encoding="utf-8")
+    controller = CONTROLLER.read_text(encoding="utf-8")
+
+    # The last-resort match, and it must be reported under its own action name
+    # so a fallback selection is never mistaken for a configured one.
+    assert '_select_inventory_by_id_prefix(scene, "weapon_")' in orch
+    assert '"action": "select_weapon_fallback"' in orch
+
+    # deploy_mod.py has always WRITTEN weapon_prefixes; until 0.2.63 nothing READ
+    # it, so the documented config-only mitigation was inert.
+    assert 'cfg.has("weapon_prefixes")' in controller
+    assert "_orch.target_weapon_prefixes = cfg[\"weapon_prefixes\"]" in controller
 
 
 def test_v123_strength_signal_is_plumbed_through_controller_and_field():

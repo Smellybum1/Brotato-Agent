@@ -178,7 +178,7 @@ var policy_version: String = "teacher_v1-0.1.129-gun-wp1"
 # Single source of truth for the deployed mod identity: stamped into every run's
 # meta AND into the mod-ready sentinel, so the collector cannot accept a build
 # whose identity disagrees with what it asked for.
-const MOD_VERSION := "0.2.62-wp2-capture"
+const MOD_VERSION := "0.2.63-wp2-capture"
 const _MOD_READY_PATH := "user://brotato_agent/mod_ready.json"
 var last_move_debug: Dictionary = {}
 var last_meta_debug: Dictionary = {}
@@ -2866,6 +2866,15 @@ func _load_auto_config() -> void:
 		auto_start_benchmark = bool(cfg["auto_start"])
 	if cfg.has("character") and _orch != null:
 		_orch.target_character_id = str(cfg["character"])
+	# deploy_mod.py has always WRITTEN weapon_prefixes and nothing ever READ it,
+	# so the documented config-only mitigation for a weapon-select stall was inert.
+	if (
+		cfg.has("weapon_prefixes")
+		and _orch != null
+		and typeof(cfg["weapon_prefixes"]) == TYPE_ARRAY
+		and not (cfg["weapon_prefixes"] as Array).empty()
+	):
+		_orch.target_weapon_prefixes = cfg["weapon_prefixes"]
 	if cfg.has("danger") and _orch != null:
 		_orch.target_danger = int(cfg["danger"])
 	if cfg.has("student_enabled"):

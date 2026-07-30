@@ -159,6 +159,21 @@ func try_menu_advance(scene, adapter) -> Dictionary:
 					_last_menu_action_ms = now
 					note_action()
 					return {"acted": true, "detail": {"action": "select_weapon", "prefix": pref}}
+			# LAST RESORT. A character whose starting_weapons contains none of the
+			# configured prefixes stalls here forever, because falling through
+			# returns {"acted": false} and nothing else advances this screen.
+			# Measured in the game data: arms_dealer offers ONLY weapon_pistol and
+			# artificer only plank/screwdriver/wrench/shredder, so the defaults
+			# (smg, stick) match neither. well_rounded matches both, which is why
+			# every campaign so far ran clean and this stayed invisible.
+			# Picking any weapon turns a dead unattended campaign into a run whose
+			# actual weapon is recorded in the summary. Reported under its own
+			# action name so the fallback is never silent.
+			var r_any = _select_inventory_by_id_prefix(scene, "weapon_")
+			if r_any:
+				_last_menu_action_ms = now
+				note_action()
+				return {"acted": true, "detail": {"action": "select_weapon_fallback", "prefix": "weapon_"}}
 		"DANGER_SELECT":
 			# Difficulty extension handles bot activation + D0 click when auto.
 			pass
