@@ -31,10 +31,41 @@ health, speed and projectile pressure simultaneously. A clean Danger 0 null does
 plausible Danger 0 mechanism does not automatically become the Danger 5 mechanism. Continuing to tune
 against Danger 0 risks another precise answer to the wrong question.
 
+## 2b. AMENDMENT 2026-07-30 — version pin moved to 0.2.61, sample restarted at n=0
+
+**Recorded BEFORE any 0.2.61 attempt was collected.** Amending a pre-registration after seeing data
+is optional stopping; this amendment is dated ahead of collection deliberately, and the decision rule
+in §5 is untouched.
+
+What happened: the first 12-attempt campaign reached **9 valid attempts** and then halted twice on
+`error {'kind': 'manual_override'}` — a movement keystroke, because the operator was using the
+machine and Steam's launch had given Brotato focus. The movement E-stop
+(`player_movement_behavior.gd`) fires on ANY input > 0.05 and movement binds Q/A/W/Z/S/D plus the
+arrows, so ordinary typing ends a run. Two attempts were destroyed that way.
+
+The fix — a `movement_estop_enabled` gate, default TRUE so nothing existing changes — required a
+deploy, which moved the installed build to **0.2.61-wp2-capture**. That makes the remaining 3
+attempts a different build from the first 9.
+
+**Decision: do NOT top up. Collect a fresh 12 on 0.2.61.** Topping up across two build strings is
+exactly what §4's `mod_version` criterion exists to prevent, and the campaign that lost 87% of its
+trials to a mid-campaign version bump is the precedent. Cost of restarting is ~2 h of machine time,
+which is cheap against a build-mixed baseline.
+
+**The 9 attempts on 0.2.60 are RETAINED and reported as a separate era-matched sample**, not
+discarded and not pooled. Their terminal waves were `[7,9,10,10,11,12,14,14,15]` (median 11,
+mean 11.33, sd 2.65). They additionally serve as a free cross-build consistency check on 0.2.61.
+
+Note on inertness: with `movement_estop_enabled` true the code path is byte-identical to 0.2.60, so
+0.2.61 is expected to be behaviourally identical for movement. **That expectation is NOT a licence to
+pool** — the whole point of a version pin is that it does not depend on my judgement of which changes
+were harmless.
+
 ## 3. Frozen for the campaign's duration
 
 ```
-mod version            0.2.60-wp2-capture (installed == repo; NO deploy mid-campaign)
+mod version            0.2.61-wp2-capture (installed == repo; NO deploy mid-campaign)
+movement_estop_enabled false   (unattended campaign; Ctrl+Shift+Q still stops the agent)
 policy version         teacher_v1-0.1.129-gun-wp1
 character              character_well_rounded
 starting weapons       weapon_smg, weapon_stick
@@ -58,7 +89,7 @@ A run counts as a valid **gameplay attempt** only if all of these hold:
 requested_danger == 5
 observed_danger  == 5      (latched from RunData on the FIRST COMBAT TICK)
 danger_ok        == true
-mod_version      == 0.2.60-wp2-capture
+mod_version      == 0.2.61-wp2-capture   (amended 2026-07-30, see §2b)
 policy_version   == teacher_v1-0.1.129-gun-wp1
 mod_ready sentinel observed for this build
 capture stream structurally complete (parses to EOF)

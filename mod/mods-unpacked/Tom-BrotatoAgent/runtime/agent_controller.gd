@@ -104,6 +104,22 @@ var rare_gun_lock_persist: bool = false
 #
 # Inert when false: the seam returns runner.current_move_vector exactly as before.
 var human_movement: bool = false
+# ── movement E-stop gate (default ON = today's behaviour) ─────────────────────
+# The E-stop in player_movement_behavior.gd fires on ANY movement input > 0.05.
+# Movement binds Q/A/W/Z/S/D plus the arrows, so while the game window holds
+# focus, ordinary typing ends the run -- it cost 2 of 12 attempts of the D5
+# baseline on 2026-07-30. Set false for UNATTENDED campaigns so a stray keystroke
+# cannot destroy hours of collection. Ctrl+Shift+Q still stops the agent and is
+# deliberately NOT gated by this flag.
+#
+# Defaults TRUE so interactive use and every existing campaign are unchanged, and
+# so a config that never arrives leaves the safety mechanism in place.
+var movement_estop_enabled: bool = true
+# -1 = the movement seam never evaluated the gate this run (a real defect -- the
+# extension did not load, or combat never ran). 0 = evaluated, no input seen.
+# >0 = input seen and SUPPRESSED while the run continued. Defaults to -1 so
+# "never written" cannot masquerade as a measured zero.
+var movement_estop_suppressed: int = -1
 # ── human input label (only meaningful when human_movement is true) ───────────
 # During a handover run `teacher.action` is the AGENT's intended vector, not what
 # the human did, so a behaviour-cloning label had to be reconstructed from
@@ -162,7 +178,7 @@ var policy_version: String = "teacher_v1-0.1.129-gun-wp1"
 # Single source of truth for the deployed mod identity: stamped into every run's
 # meta AND into the mod-ready sentinel, so the collector cannot accept a build
 # whose identity disagrees with what it asked for.
-const MOD_VERSION := "0.2.60-wp2-capture"
+const MOD_VERSION := "0.2.61-wp2-capture"
 const _MOD_READY_PATH := "user://brotato_agent/mod_ready.json"
 var last_move_debug: Dictionary = {}
 var last_meta_debug: Dictionary = {}
@@ -389,6 +405,9 @@ func _write_mod_ready() -> void:
 		"tail_calm_clearance_mult": tail_calm_clearance_mult,
 		"rare_gun_lock_persist": rare_gun_lock_persist,
 		"human_movement": human_movement,
+		# Gate state only -- DELIVERY, not correctness. Proof that suppression
+		# actually happened is the movement_estop_suppressed event/counter.
+		"movement_estop_enabled": movement_estop_enabled,
 		"time_scale": time_scale,
 	}))
 	f.close()
@@ -2389,6 +2408,7 @@ func difficulty_readback() -> Dictionary:
 func on_benchmark_activated(danger_value: int) -> void:
 	active = true
 	_manual_override = false
+	movement_estop_suppressed = -1
 	_end_run_force_at_ms = 0
 	_restore_pre_combine_mouse_mode()
 	_pending_combine_signature = ""
@@ -2413,6 +2433,21 @@ func note_human_movement(v: Vector2) -> void:
 		_human_move_all_identical = false
 	_human_move_latest = v
 	_human_move_samples += 1
+
+func note_movement_estop(had_input: bool) -> void:
+	# Called at PHYSICS rate from player_movement_behavior.gd, but ONLY while the
+	# gate is off. Arms the counter on first evaluation so -1 keeps meaning "the
+	# seam never ran" rather than "no input seen".
+	if movement_estop_suppressed < 0:
+		movement_estop_suppressed = 0
+	if not had_input:
+		return
+	movement_estop_suppressed += 1
+	# One-shot. A flag echoing its own value proves DELIVERY only; this proves
+	# CORRECTNESS -- real movement input arrived and the run did NOT end. Emitted
+	# once per run rather than at 60 Hz.
+	if movement_estop_suppressed == 1 and _telem != null and _run_started:
+		_telem.emit("movement_estop_suppressed", {"wave": RunData.current_wave})
 
 func human_debug() -> Dictionary:
 	# EMPTY unless the handover is armed. An agent vector must never be
@@ -2496,6 +2531,9 @@ func _start_run() -> void:
 		"tail_calm_clearance_mult": tail_calm_clearance_mult,
 		"rare_gun_lock_persist": rare_gun_lock_persist,
 		"human_movement": human_movement,
+		# Gate state only -- DELIVERY, not correctness. Proof that suppression
+		# actually happened is the movement_estop_suppressed event/counter.
+		"movement_estop_enabled": movement_estop_enabled,
 		"time_scale": time_scale,
 	}
 	if _telem != null:
@@ -2527,6 +2565,11 @@ func _finish_run(result_phase: String) -> void:
 			"finale_boss_ticks": finale_boss_ticks,
 			"finale_boss_in_short_range_ticks": finale_boss_in_short_range_ticks,
 			"finale_boss_in_long_range_ticks": finale_boss_in_long_range_ticks,
+			# CORRECTNESS readback for the E-stop gate. -1 = the movement seam never
+			# evaluated it (defect); 0 = evaluated, no input; >0 = input arrived and
+			# was suppressed while the run continued. Only >0 proves the gate works;
+			# movement_estop_enabled alone proves delivery.
+			"movement_estop_suppressed": movement_estop_suppressed,
 		})
 	_restore_pre_combine_mouse_mode()
 	_record_batch_result(result == "victory")
@@ -2794,6 +2837,8 @@ func _load_auto_config() -> void:
 		rare_gun_lock_persist = bool(cfg["rare_gun_lock_persist"])
 	if cfg.has("human_movement"):
 		human_movement = bool(cfg["human_movement"])
+	if cfg.has("movement_estop_enabled"):
+		movement_estop_enabled = bool(cfg["movement_estop_enabled"])
 
 func _record_finale_range_sample(state) -> void:
 	# Same state the controller already passed to the field: one source of truth

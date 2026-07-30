@@ -26,7 +26,24 @@ func get_movement() -> Vector2:
 		if runner.has_method("note_human_movement"):
 			runner.note_human_movement(human)
 		return human
+	# CAMPAIGN MODE. The E-stop below is a hair trigger: the movement actions bind
+	# Q/A/W/Z/S/D and the arrows (project.godot move_*_keyboard_only), so whenever
+	# the game window holds focus, ordinary typing reads as movement and ends the
+	# run. That destroyed 2 of 12 attempts of the D5 baseline on 2026-07-30.
+	# With movement_estop_enabled false, movement input is ignored here and only
+	# the explicit Ctrl+Shift+Q stop (agent_controller._check_emergency_stop) ends
+	# the run.
+	#
+	# FAIL SAFE: `get()` on an absent property returns null in Godot 3 and
+	# `null == false` is false, so an older runner -- or any failure to plumb the
+	# flag through -- falls through to the unchanged E-stop path. A missing config
+	# must never silently disable a safety mechanism.
+	var estop_off: bool = runner.get("movement_estop_enabled") == false
+	if estop_off and runner.has_method("note_movement_estop"):
+		runner.note_movement_estop(human.length() > 0.05)
 	if human.length() > 0.05:
+		if estop_off:
+			return runner.current_move_vector
 		runner.set("active", false)
 		if runner.has_method("on_manual_override"):
 			runner.on_manual_override()
