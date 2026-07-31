@@ -786,3 +786,48 @@ and no selection rule survives to pick the target better than chance.
    (**≥32/arm on ONE character**, no stop-on-win), not more acquisition attempts.
 2. **Accept the surface as-is.** 4 of the highest-value items are acquired; S-tier pool 8 → 11 (+38%),
    which was the campaign's stated goal in §2.
+
+## 24. PRE-REGISTRATION — properly powered test of the profile port, on JACK
+### Recorded BEFORE any build change and BEFORE any attempt. This is §23b option 1.
+
+### 24a. Why Jack, and why this design is cleaner than §18/§21
+**`item_giant_belt` is ALREADY ACQUIRED**, so no unlock can fire during this experiment ⇒ **the shop-pool
+era stays FROZEN at 177/46 for all 64 runs.** That removes the era confound that weakened every earlier
+port comparison (174 vs 175/176). Jack also has the largest observed port effect, so if the effect is
+real this is where it shows.
+
+**This is NOT another acquisition campaign** — §23b bars those. Nothing is being acquired; this is the
+capability question, which §23b names as the lever worth paying for.
+
+### 24b. Design — fixed now
+- **n = 32 per arm, 64 runs total.** Honours §21b/§23b's own stated bar of ≥32/arm. (~16 h at ~15 min
+  per Jack run.) n=8 could not resolve less than ~a doubling; that is why §21 was inconclusive.
+- **NO `--stop-on-win` in either arm.** Both run to their cap. The §20a optional-stopping defect must
+  not recur.
+- **BLOCKED and RANDOMISED**: four blocks of 16, alternating arms, **first arm chosen by
+  `secrets.randbelow` = PORTED** → order **PORTED, BARE, PORTED, BARE**. Blocking controls for drift
+  (machine load, time of day) that a single sequential switch cannot. **This is the randomisation §20c
+  said was impossible when the control arm already existed — here BOTH arms are fresh, so it is
+  possible and is being done.**
+- **Two builds**, differing in **exactly two lines**: `MOD_VERSION` and
+  `EXPERIMENT_PORT_WR_PROFILE_TO`. Control = `""` (inert). Treatment = `"character_jack"`. The content
+  diff between the two zips will be verified to be exactly those two lines — the only difference
+  between arms IS the treatment.
+
+### 24c. PRIMARY endpoint — fixed before data, no substitution
+**Terminal wave, exact permutation on the arm sum (or Monte-Carlo at ≥200k draws if the exact
+enumeration is infeasible at n=32), one-sided (ported ≥ bare), α = 0.05.**
+**SECONDARY, reported not decisive:** binary victory count; median terminal wave.
+⛔ **No other endpoint will be substituted after seeing the data** — that was the §18b failure.
+
+### 24d. Port-engagement readback, control already known non-vacuous
+`allow_melee=false` ⇒ zero melee weapon buys. Jack bare bought melee on **135/253 = 53.4%** of weapon
+purchases. **Expected: bare arm ≈ 0.53, ported arm = 0.** If the ported arm is not 0, the build is
+mis-armed and the block is void.
+
+### 24e. Pre-declared interpretation
+- **Reject** ⇒ the profile port is established as improving a non-`well_rounded` character.
+- **Fail to reject at n=32/arm** ⇒ the port is **not** a usable capability lever, and §23b option 2
+  (accept the surface) becomes the answer. **This is a real possible outcome and will be reported as
+  such**, not followed by a fifth character.
+⚠️ Still uncontrolled: one character only, so a positive result generalises no further than Jack.
