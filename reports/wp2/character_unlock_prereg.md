@@ -664,3 +664,48 @@ The port sets `allow_melee=false`. Fisherman's bare profile leaves `allow_melee`
 `weapon_prefixes = ["weapon_smg", "weapon_"]` — fisherman's pool contains `weapon_smg` (a `set_gun`
 weapon), so it opens on a gun, as the port's `allow_melee=false` requires. §4 validity unchanged.
 **Smoke must verify BEHAVIOURALLY** that `run_start.weapon` is an smg before the campaign is trusted.
+
+## 21. RESULTS — Fisherman profile-port: ❌ **NULL. The pre-registered test FAILS TO REJECT.**
+
+**8/8 attempts, 8/8 valid, 0 technical failures, 0 VICTORIES.** `item_lure` NOT unlocked,
+`chal_fisherman` not completed (djb2, positive controls passing). All eight opened on `weapon_smg_1`
+under `0.2.66-wp2-capture`, era stable **177/46**.
+
+**§20b PRIMARY, run exactly as pre-registered — no endpoint substituted:**
+- control (bare, frozen) **[10, 17, 11, 17, 11, 12, 10, 13]**, sum 101, median 12
+- treatment (ported) **[9, 16, 16, 10, 16, 17, 10, 13]**, sum 107, median 16
+- **exact permutation, one-sided: p = 4341/12870 = 0.3373** → **FAIL TO REJECT at α=0.05.**
+- Secondary, binary victories: **0/8 ported vs 0/8 bare.**
+
+✅ The port **did** engage — melee weapon buys **20/150 = 13.3% bare → 0/12+ ported**, control verified
+non-vacuous *before* collection. **Engagement is not benefit.** This is the 19th-instance pattern
+(Piggy Bank): a mechanism that is real, dosed, controlled and confirmed live, and still changes nothing.
+
+### 21a. ⛔ THIS SUBSTANTIALLY WEAKENS THE PROFILE-PORT CLAIM
+The only **uncensored, pre-registered** test of the hypothesis is this one, and it is **null**.
+
+| arm | ported | stopping rule | status |
+|---|---|---|---|
+| Jack | 1/4 | `--stop-on-win`, censored ON the victory | **OPTIMISTIC** |
+| Artificer | 1/5 | `--stop-on-win`, censored ON the victory | **OPTIMISTIC** |
+| **Fisherman** | **0/8** | ran to cap, no stop-on-win | **CLEAN — and NULL** |
+
+Pooled: bare **0/24** vs ported **2/17**, Fisher one-sided **p = 0.1659** — not significant either.
+
+**Honest verdict, replacing §19b's:** the profile port is **NOT established as the cause** of the two
+wins. Both wins came from arms whose stopping rule was correlated with the outcome; the one arm
+designed to be unbiased produced nothing. A low base rate shared across characters (2 wins in 17
+ported runs ≈ 0.12, against well_rounded's 0.384) remains fully consistent with the data.
+
+⚠️ **What IS still established, and is not in doubt:** the three S-tier items and `item_octopus` are
+unlocked, verified in the save by djb2 with positive controls, and the era stamp moved on each. **The
+acquisitions are real regardless of why the wins happened.**
+
+### 21b. What would actually settle it
+n=8 per arm cannot resolve less than ~a doubling (§17e), and three characters at that size is
+underpowered for an effect this small. Either:
+1. **A much larger single-character comparison** (≥32/arm, no stop-on-win, one character), or
+2. **Drop the causal question** and treat the port as an unproven convenience, judging future
+   campaigns only on whether they acquire the item.
+⛔ **Do NOT run a fourth character expecting a different answer** — that is optional stopping at the
+level of the experiment.
