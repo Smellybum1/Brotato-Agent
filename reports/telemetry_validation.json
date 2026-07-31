@@ -1,16 +1,20 @@
 {
-  "runs": 20,
-  "passed": 20,
+  "runs": 5,
+  "passed": 5,
   "failed": 0,
+  "scope": "run_ids_file",
+  "runs_dir": "C:\\Users\\moxhe\\AppData\\Roaming\\Brotato\\brotato_agent\\runs",
   "details": [
     {
       "ok": true,
       "errors": [],
-      "event_count": 881,
+      "event_count": 9567,
       "events_seen": [
+        "combat_capture",
         "combat_tick",
         "crate_decision",
         "crate_offer",
+        "difficulty_readback",
         "level_up_decision",
         "level_up_offer",
         "player_damage",
@@ -20,18 +24,21 @@
         "run_end",
         "run_start",
         "shop_combine_confirmed",
-        "shop_combine_dispatched"
+        "shop_combine_dispatched",
+        "shop_surplus_reroll_confirmed"
       ],
-      "path": ".tmp\\v72-certification-20260722-081318\\run_1784573193_53233\\events.jsonl"
+      "path": "C:\\Users\\moxhe\\AppData\\Roaming\\Brotato\\brotato_agent\\runs\\run_1785453239_78932\\events.jsonl"
     },
     {
       "ok": true,
       "errors": [],
-      "event_count": 2519,
+      "event_count": 9506,
       "events_seen": [
+        "combat_capture",
         "combat_tick",
         "crate_decision",
         "crate_offer",
+        "difficulty_readback",
         "level_up_decision",
         "level_up_offer",
         "player_damage",
@@ -41,18 +48,21 @@
         "run_end",
         "run_start",
         "shop_combine_confirmed",
-        "shop_combine_dispatched"
+        "shop_combine_dispatched",
+        "shop_surplus_reroll_confirmed"
       ],
-      "path": ".tmp\\v72-certification-20260722-081318\\run_1784573591_74360\\events.jsonl"
+      "path": "C:\\Users\\moxhe\\AppData\\Roaming\\Brotato\\brotato_agent\\runs\\run_1785453708_53918\\events.jsonl"
     },
     {
       "ok": true,
       "errors": [],
-      "event_count": 2502,
+      "event_count": 9123,
       "events_seen": [
+        "combat_capture",
         "combat_tick",
         "crate_decision",
         "crate_offer",
+        "difficulty_readback",
         "level_up_decision",
         "level_up_offer",
         "player_damage",
@@ -62,18 +72,21 @@
         "run_end",
         "run_start",
         "shop_combine_confirmed",
-        "shop_combine_dispatched"
+        "shop_combine_dispatched",
+        "shop_surplus_reroll_confirmed"
       ],
-      "path": ".tmp\\v72-certification-20260722-081318\\run_1784574748_23466\\events.jsonl"
+      "path": "C:\\Users\\moxhe\\AppData\\Roaming\\Brotato\\brotato_agent\\runs\\run_1785454173_52130\\events.jsonl"
     },
     {
       "ok": true,
       "errors": [],
-      "event_count": 2667,
+      "event_count": 13930,
       "events_seen": [
+        "combat_capture",
         "combat_tick",
         "crate_decision",
         "crate_offer",
+        "difficulty_readback",
         "level_up_decision",
         "level_up_offer",
         "player_damage",
@@ -83,20 +96,24 @@
         "run_end",
         "run_start",
         "shop_combine_confirmed",
-        "shop_combine_dispatched"
+        "shop_combine_dispatched",
+        "shop_surplus_reroll_confirmed"
       ],
-      "path": ".tmp\\v72-certification-20260722-081318\\run_1784575900_67865\\events.jsonl"
+      "path": "C:\\Users\\moxhe\\AppData\\Roaming\\Brotato\\brotato_agent\\runs\\run_1785454624_34006\\events.jsonl"
     },
     {
       "ok": true,
       "errors": [],
-      "event_count": 2499,
+      "event_count": 23924,
       "events_seen": [
+        "combat_capture",
         "combat_tick",
         "crate_decision",
         "crate_offer",
+        "difficulty_readback",
         "level_up_decision",
         "level_up_offer",
+        "movement_estop_suppressed",
         "player_damage",
         "purchase_decision",
         "purchase_offer",
@@ -104,324 +121,10 @@
         "run_end",
         "run_start",
         "shop_combine_confirmed",
-        "shop_combine_dispatched"
+        "shop_combine_dispatched",
+        "shop_surplus_reroll_confirmed"
       ],
-      "path": ".tmp\\v72-certification-20260722-081318\\run_1784577106_32149\\events.jsonl"
-    },
-    {
-      "ok": true,
-      "errors": [],
-      "event_count": 2575,
-      "events_seen": [
-        "combat_tick",
-        "crate_decision",
-        "crate_offer",
-        "level_up_decision",
-        "level_up_offer",
-        "player_damage",
-        "purchase_decision",
-        "purchase_offer",
-        "recovery_attempt",
-        "run_end",
-        "run_start",
-        "shop_combine_confirmed",
-        "shop_combine_dispatched"
-      ],
-      "path": ".tmp\\v72-certification-20260722-081318\\run_1784578248_64761\\events.jsonl"
-    },
-    {
-      "ok": true,
-      "errors": [],
-      "event_count": 2579,
-      "events_seen": [
-        "combat_tick",
-        "crate_decision",
-        "crate_offer",
-        "level_up_decision",
-        "level_up_offer",
-        "player_damage",
-        "purchase_decision",
-        "purchase_offer",
-        "recovery_attempt",
-        "run_end",
-        "run_start",
-        "shop_combine_confirmed",
-        "shop_combine_dispatched"
-      ],
-      "path": ".tmp\\v72-certification-20260722-081318\\run_1784579427_97655\\events.jsonl"
-    },
-    {
-      "ok": true,
-      "errors": [],
-      "event_count": 2532,
-      "events_seen": [
-        "combat_tick",
-        "crate_decision",
-        "crate_offer",
-        "level_up_decision",
-        "level_up_offer",
-        "player_damage",
-        "purchase_decision",
-        "purchase_offer",
-        "recovery_attempt",
-        "run_end",
-        "run_start",
-        "shop_combine_confirmed",
-        "shop_combine_dispatched"
-      ],
-      "path": ".tmp\\v72-certification-20260722-081318\\run_1784580600_85567\\events.jsonl"
-    },
-    {
-      "ok": true,
-      "errors": [],
-      "event_count": 2506,
-      "events_seen": [
-        "combat_tick",
-        "crate_decision",
-        "crate_offer",
-        "level_up_decision",
-        "level_up_offer",
-        "player_damage",
-        "purchase_decision",
-        "purchase_offer",
-        "recovery_attempt",
-        "run_end",
-        "run_start",
-        "shop_combine_confirmed",
-        "shop_combine_dispatched"
-      ],
-      "path": ".tmp\\v72-certification-20260722-081318\\run_1784581760_10742\\events.jsonl"
-    },
-    {
-      "ok": true,
-      "errors": [],
-      "event_count": 2563,
-      "events_seen": [
-        "combat_tick",
-        "crate_decision",
-        "crate_offer",
-        "level_up_decision",
-        "level_up_offer",
-        "player_damage",
-        "purchase_decision",
-        "purchase_offer",
-        "recovery_attempt",
-        "run_end",
-        "run_start",
-        "shop_combine_confirmed",
-        "shop_combine_dispatched"
-      ],
-      "path": ".tmp\\v72-certification-20260722-081318\\run_1784582893_33112\\events.jsonl"
-    },
-    {
-      "ok": true,
-      "errors": [],
-      "event_count": 2538,
-      "events_seen": [
-        "combat_tick",
-        "crate_decision",
-        "crate_offer",
-        "level_up_decision",
-        "level_up_offer",
-        "player_damage",
-        "purchase_decision",
-        "purchase_offer",
-        "recovery_attempt",
-        "run_end",
-        "run_start",
-        "shop_combine_confirmed",
-        "shop_combine_dispatched"
-      ],
-      "path": ".tmp\\v72-certification-20260722-081318\\run_1784584067_93061\\events.jsonl"
-    },
-    {
-      "ok": true,
-      "errors": [],
-      "event_count": 2690,
-      "events_seen": [
-        "combat_tick",
-        "crate_decision",
-        "crate_offer",
-        "level_up_decision",
-        "level_up_offer",
-        "player_damage",
-        "purchase_decision",
-        "purchase_offer",
-        "recovery_attempt",
-        "run_end",
-        "run_start",
-        "shop_combine_confirmed",
-        "shop_combine_dispatched"
-      ],
-      "path": ".tmp\\v72-certification-20260722-081318\\run_1784585216_1710\\events.jsonl"
-    },
-    {
-      "ok": true,
-      "errors": [],
-      "event_count": 2530,
-      "events_seen": [
-        "combat_tick",
-        "crate_decision",
-        "crate_offer",
-        "level_up_decision",
-        "level_up_offer",
-        "player_damage",
-        "purchase_decision",
-        "purchase_offer",
-        "recovery_attempt",
-        "run_end",
-        "run_start",
-        "shop_combine_confirmed",
-        "shop_combine_dispatched"
-      ],
-      "path": ".tmp\\v72-certification-20260722-081318\\run_1784586419_74481\\events.jsonl"
-    },
-    {
-      "ok": true,
-      "errors": [],
-      "event_count": 2530,
-      "events_seen": [
-        "combat_tick",
-        "crate_decision",
-        "crate_offer",
-        "level_up_decision",
-        "level_up_offer",
-        "player_damage",
-        "purchase_decision",
-        "purchase_offer",
-        "recovery_attempt",
-        "run_end",
-        "run_start",
-        "shop_combine_confirmed",
-        "shop_combine_dispatched"
-      ],
-      "path": ".tmp\\v72-certification-20260722-081318\\run_1784587581_2974\\events.jsonl"
-    },
-    {
-      "ok": true,
-      "errors": [],
-      "event_count": 2496,
-      "events_seen": [
-        "combat_tick",
-        "crate_decision",
-        "crate_offer",
-        "level_up_decision",
-        "level_up_offer",
-        "player_damage",
-        "purchase_decision",
-        "purchase_offer",
-        "recovery_attempt",
-        "run_end",
-        "run_start",
-        "shop_combine_confirmed",
-        "shop_combine_dispatched"
-      ],
-      "path": ".tmp\\v72-certification-20260722-081318\\run_1784588734_4891\\events.jsonl"
-    },
-    {
-      "ok": true,
-      "errors": [],
-      "event_count": 2441,
-      "events_seen": [
-        "combat_tick",
-        "crate_decision",
-        "crate_offer",
-        "level_up_decision",
-        "level_up_offer",
-        "player_damage",
-        "purchase_decision",
-        "purchase_offer",
-        "recovery_attempt",
-        "run_end",
-        "run_start",
-        "shop_combine_confirmed",
-        "shop_combine_dispatched"
-      ],
-      "path": ".tmp\\v72-certification-20260722-081318\\run_1784589879_83585\\events.jsonl"
-    },
-    {
-      "ok": true,
-      "errors": [],
-      "event_count": 2593,
-      "events_seen": [
-        "combat_tick",
-        "crate_decision",
-        "crate_offer",
-        "level_up_decision",
-        "level_up_offer",
-        "player_damage",
-        "purchase_decision",
-        "purchase_offer",
-        "recovery_attempt",
-        "run_end",
-        "run_start",
-        "shop_combine_confirmed",
-        "shop_combine_dispatched"
-      ],
-      "path": ".tmp\\v72-certification-20260722-081318\\run_1784591005_31080\\events.jsonl"
-    },
-    {
-      "ok": true,
-      "errors": [],
-      "event_count": 2478,
-      "events_seen": [
-        "combat_tick",
-        "crate_decision",
-        "crate_offer",
-        "level_up_decision",
-        "level_up_offer",
-        "player_damage",
-        "purchase_decision",
-        "purchase_offer",
-        "recovery_attempt",
-        "run_end",
-        "run_start",
-        "shop_combine_confirmed",
-        "shop_combine_dispatched"
-      ],
-      "path": ".tmp\\v72-certification-20260722-081318\\run_1784592192_98412\\events.jsonl"
-    },
-    {
-      "ok": true,
-      "errors": [],
-      "event_count": 1959,
-      "events_seen": [
-        "combat_tick",
-        "crate_decision",
-        "crate_offer",
-        "level_up_decision",
-        "level_up_offer",
-        "player_damage",
-        "purchase_decision",
-        "purchase_offer",
-        "recovery_attempt",
-        "run_end",
-        "run_start",
-        "shop_combine_confirmed",
-        "shop_combine_dispatched"
-      ],
-      "path": ".tmp\\v72-certification-20260722-081318\\run_1784593331_58683\\events.jsonl"
-    },
-    {
-      "ok": true,
-      "errors": [],
-      "event_count": 2557,
-      "events_seen": [
-        "combat_tick",
-        "crate_decision",
-        "crate_offer",
-        "level_up_decision",
-        "level_up_offer",
-        "player_damage",
-        "purchase_decision",
-        "purchase_offer",
-        "recovery_attempt",
-        "run_end",
-        "run_start",
-        "shop_combine_confirmed",
-        "shop_combine_dispatched"
-      ],
-      "path": ".tmp\\v72-certification-20260722-081318\\run_1784594223_91323\\events.jsonl"
+      "path": "C:\\Users\\moxhe\\AppData\\Roaming\\Brotato\\brotato_agent\\runs\\run_1785455309_73919\\events.jsonl"
     }
   ]
 }

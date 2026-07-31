@@ -48,6 +48,50 @@ func _apply_experiments() -> void:
 	wr.tier_bonus = 8.0
 	wr.set_synergy = 12.0
 	wr.auto_combine = true
+	_port_wr_profile(wr)
+
+
+# Copy well_rounded's tuned profile onto one other character.
+# See BotConfig.EXPERIMENT_PORT_WR_PROFILE_TO ("" = inert).
+func _port_wr_profile(wr: BotBuildProfile) -> void:
+	var target_id: String = str(BotConfig.EXPERIMENT_PORT_WR_PROFILE_TO)
+	if target_id == "" or target_id == "character_well_rounded":
+		return
+	if not _cache.has(target_id):
+		return
+	var tgt: BotBuildProfile = _cache[target_id]
+	# The NAME is load-bearing, not cosmetic: three scoring paths gate on
+	# str(profile.name) == "well_rounded" (combat_model.gd:206 late-shop,
+	# shop_strategy.gd:579 and :766). Copying the values while leaving the
+	# original name would leave the port PARTIALLY INERT.
+	tgt.name = "well_rounded"
+	tgt.wanted_tags = wr.wanted_tags.duplicate()
+	tgt.preferred_sets = wr.preferred_sets.duplicate()
+	tgt.allowed_weapon_ids = null
+	tgt.banned_weapon_ids = wr.banned_weapon_ids.duplicate()
+	if wr.allowed_weapon_sets == null:
+		tgt.allowed_weapon_sets = null
+	else:
+		tgt.allowed_weapon_sets = wr.allowed_weapon_sets.duplicate()
+	tgt.allow_melee = wr.allow_melee
+	tgt.allow_ranged = wr.allow_ranged
+	tgt.set_synergy = wr.set_synergy
+	tgt.tier_bonus = wr.tier_bonus
+	tgt.combine_bonus = wr.combine_bonus
+	tgt.auto_combine = wr.auto_combine
+	tgt.min_buy_score = wr.min_buy_score
+	tgt.gold_reserve = wr.gold_reserve
+	tgt.reroll_gold_factor = wr.reroll_gold_factor
+	tgt.engage_scale = wr.engage_scale
+	tgt.dodge_caution = wr.dodge_caution
+	tgt.pursue_enemies = wr.pursue_enemies
+	tgt.dps_gain_weight = wr.dps_gain_weight
+	tgt.flat_damage_value = wr.flat_damage_value
+	tgt.speed_value_multiplier = wr.speed_value_multiplier
+	tgt.ehp_value_multiplier = wr.ehp_value_multiplier
+	tgt.banned_item_ids = wr.banned_item_ids.duplicate()
+	tgt.utility_overrides = wr.utility_overrides.duplicate()
+	tgt.tag_bonus_overrides = wr.tag_bonus_overrides.duplicate()
 
 
 func get_profile(character_id: String) -> BotBuildProfile:

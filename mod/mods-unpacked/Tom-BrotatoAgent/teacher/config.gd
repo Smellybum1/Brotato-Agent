@@ -8,6 +8,13 @@ class_name BotConfig
 # true  = WR Gun-class allowlist + bans (see build_profiles); false = base WR profile
 const EXPERIMENT_ANY_GUNS := true
 const EXPERIMENT_BANNED_WEAPON_IDS := ["weapon_medical_gun", "weapon_rocket_launcher", "weapon_flamethrower"]
+# Copy well_rounded's TUNED profile onto another character. "" = inert (default).
+# well_rounded is the only one of 61 profiles carrying the tuned spec, and all
+# ~1,275 recorded wins ran it; every other character starts from a sparse
+# default. Measured 2026-07-31: 2 wins / 43 non-well_rounded runs (0.047) vs
+# well_rounded's 0.384 on full runs. This tests whether the PROFILE, not the
+# character, carries the win rate. See build_profiles._apply_experiments().
+const EXPERIMENT_PORT_WR_PROFILE_TO := "character_artificer"
 # Any gun (except bans). Soft-prefer this ladder over other guns from wave 1.
 const EXPERIMENT_WEAPON_PRIORITY_FROM_WAVE := 1
 const EXPERIMENT_PRIORITY_WEAPONS_ONLY := false
