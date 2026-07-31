@@ -92,6 +92,40 @@ def newest_events(src: Path) -> tuple[Path | None, int, float]:
     return best, n, best_mtime
 
 
+def _last_event(path: Path, max_bytes: int = 262_144) -> dict | None:
+    """Return the last complete JSON event, reading only the file's tail.
+
+    A wave-20 run's events.jsonl reaches 100+ MB and the stall check runs on
+    every poll, so reading the whole file is O(GB) per second of supervision.
+    On 2026-07-31 that raised MemoryError, killed the supervisor mid-campaign,
+    and left the game running with auto_start still ARMED and no driver
+    watching it — the exact unsupervised-run window this driver exists to close.
+
+    Seeks to the last `max_bytes`, drops the (likely partial) first line, and
+    parses the last line that parses. Returns None rather than raising.
+    """
+    size = path.stat().st_size
+    if size == 0:
+        return None
+    read_size = min(size, max_bytes)
+    with path.open("rb") as handle:
+        handle.seek(size - read_size)
+        data = handle.read(read_size)
+    lines = data.decode("utf-8", errors="replace").splitlines()
+    if read_size < size and len(lines) > 1:
+        lines = lines[1:]  # first line is truncated by the seek
+    for line in reversed(lines):
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            event = json.loads(line)
+        except json.JSONDecodeError:
+            continue  # trailing partial write
+        return event if isinstance(event, dict) else None
+    return None
+
+
 def disarm_auto_start() -> None:
     """Set auto_start false and PROVE it by reading the file back.
 
@@ -413,14 +447,17 @@ def main() -> int:
         dead_stuck = False
         if ev_path is not None and ev_path.exists():
             try:
-                lines = ev_path.read_text(encoding="utf-8").splitlines()
-                if lines:
-                    last = json.loads(lines[-1])
-                    if last.get("event") == "combat_tick":
-                        hp = last.get("payload", {}).get("hp")
-                        if hp == 0 and (time.time() - last_progress > 45):
-                            dead_stuck = True
-            except (OSError, json.JSONDecodeError, TypeError):
+                # Read only the TAIL. read_text() on the whole file died with
+                # MemoryError mid-campaign 2026-07-31: a wave-20 Jack run's
+                # events.jsonl reaches 100+ MB and this runs on every poll, so
+                # under memory pressure it took the supervisor down and left the
+                # game running ARMED with no driver. Only the last line is used.
+                last = _last_event(ev_path)
+                if last is not None and last.get("event") == "combat_tick":
+                    hp = last.get("payload", {}).get("hp")
+                    if hp == 0 and (time.time() - last_progress > 45):
+                        dead_stuck = True
+            except (OSError, json.JSONDecodeError, TypeError, ValueError):
                 pass
         if dead_stuck:
             print("Death screen stuck (hp=0); restarting", flush=True)
