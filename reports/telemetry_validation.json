@@ -8,7 +8,7 @@
     {
       "ok": true,
       "errors": [],
-      "event_count": 7952,
+      "event_count": 19402,
       "events_seen": [
         "combat_capture",
         "combat_tick",
@@ -27,12 +27,12 @@
         "shop_combine_dispatched",
         "shop_surplus_reroll_confirmed"
       ],
-      "path": "C:\\Users\\moxhe\\AppData\\Roaming\\Brotato\\brotato_agent\\runs\\run_1785457587_43993\\events.jsonl"
+      "path": "C:\\Users\\moxhe\\AppData\\Roaming\\Brotato\\brotato_agent\\runs\\run_1785463541_40632\\events.jsonl"
     },
     {
       "ok": true,
       "errors": [],
-      "event_count": 18037,
+      "event_count": 19319,
       "events_seen": [
         "combat_capture",
         "combat_tick",
@@ -51,12 +51,12 @@
         "shop_combine_dispatched",
         "shop_surplus_reroll_confirmed"
       ],
-      "path": "C:\\Users\\moxhe\\AppData\\Roaming\\Brotato\\brotato_agent\\runs\\run_1785457974_8811\\events.jsonl"
+      "path": "C:\\Users\\moxhe\\AppData\\Roaming\\Brotato\\brotato_agent\\runs\\run_1785464494_578\\events.jsonl"
     },
     {
       "ok": true,
       "errors": [],
-      "event_count": 17999,
+      "event_count": 18152,
       "events_seen": [
         "combat_capture",
         "combat_tick",
@@ -75,12 +75,12 @@
         "shop_combine_dispatched",
         "shop_surplus_reroll_confirmed"
       ],
-      "path": "C:\\Users\\moxhe\\AppData\\Roaming\\Brotato\\brotato_agent\\runs\\run_1785458843_51020\\events.jsonl"
+      "path": "C:\\Users\\moxhe\\AppData\\Roaming\\Brotato\\brotato_agent\\runs\\run_1785465438_88617\\events.jsonl"
     },
     {
       "ok": true,
       "errors": [],
-      "event_count": 9541,
+      "event_count": 13948,
       "events_seen": [
         "combat_capture",
         "combat_tick",
@@ -99,12 +99,12 @@
         "shop_combine_dispatched",
         "shop_surplus_reroll_confirmed"
       ],
-      "path": "C:\\Users\\moxhe\\AppData\\Roaming\\Brotato\\brotato_agent\\runs\\run_1785459718_43082\\events.jsonl"
+      "path": "C:\\Users\\moxhe\\AppData\\Roaming\\Brotato\\brotato_agent\\runs\\run_1785466318_79427\\events.jsonl"
     },
     {
       "ok": true,
       "errors": [],
-      "event_count": 17804,
+      "event_count": 11240,
       "events_seen": [
         "combat_capture",
         "combat_tick",
@@ -123,12 +123,12 @@
         "shop_combine_dispatched",
         "shop_surplus_reroll_confirmed"
       ],
-      "path": "C:\\Users\\moxhe\\AppData\\Roaming\\Brotato\\brotato_agent\\runs\\run_1785460175_48975\\events.jsonl"
+      "path": "C:\\Users\\moxhe\\AppData\\Roaming\\Brotato\\brotato_agent\\runs\\run_1785466997_40563\\events.jsonl"
     },
     {
       "ok": true,
       "errors": [],
-      "event_count": 19436,
+      "event_count": 21979,
       "events_seen": [
         "combat_capture",
         "combat_tick",
@@ -147,12 +147,12 @@
         "shop_combine_dispatched",
         "shop_surplus_reroll_confirmed"
       ],
-      "path": "C:\\Users\\moxhe\\AppData\\Roaming\\Brotato\\brotato_agent\\runs\\run_1785461031_148\\events.jsonl"
+      "path": "C:\\Users\\moxhe\\AppData\\Roaming\\Brotato\\brotato_agent\\runs\\run_1785467550_41612\\events.jsonl"
     },
     {
       "ok": true,
       "errors": [],
-      "event_count": 9549,
+      "event_count": 15349,
       "events_seen": [
         "combat_capture",
         "combat_tick",
@@ -171,12 +171,12 @@
         "shop_combine_dispatched",
         "shop_surplus_reroll_confirmed"
       ],
-      "path": "C:\\Users\\moxhe\\AppData\\Roaming\\Brotato\\brotato_agent\\runs\\run_1785461972_9131\\events.jsonl"
+      "path": "C:\\Users\\moxhe\\AppData\\Roaming\\Brotato\\brotato_agent\\runs\\run_1785468615_17472\\events.jsonl"
     },
     {
       "ok": true,
       "errors": [],
-      "event_count": 13842,
+      "event_count": 13980,
       "events_seen": [
         "combat_capture",
         "combat_tick",
@@ -192,10 +192,9 @@
         "run_end",
         "run_start",
         "shop_combine_confirmed",
-        "shop_combine_dispatched",
-        "shop_surplus_reroll_confirmed"
+        "shop_combine_dispatched"
       ],
-      "path": "C:\\Users\\moxhe\\AppData\\Roaming\\Brotato\\brotato_agent\\runs\\run_1785462436_70110\\events.jsonl"
+      "path": "C:\\Users\\moxhe\\AppData\\Roaming\\Brotato\\brotato_agent\\runs\\run_1785469375_76602\\events.jsonl"
     }
   ]
 }
