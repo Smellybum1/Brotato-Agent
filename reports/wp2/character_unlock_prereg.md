@@ -709,3 +709,80 @@ underpowered for an effect this small. Either:
    campaigns only on whether they acquire the item.
 ⛔ **Do NOT run a fourth character expecting a different answer** — that is optional stopping at the
 level of the experiment.
+
+## 22. Cyborg → `item_improved_tools` (A) — ACQUISITION ONLY (2026-07-31, pre-collection)
+
+### 22a. This is §1's acquisition task again, NOT a hypothesis test
+No arm comparison, no endpoint, no p-value. The deliverable is one unlocked item.
+⛔ **Therefore `--stop-on-win` IS used, and these runs are PERMANENTLY DISQUALIFIED from serving as a
+treatment arm in any later comparison** — the stopping rule is correlated with the outcome
+(measurement-discipline 22nd). Recorded now so the trap cannot recur by someone reusing this data.
+
+### 22b. Target selection, re-derived from the CURRENT save (era 177)
+43 of 88 challenges complete; **34 incomplete challenges have their character already unlocked.**
+Rewards ranked by the scorer's own tables (`ROGUERANKER_ITEM_TIERS` 68 + `WIKI_USEFUL_ITEM_TIERS` 98):
+A-tier reachable = `focus`(one_arm), `lure`(fisherman), `robot_arm`(engineer), `spider`(gladiator),
+`stone_skin`(golem), `big_arms`(generalist), **`improved_tools`(cyborg)**, `tentacle`(lich).
+
+Excluded on **mechanical** grounds — impossibilities for a gun policy, not the disconfirmed winnability
+ranking: `one_arm` (`weapon_slot −5` ⇒ ONE weapon slot), `engineer` (0 ranged in pool),
+`gladiator` (`no_ranged_weapons`, 0/12 ranged). `fisherman` is exhausted (16 attempts, 0 wins).
+⛔ 6 rewards are **OFF the scorer allowlist** and hard-vetoed `-1e9` from wave 11
+(`bowler_hat`, `compass`, **`fairy`**, `gnome`, `rip_and_tear`, `spicy_sauce`) — worth less than nothing.
+⛔ Weapon rewards (12 characters) are structurally off-list — the allowlist covers items only.
+
+**Chosen: `character_cyborg`.** Its profile ALREADY carries `allow_melee: false` and
+`preferred_sets: ["set_gun"]` — the closest of any candidate to `well_rounded`'s runtime config,
+**without needing the unproven profile port**. Its pool contains `weapon_smg`, so it opens on a gun.
+⚠️ Known risk, stated up front: cyborg carries **`effect_reduce_stat_gains`** entries (−75/−100/−100
+with a +250) that rewrite stat scaling and may break the shop's linear valuation. **No prediction is
+made about the win rate** — the structural ranking was disconfirmed on fisherman and is not being
+relied on again.
+
+### 22c. Arm
+`character_cyborg`, D0, build **frozen at `0.2.66-wp2-capture`** (which ports to `fisherman`, so cyborg
+uses its OWN profile — **config-only, no deploy**). `weapon_prefixes = ["weapon_smg", "weapon_"]`.
+**8 attempts, stop on first victory.** §4 validity unchanged. Smoke must verify BEHAVIOURALLY that
+`run_start.weapon` is an smg.
+
+## 23. RESULTS — Cyborg: ❌ 0/8, `item_improved_tools` NOT acquired (2026-07-31)
+
+**8/8 attempts, 8/8 valid, 0 technical failures, 0 victories.** Terminal waves
+**[17, 17, 16, 13, 11, 19, 14, 13]** — a deep floor (6 of 8 reached ≥13, one hit 19) with no
+conversion. All eight opened on `weapon_smg_1`, build frozen `0.2.66`, era stable **177/46**.
+`item_improved_tools` and `chal_cyborg` verified still locked (djb2, positive controls passing).
+⛔ Per §22a these runs are **DISQUALIFIED from any later comparison** (`--stop-on-win` armed).
+
+### 23a. The cumulative record is the durable result of this session
+| arm | wins/runs |
+|---|---|
+| arms_dealer bare | 0/8 |
+| artificer bare / **PORTED** | 0/8 / **1/5** |
+| jack bare / **PORTED** | 0/8 / **1/4** |
+| mutant bare | 1/4 |
+| fisherman bare / **PORTED** | 0/8 / **0/8** |
+| cyborg bare | 0/8 |
+| **TOTAL** | **3 / 61 = 0.049** |
+
+**Non-`well_rounded` characters win 4.9% of D0 full runs; `well_rounded` wins 38.4% (103/268).**
+That ~8x gap is measured over 61 formal attempts across 6 characters and is the most solid quantitative
+finding here — far better evidenced than any explanation for it.
+
+**The explanation remains open.** The profile port was the leading candidate and its only unbiased test
+was null (§21). Both port "successes" sit in arms censored on their own victory. 3 wins in 61 runs is
+consistent with a single low rate shared across characters, with neither character choice nor the port
+doing measurable work.
+
+### 23b. Stop expanding; the acquisition branch is spent at this power
+Six characters, 61 attempts, 4 items acquired (all three original S-tier + `item_octopus`). Every
+remaining A-tier reward is behind a character that is either mechanically gun-hostile, already
+exhausted, or (cyborg, generalist, golem, lich) carries stat-rewrites of the kind just measured to be
+worth 0/8. **Another 8-attempt campaign has ~1 - (1-0.049)^8 ≈ 33% chance of acquiring anything**,
+and no selection rule survives to pick the target better than chance.
+
+⛔ **Do not queue further 8-attempt character campaigns as the default.** The two honest options:
+1. **Fix capability** — the 8x gap is the real lever. Any change that moves the non-`well_rounded` rate
+   toward 0.384 unlocks the whole remaining branch at once. That needs a properly powered test
+   (**≥32/arm on ONE character**, no stop-on-win), not more acquisition attempts.
+2. **Accept the surface as-is.** 4 of the highest-value items are acquired; S-tier pool 8 → 11 (+38%),
+   which was the campaign's stated goal in §2.
