@@ -616,3 +616,51 @@ cannot play other characters" is better explained as **"no other character has e
 profile"** — `character_well_rounded` is the only one of 61 that does, and all ~1,275 wins ran it.
 ▶ Next, if the line is continued: **port to `character_fisherman`** (the one bare-profile failure left,
 `item_lure` A-tier) as a third replication with a **pre-registered endpoint and randomised arm order**.
+
+## 20. PRE-REGISTRATION — Fisherman profile-port, THIRD replication (2026-07-31)
+### Recorded BEFORE the build is changed and BEFORE any attempt is collected.
+
+### 20a. ⛔ FIRST, A DEFECT IN §18b/§19b's OWN STATISTICS: `--stop-on-win` IS OPTIONAL STOPPING
+Both prior port arms ran `--stop-on-win`, so each **terminated precisely on a victory** — the largest
+possible terminal wave. Jack's post-port arm is [19, 17, 16, **20**] and stopped *because* of the 20;
+Artificer's [10, 10, 10, 13, **20**] likewise. **The treatment arm is censored on a high value, which
+inflates the permutation statistic.** The reported **Jack p = 0.0525 and Artificer p = 0.1290 are
+therefore OPTIMISTIC**, and the combined **0.0406 inherits it**. The control arms (0/8 each) ran to
+their cap and are unaffected, so the bias is one-directional and favours my own hypothesis.
+
+**This does not touch the acquisitions** — the items unlocked and are verified in the save. It touches
+only the strength-of-evidence claim. §19b's "supported, not established" verdict stands; if anything it
+was more generous than the design earned.
+
+**Fix, applied here:** this campaign runs **all 8 attempts regardless of a victory — NO
+`--stop-on-win`.** The reward is granted by the first win whether or not collection continues, so the
+only cost is ~1 h of machine time, and it buys an **uncensored** treatment arm.
+
+### 20b. Pre-specified PRIMARY endpoint — fixed now, before any data
+**Terminal wave, exact permutation test on the arm sum, one-sided (post-port ≥ pre-port), α = 0.05.**
+- **Control arm, ALREADY COLLECTED AND FROZEN:** fisherman bare-profile, n=8, terminal waves
+  **[10, 17, 11, 17, 11, 12, 10, 13]** (era 175, `0.2.63`).
+- **Treatment arm:** fisherman ported, **n=8, run to completion**, `0.2.66`.
+- **SECONDARY (reported, not decisive):** binary victory count; and the acquisition of `item_lure`.
+- **No other endpoint will be substituted after seeing the data.** This is the specific weakness §19b
+  named — Jack's endpoint was chosen after Jack's data.
+
+### 20c. Pre-declared confounds — stated because they CANNOT be fixed
+- **Arm order cannot be randomised.** The control arm already exists; §5 forbids discarding collected
+  attempts, and re-collecting them would select on outcome. Sequential arms are therefore inherent.
+- **Era differs**: control era **175/46**, treatment era **177/46** (three unlocks landed between).
+  The pool the shop samples from is not identical. **This alone prevents a clean causal claim** and is
+  the reason a positive result here is still only a third replication, not proof.
+- n=8 v 8 cannot resolve less than roughly a doubling (§17e).
+
+### 20d. Port-engagement readback — control verified NON-VACUOUS in advance
+The port sets `allow_melee=false`. Fisherman's bare profile leaves `allow_melee` at its default
+**true**, and it **did** buy melee: **20/150 = 13.3%** of weapon purchases
+(jousting_lance 4, fist 3, circular_saw 3, rock 3, knife 2, spear 2, stick 2, torch 1).
+**Expected post-port: 0.** Unlike Artificer, the melee signature is usable here — checked first.
+
+### 20e. Arm and validity
+`character_fisherman`, D0, build **`0.2.66-wp2-capture`** frozen for the campaign, era recorded per run.
+`weapon_prefixes = ["weapon_smg", "weapon_"]` — fisherman's pool contains `weapon_smg` (a `set_gun`
+weapon), so it opens on a gun, as the port's `allow_melee=false` requires. §4 validity unchanged.
+**Smoke must verify BEHAVIOURALLY** that `run_start.weapon` is an smg before the campaign is trusted.
