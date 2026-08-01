@@ -820,10 +820,41 @@ enumeration is infeasible at n=32), one-sided (ported ≥ bare), α = 0.05.**
 **SECONDARY, reported not decisive:** binary victory count; median terminal wave.
 ⛔ **No other endpoint will be substituted after seeing the data** — that was the §18b failure.
 
+#### 24c-i. Analysis code written BLIND — provenance
+`scripts/wp2_jack_power_analysis.py` was written **2026-08-01, while block A2 stood at 8/16 and block
+B2 had not been started**, i.e. with half the design uncollected. The endpoint, the statistic, the
+direction and the α are fixed in that file.
+- The exact-enumeration escape hatch above is **not needed**: the permutation null is computed
+  **exactly** by dynamic programming over (subset size, subset sum) — terminal waves are small
+  integers, so all **C(64,32) = 1,832,624,140,942,590,534** splits are *counted* rather than
+  enumerated. No Monte-Carlo approximation is used.
+- The statistics are validated by `--self-test` before they decide anything: DP counts vs brute-force
+  enumeration; permutation p vs full enumeration; **Fisher reproduces the canonical tea table
+  17/70 = 0.242857** (the closed form that catches a wrong-tail sum, cf. §11c); and both tests are
+  shown to be able to return **the positive** (complete separation → the 1/C floor) and **the null**
+  (identical arms → 1, reversed arms → 1). At 32/arm the p-value floor is 5.46e-19, so the design is
+  capable of significance.
+- The script **refuses to run** unless all four blocks hold 16 runs, printing the optional-stopping
+  rationale. `--allow-incomplete` exists for plumbing checks only and prints a loud non-preregistered
+  banner. The data path was verified end-to-end on a **synthetic** tree so that no partial real result
+  was ever computed.
+
 ### 24d. Port-engagement readback, control already known non-vacuous
 `allow_melee=false` ⇒ zero melee weapon buys. Jack bare bought melee on **135/253 = 53.4%** of weapon
 purchases. **Expected: bare arm ≈ 0.53, ported arm = 0.** If the ported arm is not 0, the build is
 mis-armed and the block is void.
+
+⚠️ **MEASURED AT BLOCK LEVEL 2026-08-01, and the expected bare rate above is WRONG:**
+**A1 PORTED 0/444 = 0.0000** vs **B1 BARE 61/327 = 0.1865**. The bare arm buys melee at **18.65%**,
+not 53.4% — both arms now start on a gun under the shared `weapon_prefixes`, so the older 53.4%
+figure does not transfer. **The readback still passes decisively**: under the bare rate,
+P(0 of 444) ≈ e⁻⁹². The direction and the zero are what the gate needs; the specific bare rate was
+never load-bearing. ⚠️ A 3-run spot check of the same quantity read **8.7%** — less than half the
+block figure, so quote the block number.
+⚠️ **Method note:** `weapon_type` is on the `purchase_offer`, the buy is on the `purchase_decision`
+(`payload.action.type == "shop_buy"`); the two must be joined via the most recent offer board. Reading
+`e["type"]` (it is `e["event"]`) or expecting `payload.items` on a decision yields **0/0** — a vacuous
+zero that reads as a clean pass. The bare control is what exposed it.
 
 ### 24e. Pre-declared interpretation
 - **Reject** ⇒ the profile port is established as improving a non-`well_rounded` character.
@@ -831,3 +862,138 @@ mis-armed and the block is void.
   (accept the surface) becomes the answer. **This is a real possible outcome and will be reported as
   such**, not followed by a fifth character.
 ⚠️ Still uncontrolled: one character only, so a positive result generalises no further than Jack.
+
+---
+
+# §25. DOES THE PROFILE PORT GENERALISE BEYOND JACK?
+
+Written 2026-08-01, **before any §25 data exists.** §24 established the port on Jack
+(terminal wave p = 0.0186; victories 17/32 vs 4/32). §24e pre-registered that this
+"generalises no further than Jack". §25 tests whether it generalises at all.
+
+**The existing evidence is genuinely mixed and that is why this is worth running:**
+Jack ported = large positive at 32/arm; **fisherman ported = 0/8 vs bare 0/8, p = 0.3373**,
+a clean null but at n=8, which can detect almost nothing. One positive and one
+uninformative null is not a generalisation claim in either direction.
+
+## 25a. Design — characters are the generalisation unit
+
+Four characters x 8 runs x 2 arms = **64 runs**, Danger 0, full runs.
+
+Per `campaign_sizing_v2.md`: precision depends on (units x reps) and **the generalisation
+unit is the thing you want to generalise over**. §24 spent 32 reps on one character and can
+say nothing about a second. §25 spends the same 64 runs on **four** characters to buy a
+generalisation claim instead of a tighter single-character estimate.
+
+**Characters, and why exactly these four.** The port sets `allow_melee = false`, so a
+character whose reachable starting weapon is MELEE would open on a weapon its own shop
+scores -1e9 — the Artificer plank defect. Verified from the game's own `*_data.tres`:
+
+| character | starting weapons | first matching prefix | weapon | type |
+|---|---|---|---|---|
+| `arms_dealer` | 1 | `weapon_pistol` | pistol | **RANGED** |
+| `cyborg` | 8 (3 melee / 5 ranged) | `weapon_pistol` | pistol | **RANGED** |
+| `fisherman` | 16 (8 melee / 8 ranged) | `weapon_pistol` | pistol | **RANGED** |
+| `mutant` | 13 (6 melee / 7 ranged) | *no pistol* -> `weapon_smg` | smg | **RANGED** |
+
+**EXCLUDED and why:** `crazy` (1 ranged of 6), `lucky` (2 of 8), `multitasker` (10 of 27 but
+melee-first) — all would hand the ported arm a melee opener. Excluding them is a
+**restriction on the claim**, stated here: §25 tests generalisation across
+*ranged-capable* characters only.
+
+**Weapon prefixes, identical in both arms** (order-sensitive, walked per character above):
+`["weapon_pistol","weapon_smg","weapon_revolver","weapon_shredder","weapon_crossbow","weapon_laser_gun","weapon_"]`
+
+## 25b. Arms differ in exactly one constant
+
+- **PORTED:** `EXPERIMENT_PORT_WR_PROFILE_TO = "*"` (new in this build — ports onto every
+  cached profile except well_rounded). A run uses one character, so "*" is behaviourally
+  identical for that run to naming its character, while letting **one build serve all four**.
+  Without it the campaign needs 8 deploys and 8 version bumps, each an identity-gate risk.
+- **BARE:** `EXPERIMENT_PORT_WR_PROFILE_TO = ""`.
+- Each arm ships its **own version** (different content must never wear the same version
+  string — the identity gate compares strings and cannot see content).
+- `agent_config.json` **byte-identical across arms** except `character`.
+- Guarded by `test_v70_port_supports_wildcard_so_one_build_serves_a_multi_character_block`,
+  which asserts both branches route through one copier, the wildcard skips well_rounded, and
+  the load-bearing `tgt.name = "well_rounded"` survives.
+
+**Order drawn with `secrets` BEFORE collection: BARE first, then PORTED.**
+Character order within each arm: **cyborg, fisherman, mutant, arms_dealer.**
+
+## 25c. PRIMARY endpoint — fixed before data, no substitution
+
+**Terminal wave. STRATIFIED exact permutation: arm labels are permuted WITHIN each
+character; statistic = total ported terminal-wave sum across all four strata; one-sided
+(ported > bare); alpha = 0.05.**
+
+Stratification is not optional. Characters differ enormously in baseline strength, and an
+unstratified test would let between-character variance swamp the treatment — the same reason
+fixture campaigns here are always paired. The null distribution is computed **exactly**: per
+character, DP over (subset size, subset sum) gives that stratum's exact distribution; the
+four are then **convolved**. No Monte-Carlo.
+
+**SECONDARY, reported not decisive:** pooled victories (Fisher one-sided); per-character
+terminal-wave means and victory counts, reported for all four **whatever they show**.
+
+## 25d. Engagement readback, with its control
+
+`allow_melee = false` ⇒ **zero melee weapon buys on the ported arm.** The bare arm supplies
+the non-vacuous control. **Measured at BLOCK level, never per run** — a single bare run
+bought 0/31 melee in §24 purely by chance. Method: `weapon_type` is on the `purchase_offer`,
+the buy on the `purchase_decision`; the two must be joined via the most recent offer board.
+**If the ported arm is not 0 melee across the block, the build is mis-armed and the block is void.**
+
+## 25e. Pre-declared interpretation
+
+- **Reject** ⇒ the port generalises across ranged-capable characters. This becomes a
+  shipping decision, not another experiment.
+- **Fail to reject** ⇒ the port is **Jack-specific**, §24 stands as a single-character
+  result, and the "fix capability" branch is far weaker than §24 alone suggested.
+  **This is a real possible outcome and will be reported as such.**
+- **Heterogeneity is expected and is not a licence to pick.** If the pooled test is null but
+  one character looks strong, that is a HYPOTHESIS for a future powered test on that
+  character — **not** a finding. Selecting the best of four post hoc is exactly the
+  multiplicity error this document exists to prevent.
+
+⛔ **No `--stop-on-win` in any block** (§22). All 8 attempts per character-arm run regardless.
+⛔ Era must stay **177/46** throughout; any unlock invalidates pooling.
+
+## §25f. AMENDMENT, 2026-08-01 — character set changed for ERA SAFETY, before any outcome was examined
+
+**The flaw.** §24 could not suffer shop-pool drift because Jack's reward was already unlocked, so no
+victory could change the pool. I carried that immunity into §25 **without re-deriving it for the new
+characters.** Checked in the save by djb2 (positive controls `item_potato`/`item_padding`/
+`item_night_goggles`/`item_lens` all True; negative control False):
+
+| character | challenge done | reward | unlocked | a win would |
+|---|---|---|---|---|
+| cyborg | ✗ | `item_improved_tools` | **✗** | **move the era** |
+| fisherman | ✗ | `item_lure` | **✗** | **move the era** |
+| mutant | ✓ | `item_octopus` | ✓ | safe |
+| arms_dealer | ✓ | `item_anvil` | ✓ | safe |
+
+**The ported arm is the arm expected to win**, so drift was the likely case, not a tail risk — and
+§25b already declares that any unlock invalidates pooling. The campaign was **stopped at 7/64**.
+
+**The fix — no save modification.** Enumerated all 41 playable characters for (a) reward already
+unlocked and (b) a RANGED opener under the §25 prefix list. **Seven qualify**: arms_dealer, artificer,
+jack, mutant, ranger, saver, well_rounded. Excluding `well_rounded` (the source profile — porting to
+it is a no-op) and `jack` (already the §24 subject), the set becomes:
+
+**`artificer, ranger, mutant, arms_dealer`** — cyborg → artificer, fisherman → ranger, substituted in
+place so the drawn order is otherwise preserved. Openers re-verified: artificer `weapon_shredder_1`,
+ranger `weapon_pistol_1`, mutant `weapon_smg_1`, arms_dealer `weapon_pistol_1` — **all RANGED under the
+unchanged prefix list.**
+
+⚠️ **The substitution is driven by a STRUCTURAL, pre-data property (which rewards are unlocked in the
+save), not by any outcome.** No fisherman run was ever collected. Seven cyborg runs were collected and
+are **discarded unused**; one of them was inspected for arm certification (defeat, wave 16) before the
+flaw was found. Cyborg's removal is caused by its locked reward, not by that result.
+
+⚠️ **§25d's melee readback is VACUOUS for artificer and ranger** — both profiles already set
+`allow_melee:false`, so their bare arms buy no melee either. **Their readback is instead the share of
+weapon buys OUTSIDE `set_gun`**, since the port sets `allowed_weapon_sets = ["set_gun"]` (artificer is
+already known to go 14.6% → 0 on that signature). arms_dealer and mutant keep the melee readback
+(`allow_melee` defaults true for both). **The bare arm's non-vacuity must be confirmed per character
+before any zero is believed.**

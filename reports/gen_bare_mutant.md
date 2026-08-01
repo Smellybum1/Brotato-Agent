@@ -1,0 +1,17 @@
+# Overnight Batch (gen_bare_mutant)
+
+- Runs: 8
+- Victories: 1
+- Win rate: 0.125 (Wilson 95% CI 0.022–0.471)
+- Min wins gate: 0
+
+| run_id | result | last_wave | duration_ms | recoveries | failure |
+|---|---|---:|---:|---:|---|
+| run_1785560453_42087 | defeat | 15 | 819425 | 9 |  |
+| run_1785561274_49571 | defeat | 19 | 1084004 | 13 |  |
+| run_1785562359_32952 | defeat | 17 | 961319 | 11 |  |
+| run_1785563322_33702 | victory | 20 | 1127947 | 14 |  |
+| run_1785564451_29435 | defeat | 15 | 790395 | 9 |  |
+| run_1785565243_88427 | defeat | 19 | 1070410 | 13 |  |
+| run_1785566314_9253 | defeat | 10 | 471332 | 4 |  |
+| run_1785566787_89264 | defeat | 15 | 836902 | 9 |  |
