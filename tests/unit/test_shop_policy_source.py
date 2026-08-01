@@ -134,12 +134,12 @@ def test_wp2_capture_build_versions_the_v122_crossing_tier_policy():
     # student-inference path (learned/ bridge, default-off) is unchanged —
     # deploy surface bumps together: manifest, controller meta, telemetry
     # default, and the collector identity gate.
-    assert '"version_number": "0.2.68"' in manifest
+    assert '"version_number": "0.2.72"' in manifest
     assert "v128 deterministic teacher" in manifest
     assert controller.count("teacher_v1-0.1.129-gun-wp1") == 1
-    assert controller.count("0.2.68-wp2-capture") == 1
+    assert controller.count("0.2.72-wp2-capture") == 1
     assert telemetry.count("teacher_v1-0.1.129-gun-wp1") == 1
-    assert telemetry.count("0.2.68-wp2-capture") == 1
+    assert telemetry.count("0.2.72-wp2-capture") == 1
 
 
 def test_starting_weapon_select_cannot_stall_on_any_character():
@@ -2428,3 +2428,37 @@ def test_rare_gun_lock_visit_cap_cannot_be_bypassed():
     assert decide(1, 72, -1) == ("near", True)     # median minigun shortfall
     assert decide(1, 91, -1) == ("near", True)     # best chain-gun shortfall
     assert decide(1, 128, -1) == ("near", True)    # observed chain-gun trajectory
+
+
+def test_v70_port_supports_wildcard_so_one_build_serves_a_multi_character_block():
+    """The "*" port target, and the invariants it must not break.
+
+    A multi-character port campaign would otherwise need one deploy (and one
+    version bump) per character. "*" ports onto every cached profile, which is
+    behaviourally identical for any single run while keeping the installed
+    build constant across the block.
+    """
+    src = PROFILES.read_text(encoding="utf-8")
+
+    # The wildcard branch exists and excludes the source profile, or the port
+    # would overwrite well_rounded with itself and the control arm would move.
+    assert 'if target_id == "*":' in src
+    wildcard = src.split('if target_id == "*":', 1)[1].split("return", 1)[0]
+    assert '!= "character_well_rounded"' in wildcard, "wildcard must skip well_rounded"
+    assert "_port_one(" in wildcard
+
+    # Both branches must route through ONE copier, so the single-character and
+    # wildcard arms cannot drift apart in what they copy.
+    assert src.count("_port_one(") == 3, "two call sites plus the definition"
+    assert "func _port_one(" in src
+
+    # The load-bearing rename must still be inside the shared copier: three
+    # scoring paths gate on str(profile.name) == "well_rounded", so dropping it
+    # leaves the port PARTIALLY INERT — applied, and silently doing nothing.
+    body = src.split("func _port_one(", 1)[1].split("\nfunc ", 1)[0]
+    assert 'tgt.name = "well_rounded"' in body
+    for field in ("utility_overrides", "dodge_caution", "gold_reserve", "allow_melee"):
+        assert f"tgt.{field}" in body, f"{field} must still be ported"
+
+    # "" stays inert: the control arm depends on it.
+    assert 'if target_id == "" or target_id == "character_well_rounded":' in src

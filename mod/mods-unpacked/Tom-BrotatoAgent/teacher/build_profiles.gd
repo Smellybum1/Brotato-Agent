@@ -51,15 +51,30 @@ func _apply_experiments() -> void:
 	_port_wr_profile(wr)
 
 
-# Copy well_rounded's tuned profile onto one other character.
+# Copy well_rounded's tuned profile onto other characters.
 # See BotConfig.EXPERIMENT_PORT_WR_PROFILE_TO ("" = inert).
+#   ""            -> inert
+#   "character_x" -> port onto that one character
+#   "*"           -> port onto EVERY cached character except well_rounded.
+# "*" exists so a multi-character campaign needs ONE build rather than one per
+# character: a run uses exactly one character, so porting to all of them is
+# behaviourally identical for that run to porting to its own character, while
+# keeping the installed build (and therefore the arm) constant across the block.
 func _port_wr_profile(wr: BotBuildProfile) -> void:
 	var target_id: String = str(BotConfig.EXPERIMENT_PORT_WR_PROFILE_TO)
 	if target_id == "" or target_id == "character_well_rounded":
 		return
+	if target_id == "*":
+		for key in _cache.keys():
+			if str(key) != "character_well_rounded":
+				_port_one(wr, _cache[key])
+		return
 	if not _cache.has(target_id):
 		return
-	var tgt: BotBuildProfile = _cache[target_id]
+	_port_one(wr, _cache[target_id])
+
+
+func _port_one(wr: BotBuildProfile, tgt: BotBuildProfile) -> void:
 	# The NAME is load-bearing, not cosmetic: three scoring paths gate on
 	# str(profile.name) == "well_rounded" (combat_model.gd:206 late-shop,
 	# shop_strategy.gd:579 and :766). Copying the values while leaving the
