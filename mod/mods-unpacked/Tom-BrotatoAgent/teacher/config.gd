@@ -14,7 +14,7 @@ const EXPERIMENT_BANNED_WEAPON_IDS := ["weapon_medical_gun", "weapon_rocket_laun
 # default. Measured 2026-07-31: 2 wins / 43 non-well_rounded runs (0.047) vs
 # well_rounded's 0.384 on full runs. This tests whether the PROFILE, not the
 # character, carries the win rate. See build_profiles._apply_experiments().
-const EXPERIMENT_PORT_WR_PROFILE_TO := "*"
+const EXPERIMENT_PORT_WR_PROFILE_TO := ""
 # Any gun (except bans). Soft-prefer this ladder over other guns from wave 1.
 const EXPERIMENT_WEAPON_PRIORITY_FROM_WAVE := 1
 const EXPERIMENT_PRIORITY_WEAPONS_ONLY := false
