@@ -53,12 +53,32 @@ Therefore the inference table is asymmetric, and the *informative* cell is not t
 control is comparable in construction (though NOT poolable: different era, and fixture-resume rather
 than a wave-1 start).
 
-**Fixtures: 8 distinct wave-1 D5 mutant snapshots.** Harvesting is cheap (~1 min each; the gate's
-snapshot was captured 20 s after launch). Distinct snapshots carry distinct predetermined
-`bosses_spawn` and RNG streams, which is the generalisation unit — memory's standing rule is to spend
-budget on **more fixtures, not more repeats**.
-⚠️ Wave-1 builds are far more homogeneous than the w17 fixture library, so between-fixture variance
-will be smaller here and pairing buys less than it does at wave 17. Pairing is still used; it cannot hurt.
+**Fixtures: 8 distinct wave-1 D5 mutant snapshots**, harvested cheaply (~1 min each).
+
+⛔⛔ **CORRECTED 2026-08-02 BEFORE COLLECTION — the first draft justified this wrongly.** It claimed
+distinct snapshots carry "distinct predetermined `bosses_spawn` and RNG streams." Measured across 8
+harvested files:
+
+- **`bosses_spawn` takes only TWO values**, and they are the same pair in either order —
+  `["boss_wizard","boss_crab"]` / `["boss_crab","boss_wizard"]`. Boss identity is effectively fixed;
+  only which one arrives first varies. **Much narrower than the draft claimed.**
+- **`elites_spawn` DOES carry per-wave RNG seeds** (`[[12, 0, 2907336940], ...]` vs
+  `[[12, 0, 1458511319], ...]`) and is the real run identity.
+- Entry state genuinely varies: **`current_level` 2-3, gold, `current_health` 12-13, `shop_items`.**
+
+⛔⛔ **AND THE DEDUP KEY MATTERS: 8 snapshot FILES were only 5 distinct RUNS.** The collector writes a
+snapshot per save-write, so one run yields several wave-1 states (before/after the wave-1 shop) that
+differ in gold but share a run. **Selecting fixtures by file would be silent pseudo-replication** —
+near-identical entry states counted as independent draws, which would understate variance and inflate
+any effect. **Fixtures are therefore selected ONE PER DISTINCT `elites_spawn`**, and the harvest counts
+distinct runs, not files.
+
+⚠️ Consequence for the design: wave-1 states are far more homogeneous than the w17 fixture library, so
+**between-fixture variance is small and pairing buys much less here than at wave 17.** The primary
+analysis is therefore reported **unpaired**, with the paired form as a sensitivity. The generalisation
+claim narrows accordingly: this is one wave-1 D5 mutant entry distribution, not a build library.
+⚠️ **No RNG seed for in-run combat is stored**, so replays of the same fixture are NOT deterministic —
+the control arm's own spread across 8 fixtures is the check on that, and is reported first.
 
 **5 arms, each fixture played under all 5 (paired):**
 
