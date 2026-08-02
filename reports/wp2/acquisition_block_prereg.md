@@ -87,3 +87,42 @@ After each character's block, verify the unlock **in the save**:
 - ⚠️ The gating table came from a **decompiled snapshot older than the installed build** (12 completed
   challenge hashes in the save have no counterpart in it), so the reward list may be incomplete. The
   five rows here were each read from a real `.tres`, but do not treat the 37-row table as exhaustive.
+
+---
+
+## ⛔⛔ CORRECTION 2026-08-02 (post-hoc; §27e as pre-registered was WRONG FOR WEAPONS)
+
+Recorded after block 1 rather than edited in place, so what was pre-registered stays legible.
+Result: `acquisition_block1_result.md`.
+
+**§27e says "hash the entity's own `my_id`". That is correct for ITEMS and CHARACTERS and
+structurally incapable of returning True for WEAPONS.**
+
+`progress_data.gd:225,259` push **`weapon.weapon_id`** — the tier-stripped FAMILY id — and
+`item_service.gd:81` filters the shop pool on the same field. `my_id` is never stored for weapons.
+The two differ by the tier suffix: `my_id = "weapon_nuclear_launcher_3"` vs
+`weapon_id = "weapon_nuclear_launcher"`. Measured: **0 of 182 weapon `my_id` hashes** appear in
+`weapons_unlocked` (47 entries).
+
+**Why §27e's own safeguard did not catch it:** every listed positive control — `item_potato`,
+`item_padding`, `item_night_goggles`, `item_lens`, `item_anvil` — is an **ITEM**. They all pass while
+saying nothing about `weapons_unlocked`. **A positive control validates the TEST, not the KEYS, and
+not the COLLECTION.**
+
+**Superseding rule for block 2 — assert a control on EVERY list a target is read from:**
+
+| list | key to hash | positive controls |
+|---|---|---|
+| `items_unlocked` | `my_id` (`item_*`) | `item_anvil`, `item_lens` |
+| `challenges_completed` | `my_id` (`chal_*`) | `chal_arms_dealer`, `chal_soldier` |
+| **`weapons_unlocked`** | **`weapon_id` (FAMILY, no tier suffix)** | **`weapon_smg`, `weapon_pistol`** |
+
+Implemented in **`.tmp/acq_verify.py`**, which refuses to report a target unless all controls pass.
+
+**Also add to §27e:** a weapon unlock admits the **whole family** (every tier variant), because
+`init_unlocked_pool()` iterates all variants and filters each on the family id — so record the reward
+as a family, not a single tier.
+
+**And a §27e-adjacent method note:** the strongest instrument needs no id table at all — **diff
+`weapons_unlocked` against a pre-campaign save snapshot** and decode the added integer. Snapshot the
+save before every block.
