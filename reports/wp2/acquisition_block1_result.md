@@ -68,6 +68,34 @@ S-tier universal item while our allowlist omits it entirely. Both cannot be righ
 makes offer→buy in waves 1-10 measurable. If the guide is right, the blind spot affects
 **already-unlocked** items too — a larger finding than any single unlock.
 
+#### The test was run immediately, and it is UNDERPOWERED — not answered
+Ledger over the 24 post-unlock runs (cyborg, hunter, one_arm; renegade won on its last run so fairy
+existed for none of its own). Instrument healthy: 2,572 boards, 8,390 offer slots, **997 buys
+attributed, 0 unmatched.**
+
+`item_fairy` drew **9 distinct offers across 4 of 24 runs**:
+
+| where | n | outcome |
+|---|---:|---|
+| waves 1-10 (legal to buy) | 6 | **all unaffordable** — price 132-180 vs board gold 5-71 |
+| affordable (gold 255 ≥ price 218) | 1 | **wave 14 — inside the `-1e9` veto** |
+| **affordable AND legal** | **0** | **zero buying opportunities** |
+
+So the 0 buys carries **no information** about whether our scorer would take it. Fairy is not a
+pricing outlier either: median 165.5 against a tier-2 population median of 158 (range 104-237).
+
+**A structural hypothesis was proposed and refuted by the same data.** The tempting reading — that an
+off-list high-tier item is categorically unbuyable, unaffordable while legal and vetoed once
+affordable — does not hold: tier-2 items in waves 1-10 show **227 offers, 88 affordable, 31 bought**,
+and median board gold reaches 172 by wave 9. The early window is genuinely active. Fairy's 0/6 is mild
+bad luck, P(0 affordable in 6 | 0.388) = **0.053**, driven by its offers landing at waves 5-10.
+
+**Cost to answer properly:** ~0.097 buyable opportunities per run ⇒ **~52 runs (~16 h) for 5
+opportunities, ~103 runs (~33 h) for 10** — a floor, since fairy's offers skew early. Either pay for
+that, or test allowlist calibration with a design that does not hinge on one scarce item.
+
+⛔ **Do not quote "fairy was bought 0 times" as evidence for or against the allowlist.**
+
 ### 3. The era-drift signature replicated three times
 In soldier, hunter and one_arm the cell contained a **second victory after the reward was claimed**,
 and every one granted nothing (era static across the later wins). Independent confirmation that
