@@ -128,11 +128,41 @@ No other guard is evaluated on data produced after the measured event.
 known closed form before it decides anything, and checked in BOTH directions (a p-value that is small
 when it should be large is as broken as the reverse).
 
-**Per-trial dose readback — the manipulation check.** Every trial's per-entity `max_hp` is compared to
-the arm's expected ratio. A trial whose readback does not match its assigned dose is **excluded and
-reported**, not silently kept. *A self-report proves delivery, never correctness.*
-⚠️ Read the **LARGE-HP** types (bruiser, horned_bruiser, healer); small-HP types deviate by integer
-rounding alone.
+**⛔⛔ A SECOND REJECT-BY-OUTCOME GUARD WAS FOUND IN THE PILOT AND FIXED (2026-08-02).** §28f originally
+claimed class (b) was handled because the timeout was fixed. It was not. `wp2_finale_loop.py` carried
+`elif boss_paths: return "unexpected_boss"` under the comment *"Bosses only exist at wave 20."*
+**That premise is false: ELITES are classified into `boss_paths` and spawn from wave 11** — the save's
+own `elites_spawn` lists their waves (`[[11,1,...],[14,0,...]]`).
+
+Measured on the first 10 pilot trials: **every trial reaching wave >= 12 was rejected
+`unexpected_boss`** (monk, rhino, gargoyle, mantis) **while every trial ending <= 11 passed.** It
+discards the high tail of every arm and discards MOST from the arms that work best (H50: 2/2 rejected).
+*The adjacent branch in the same function already carried the correct reasoning — "enforcing boss
+identity here would reject exactly the trials that SURVIVED" — fixed for the wave-20 case and left
+unfixed here.*
+**Fixed:** no boss/elite check at all when `target_wave < 20` (a long run legitimately accumulates
+several distinct elite paths — one pilot trial had three at wave 18). Verified: all 6 wrongly-rejected
+trials now pass, and the guard still rejects real faults (`resume_failed_fresh_run`, `wave_gap`) — the
+fix is not vacuous.
+
+**Dose readback — the manipulation check, and it differs per dial.**
+
+- **HEALTH arms — per-trial, deterministic.** Per-entity `max_hp` vs the arm's expected ratio; a trial
+  that does not match is **excluded and reported**. Read the **LARGE-HP** types (bruiser,
+  horned_bruiser, healer); small-HP types deviate by integer rounding alone.
+- **⛔ DAMAGE arms — `max_hp` IS VACUOUS FOR THEM.** Damage scaling does not change `max_hp`, and
+  **the capture carries no enemy damage field** (verified: enemy keys are `armor, health_ratio, hp,
+  max_hp, speed, ...`). Applying the health readback to the D arms would be a check that cannot
+  return the positive — the artificer-melee trap.
+  **Replacement: median player HP-DROP SIZE at MATCHED WAVES, aggregated PER ARM.** Per-trial is
+  impossible — a control run yields only ~5 drop events in ~11,700 captures.
+  ⛔ **Gross `damage_taken` is NOT a valid check here.** Pilot: D50 took *more* gross damage per wave
+  than control (11.8 vs 4.7) because the dial changes behaviour — more hits, each smaller. Drop SIZE
+  is confound-resistant; drop COUNT and gross total are not.
+  ✅ **Pilot evidence the dial engages** (n=1/cell, indicative only): damage-1.0 arms show drops of
+  9-33, damage-reduced arms 3-8.
+  ⚠️ **The damage dial had never actually been verified** — the 2026-07-28 lever check tested `health`
+  only, and "damage perturbs incoming damage" was a design statement carried as if measured.
 
 **Arm certification.** `character_ok` and `observed_danger` are taken from the **capture stream**, not
 the summary — the gate found `summary.observed_danger` reading `None` while `danger_ok` read `True`,

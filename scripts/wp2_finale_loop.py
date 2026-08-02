@@ -249,7 +249,26 @@ def validate_trial(
         # A hole in the wave sequence means captures went missing.
         return f"wave_gap:{waves}"
     boss_paths = analysis.get("boss_paths") or {}
-    if 20 in waves:
+    if target_wave < 20:
+        # ⛔ "Bosses only exist at wave 20" IS FALSE, and asserting it rejected by
+        # OUTCOME. ELITES are classified into boss_paths and spawn from wave 11 --
+        # the save's own current_run_state.elites_spawn lists their waves, e.g.
+        # [[11, 1, ...], [14, 0, ...]]. So a lower-wave trial meets one only if it
+        # SURVIVED long enough to reach an elite wave.
+        #
+        # Measured 2026-08-02 on the §28 D5 ladder, first 10 trials: every trial
+        # reaching wave >= 12 was rejected `unexpected_boss` (monk, rhino,
+        # gargoyle, mantis) while every trial ending <= 11 passed. That discards
+        # the high tail of every arm, and discards MOST from the arms that work
+        # best -- the effective treatment looks worst. A long run legitimately
+        # accumulates SEVERAL distinct elite paths (one trial had three at wave
+        # 18), so even a `len(boss_paths) > 1` sanity check is wrong here.
+        #
+        # The observed entity is still recorded on the trial row, so the data
+        # stays self-describing. Same defect, same file, as the branch below --
+        # which was fixed for wave-20-present trials and left unfixed here.
+        pass
+    elif 20 in waves:
         if target_wave == 20:
             # The boss fight IS the measurement: identity must match the arm.
             if len(boss_paths) != 1:
