@@ -120,6 +120,26 @@ never silently dropped. Also grep the supervisor log for `Death screen stuck`, `
 ⚠️ **A count of zero here means nothing unless the directory-vs-summary reconciliation was actually
 computed** — print both denominators, not just the difference.
 
+### ⛔ DEFECT IN THIS SECTION'S WORDING, found AFTER data (2026-08-03). NOT retroactively relaxed.
+
+*"They must match"* is **a bar no supervised campaign can satisfy.** When the supervisor collects its
+final summary it stops, and the driver's `kill_game()` then kills **whatever run is in flight** — so
+there is essentially always exactly one extra directory. §29 read **A=17 vs B=16** and the blind
+analysis correctly **exited 3 (validity problem)**, as written.
+
+⛔ **The bar is NOT being moved to make §29 pass.** The literal criterion FAILED and that is recorded.
+What is also recorded is that **the check's INTENT was met**: the single excess run
+(`run_1785731852_60447`) started **9 s before campaign end**, reached **wave 3 at HP 9 — ALIVE** — so
+it cannot be a `dead_stuck` drop, that path firing only at `hp == 0`. **No death was silently lost.**
+
+⇒ **CORRECTED RULE FOR §30 ONWARDS** (not applied to §29): the reconciliation passes when every excess
+directory is individually **accounted for**, not when the count is zero. An excess run is BENIGN iff
+its start epoch is after the last collected run's start AND its last observed HP is **> 0**; any excess
+with **HP == 0**, or starting before the last collected run, is a **potential silently-dropped death**
+and fails the check. This is the same family as §5 of the D5 baseline prereg — *a stopping rule that
+cannot be satisfied is design-time lie 11(c) in new clothes* — and it should have been caught by asking
+"what does this criterion read on a HEALTHY campaign?" before fixing it.
+
 ## 29g. Endpoint and analysis — fixed in advance
 
 - **PRIMARY (objective): victory, binary.** Era-independent. A win at any point satisfies north star 1.
