@@ -137,6 +137,47 @@ def test_body_clearance_is_a_gate_never_a_preference():
             )
 
 
+def test_every_lane_is_scored_including_gated_out_ones():
+    """v130. v129 recorded 0.0 terms for skipped lanes, which made the score of a
+    gated-out lane unrecoverable and blocked every counterfactual over the
+    ADMISSION rule. The terms must now be computed BEFORE the gates."""
+    potential = POTENTIAL_FIELD.read_text(encoding="utf-8")
+    body = _func(potential, "_finale_body_safety")
+    align = body.index("var align_term := BotConfig.ESCAPE_ALIGN_BONUS")
+    first_gate = body.index("if projectile_clearance < projectile_floor:")
+    assert align < first_gate, (
+        "the score terms must be computed before the first gate, or a skipped "
+        "lane's score cannot be recorded and admission counterfactuals are "
+        "impossible to compute offline"
+    )
+    # No _route_record call may pass literal zeros for the terms any more.
+    assert '"projectile_floor", 0.0, 0.0, 0.0' not in body
+    assert '"body_floor", 0.0, 0.0, 0.0' not in body
+    assert '"enemy_slack", 0.0, 0.0, 0.0' not in body
+    # Every skip path records the real terms.
+    for tag in ("projectile_floor", "body_floor", "enemy_slack"):
+        assert '"%s", align_term, continuity_term, score)' % tag in body, (
+            "skip path %r must record the real score terms" % tag
+        )
+    # Behaviour is unchanged: only admitted lanes are compared to best_score.
+    assert body.index("if score > best_score:") > body.index(
+        '"", align_term, continuity_term, score)')
+
+
+def test_baseline_vector_is_recorded_for_independent_rederivation():
+    potential = POTENTIAL_FIELD.read_text(encoding="utf-8")
+    body = _func(potential, "_finale_body_safety")
+    assert "_finale_route_baseline = baseline" in body
+    debug = _func(potential, "finale_route_debug")
+    for key in ('"base_x"', '"base_y"'):
+        assert key in debug, (
+            "%s must be exposed: the align term is the only score component that "
+            "cannot be reconstructed from the per-lane record alone, so without "
+            "the baseline an offline reader must trust the stored score rather "
+            "than re-derive it" % key
+        )
+
+
 def test_selected_lane_is_recorded_so_the_block_can_self_reconcile():
     potential = POTENTIAL_FIELD.read_text(encoding="utf-8")
     body = _func(potential, "_finale_body_safety")

@@ -64,6 +64,9 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--runs-dir", required=True)
     ap.add_argument("--stride", type=int, default=3)
+    # Parameterised rather than hardcoded: a build constant frozen inside an
+    # analysis script is how a verdict silently outlives the build it belongs to.
+    ap.add_argument("--mod-version", default="0.2.76-wp2-capture")
     args = ap.parse_args()
 
     ids = []
@@ -75,7 +78,7 @@ def main():
             s = json.load(open(sp, encoding="utf-8-sig"))
         except ValueError:
             continue
-        if (str(s.get("mod_version")) == "0.2.76-wp2-capture"
+        if (str(s.get("mod_version")) == args.mod_version
                 and s.get("route_scores_enabled") and d not in EXCLUDE_RUNS):
             ids.append(d)
     print(f"runs: {len(ids)}")

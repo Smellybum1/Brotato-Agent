@@ -73,6 +73,11 @@ var _finale_route_baseline_admitted := false
 # the same reconciliation that validated the shop's board_scores.
 var _finale_route_selected := Vector2.ZERO
 var _finale_route_best_score := -1.0e18
+# v130: the incoming command the align term is measured against. Recorded so an
+# offline reader can re-derive any lane's score from first principles instead of
+# trusting the stored one -- the align term is the only score component that
+# cannot otherwise be reconstructed from the per-lane record.
+var _finale_route_baseline := Vector2.ZERO
 # Finale controller v2 flag; the controller propagates agent_config.finale_v2.
 var finale_v2_enabled: bool = false
 # Wave-20 dev flags; the controller propagates agent_config.finale_no_panic and
@@ -1493,6 +1498,7 @@ func _finale_body_safety(pos: Vector2, desired: Vector2, player_speed: float,
 	# and active wall recovery while rejecting an avoidable predicted body impact.
 	var baseline := _clamp_finale_wall_components(
 		pos, desired, arena, player_speed)
+	_finale_route_baseline = baseline
 	if enemies.empty() and bosses.empty():
 		_finale_route_exit = "no_threats"
 		return baseline
@@ -1765,24 +1771,13 @@ func _finale_body_safety(pos: Vector2, desired: Vector2, player_speed: float,
 		var projectile_clearance := float(row[2])
 		var enemy_penalty := float(row[3])
 		var candidate: Vector2 = row[0]
-		# v129: the two floor tests were one `or`; split so the record can name
-		# WHICH gate dropped the lane. Both still `continue`, so the emitted
-		# command is unchanged.
-		if projectile_clearance < projectile_floor:
-			_route_record(candidate, body_clearance, projectile_clearance,
-				enemy_penalty, "projectile_floor", 0.0, 0.0, 0.0)
-			continue
-		if body_clearance < body_floor:
-			_route_record(candidate, body_clearance, projectile_clearance,
-				enemy_penalty, "body_floor", 0.0, 0.0, 0.0)
-			continue
-		if (enemy_penalty > lowest_enemy_penalty
-				+ BotConfig.BOSS_FINALE_ENEMY_PENALTY_SLACK):
-			_route_record(candidate, body_clearance, projectile_clearance,
-				enemy_penalty, "enemy_slack", 0.0, 0.0, 0.0)
-			continue
-		# Terms are hoisted into locals so the record carries the SAME values the
-		# comparison uses -- a recomputed copy could drift from the decision.
+		# v130: score EVERY lane, including ones a gate drops. v129 recorded 0.0
+		# for the terms of a skipped lane, which made the score of a gated-out
+		# lane unrecoverable -- so no counterfactual over the ADMISSION rule
+		# ("what would the ranking pick if the floor were lower?") was computable
+		# offline. Scoring is pure arithmetic on values already in hand and has no
+		# effect on the gates or on the emitted command; only admitted lanes are
+		# ever compared against best_score, exactly as before.
 		# Accumulation order is unchanged: ((proj - pen) + align) + continuity.
 		var align_term := BotConfig.ESCAPE_ALIGN_BONUS * candidate.dot(baseline)
 		var continuity_term := 0.0
@@ -1792,6 +1787,22 @@ func _finale_body_safety(pos: Vector2, desired: Vector2, player_speed: float,
 		var score := projectile_clearance - enemy_penalty
 		score += align_term
 		score += continuity_term
+		# v129: the two floor tests were one `or`; split so the record can name
+		# WHICH gate dropped the lane. Both still `continue`, so the emitted
+		# command is unchanged.
+		if projectile_clearance < projectile_floor:
+			_route_record(candidate, body_clearance, projectile_clearance,
+				enemy_penalty, "projectile_floor", align_term, continuity_term, score)
+			continue
+		if body_clearance < body_floor:
+			_route_record(candidate, body_clearance, projectile_clearance,
+				enemy_penalty, "body_floor", align_term, continuity_term, score)
+			continue
+		if (enemy_penalty > lowest_enemy_penalty
+				+ BotConfig.BOSS_FINALE_ENEMY_PENALTY_SLACK):
+			_route_record(candidate, body_clearance, projectile_clearance,
+				enemy_penalty, "enemy_slack", align_term, continuity_term, score)
+			continue
 		_route_record(candidate, body_clearance, projectile_clearance,
 			enemy_penalty, "", align_term, continuity_term, score)
 		if score > best_score:
@@ -1858,6 +1869,7 @@ func _reset_finale_route() -> void:
 	_finale_route_baseline_admitted = false
 	_finale_route_selected = Vector2.ZERO
 	_finale_route_best_score = -1.0e18
+	_finale_route_baseline = Vector2.ZERO
 
 
 func _route_record(candidate: Vector2, body_clearance: float,
@@ -1892,6 +1904,8 @@ func finale_route_debug() -> Dictionary:
 		"lowest_enemy_penalty": _finale_route_lowest_enemy_penalty,
 		"prev_x": stepify(_prev_move.x, 0.0001),
 		"prev_y": stepify(_prev_move.y, 0.0001),
+		"base_x": stepify(_finale_route_baseline.x, 0.0001),
+		"base_y": stepify(_finale_route_baseline.y, 0.0001),
 		"sel_x": stepify(_finale_route_selected.x, 0.0001),
 		"sel_y": stepify(_finale_route_selected.y, 0.0001),
 		"best_score": stepify(_finale_route_best_score, 0.01),

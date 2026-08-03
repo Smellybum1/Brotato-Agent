@@ -134,12 +134,12 @@ def test_wp2_capture_build_versions_the_v122_crossing_tier_policy():
     # student-inference path (learned/ bridge, default-off) is unchanged —
     # deploy surface bumps together: manifest, controller meta, telemetry
     # default, and the collector identity gate.
-    assert '"version_number": "0.2.76"' in manifest
+    assert '"version_number": "0.2.77"' in manifest
     assert "v128 deterministic teacher" in manifest
     assert controller.count("teacher_v1-0.1.129-gun-wp1") == 1
-    assert controller.count("0.2.76-wp2-capture") == 1
+    assert controller.count("0.2.77-wp2-capture") == 1
     assert telemetry.count("teacher_v1-0.1.129-gun-wp1") == 1
-    assert telemetry.count("0.2.76-wp2-capture") == 1
+    assert telemetry.count("0.2.77-wp2-capture") == 1
 
 
 def test_starting_weapon_select_cannot_stall_on_any_character():
