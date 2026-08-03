@@ -164,6 +164,24 @@ def test_every_lane_is_scored_including_gated_out_ones():
         '"", align_term, continuity_term, score)')
 
 
+def test_prev_move_is_latched_at_scoring_time_not_at_debug_time():
+    """v131. compute_movement ends with `_prev_move = final_move`, and the
+    controller calls finale_route_debug() AFTER that -- so reading _prev_move in
+    the debug getter reports THIS tick's output, not the vector the continuity
+    term was measured against. It differed on 27.7% of §32 captures."""
+    potential = POTENTIAL_FIELD.read_text(encoding="utf-8")
+    debug = _func(potential, "finale_route_debug")
+    assert "_prev_move" not in debug, (
+        "finale_route_debug must NOT read _prev_move directly -- by the time it "
+        "runs, compute_movement has already reassigned it to this tick's output"
+    )
+    assert "_finale_route_prev.x" in debug and "_finale_route_prev.y" in debug
+    body = _func(potential, "_finale_body_safety")
+    latch = body.index("_finale_route_prev = _prev_move")
+    loop = body.index("for row in rows:", body.index("var best_score := -1.0e18"))
+    assert latch < loop, "the latch must precede the ranking loop that uses it"
+
+
 def test_baseline_vector_is_recorded_for_independent_rederivation():
     potential = POTENTIAL_FIELD.read_text(encoding="utf-8")
     body = _func(potential, "_finale_body_safety")

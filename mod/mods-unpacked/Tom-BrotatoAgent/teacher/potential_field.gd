@@ -78,6 +78,16 @@ var _finale_route_best_score := -1.0e18
 # trusting the stored one -- the align term is the only score component that
 # cannot otherwise be reconstructed from the per-lane record.
 var _finale_route_baseline := Vector2.ZERO
+# v131: `_prev_move` AS THE SCORING LOOP SAW IT. Reading `_prev_move` inside
+# finale_route_debug() is WRONG: the controller calls that after compute_movement
+# has already run `_prev_move = final_move`, so it reports THIS tick's output
+# instead of the vector the continuity term was measured against. Measured on the
+# §32 runs: the two differ on 27.7% of captures (p90 0.31, max 2.00), and on
+# exactly the captures where an offline re-derivation mispicked the lane, the
+# deviation was median 0.3874 against 0.0000 overall.
+# ⛔ THE FIELD WAS STALE IN 0.2.76 AND 0.2.77. For those builds, recover the true
+# vector by inverting cont_i = 85.0 * dot(cand_i, prev) across the admitted lanes.
+var _finale_route_prev := Vector2.ZERO
 # Finale controller v2 flag; the controller propagates agent_config.finale_v2.
 var finale_v2_enabled: bool = false
 # Wave-20 dev flags; the controller propagates agent_config.finale_no_panic and
@@ -1766,6 +1776,8 @@ func _finale_body_safety(pos: Vector2, desired: Vector2, player_speed: float,
 		return baseline
 	var best_dir := baseline
 	var best_score := -1.0e18
+	# Latched HERE, where the continuity term is about to be measured against it.
+	_finale_route_prev = _prev_move
 	for row in rows:
 		var body_clearance := float(row[1])
 		var projectile_clearance := float(row[2])
@@ -1870,6 +1882,7 @@ func _reset_finale_route() -> void:
 	_finale_route_selected = Vector2.ZERO
 	_finale_route_best_score = -1.0e18
 	_finale_route_baseline = Vector2.ZERO
+	_finale_route_prev = Vector2.ZERO
 
 
 func _route_record(candidate: Vector2, body_clearance: float,
@@ -1902,8 +1915,8 @@ func finale_route_debug() -> Dictionary:
 		"body_floor": _finale_route_body_floor,
 		"projectile_floor": _finale_route_projectile_floor,
 		"lowest_enemy_penalty": _finale_route_lowest_enemy_penalty,
-		"prev_x": stepify(_prev_move.x, 0.0001),
-		"prev_y": stepify(_prev_move.y, 0.0001),
+		"prev_x": stepify(_finale_route_prev.x, 0.0001),
+		"prev_y": stepify(_finale_route_prev.y, 0.0001),
 		"base_x": stepify(_finale_route_baseline.x, 0.0001),
 		"base_y": stepify(_finale_route_baseline.y, 0.0001),
 		"sel_x": stepify(_finale_route_selected.x, 0.0001),

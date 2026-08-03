@@ -47,12 +47,24 @@ def slack_for(wave):
     return 35.0 if int(wave) <= 12 else 20.0
 
 
-def recover_baseline(admitted):
-    """Least squares for `baseline` from align_i = ALIGN_BONUS * (cand_i . b)."""
+def recover_vector(admitted, field, coef):
+    """Least squares for v from  term_i = coef * (cand_i . v).
+
+    Used for BOTH score direction-vectors:
+      align -> baseline,  cont -> _prev_move.
+
+    ⛔ `cont` must be inverted rather than reading route.prev_x/prev_y. That field
+    is captured by finale_route_debug(), which the controller calls AFTER
+    compute_movement has already executed `_prev_move = final_move` -- so it holds
+    THIS tick's output, not the vector the scoring loop actually used. Measured:
+    it differs from the true _prev_move on 27.7% of captures (p90 0.31, max 2.00),
+    and on exactly the captures where re-derivation mispicked, the deviation is
+    median 0.3874 against 0.0000 overall. Instant-of-measurement, again.
+    """
     sxx = sxy = syy = sxa = sya = 0.0
     for r in admitted:
         cx, cy = float(r.get("x", 0)), float(r.get("y", 0))
-        a = float(r.get("align", 0)) / ALIGN_BONUS
+        a = float(r.get(field, 0)) / coef
         sxx += cx * cx; sxy += cx * cy; syy += cy * cy
         sxa += cx * a;  sya += cy * a
     det = sxx * syy - sxy * sxy
@@ -60,8 +72,8 @@ def recover_baseline(admitted):
         return None, None
     bx = (syy * sxa - sxy * sya) / det
     by = (-sxy * sxa + sxx * sya) / det
-    err = max(abs(ALIGN_BONUS * (float(r.get("x", 0)) * bx + float(r.get("y", 0)) * by)
-                  - float(r.get("align", 0))) for r in admitted)
+    err = max(abs(coef * (float(r.get("x", 0)) * bx + float(r.get("y", 0)) * by)
+                  - float(r.get(field, 0))) for r in admitted)
     return (bx, by), err
 
 
@@ -71,12 +83,34 @@ def score_of(r, bx, by, px, py):
             + CONTINUITY * (float(r.get("x", 0)) * px + float(r.get("y", 0)) * py))
 
 
-def admitted_at(rows, pack, proj_floor, wave):
-    hbc = max((float(r.get("body", -1e18)) for r in rows
-               if float(r.get("proj", -1e18)) >= proj_floor), default=None)
+def floor_at(hbc, pack, wave, loot_dash):
+    """The mod's branch chain, in source order (potential_field.gd ~1690-1735).
+
+    ⛔ `enforce_pack_clearance` is `not _loot_dash_active` at the call site, so on
+    a loot dash the floor is a FLAT 45 and the pack formula never runs. Omitting
+    that branch is what dropped control 2 to 0.9302 -- the controls caught it
+    before any counterfactual was reported.
+    (body_emergency_active and wall_body_relief_active are constant false in this
+    D5 sample, verified in the telemetry inventory, so their branches are absent.)
+    """
+    s = slack_for(wave)
+    if hbc >= CRITICAL:
+        if loot_dash:
+            return CRITICAL
+        return max(CRITICAL, min(pack, hbc - s))
+    return hbc - s
+
+
+def highest_body(rows, proj_floor):
+    return max((float(r.get("body", -1e18)) for r in rows
+                if float(r.get("proj", -1e18)) >= proj_floor), default=None)
+
+
+def admitted_at(rows, pack, proj_floor, wave, loot_dash=False):
+    hbc = highest_body(rows, proj_floor)
     if hbc is None:
         return None
-    floor = max(CRITICAL, min(pack, hbc - slack_for(wave)))
+    floor = floor_at(hbc, pack, wave, loot_dash)
     by_floors = [r for r in rows
                  if float(r.get("proj", -1e18)) >= proj_floor
                  and float(r.get("body", -1e18)) >= floor]
@@ -133,18 +167,35 @@ def run(runs_dir, ids, stride):
                 continue
             wave = pl.get("wave", 0)
             proj_floor = float(r.get("projectile_floor", -1e18))
+            ft = ((pl.get("teacher") or {}).get("contributions") or {}).get(
+                "finale_translation") or {}
+            loot_dash = bool(ft.get("loot_dash_active"))
 
-            b, err = recover_baseline(adm_rec)
-            if b is None or err > ALIGN_TOL:
-                skipped["baseline_unrecoverable"] += 1
+            # CONTROL 2a: the recomputed floor must equal the RECORDED one. This
+            # isolates the floor MODEL from the admission model -- without it a
+            # wrong branch chain shows up only as a diffuse admission mismatch.
+            hbc = highest_body(rows, proj_floor)
+            rec_floor = float(r.get("body_floor", -1e18))
+            if hbc is not None and rec_floor > -1e17:
+                if abs(floor_at(hbc, PACK_ACTUAL, wave, loot_dash) - rec_floor) <= 0.02:
+                    ctl["c2a_ok"] += 1
+                else:
+                    ctl["c2a_fail"] += 1
+                    skipped["floor_model_mismatch"] += 1
+                    continue
+
+            b, err = recover_vector(adm_rec, "align", ALIGN_BONUS)
+            pv, perr = recover_vector(adm_rec, "cont", CONTINUITY)
+            if b is None or err > ALIGN_TOL or pv is None or perr > ALIGN_TOL:
+                skipped["vector_unrecoverable"] += 1
                 ctl["c1_fail"] += 1
                 continue
             ctl["c1_ok"] += 1
             bx, by = b
-            px, py = float(r.get("prev_x", 0)), float(r.get("prev_y", 0))
+            px, py = pv          # NOT route.prev_x/prev_y -- that field is stale
 
             # CONTROL 2: admission at the actual PACK reproduces recorded skips
-            sim = admitted_at(rows, PACK_ACTUAL, proj_floor, wave)
+            sim = admitted_at(rows, PACK_ACTUAL, proj_floor, wave, loot_dash)
             if sim is None:
                 skipped["no_highest_body"] += 1
                 continue
@@ -181,7 +232,7 @@ def run(runs_dir, ids, stride):
             if key(pick) not in ir:
                 skipped["degenerate_pick"] += 1
                 continue
-            caps.append((rows, proj_floor, wave, bx, by, px, py, pick, ir))
+            caps.append((rows, proj_floor, wave, loot_dash, bx, by, px, py, pick, ir))
 
     print("=" * 70)
     print("DENOMINATORS (before any result)")
@@ -198,16 +249,18 @@ def run(runs_dir, ids, stride):
         t = ctl[a] + ctl[b]
         return ctl[a] / t if t else 0.0, t
     r1, t1 = rate("c1_ok", "c1_fail")
+    r2a, t2a = rate("c2a_ok", "c2a_fail")
     r2, t2 = rate("c2_ok", "c2_fail")
     r3, t3 = rate("c3_ok", "c3_fail")
     print(f"  1. baseline recovered <= {ALIGN_TOL:g}   : {ctl['c1_ok']}/{t1} = {r1:.4f}")
+    print(f"  2a.floor model == recorded body_floor: {ctl['c2a_ok']}/{t2a} = {r2a:.4f}")
     print(f"  2. admitted(160) == recorded skips : {ctl['c2_ok']}/{t2} = {r2:.4f}")
     print(f"  3. chosen(160)   == recorded sel   : {ctl['c3_ok']}/{t3} = {r3:.4f}"
           f"   <-- the control §32 lacked")
     if not caps:
         print("\n  !! EMPTY ANALYSIS SET -- no statistic reported.")
         return 1
-    if r2 < 0.99 or r3 < 0.99:
+    if r2a < 0.99 or r2 < 0.99 or r3 < 0.99:
         print("\n  ⛔ A CONTROL FAILED ITS 0.99 BAR. The simulated rule cannot reproduce")
         print("     the observed decision, so no counterfactual over it is reportable.")
         return 1
@@ -226,8 +279,8 @@ def run(runs_dir, ids, stride):
     a_pass = b_pass = False
     for pack in PACKS:
         flips, gs, bo, bn, adm_n = 0, [], [], [], []
-        for rows, pf, wave, bx, by, px, py, pick, ir in caps:
-            sim = admitted_at(rows, pack, pf, wave)
+        for rows, pf, wave, ld, bx, by, px, py, pick, ir in caps:
+            sim = admitted_at(rows, pack, pf, wave, ld)
             if not sim:
                 continue
             adm_n.append(len(sim))
@@ -278,13 +331,13 @@ def _self_test():
     for cx, cy in ((1, 0), (0, 1), (0.7071, 0.7071)):
         lanes.append({"x": cx, "y": cy,
                       "align": ALIGN_BONUS * (cx * base[0] + cy * base[1])})
-    b, err = recover_baseline(lanes)
+    b, err = recover_vector(lanes, "align", ALIGN_BONUS)
     check("baseline recovered exactly", b is not None and err < 1e-9
           and abs(b[0] - 0.6) < 1e-9 and abs(b[1] + 0.8) < 1e-9)
 
     # Collinear lanes are degenerate and must return None, not a wrong answer.
     col = [{"x": 1, "y": 0, "align": 8.4}, {"x": 2, "y": 0, "align": 16.8}]
-    b2, _ = recover_baseline(col)
+    b2, _ = recover_vector(col, "align", ALIGN_BONUS)
     check("collinear lanes rejected", b2 is None)
 
     # Lowering PACK must ADMIT MORE, never fewer.
