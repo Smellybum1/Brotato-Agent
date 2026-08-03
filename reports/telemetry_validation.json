@@ -1,6 +1,6 @@
 {
-  "runs": 4,
-  "passed": 4,
+  "runs": 8,
+  "passed": 8,
   "failed": 0,
   "scope": "run_ids_file",
   "runs_dir": "C:\\Users\\moxhe\\AppData\\Roaming\\Brotato\\brotato_agent\\runs",
@@ -8,7 +8,7 @@
     {
       "ok": true,
       "errors": [],
-      "event_count": 14972,
+      "event_count": 20082,
       "events_seen": [
         "combat_capture",
         "combat_tick",
@@ -27,17 +27,15 @@
         "shop_combine_dispatched",
         "shop_surplus_reroll_confirmed"
       ],
-      "path": "C:\\Users\\moxhe\\AppData\\Roaming\\Brotato\\brotato_agent\\runs\\run_1785749061_24400\\events.jsonl"
+      "path": "C:\\Users\\moxhe\\AppData\\Roaming\\Brotato\\brotato_agent\\runs\\run_1785754965_28036\\events.jsonl"
     },
     {
       "ok": true,
       "errors": [],
-      "event_count": 8402,
+      "event_count": 7632,
       "events_seen": [
         "combat_capture",
         "combat_tick",
-        "crate_decision",
-        "crate_offer",
         "difficulty_readback",
         "level_up_decision",
         "level_up_offer",
@@ -45,38 +43,40 @@
         "purchase_decision",
         "purchase_offer",
         "recovery_attempt",
-        "run_end",
-        "run_start",
-        "shop_combine_confirmed",
-        "shop_combine_dispatched",
-        "shop_surplus_reroll_confirmed"
-      ],
-      "path": "C:\\Users\\moxhe\\AppData\\Roaming\\Brotato\\brotato_agent\\runs\\run_1785749809_20090\\events.jsonl"
-    },
-    {
-      "ok": true,
-      "errors": [],
-      "event_count": 4499,
-      "events_seen": [
-        "combat_capture",
-        "combat_tick",
-        "difficulty_readback",
-        "level_up_decision",
-        "level_up_offer",
-        "player_damage",
-        "purchase_decision",
-        "purchase_offer",
         "run_end",
         "run_start",
         "shop_combine_confirmed",
         "shop_combine_dispatched"
       ],
-      "path": "C:\\Users\\moxhe\\AppData\\Roaming\\Brotato\\brotato_agent\\runs\\run_1785750220_39941\\events.jsonl"
+      "path": "C:\\Users\\moxhe\\AppData\\Roaming\\Brotato\\brotato_agent\\runs\\run_1785755965_44537\\events.jsonl"
     },
     {
       "ok": true,
       "errors": [],
-      "event_count": 9654,
+      "event_count": 5715,
+      "events_seen": [
+        "combat_capture",
+        "combat_tick",
+        "crate_decision",
+        "crate_offer",
+        "difficulty_readback",
+        "level_up_decision",
+        "level_up_offer",
+        "player_damage",
+        "purchase_decision",
+        "purchase_offer",
+        "recovery_attempt",
+        "run_end",
+        "run_start",
+        "shop_combine_confirmed",
+        "shop_combine_dispatched"
+      ],
+      "path": "C:\\Users\\moxhe\\AppData\\Roaming\\Brotato\\brotato_agent\\runs\\run_1785756364_37779\\events.jsonl"
+    },
+    {
+      "ok": true,
+      "errors": [],
+      "event_count": 10625,
       "events_seen": [
         "combat_capture",
         "combat_tick",
@@ -95,7 +95,100 @@
         "shop_combine_dispatched",
         "shop_surplus_reroll_confirmed"
       ],
-      "path": "C:\\Users\\moxhe\\AppData\\Roaming\\Brotato\\brotato_agent\\runs\\run_1785750447_22515\\events.jsonl"
+      "path": "C:\\Users\\moxhe\\AppData\\Roaming\\Brotato\\brotato_agent\\runs\\run_1785756664_17215\\events.jsonl"
+    },
+    {
+      "ok": true,
+      "errors": [],
+      "event_count": 10716,
+      "events_seen": [
+        "combat_capture",
+        "combat_tick",
+        "crate_decision",
+        "crate_offer",
+        "difficulty_readback",
+        "level_up_decision",
+        "level_up_offer",
+        "player_damage",
+        "purchase_decision",
+        "purchase_offer",
+        "recovery_attempt",
+        "run_end",
+        "run_start",
+        "shop_combine_confirmed",
+        "shop_combine_dispatched",
+        "shop_surplus_reroll_confirmed"
+      ],
+      "path": "C:\\Users\\moxhe\\AppData\\Roaming\\Brotato\\brotato_agent\\runs\\run_1785757198_83975\\events.jsonl"
+    },
+    {
+      "ok": true,
+      "errors": [],
+      "event_count": 14786,
+      "events_seen": [
+        "combat_capture",
+        "combat_tick",
+        "crate_decision",
+        "crate_offer",
+        "difficulty_readback",
+        "level_up_decision",
+        "level_up_offer",
+        "player_damage",
+        "purchase_decision",
+        "purchase_offer",
+        "recovery_attempt",
+        "run_end",
+        "run_start",
+        "shop_combine_confirmed",
+        "shop_combine_dispatched",
+        "shop_surplus_reroll_confirmed"
+      ],
+      "path": "C:\\Users\\moxhe\\AppData\\Roaming\\Brotato\\brotato_agent\\runs\\run_1785757742_9445\\events.jsonl"
+    },
+    {
+      "ok": true,
+      "errors": [],
+      "event_count": 8048,
+      "events_seen": [
+        "combat_capture",
+        "combat_tick",
+        "difficulty_readback",
+        "level_up_decision",
+        "level_up_offer",
+        "player_damage",
+        "purchase_decision",
+        "purchase_offer",
+        "recovery_attempt",
+        "run_end",
+        "run_start",
+        "shop_combine_confirmed",
+        "shop_combine_dispatched",
+        "shop_surplus_reroll_confirmed"
+      ],
+      "path": "C:\\Users\\moxhe\\AppData\\Roaming\\Brotato\\brotato_agent\\runs\\run_1785758500_77660\\events.jsonl"
+    },
+    {
+      "ok": true,
+      "errors": [],
+      "event_count": 8368,
+      "events_seen": [
+        "combat_capture",
+        "combat_tick",
+        "crate_decision",
+        "crate_offer",
+        "difficulty_readback",
+        "level_up_decision",
+        "level_up_offer",
+        "player_damage",
+        "purchase_decision",
+        "purchase_offer",
+        "recovery_attempt",
+        "run_end",
+        "run_start",
+        "shop_combine_confirmed",
+        "shop_combine_dispatched"
+      ],
+      "path": "C:\\Users\\moxhe\\AppData\\Roaming\\Brotato\\brotato_agent\\runs\\run_1785758909_7977\\events.jsonl"
     }
   ]
 }
