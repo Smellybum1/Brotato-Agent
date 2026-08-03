@@ -387,10 +387,19 @@ def test_target_wave_17_missing_target_rejected(tmp_path: Path):
     assert reason == "unexpected_waves:[18, 19, 20]"
 
 
-def test_target_wave_17_boss_without_wave_20_rejected(tmp_path: Path):
+def test_target_wave_17_elite_below_wave_20_accepted(tmp_path: Path):
+    # ⛔ REGRESSION PIN, NOT A BEHAVIOUR CHANGE. This used to assert
+    # `unexpected_boss:[...]`, on the premise "bosses only exist at wave 20".
+    # THAT PREMISE IS FALSE: ELITES are classified into `boss_paths` and spawn
+    # from wave 11 (the save's own `current_run_state.elites_spawn`), so the
+    # guard rejected BY OUTCOME — a trial met an elite only if it SURVIVED long
+    # enough to reach one. Measured on the §28 D5 ladder, every trial reaching
+    # wave >= 12 was rejected while every trial ending <= 11 passed, which
+    # discards the high tail of every arm and most of the arms that work best.
+    # ⛔ NEVER RESTORE THE GUARD. Below wave 20 no boss/elite check applies.
     analysis = analyse_events(_events(tmp_path, [(17, [PREDATOR]), (18, [])]))
     reason = validate_trial(analysis, _summary(), "predator", False, target_wave=17)
-    assert reason == "unexpected_boss:['%s']" % PREDATOR
+    assert reason == ""
 
 
 def test_target_wave_17_boss_identity_not_enforced(tmp_path: Path):
@@ -411,12 +420,18 @@ def test_target_wave_20_boss_identity_still_enforced(tmp_path: Path):
     )
 
 
-def test_target_wave_17_multiple_boss_paths_rejected(tmp_path: Path):
+def test_target_wave_17_multiple_boss_paths_accepted(tmp_path: Path):
+    # ⛔ REGRESSION PIN, same defect as the elite test above. This used to assert
+    # `boss_path_count:2`. A long sub-20 run legitimately accumulates SEVERAL
+    # distinct elite paths, so counting them rejects the LONGEST-SURVIVING
+    # trials — reject-by-outcome again, in a second branch of the same function.
+    # Fixing one instance did not close the class; both had to go.
+    # ⛔ NEVER RESTORE. Below wave 20, boss-path COUNT carries no validity signal.
     analysis = analyse_events(
         _events(tmp_path, [(17, []), (18, []), (19, []), (20, [INVOKER, PREDATOR])])
     )
     reason = validate_trial(analysis, _summary(), "predator", False, target_wave=17)
-    assert reason == "boss_path_count:2"
+    assert reason == ""
 
 
 def test_target_wave_17_no_boss_at_wave_20_allowed(tmp_path: Path):

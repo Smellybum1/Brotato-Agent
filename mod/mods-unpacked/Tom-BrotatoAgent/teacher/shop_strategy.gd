@@ -38,6 +38,9 @@ var _session_cycle_blocked_item_ids := {}
 # Telemetry-only: per-candidate scores from the most recent "# 1) Best purchase"
 # ranking loop. Recording only -- nothing reads this to make a decision.
 var _last_board_scores: Array = []
+# v83 (§36): board-level scalars for the same decision. Cleared on ENTRY with
+# _last_board_scores, for the same reason — see the comment at the clear site.
+var _last_board_meta: Dictionary = {}
 
 # Dev flag, default FALSE = byte-identical to the shipped one-visit rare-gun lock
 # lifetime. When true, an inherited rare-gun lock is kept while the gun still
@@ -539,12 +542,25 @@ func get_last_board_scores() -> Array:
 	return _last_board_scores
 
 
+# v83 (§36): the board-level scalars the per-candidate rows are judged against.
+# Separate from the rows because they are properties of the DECISION, not of any
+# candidate, and duplicating them per row would be both wasteful and a source of
+# disagreement if one row were ever written from a different branch.
+func get_last_board_meta() -> Dictionary:
+	return _last_board_meta
+
+
 # Telemetry-only recorder for the "# 1) Best purchase" ranking loop. `score` is
 # the value ALREADY computed by that loop, or null when a gate skipped the
 # candidate before scoring. Capped so the payload stays small; when the cap
 # bites, a {"truncated": true} marker is appended so a reader can never mistake
 # a cap for a complete board.
-func _board_note(item: Dictionary, score, skipped: String) -> void:
+#
+# `extras` carries per-candidate values that are otherwise invisible to a reader
+# (v83/§36: the two band-gate operands). Keys are merged verbatim; a key ABSENT
+# means "not applicable to this candidate" and is never written as 0 — a
+# plausible-looking zero is the most dangerous default this project has met.
+func _board_note(item: Dictionary, score, skipped: String, extras: Dictionary = {}) -> void:
 	var n: int = _last_board_scores.size()
 	if n >= 16:
 		if n == 16:
@@ -560,6 +576,8 @@ func _board_note(item: Dictionary, score, skipped: String) -> void:
 	}
 	if skipped != "":
 		entry["skipped"] = skipped
+	for k in extras:
+		entry[k] = extras[k]
 	_last_board_scores.append(entry)
 
 
@@ -1452,6 +1470,7 @@ func decide_shop(state: Dictionary, profile) -> Dictionary:
 	# test_v75_affordable_direct_offense_precedes_generic_thresholds_and_locks
 	# uses that string as a POSITIONAL ANCHOR inside decide_shop.)
 	_last_board_scores = []
+	_last_board_meta = {}
 	var gold: int = state.get("gold", 0)
 	var wave: int = state.get("wave", 1)
 	var reroll_price: int = state.get("reroll_price", 0)
@@ -1472,6 +1491,19 @@ func decide_shop(state: Dictionary, profile) -> Dictionary:
 	# shopping to impactful offense only (see OFFENSE_DPS_TARGETS_BY_WAVE).
 	var band_gate: bool = _dps_below_band(build, wave)
 	var band_impact_floor: float = _band_impact_floor(build) if band_gate else 0.0
+	# v83 (§36): record the band scalars. `band_impact_floor` above is 0.0 when
+	# the gate is closed, which is NOT the floor a counterfactual would use — so
+	# the unconditional value is recorded separately. Below wave 13 the gate is
+	# closed for a whole D5 run, so without this the only recoverable fact would
+	# be that nothing happened.
+	_last_board_meta = {
+		"wave": wave,
+		"band_gate": band_gate,
+		"band_impact_floor": band_impact_floor,
+		"band_impact_floor_uncond": _band_impact_floor(build),
+		"slots_full": slots_full,
+		"weapon_slots": slots,
+	}
 
 	var rich_threshold: int = min(BotConfig.SHOP_RICH_GOLD_BASE + BotConfig.SHOP_RICH_GOLD_PER_WAVE * wave,
 		BotConfig.SHOP_RICH_GOLD_MAX)
@@ -1623,6 +1655,7 @@ func decide_shop(state: Dictionary, profile) -> Dictionary:
 	var best_action := []
 	for it in items:
 		var is_weapon: bool = it.get("category") == "weapon"
+		var extras := {}
 		if is_weapon:
 			if not it.get("usable", true):
 				_board_note(it, null, "unusable")
@@ -1630,23 +1663,36 @@ func decide_shop(state: Dictionary, profile) -> Dictionary:
 			if _session_sold_families.has(it.get("weapon_id")):
 				_board_note(it, null, "sold_family")
 				continue
+			# v83 (§36): BOTH band-gate operands are hoisted into locals and
+			# recorded for EVERY weapon candidate, not only the gated ones.
+			# Below wave 13 `band_gate` is false, so the `and` chain
+			# short-circuits and neither value is computed at all — which is
+			# exactly why an offline counterfactual over this gate was found to
+			# be impossible on archived telemetry. A counterfactual must
+			# evaluate the predicate on candidates that CURRENTLY PASS.
+			# Both functions are pure reads over `it`/`weapons`/`build`, so
+			# hoisting them cannot change the decision below.
+			var pairs_combine: bool = _pairs_for_combine(it, weapons)
+			var proj_dps_gain: float = _projected_weapon_dps_gain(it, build)
+			extras["pairs_combine"] = pairs_combine
+			extras["proj_dps_gain"] = proj_dps_gain
 			# v80/v82: below the winner-DPS band, filler guns whose marginal
 			# gain is under the impact floor and that don't pair for an
 			# immediate combine can't compete for gold (slots stay fillable
 			# via step 2.5 when a slot is actually empty).
 			if (band_gate and slots_full
-					and not _pairs_for_combine(it, weapons)
-					and _projected_weapon_dps_gain(it, build) < band_impact_floor):
-				_board_note(it, null, "band_gate")
+					and not pairs_combine
+					and proj_dps_gain < band_impact_floor):
+				_board_note(it, null, "band_gate", extras)
 				continue
 		elif not it.get("can_buy", true):
 			_board_note(it, null, "cannot_buy")
 			continue
 		if not it.get("affordable"):
-			_board_note(it, null, "unaffordable")
+			_board_note(it, null, "unaffordable", extras)
 			continue
 		var s := item_score(it, build, profile, wave)
-		_board_note(it, s, "")
+		_board_note(it, s, "", extras)
 		if s <= best_score: continue
 		if not is_weapon:
 			best_score = s; best_action = ["shop_buy", "slot", it["slot"]]; continue

@@ -134,12 +134,12 @@ def test_wp2_capture_build_versions_the_v122_crossing_tier_policy():
     # student-inference path (learned/ bridge, default-off) is unchanged —
     # deploy surface bumps together: manifest, controller meta, telemetry
     # default, and the collector identity gate.
-    assert '"version_number": "0.2.78"' in manifest
+    assert '"version_number": "0.2.79"' in manifest
     assert "v128 deterministic teacher" in manifest
     assert controller.count("teacher_v1-0.1.129-gun-wp1") == 1
-    assert controller.count("0.2.78-wp2-capture") == 1
+    assert controller.count("0.2.79-wp2-capture") == 1
     assert telemetry.count("teacher_v1-0.1.129-gun-wp1") == 1
-    assert telemetry.count("0.2.78-wp2-capture") == 1
+    assert telemetry.count("0.2.79-wp2-capture") == 1
 
 
 def test_starting_weapon_select_cannot_stall_on_any_character():
@@ -1917,7 +1917,23 @@ def test_v80_winner_trajectory_curves_and_impactful_offense_band():
     # Ordinary scoring: filler guard only while slots are full, with the
     # immediate-combine exception preserved.
     assert "if (band_gate and slots_full" in strategy
-    assert "_projected_weapon_dps_gain(it, build) < band_impact_floor" in strategy
+    # v83 (§36): the two operands are HOISTED into locals so they can be
+    # recorded for every weapon candidate. The guard's semantics are unchanged
+    # (both helpers are pure reads), but the comparison now reads off the
+    # locals. Pin the hoisted form AND the recording, so the instrument cannot
+    # be silently dropped while the guard keeps working.
+    assert "and not pairs_combine" in strategy
+    assert "and proj_dps_gain < band_impact_floor" in strategy
+    assert "var pairs_combine: bool = _pairs_for_combine(it, weapons)" in strategy
+    assert "var proj_dps_gain: float = _projected_weapon_dps_gain(it, build)" in strategy
+    assert 'extras["pairs_combine"] = pairs_combine' in strategy
+    assert 'extras["proj_dps_gain"] = proj_dps_gain' in strategy
+    # The band scalars must be recorded UNCONDITIONALLY: below wave 13 the gate
+    # is closed for a whole D5 run, so `band_impact_floor` is 0.0 and is NOT the
+    # floor a counterfactual would use.
+    assert '"band_impact_floor_uncond": _band_impact_floor(build),' in strategy
+    assert "func get_last_board_meta() -> Dictionary:" in strategy
+    assert "_last_board_meta = {}" in strategy
     # Reroll pressure while below the band.
     assert "worth += BotConfig.OFFENSE_BAND_REROLL_PRESSURE" in strategy
 
