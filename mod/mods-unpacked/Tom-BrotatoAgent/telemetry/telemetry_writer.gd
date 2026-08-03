@@ -77,7 +77,7 @@ func begin_run(meta: Dictionary) -> void:
 		"endless": meta.get("endless", false),
 		"wave_retry": meta.get("wave_retry", false),
 		"game_version": meta.get("game_version", ""),
-		"mod_version": meta.get("mod_version", "0.2.74-wp2-capture"),
+		"mod_version": meta.get("mod_version", "0.2.75-wp2-capture"),
 		"config_id": meta.get("config_id", "well_rounded_d0_smg"),
 		# Which finale controller actually ran. policy_version cannot carry this:
 		# the flag lives in agent_config.json, so a v2 run and a v1 run of the
@@ -105,6 +105,9 @@ func begin_run(meta: Dictionary) -> void:
 		# ALLOWLIST: without this line the value never reaches telemetry and
 		# arm validation would silently pass on every trial.
 		"engage_distance_scale": meta.get("engage_distance_scale", 1.0),
+		# Body-clearance dose (float, 1.0 = inert). Must be forwarded here or
+		# arm validation cannot see the dial and would pass on every trial.
+		"body_clearance_scale": meta.get("body_clearance_scale", 1.0),
 		# Calm-enemy threat weight dose (float, 1.0 = inert). Same ALLOWLIST
 		# reasoning as above: omit the line and arm validation passes blind.
 		"calm_threat_mult": meta.get("calm_threat_mult", 1.0),

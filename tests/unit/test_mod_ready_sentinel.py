@@ -42,8 +42,8 @@ def test_mod_version_is_single_sourced():
     # The identity in the sentinel and the identity stamped into run meta must be
     # the same constant, or they can drift and the guard silently checks nothing.
     src = CONTROLLER.read_text(encoding="utf-8")
-    assert 'const MOD_VERSION := "0.2.74-wp2-capture"' in src
-    assert src.count('"0.2.74-wp2-capture"') == 1, "mod version literal must appear once"
+    assert 'const MOD_VERSION := "0.2.75-wp2-capture"' in src
+    assert src.count('"0.2.75-wp2-capture"') == 1, "mod version literal must appear once"
     assert '"mod_version": MOD_VERSION,' in src
 
 

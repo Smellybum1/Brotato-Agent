@@ -75,6 +75,11 @@ var finale_ring_radius_enabled: bool = false
 # scale. Larger holds farther from enemies, smaller closes in. Pure multiplier,
 # so 1.0 is exactly inert -- no clamp or floor is added here on purpose.
 var engage_distance_scale: float = 1.0
+# Dev knob: dose on the body-clearance requirement used by _finale_body_safety,
+# the last body arbiter on the emitted command. Pure multiplier on the
+# wave-indexed slack and the pack-clearance cap, so 1.0 is exactly inert. The
+# 45-unit hard contact floor is deliberately NOT scaled.
+var body_clearance_scale: float = 1.0
 # Dev knob: threat weight applied to enemies that are NOT currently charging.
 # 1.0 (default) is exactly inert. Below 1.0 the agent respects a walking enemy
 # less and can close on it, while a charging enemy keeps full weight.
@@ -1446,7 +1451,7 @@ func _finale_body_safety(pos: Vector2, desired: Vector2, player_speed: float,
 		enforce_pack_clearance := false, dash_active := false) -> Vector2:
 	# v123: the near-best body-preference slack is wave-indexed (35 for wave <= 12,
 	# 20 otherwise incl. waves 19/20). The 45-unit contact floor is NOT modulated.
-	var body_slack := BotConfig.body_clearance_slack(wave)
+	var body_slack := BotConfig.body_clearance_slack(wave) * body_clearance_scale
 	# v107: projectile selection and wall projection each reasoned about body
 	# clearance, but the final wall clamp could rotate a safe diagonal back through
 	# a pack. Ordinary late movement also had no final body gate at all. Re-sample
@@ -1668,6 +1673,11 @@ func _finale_body_safety(pos: Vector2, desired: Vector2, player_speed: float,
 		# clearance on the boss wave, prefer a genuinely open route and stay
 		# close to the best lane until the capped clearance is reached. The old
 		# fixed 45-unit floor could admit a visibly worse route through a pack.
+		# The dose rides ONLY on body_slack, deliberately. Inside this min(),
+		# a larger slack LOWERS the floor (more permissive) while a larger pack
+		# term RAISES it (more restrictive) -- one scalar on both would push the
+		# two halves in opposite directions and make the dose non-monotone, i.e.
+		# unreadable at any value but 1.0. The pack term stays unscaled.
 		body_floor = max(
 			BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE,
 			min(BotConfig.BOSS_FINALE_BODY_PACK_CLEARANCE,
