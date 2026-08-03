@@ -5,6 +5,27 @@ workflow (operator directive, 2026-07-23): the primary agent is Claude Fable,
 and Fable tokens are limited — the primary agent does only the work that
 genuinely needs its judgment and delegates everything else.
 
+## North stars
+
+1. **Win a Danger 5 run.**
+2. **Win a Danger 5 run with every character.** (Operator, 2026-08-03 — supersedes the earlier
+   *"get good with every character"*, which had no pass condition.)
+
+Both are the game's own definition of success: binary, terminal, un-gameable.
+
+**Current status: 0 Danger 5 victories, any character**; median D5 terminal wave **11 of 20**.
+§28 established that D5 failure is **clearance-limited, not survival-limited** — the agent dies
+because it kills too slowly, not because it is fragile. A defensive lever justified by *"D5 kills
+us"* is **not licensed**.
+
+**Sequencing:** pursue (1) first. The operator's expectation is that what it takes to win one D5
+run transfers substantially to (2). ⚠️ That transfer is a **directive, not a measured finding** —
+§25 is a strong null on cross-character generalisation (p = 0.791, treatment provably engaged) and
+§27 measured `cyborg` at 0/16 despite the closest profile to `well_rounded`. Do not cite it as
+established.
+
+Full statement, measured distance, and what binds each: **`docs/ROADMAP.md`**.
+
 ## Primary-agent responsibilities
 
 The primary agent (Claude Fable) owns the work that benefits most from full

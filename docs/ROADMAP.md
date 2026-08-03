@@ -1,5 +1,67 @@
 # Roadmap (project copy)
 
+## North stars
+
+Two terminal objectives, in order. Both are the game's own definition of success — binary and
+un-gameable, not proxies this project invented. That property is the point: this project's
+documented failure mode is over-reading its own metrics, and a win is not a metric you can
+select your way into.
+
+**North star 1 — win a Danger 5 run.** (Stated 2026-07-30, `reports/wp2/pro_brief_20260730_danger5.md`.)
+
+**North star 2 — win a Danger 5 run with every character.** (Sharpened by the operator
+2026-08-03, from the earlier and vaguer *"get good with every character"* — that wording had no
+pass condition; this one does.)
+
+### Distance to them, measured
+
+| | status |
+|---|---|
+| D5 victories, any character | **0** |
+| D5 terminal wave (`mutant`, n=16, era-stamped) | median **11 of 20** |
+| D0 victories off `well_rounded` | **0/24** formal attempts across 3 characters; plus `cyborg` **0/16** |
+| Characters that have ever won a run at all | **2** — `well_rounded` .395, `ranger` .625, both at **D0** |
+| Roster reachable today | **43 of 50** — 7 characters locked |
+
+### What binds each
+
+**NS1 is clearance-limited, and that is measured** (§28, 40/40 trials, 0 censored, 0 invalid):
+halving enemy health moved terminal wave **+7.375**; cutting enemy damage 25% did nothing
+(−0.375) and halving it was ambiguous. Both dials were verified engaged, so the damage null is
+interpretable. **The agent does not die at D5 because it is fragile — it dies because it kills
+too slowly.** A defensive lever justified by *"D5 kills us"* is therefore **not licensed**.
+
+**NS2 additionally contains a bootstrap.** D5 is *not* difficulty-gated —
+`max_selectable_difficulty` reads 5 for every character. But 7 characters are locked and every
+remaining unlock is behind *"win a run with character X"* (the stat gates are measured dead), so
+**characters must be won in order to be obtained** — at a measured off-`well_rounded` win rate of
+0/24 on the *easiest* tier. Sequencing is load-bearing here, not incidental.
+
+### Sequencing, and the assumption inside it
+
+**Operator directive, 2026-08-03: pursue NS1 first — what it takes to win one D5 run is expected
+to transfer substantially to NS2.**
+
+⚠️ **Recorded as a directive, not as a finding.** This project's measured evidence on
+cross-character transfer is currently **negative**, and NS2 should test it rather than inherit it:
+
+- **§25 is a strong null** — the `well_rounded` profile port did **not** generalise beyond Jack
+  (p = 0.791), with the treatment provably engaged (P 5.8e-80). Not a weak or underpowered null.
+- **§27** — `cyborg` went **0/16** despite the closest profile to `well_rounded` ⇒ profile
+  similarity does not predict win rate.
+- **§24** worked on Jack, and Jack only (p = 0.0186).
+
+The directive is sound as *sequencing* regardless of how that resolves: NS1 is a strict
+sub-problem of NS2, it is far cheaper to measure, and it is the only one of the two with an
+identified binding constraint. What is unestablished is the **size** of the transfer, not the
+order of the work. Treat *"D5 capability generalises across characters"* as an open question NS2
+must answer, not a premise it starts from.
+
+⚠️ **64 build profiles covering all 50 roster characters is evidence a profile EXISTS, not that
+the character plays well.** That line was carried as capability for weeks and is measured false.
+
+---
+
 See also the director master roadmap. Work Package status:
 
 | Milestone | Status |
