@@ -1,0 +1,5 @@
+run_id,result,last_wave,duration_ms,recoveries,errors,hangs,failure_category
+run_1785744980_49347,defeat,11,544642,5,0,0,
+run_1785745526_90679,defeat,12,621300,6,0,0,
+run_1785746148_88296,defeat,12,617546,6,0,0,
+run_1785746767_5882,defeat,6,224015,0,0,0,
