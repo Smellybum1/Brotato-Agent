@@ -28,6 +28,12 @@ import os
 import sys
 from collections import Counter
 
+# Windows consoles default to cp1252 and raise UnicodeEncodeError on the marker
+# glyphs used throughout this project's reports. Reconfigure rather than drop the
+# glyphs: a verdict line that cannot print is a verdict that can be lost.
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
 HORIZON = 0.60          # BotConfig.ESCAPE_HORIZON -- fixed in the prereg
 WEIGHTS = [10, 25, 50, 85, 150, 300]   # 85 == BOSS_FINALE_ESCAPE_CONTINUITY
 EXCLUDE_RUNS = {"run_1785754086_12860"}   # force-killed smoke; excluded in the prereg
