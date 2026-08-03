@@ -36,7 +36,52 @@ detector below wave 13, then raising the target while leaving `W = 13` **must** 
 decisions at waves ≤ 11. **A non-zero result in arm C falsifies my source reading and voids the
 analysis** — it does not get explained away.
 
-## §36c — Method: exact offline counterfactual, no new runs
+## ⛔⛔ §36c-AMENDMENT, 2026-08-04, BEFORE ANY FLIP WAS COMPUTED — **GATE 0 IS NOT OFFLINE-COMPUTABLE**
+
+**The "exact offline counterfactual" claimed below is WRONG and is retracted.** Found by reading the
+exclusion condition in source rather than trusting the plan. `shop_strategy.gd:1637-1641`:
+
+```
+if (band_gate and slots_full
+        and not _pairs_for_combine(it, weapons)
+        and _projected_weapon_dps_gain(it, build) < band_impact_floor):
+    _board_note(it, null, "band_gate")
+```
+
+Four conjuncts. **Two are computable, two are not:**
+
+| conjunct | computable offline? | why |
+|---|---|---|
+| `band_gate` | ✅ | `weapon_dps` + `dps_target` are in `build_metrics.offense` |
+| `slots_full` | ✅ | `weapon_count` is in `build_metrics.offense` (verified, 0 missing) |
+| `band_impact_floor` | ✅ | `= 0.05 * weapon_dps` (`:692-697`) |
+| **`_pairs_for_combine(it, weapons)`** | ⛔ | needs the **HELD weapons' ids and tiers**. `payload.weapons` carries only `{type, max_range, damage, cooldown}` — **no id, no tier** (measured: tier extraction over 92 weapons returned 100% `None`). |
+| **`_projected_weapon_dps_gain(it, build)`** | ⛔ | an internal `BotCombatModel` projection, **never recorded anywhere in telemetry**. |
+
+⛔ **Approximating the two missing terms is NOT acceptable here.** The filter is a threshold
+(`gain < 0.05 * weapon_dps`), so any approximation error lands **exactly on the boundary cases — which
+are precisely the decisions that flip.** A counterfactual whose error concentrates on its own outcome
+is worthless. *(Same reasoning that made §35's loot reproduction a make-or-break control rather than a
+best effort.)*
+
+⇒ **REQUIRED FIRST: an instrument, exactly as `board_scores` (`0.2.74`) and `route_scores` (`0.2.76`)
+were required before the shop and movement Gate 0s.** Add to each existing `board_scores` entry:
+`proj_dps_gain` (the `_projected_weapon_dps_gain` value) and `pairs_combine` (the
+`_pairs_for_combine` boolean), plus the scalar `band_impact_floor`. Additive to an existing array;
+default `null` so "not computed" cannot masquerade as a real 0.
+⛔ **Clear on ENTRY, not in the loop** — `decide_shop` has 18 early returns and a loop-scoped clear
+would emit the PREVIOUS board's values against this decision (the exact bug caught in `board_scores`
+review, and again in `route_scores`).
+⛔ Verify **CORRECTNESS, not delivery**: on a live D5 board, the recomputed `band_gate` decision must
+reproduce the emitted action, and `proj_dps_gain` must VARY (a constant would be the 13th member of
+this project's structurally-uninformative-field family).
+
+**Everything else in this document — the 2x2 design, arm C as a structural control, the cell-wise
+reproduction table, the interaction bar, the absence of a Gate 0b, and the §36h prediction — STANDS
+UNCHANGED and is unaffected by the amendment.** Only the data source moves: the counterfactual runs on
+a fresh instrumented D5 sample instead of the archive. **No bar is relaxed.**
+
+## §36c — Method (⛔ SUPERSEDED IN PART BY THE AMENDMENT ABOVE)
 
 Data: **30 D5 runs at ≥ 0.2.74** (`board_scores` ships there). ⚠️ **Pooled across `0.2.74` (6) /
 `0.2.75` (16) / `0.2.76` (8) — reported, not hidden**; per-build results printed.
