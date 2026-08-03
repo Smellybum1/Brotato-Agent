@@ -134,12 +134,12 @@ def test_wp2_capture_build_versions_the_v122_crossing_tier_policy():
     # student-inference path (learned/ bridge, default-off) is unchanged —
     # deploy surface bumps together: manifest, controller meta, telemetry
     # default, and the collector identity gate.
-    assert '"version_number": "0.2.75"' in manifest
+    assert '"version_number": "0.2.76"' in manifest
     assert "v128 deterministic teacher" in manifest
     assert controller.count("teacher_v1-0.1.129-gun-wp1") == 1
-    assert controller.count("0.2.75-wp2-capture") == 1
+    assert controller.count("0.2.76-wp2-capture") == 1
     assert telemetry.count("teacher_v1-0.1.129-gun-wp1") == 1
-    assert telemetry.count("0.2.75-wp2-capture") == 1
+    assert telemetry.count("0.2.76-wp2-capture") == 1
 
 
 def test_starting_weapon_select_cannot_stall_on_any_character():
@@ -1058,11 +1058,16 @@ def test_v107_final_body_gate_runs_after_wall_projection_and_preserves_safety_ti
     panic_tier = safety.index("highest_projectile_clearance >= panic_clear")
     concession = safety.index("BOSS_FINALE_BODY_ESCAPE_PROJECTILE_SLACK")
     body_tier = safety.index("var body_floor := highest_body_clearance")
-    body_gate = safety.index(
-        "projectile_clearance < projectile_floor or body_clearance < body_floor"
-    )
+    # v129 split the single `or` gate into two `if`s so the route record can name
+    # WHICH gate dropped a lane. Both still `continue`, so the emitted command is
+    # unchanged -- but pin BOTH, in order, so the split cannot silently lose one.
+    # (The "if " prefix matters: it excludes the relief branch's
+    # `if highest_body_clearance < body_floor:`, which contains this substring.)
+    projectile_gate = safety.index("if projectile_clearance < projectile_floor:")
+    body_gate = safety.index("if body_clearance < body_floor:")
     assert clamp < wall_gate < body < projectile_floor
-    assert projectile_floor < safe_tier < panic_tier < concession < body_tier < body_gate
+    assert projectile_floor < safe_tier < panic_tier < concession < body_tier
+    assert body_tier < projectile_gate < body_gate
 
     for field in (
         '"body_safety_active": _finale_body_safety_active',

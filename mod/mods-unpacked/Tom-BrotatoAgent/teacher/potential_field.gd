@@ -51,6 +51,28 @@ var _finale_body_best_clearance := -1.0
 var _finale_body_selected_clearance := -1.0
 var _finale_body_projectile_floor := -1.0
 var _finale_body_selected_projectile_clearance := -1.0
+# v129 route telemetry: the per-candidate record of the last body-safety ranking.
+# Body clearance is an ADMISSION GATE in that ranking and never a preference --
+# it does not appear in the lane score at all -- so no scalar summary can say
+# which term decided the route. These are the movement analogue of the shop's
+# purchase_decision.board_scores. Default-inert: with route_scores_enabled false
+# nothing is appended and the emitted command is byte-identical.
+var route_scores_enabled: bool = false
+var _finale_route_scores := []
+var _finale_route_exit := ""
+var _finale_route_body_floor := -1.0e18
+var _finale_route_projectile_floor := -1.0e18
+var _finale_route_lowest_enemy_penalty := -1.0
+var _finale_route_sampled := -1
+var _finale_route_floor_admitted := 0
+var _finale_route_baseline_admitted := false
+# The lane the ranking actually emitted, plus its score. Without these the block
+# would prove DELIVERY (rows exist) but not CORRECTNESS (that the recorded rows
+# are the ones the decision was made from). With them the check is exact and
+# self-contained: the max-scoring non-skipped row must BE the selected lane --
+# the same reconciliation that validated the shop's board_scores.
+var _finale_route_selected := Vector2.ZERO
+var _finale_route_best_score := -1.0e18
 # Finale controller v2 flag; the controller propagates agent_config.finale_v2.
 var finale_v2_enabled: bool = false
 # Wave-20 dev flags; the controller propagates agent_config.finale_no_panic and
@@ -150,6 +172,11 @@ func compute_movement(state, profile) -> Vector2:
 	_finale_body_selected_clearance = -1.0
 	_finale_body_projectile_floor = -1.0
 	_finale_body_selected_projectile_clearance = -1.0
+	# Reset here as well as on entry to _finale_body_safety: the FLEE branches
+	# below return without ever calling it, so without this a stale block would
+	# read exactly like a fresh one. "not_reached" is a value no real ranking can
+	# produce, so a missed reset cannot masquerade as data.
+	_reset_finale_route()
 
 	# FLEE-mode branches (Pacifist/Beast Master/Bull/Wounded etc).
 	if profile.flee_mode:
@@ -1449,6 +1476,13 @@ func _best_wall_safe_projectile_lane(pos: Vector2, baseline: Vector2,
 func _finale_body_safety(pos: Vector2, desired: Vector2, player_speed: float,
 		arena, enemies, bosses, projectiles, profile, wave: int,
 		enforce_pack_clearance := false, dash_active := false) -> Vector2:
+	# v129: clear the route record on ENTRY, never inside the ranking loop. This
+	# function has SIX return paths and a loop-scoped clear would emit the
+	# PREVIOUS tick's candidates against this decision. An empty array therefore
+	# means honestly "the ranking loop was never reached", and route_exit names
+	# which return fired.
+	_reset_finale_route()
+	_finale_route_exit = "entered"
 	# v123: the near-best body-preference slack is wave-indexed (35 for wave <= 12,
 	# 20 otherwise incl. waves 19/20). The 45-unit contact floor is NOT modulated.
 	var body_slack := BotConfig.body_clearance_slack(wave) * body_clearance_scale
@@ -1460,6 +1494,7 @@ func _finale_body_safety(pos: Vector2, desired: Vector2, player_speed: float,
 	var baseline := _clamp_finale_wall_components(
 		pos, desired, arena, player_speed)
 	if enemies.empty() and bosses.empty():
+		_finale_route_exit = "no_threats"
 		return baseline
 	var times := []
 	for i in range(BotConfig.ESCAPE_TIME_SAMPLES):
@@ -1540,6 +1575,7 @@ func _finale_body_safety(pos: Vector2, desired: Vector2, player_speed: float,
 	if rows.empty():
 		_finale_body_best_clearance = _finale_body_input_clearance
 		_finale_body_selected_clearance = _finale_body_input_clearance
+		_finale_route_exit = "rows_empty"
 		return baseline
 	# The active pool may exclude hard-safe relief rows. Anchor projectile tiers
 	# only to candidates the final body pass can actually emit.
@@ -1641,6 +1677,7 @@ func _finale_body_safety(pos: Vector2, desired: Vector2, player_speed: float,
 	if highest_body_clearance <= -1.0e17:
 		_finale_body_best_clearance = _finale_body_input_clearance
 		_finale_body_selected_clearance = _finale_body_input_clearance
+		_finale_route_exit = "no_body_tier"
 		return baseline
 	_finale_body_best_clearance = highest_body_clearance
 	if _finale_wall_body_relief_active:
@@ -1665,6 +1702,8 @@ func _finale_body_safety(pos: Vector2, desired: Vector2, player_speed: float,
 		# failed the audit. Make the fallback explicit and diagnosed.
 		if highest_body_clearance < body_floor:
 			_finale_body_selected_clearance = _finale_body_input_clearance
+			_finale_route_exit = "relief_underflow"
+			_finale_route_body_floor = body_floor
 			return baseline
 	elif (enforce_pack_clearance
 			and highest_body_clearance
@@ -1691,6 +1730,17 @@ func _finale_body_safety(pos: Vector2, desired: Vector2, player_speed: float,
 		if (float(row[2]) >= projectile_floor
 				and float(row[1]) >= body_floor):
 			lowest_enemy_penalty = min(lowest_enemy_penalty, float(row[3]))
+			# Counted on the SAME conditional that computes the minimum, so the
+			# count cannot drift from the gate it describes. This is the
+			# floor-admitted pool only; the enemy-penalty band is relative to
+			# lowest_enemy_penalty and is not knowable until this loop ends, so
+			# per-row band admission is recorded in the ranking loop instead.
+			_finale_route_floor_admitted += 1
+	_finale_route_sampled = rows.size()
+	_finale_route_body_floor = body_floor
+	_finale_route_projectile_floor = projectile_floor
+	if lowest_enemy_penalty < INF:
+		_finale_route_lowest_enemy_penalty = lowest_enemy_penalty
 	var baseline_enemy_penalty := _predictive_enemy_path_penalty(
 		pos, baseline, player_speed, times, enemies, bosses, 1.0)
 	# v118: an active loot dash deliberately accepts crowd pressure; the soft
@@ -1705,6 +1755,8 @@ func _finale_body_safety(pos: Vector2, desired: Vector2, player_speed: float,
 		_finale_body_selected_projectile_clearance = baseline_projectile_clearance
 		if not projectile_context.empty():
 			_finale_projectile_final_body_clearance = _finale_body_input_clearance
+		_finale_route_exit = "baseline_kept"
+		_finale_route_baseline_admitted = true
 		return baseline
 	var best_dir := baseline
 	var best_score := -1.0e18
@@ -1712,22 +1764,44 @@ func _finale_body_safety(pos: Vector2, desired: Vector2, player_speed: float,
 		var body_clearance := float(row[1])
 		var projectile_clearance := float(row[2])
 		var enemy_penalty := float(row[3])
-		if projectile_clearance < projectile_floor or body_clearance < body_floor:
+		var candidate: Vector2 = row[0]
+		# v129: the two floor tests were one `or`; split so the record can name
+		# WHICH gate dropped the lane. Both still `continue`, so the emitted
+		# command is unchanged.
+		if projectile_clearance < projectile_floor:
+			_route_record(candidate, body_clearance, projectile_clearance,
+				enemy_penalty, "projectile_floor", 0.0, 0.0, 0.0)
+			continue
+		if body_clearance < body_floor:
+			_route_record(candidate, body_clearance, projectile_clearance,
+				enemy_penalty, "body_floor", 0.0, 0.0, 0.0)
 			continue
 		if (enemy_penalty > lowest_enemy_penalty
 				+ BotConfig.BOSS_FINALE_ENEMY_PENALTY_SLACK):
+			_route_record(candidate, body_clearance, projectile_clearance,
+				enemy_penalty, "enemy_slack", 0.0, 0.0, 0.0)
 			continue
-		var candidate: Vector2 = row[0]
-		var score := projectile_clearance - enemy_penalty
-		score += BotConfig.ESCAPE_ALIGN_BONUS * candidate.dot(baseline)
+		# Terms are hoisted into locals so the record carries the SAME values the
+		# comparison uses -- a recomputed copy could drift from the decision.
+		# Accumulation order is unchanged: ((proj - pen) + align) + continuity.
+		var align_term := BotConfig.ESCAPE_ALIGN_BONUS * candidate.dot(baseline)
+		var continuity_term := 0.0
 		if _prev_move.length() > 0.1:
-			score += (BotConfig.BOSS_FINALE_ESCAPE_CONTINUITY
+			continuity_term = (BotConfig.BOSS_FINALE_ESCAPE_CONTINUITY
 				* candidate.dot(_prev_move))
+		var score := projectile_clearance - enemy_penalty
+		score += align_term
+		score += continuity_term
+		_route_record(candidate, body_clearance, projectile_clearance,
+			enemy_penalty, "", align_term, continuity_term, score)
 		if score > best_score:
 			best_score = score
 			best_dir = candidate
 			_finale_body_selected_clearance = body_clearance
 			_finale_body_selected_projectile_clearance = projectile_clearance
+	_finale_route_exit = "ranked"
+	_finale_route_selected = best_dir
+	_finale_route_best_score = best_score
 	_finale_body_safety_active = best_dir.dot(baseline) < 0.999
 	if not projectile_context.empty():
 		_finale_projectile_final_clearance = _finale_body_selected_projectile_clearance
@@ -1768,6 +1842,61 @@ func _finale_committed_escape(pos: Vector2, desired: Vector2, arena, bosses) -> 
 	return _normalize(
 		_finale_commit_dir * (1.0 - BotConfig.BOSS_FINALE_COMMIT_DESIRE_BLEND)
 		+ desired_n * BotConfig.BOSS_FINALE_COMMIT_DESIRE_BLEND)
+
+
+func _reset_finale_route() -> void:
+	# "not_reached" is a value no real ranking can produce, so a stale block can
+	# never be mistaken for a fresh one. Counters reset to -1 for the same
+	# reason: 0 is a plausible measurement, -1 is not.
+	_finale_route_scores = []
+	_finale_route_exit = "not_reached"
+	_finale_route_body_floor = -1.0e18
+	_finale_route_projectile_floor = -1.0e18
+	_finale_route_lowest_enemy_penalty = -1.0
+	_finale_route_sampled = -1
+	_finale_route_floor_admitted = 0
+	_finale_route_baseline_admitted = false
+	_finale_route_selected = Vector2.ZERO
+	_finale_route_best_score = -1.0e18
+
+
+func _route_record(candidate: Vector2, body_clearance: float,
+		projectile_clearance: float, enemy_penalty: float, skip: String,
+		align_term: float, continuity_term: float, score: float) -> void:
+	# Pure observation. The early return is what makes the flag exactly inert:
+	# with route_scores_enabled false this function touches no state at all.
+	if not route_scores_enabled:
+		return
+	_finale_route_scores.append({
+		"x": stepify(candidate.x, 0.0001),
+		"y": stepify(candidate.y, 0.0001),
+		"body": stepify(body_clearance, 0.01),
+		"proj": stepify(projectile_clearance, 0.01),
+		"pen": stepify(enemy_penalty, 0.01),
+		"skip": skip,
+		"align": stepify(align_term, 0.01),
+		"cont": stepify(continuity_term, 0.01),
+		"score": stepify(score, 0.01),
+	})
+
+
+func finale_route_debug() -> Dictionary:
+	return {
+		"exit": _finale_route_exit,
+		"enabled": route_scores_enabled,
+		"sampled": _finale_route_sampled,
+		"floor_admitted": _finale_route_floor_admitted,
+		"baseline_admitted": _finale_route_baseline_admitted,
+		"body_floor": _finale_route_body_floor,
+		"projectile_floor": _finale_route_projectile_floor,
+		"lowest_enemy_penalty": _finale_route_lowest_enemy_penalty,
+		"prev_x": stepify(_prev_move.x, 0.0001),
+		"prev_y": stepify(_prev_move.y, 0.0001),
+		"sel_x": stepify(_finale_route_selected.x, 0.0001),
+		"sel_y": stepify(_finale_route_selected.y, 0.0001),
+		"best_score": stepify(_finale_route_best_score, 0.01),
+		"scores": _finale_route_scores,
+	}
 
 
 func finale_translation_debug() -> Dictionary:

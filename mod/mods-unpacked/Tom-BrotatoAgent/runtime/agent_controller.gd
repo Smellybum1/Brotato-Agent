@@ -80,6 +80,14 @@ var engage_distance_scale: float = 1.0
 # last body arbiter on the emitted command. Pure multiplier, so 1.0 is exactly
 # inert. The 45-unit hard contact floor is deliberately NOT scaled.
 var body_clearance_scale: float = 1.0
+# Instrument (not a knob). It gates ONLY the per-candidate `scores` array in
+# teacher.contributions.route -- ~24 dicts per decision, and the archive is
+# already ~110 GB, so that array is armed only for a measurement campaign.
+# The route SCALARS (`exit`, `sampled`, `floor_admitted`, the floors) are always
+# recorded and cost ~10 keys per capture: the admitted-lane count is therefore
+# available with this flag OFF, which is what makes a default-off array cheap.
+# Recording is pure observation; flag-off is byte-identical on the emitted command.
+var route_scores_enabled: bool = false
 # Dev knob: threat weight applied to enemies that are NOT currently charging.
 # 1.0 (default) is exactly inert.
 var calm_threat_mult: float = 1.0
@@ -182,7 +190,7 @@ var policy_version: String = "teacher_v1-0.1.129-gun-wp1"
 # Single source of truth for the deployed mod identity: stamped into every run's
 # meta AND into the mod-ready sentinel, so the collector cannot accept a build
 # whose identity disagrees with what it asked for.
-const MOD_VERSION := "0.2.75-wp2-capture"
+const MOD_VERSION := "0.2.76-wp2-capture"
 const _MOD_READY_PATH := "user://brotato_agent/mod_ready.json"
 var last_move_debug: Dictionary = {}
 var last_meta_debug: Dictionary = {}
@@ -344,6 +352,7 @@ func _ready() -> void:
 		_field.finale_ring_radius_enabled = finale_ring_radius
 		_field.engage_distance_scale = engage_distance_scale
 		_field.body_clearance_scale = body_clearance_scale
+		_field.route_scores_enabled = route_scores_enabled
 		_field.calm_threat_mult = calm_threat_mult
 		_field.tail_calm_penalty_mult = tail_calm_penalty_mult
 		_field.tail_calm_clearance_mult = tail_calm_clearance_mult
@@ -406,6 +415,7 @@ func _write_mod_ready() -> void:
 		"finale_ring_radius": finale_ring_radius,
 		"engage_distance_scale": engage_distance_scale,
 		"body_clearance_scale": body_clearance_scale,
+		"route_scores_enabled": route_scores_enabled,
 		"calm_threat_mult": calm_threat_mult,
 		"tail_calm_penalty_mult": tail_calm_penalty_mult,
 		"tail_calm_clearance_mult": tail_calm_clearance_mult,
@@ -2325,6 +2335,15 @@ func choose_movement(combat_observation: Dictionary) -> Dictionary:
 	var tail_debug: Dictionary = {}
 	if _field.has_method("tail_debug"):
 		tail_debug = _field.tail_debug()
+	# v129: per-candidate record of the body-safety ranking -- the movement
+	# analogue of purchase_decision.board_scores. Its own block rather than a key
+	# inside finale_translation, so every analysis written against that block
+	# keeps working unchanged (same reasoning as loot_dash in v127). Default-off;
+	# `enabled` rides inside the block so a run can certify from its own record
+	# which arm it ran, and `exit` names which of the six return paths fired.
+	var route_debug: Dictionary = {}
+	if _field.has_method("finale_route_debug"):
+		route_debug = _field.finale_route_debug()
 	return {
 		"vector": vec,
 		"reason": "potential_field",
@@ -2336,6 +2355,7 @@ func choose_movement(combat_observation: Dictionary) -> Dictionary:
 			"loot_dash": loot_dash_debug,
 			"desire": desire_debug,
 			"tail": tail_debug,
+			"route": route_debug,
 			# Raw human keyboard vector for the handover arm. Same free-form debug
 			# bag as desire/tail, so no capture-schema or hash change; capture path
 			# is teacher.contributions.human. Empty dict when human_movement is off.
@@ -2608,6 +2628,7 @@ func _start_run() -> void:
 		"finale_ring_radius": finale_ring_radius,
 		"engage_distance_scale": engage_distance_scale,
 		"body_clearance_scale": body_clearance_scale,
+		"route_scores_enabled": route_scores_enabled,
 		"calm_threat_mult": calm_threat_mult,
 		"tail_calm_penalty_mult": tail_calm_penalty_mult,
 		"tail_calm_clearance_mult": tail_calm_clearance_mult,
@@ -2926,6 +2947,8 @@ func _load_auto_config() -> void:
 		engage_distance_scale = float(cfg["engage_distance_scale"])
 	if cfg.has("body_clearance_scale"):
 		body_clearance_scale = float(cfg["body_clearance_scale"])
+	if cfg.has("route_scores_enabled"):
+		route_scores_enabled = bool(cfg["route_scores_enabled"])
 	if cfg.has("calm_threat_mult"):
 		calm_threat_mult = float(cfg["calm_threat_mult"])
 	if cfg.has("tail_calm_penalty_mult"):
