@@ -35,6 +35,9 @@ var _session_new_lock_item_ids := {}
 var _session_expired_lock_item_ids := {}
 var _session_lock_transition_counts := {}
 var _session_cycle_blocked_item_ids := {}
+# Telemetry-only: per-candidate scores from the most recent "# 1) Best purchase"
+# ranking loop. Recording only -- nothing reads this to make a decision.
+var _last_board_scores: Array = []
 
 # Dev flag, default FALSE = byte-identical to the shipped one-visit rare-gun lock
 # lifetime. When true, an inherited rare-gun lock is kept while the gun still
@@ -530,6 +533,34 @@ func _is_vetoed(item: Dictionary, build: Dictionary, wave: int) -> bool:
 	if not _item_matches_current_build(item, build, wave): return true
 	if _sustain_cap_veto(item, build, wave): return true
 	return false
+
+
+func get_last_board_scores() -> Array:
+	return _last_board_scores
+
+
+# Telemetry-only recorder for the "# 1) Best purchase" ranking loop. `score` is
+# the value ALREADY computed by that loop, or null when a gate skipped the
+# candidate before scoring. Capped so the payload stays small; when the cap
+# bites, a {"truncated": true} marker is appended so a reader can never mistake
+# a cap for a complete board.
+func _board_note(item: Dictionary, score, skipped: String) -> void:
+	var n: int = _last_board_scores.size()
+	if n >= 16:
+		if n == 16:
+			_last_board_scores.append({"truncated": true})
+		return
+	var entry := {
+		"slot": item.get("slot", -1),
+		"id": str(item.get("id", "")),
+		"category": str(item.get("category", "")),
+		"price": int(item.get("price", 0)),
+		"affordable": item.get("affordable", null),
+		"score": score,
+	}
+	if skipped != "":
+		entry["skipped"] = skipped
+	_last_board_scores.append(entry)
 
 
 func item_score(item: Dictionary, build: Dictionary, profile, wave: int) -> float:
@@ -1411,6 +1442,16 @@ func _surplus_state(items: Array, build: Dictionary, profile, wave: int,
 
 func decide_shop(state: Dictionary, profile) -> Dictionary:
 	_reset_session_if_new(state)
+	# Telemetry-only. Cleared HERE, on entry, and NOT down at the ranking loop:
+	# there are 18 early returns before that loop, and on every one of them a
+	# loop-scoped clear would leave the PREVIOUS board's scores in place to be
+	# emitted against THIS decision. Stale-but-present reads exactly like fresh,
+	# which is how this project has been bitten before. An empty array here
+	# honestly means "the ranking loop was never reached".
+	# (Deliberately does not quote the ranking loop's banner comment verbatim --
+	# test_v75_affordable_direct_offense_precedes_generic_thresholds_and_locks
+	# uses that string as a POSITIONAL ANCHOR inside decide_shop.)
+	_last_board_scores = []
 	var gold: int = state.get("gold", 0)
 	var wave: int = state.get("wave", 1)
 	var reroll_price: int = state.get("reroll_price", 0)
@@ -1583,8 +1624,12 @@ func decide_shop(state: Dictionary, profile) -> Dictionary:
 	for it in items:
 		var is_weapon: bool = it.get("category") == "weapon"
 		if is_weapon:
-			if not it.get("usable", true): continue
-			if _session_sold_families.has(it.get("weapon_id")): continue
+			if not it.get("usable", true):
+				_board_note(it, null, "unusable")
+				continue
+			if _session_sold_families.has(it.get("weapon_id")):
+				_board_note(it, null, "sold_family")
+				continue
 			# v80/v82: below the winner-DPS band, filler guns whose marginal
 			# gain is under the impact floor and that don't pair for an
 			# immediate combine can't compete for gold (slots stay fillable
@@ -1592,11 +1637,16 @@ func decide_shop(state: Dictionary, profile) -> Dictionary:
 			if (band_gate and slots_full
 					and not _pairs_for_combine(it, weapons)
 					and _projected_weapon_dps_gain(it, build) < band_impact_floor):
+				_board_note(it, null, "band_gate")
 				continue
 		elif not it.get("can_buy", true):
+			_board_note(it, null, "cannot_buy")
 			continue
-		if not it.get("affordable"): continue
+		if not it.get("affordable"):
+			_board_note(it, null, "unaffordable")
+			continue
 		var s := item_score(it, build, profile, wave)
+		_board_note(it, s, "")
 		if s <= best_score: continue
 		if not is_weapon:
 			best_score = s; best_action = ["shop_buy", "slot", it["slot"]]; continue

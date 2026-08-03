@@ -178,7 +178,7 @@ var policy_version: String = "teacher_v1-0.1.129-gun-wp1"
 # Single source of truth for the deployed mod identity: stamped into every run's
 # meta AND into the mod-ready sentinel, so the collector cannot accept a build
 # whose identity disagrees with what it asked for.
-const MOD_VERSION := "0.2.73-wp2-capture"
+const MOD_VERSION := "0.2.74-wp2-capture"
 const _MOD_READY_PATH := "user://brotato_agent/mod_ready.json"
 var last_move_debug: Dictionary = {}
 var last_meta_debug: Dictionary = {}
@@ -1432,6 +1432,9 @@ func _handle_shop(shop) -> void:
 			state.get("build", {}).get("stats", {}),
 			state.get("build", {}).get("weapons", []), int(state.get("wave", 0)),
 			_last_known_max_hp)
+		var board_scores := []
+		if _shop != null:
+			board_scores = _shop.get_last_board_scores()
 		_telem.emit("purchase_offer", {"items": state.get("shop_items", []), "gold": state.get("gold", 0), "reroll_price": state.get("reroll_price", 0)})
 		_telem.emit("purchase_decision", {
 			"action": action,
@@ -1446,6 +1449,9 @@ func _handle_shop(shop) -> void:
 			# from, so the audit can recompute both from telemetry alone.
 			"exit_reason": action.get("exit_reason", ""),
 			"surplus": action.get("surplus", {}),
+			# Per-candidate scores from the shop's ranking loop, so the
+			# runner-up margin is recoverable from telemetry alone.
+			"board_scores": board_scores,
 		})
 	_update_shop_hud(action, state, decision)
 	if action.empty() or action.get("type", "") == "shop_go":
