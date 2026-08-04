@@ -109,6 +109,17 @@ too often without improving engagement. The exact selector is closed; no impleme
 treatment is licensed. A strict-positive deadband would be mechanism-distinct but is now a
 discovery-derived hypothesis requiring new preregistered sealed evidence.
 
+**§47's sealed strict-benefit confirmation is `VOID`; it does not rescue §46.** Six new fixed
+instrument runs completed at waves 14/3/7/10/12/10. All archive controls pass: **43,690/43,690**
+fresh and instrument-enabled captures, **333,666/333,666** ranked rows, **24,171/24,171** living
+`baseline_kept` rows, **14,102/14,102** delivered headings, **2,594/2,594** live conversion guards,
+and **38,273/38,273** complete unique threat identities. But the valid wave-3 run supplies only
+**31 eligible episodes** and **365 retained steps** against the frozen per-run minima 50/500. The
+analyzer stopped at branch controls; result bars were not adjudicated, and replacement/top-up is
+forbidden. An audit caught and repaired an analyzer ordering leak that had serialized endpoints
+before the control return; those leaked values are not interpreted. The strict-benefit mechanism
+remains unresolved and no implementation or live screen is licensed.
+
 **NS2 additionally contains a bootstrap.** D5 is *not* difficulty-gated —
 `max_selectable_difficulty` reads 5 for every character. But 7 characters are locked and every
 remaining unlock is behind *"win a run with character X"* (the stat gates are measured dead), so

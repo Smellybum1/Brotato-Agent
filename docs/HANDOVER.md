@@ -57,6 +57,7 @@ tells you whether a *different* mechanism on the same defect is still live.
 | **Safety-revalidated conversion latch, archive Gate 0** (§44) | `DATA_LIMITED`; all-exit instrument licensed, latch not closed | All §40/41 controls reproduce exactly and visible retained steps are safe **8,469/8,469**, but active-future candidate observability is only **9,400/12,429 = 75.63%** versus the fixed 90% adequacy bar. `baseline_kept` alone causes 2,854/4,039 conservative releases. The 73/3,985 horizon lower bound cannot be read as a mechanism null. |
 | **All-exit latch revalidation acquisition** (§45) | instrument qualified; `INSUFFICIENT_INSTRUMENT`, no latch result | Row parity is **215,901/215,901**, living `baseline_kept` readiness **15,457/15,457**, and active-future observability **6,242/6,248 = 99.904%**. But the fixed four runs yielded **885** stateful episodes against the preregistered 1,000 minimum. The analyzer stopped before latch bars; no fifth run or lowered boundary is allowed. |
 | **Original-cohort objective commitment** (§46) | fails Gate 0; exact selector closed | Objective persistence works (**690/708 = 97.46%** reach 0.60 s) and safety is **8,514/8,514**, but the largest run supplies **275/708 = 38.84%** against the 35% bar and median cohort advantage on **6,351** overrides is exactly **0.000** against +0.05. Post-result: 3,805/6,351 overrides are zero-gain. No live treatment. |
+| **Strict-benefit cohort commitment, sealed confirmation** (§47) | `VOID`; result bars not computed | Six fixed new runs pass archive/parity/delivery/identity controls, but the valid wave-3 run supplies only **31 eligible episodes** and **365 retained steps** against frozen per-run minima 50/500. No replacement, top-up, or dropping the run. An analyzer control-order leak was repaired; leaked endpoints are not interpreted. |
 | **Character selection** (§29) | excluded | ranger 0/16 despite a 2.4x D0 edge; cyborg 0/23 despite the largest offensive multiplier in the game. **Stat block does not predict win rate.** |
 | **Build / economy** | excluded | Same DPS, HP, weapons and materials-per-wave at D0 and D5 (matched pair, 16/arm). There is no economic starvation. |
 | **Idle materials** | not a problem | Post-shop balance is **13** at wave 9 against a 436 budget — it converts ~97%. |
@@ -121,7 +122,11 @@ strongly (690/708 horizons), but the gate failed concentration (38.84% from one 
 benefit (median override advantage 0.000; 3,805/6,351 overrides had zero gain). The exact cohort
 selector is closed and live treatment remains unlicensed. A strict-positive-advantage deadband is
 only a discovery lead; because §46 revealed it, it needs new preregistered sealed evidence rather
-than relaxed reuse of these four runs.
+than relaxed reuse of these four runs. §47 collected that sealed evidence in six fixed slots, but a
+valid wave-3 defeat missed both preregistered per-run minima (31/50 episodes, 365/500 steps). Archive,
+instrument, delivery, conversion-guard, identity, and positive/negative branch controls otherwise
+passed. The analyzer stopped at `VOID`; no result bar was adjudicated and no top-up is allowed. The
+strict-benefit mechanism remains unresolved and unlicensed.
 
 ## 5. ⭐ The methodology — this is the most valuable thing here
 

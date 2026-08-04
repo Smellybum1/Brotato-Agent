@@ -1,0 +1,76 @@
+{
+  "status": "VOID",
+  "stage": "branch_controls",
+  "faults": [
+    "run_1785842475_92913: eligible=31 < 50",
+    "run_1785842475_92913: retained=365 < 500"
+  ],
+  "runs": {
+    "run_1785841731_99333": {
+      "run_id": "run_1785841731_99333",
+      "eligible_episodes": 252,
+      "retained_steps": 3073,
+      "strict_overrides": 789,
+      "deadband_retained": 2278,
+      "objective_complete_steps": 6,
+      "deadband_correct": 3073,
+      "decision_steps": 3073,
+      "trigger_exclusions": {}
+    },
+    "run_1785842475_92913": {
+      "run_id": "run_1785842475_92913",
+      "eligible_episodes": 31,
+      "retained_steps": 365,
+      "strict_overrides": 111,
+      "deadband_retained": 254,
+      "objective_complete_steps": 0,
+      "deadband_correct": 365,
+      "decision_steps": 365,
+      "trigger_exclusions": {}
+    },
+    "run_1785842563_81367": {
+      "run_id": "run_1785842563_81367",
+      "eligible_episodes": 102,
+      "retained_steps": 1220,
+      "strict_overrides": 367,
+      "deadband_retained": 848,
+      "objective_complete_steps": 5,
+      "deadband_correct": 1220,
+      "decision_steps": 1220,
+      "trigger_exclusions": {}
+    },
+    "run_1785842851_55907": {
+      "run_id": "run_1785842851_55907",
+      "eligible_episodes": 203,
+      "retained_steps": 2468,
+      "strict_overrides": 701,
+      "deadband_retained": 1762,
+      "objective_complete_steps": 5,
+      "deadband_correct": 2468,
+      "decision_steps": 2468,
+      "trigger_exclusions": {}
+    },
+    "run_1785843329_72938": {
+      "run_id": "run_1785843329_72938",
+      "eligible_episodes": 246,
+      "retained_steps": 2949,
+      "strict_overrides": 713,
+      "deadband_retained": 2232,
+      "objective_complete_steps": 4,
+      "deadband_correct": 2949,
+      "decision_steps": 2949,
+      "trigger_exclusions": {}
+    },
+    "run_1785843952_82128": {
+      "run_id": "run_1785843952_82128",
+      "eligible_episodes": 212,
+      "retained_steps": 2537,
+      "strict_overrides": 598,
+      "deadband_retained": 1939,
+      "objective_complete_steps": 0,
+      "deadband_correct": 2537,
+      "decision_steps": 2537,
+      "trigger_exclusions": {}
+    }
+  }
+}
