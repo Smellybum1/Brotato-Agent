@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "design": "s47_route_cohort_strict_benefit_sealed",
+  "fixed_slots": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "mod_version": "0.2.81-wp2-capture",
+  "policy_version": "teacher_v1-0.1.129-gun-wp1",
+  "slots": [
+    {
+      "slot": 1,
+      "arm": "I",
+      "run_id": "run_1785841731_99333"
+    },
+    {
+      "slot": 2,
+      "arm": "I",
+      "run_id": "run_1785842475_92913"
+    },
+    {
+      "slot": 3,
+      "arm": "I",
+      "run_id": "run_1785842563_81367"
+    },
+    {
+      "slot": 4,
+      "arm": "I",
+      "run_id": "run_1785842851_55907"
+    },
+    {
+      "slot": 5,
+      "arm": "I",
+      "run_id": "run_1785843329_72938"
+    },
+    {
+      "slot": 6,
+      "arm": "I",
+      "run_id": "run_1785843952_82128"
+    }
+  ]
+}
