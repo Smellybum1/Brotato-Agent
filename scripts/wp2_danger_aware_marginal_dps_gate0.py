@@ -221,10 +221,11 @@ def _weapon_gain(item: dict[str, Any], row: dict[str, Any], loadout: list[str],
 def _price_rows(rows: list[dict[str, Any]], joined: dict[tuple[int, str], dict[str, Any]],
                 loadout: list[str], catalog: dict[str, dict[str, Any]],
                 stats: dict[str, Any], current_dps: float
-                ) -> tuple[list[dict[str, Any]] | None, Counter, list[tuple[float, float]]]:
+                ) -> tuple[list[dict[str, Any]] | None, Counter,
+                           list[tuple[float, float, str]]]:
     priced: list[dict[str, Any]] = []
     reasons: Counter = Counter()
-    parity: list[tuple[float, float]] = []
+    parity: list[tuple[float, float, str]] = []
     for row in rows:
         key = (int(row.get("slot", -1)), str(row.get("id", "")))
         item = joined.get(key)
@@ -234,7 +235,7 @@ def _price_rows(rows: list[dict[str, Any]], joined: dict[tuple[int, str], dict[s
         if row.get("category") == "weapon":
             gain, method = _weapon_gain(item, row, loadout, catalog, stats)
             if method == "weapon_add" and _is_number(row.get("proj_dps_gain")) and gain is not None:
-                parity.append((gain, float(row["proj_dps_gain"])))
+                parity.append((gain, float(row["proj_dps_gain"]), str(row.get("id", ""))))
         else:
             gain, method = _item_gain(item, loadout, catalog, stats)
         if gain is None:
@@ -270,6 +271,7 @@ class Analysis:
     trusted_eligible: int = 0
     parity_total: int = 0
     parity_ok: int = 0
+    parity_failures: list[dict[str, Any]] = field(default_factory=list)
     repro_total: int = 0
     repro_ok: int = 0
     gain_failures: Counter = field(default_factory=Counter)
@@ -314,7 +316,11 @@ def analyse(runs_dir: Path) -> Analysis:
         events = runs[run_id]
         start_weapon = next(((event.get("payload") or {}).get("weapon") for event in events
                              if event.get("event") == "run_start"), None)
-        loadout: list[str] = [str(start_weapon)] if start_weapon else []
+        # Ranger's actual initial loadout is two copies of the selected pistol:
+        # first-shop count/tier/DPS controls agree on all 16 source runs.  The
+        # run_start field names the selected id once; §37j records the recovery.
+        loadout: list[str] = ([str(start_weapon), str(start_weapon)]
+                              if start_weapon else [])
         last_offer: dict[str, Any] | None = None
 
         for event in events:
@@ -368,10 +374,17 @@ def analyse(runs_dir: Path) -> Analysis:
                         priced, failures, parity = _price_rows(
                             rows, joined, loadout, catalog, stats, current_dps)
                         out.gain_failures.update(failures)
-                        for computed, recorded in parity:
+                        for computed, recorded, item_id in parity:
                             out.parity_total += 1
                             allowed = max(0.01, 0.01 * abs(recorded))
-                            out.parity_ok += int(abs(computed - recorded) <= allowed)
+                            passed = abs(computed - recorded) <= allowed
+                            out.parity_ok += int(passed)
+                            if not passed and len(out.parity_failures) < 30:
+                                out.parity_failures.append({
+                                    "run_id": run_id, "wave": wave, "item_id": item_id,
+                                    "computed": computed, "recorded": recorded,
+                                    "abs_error": abs(computed - recorded),
+                                })
                         if priced is None:
                             out.exclusions["gain_uncomputable"] += 1
                         else:
@@ -484,7 +497,8 @@ def _controls(analysis: Analysis) -> tuple[dict[str, Any], list[str]]:
                           "total": analysis.otherwise_eligible,
                           "rate": trust_rate, "bar": TRUST_BAR},
         "weapon_gain_parity": {"ok": analysis.parity_ok, "total": analysis.parity_total,
-                               "rate": parity_rate, "bar": PARITY_BAR},
+                               "rate": parity_rate, "bar": PARITY_BAR,
+                               "failures": analysis.parity_failures},
         "baseline_reproduction": {"ok": analysis.repro_ok, "total": analysis.repro_total,
                                   "rate": repro_rate, "bar": REPRO_BAR},
         "gain_failures": dict(analysis.gain_failures),

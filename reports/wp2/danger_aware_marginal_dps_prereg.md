@@ -200,3 +200,21 @@ This prediction is deliberately directional and falsifiable: a pass would show t
 family/synergy score, not offer scarcity alone, leaves enough immediate clearance on early D5 boards
 to justify a live screen. A surface-limited failure would rule out one more scoring mechanism without
 re-running §30's binary tilt or §36's late full-slot gate.
+
+## §37j — Measurement amendment after a control-only VOID, before any policy result
+
+The first analyzer execution returned **VOID before computing Gate 0**: loadout trust was 44.8% and
+ordinary-weapon gain parity was 88.3%, below the fixed 95% / 99% bars. No reachable count, dose flip,
+or policy verdict was computed or printed.
+
+The first failed loadout control exposed an omitted initial-state fact. `run_start.weapon` records the
+selected weapon id once, but on **16/16** source runs the first shop decision reports weapon count 2,
+tier sum 2, and effective DPS consistent with **two copies of that tier-I pistol**. There are zero
+earlier shop decisions in each event stream. For this ranger population the replay must therefore
+initialize with two copies of `run_start.weapon`, not one. This is a recovery of the actual initial
+loadout from three recorded positive controls (count, tier sum, DPS), not a policy change.
+
+The analyzer is amended only to use that two-copy initial state and to print row-level parity failures
+if the independent `proj_dps_gain` control still misses. **No dose, denominator, bar, prediction, or
+counterfactual rule changes.** The fixed controls remain binding; if the repair does not lift loadout
+trust to 95% and weapon-gain parity to 99%, the result remains VOID.

@@ -1,0 +1,64 @@
+{
+  "status": "VOID",
+  "control_failures": [
+    "trust_rate 0.4483 < 0.95",
+    "parity_rate 0.8828 < 0.99"
+  ],
+  "controls": {
+    "run_count": 16,
+    "arm_errors": [],
+    "policy_n": 409,
+    "policy_by_run": {
+      "run_1785767708_21879": 16,
+      "run_1785767995_37848": 13,
+      "run_1785768455_42044": 33,
+      "run_1785769039_77971": 33,
+      "run_1785769630_27303": 30,
+      "run_1785770174_45166": 34,
+      "run_1785770704_59997": 13,
+      "run_1785770966_40695": 18,
+      "run_1785771251_53203": 28,
+      "run_1785771763_20515": 37,
+      "run_1785772372_66131": 12,
+      "run_1785772596_61603": 23,
+      "run_1785772987_71550": 44,
+      "run_1785773742_57796": 31,
+      "run_1785774268_7839": 14,
+      "run_1785774517_69209": 30
+    },
+    "exclusions": {
+      "loadout_untrusted": 128,
+      "slots_full": 130,
+      "gain_uncomputable": 1,
+      "no_scored_rows": 47
+    },
+    "join": {
+      "ok": 736,
+      "total": 736,
+      "rate": 1.0,
+      "bar": 0.99
+    },
+    "loadout_trust": {
+      "ok": 104,
+      "total": 232,
+      "rate": 0.4482758620689655,
+      "bar": 0.95
+    },
+    "weapon_gain_parity": {
+      "ok": 113,
+      "total": 128,
+      "rate": 0.8828125,
+      "bar": 0.99
+    },
+    "baseline_reproduction": {
+      "ok": 103,
+      "total": 103,
+      "rate": 1.0,
+      "bar": 0.99
+    },
+    "gain_failures": {
+      "next_tier_missing": 1
+    },
+    "null_flips": 0
+  }
+}
