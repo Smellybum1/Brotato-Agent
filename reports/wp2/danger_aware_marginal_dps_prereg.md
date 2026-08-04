@@ -243,3 +243,27 @@ The replay will maintain the missing stat ledger from those transitions, while c
 four directly recorded offense stats from each decision. Loadout DPS validation and independent
 `proj_dps_gain` parity remain the adjudicators: a missed dynamic/stat transition will fail the same
 unchanged 95% / 99% bars. **No policy definition, dose, denominator, bar, or prediction changes.**
+
+## §37l — Third measurement amendment after a third control-only VOID
+
+The full permanent-stat ledger improved ordinary-weapon parity **88.1% → 95.6%**, but the unchanged
+99% bar still failed; loadout trust remained 88.4% against 95%. The analyzer therefore returned a
+third **VOID before computing or printing any reachable count, dose flip, or Gate 0 result.**
+
+The remaining controls isolate two omitted deterministic transitions:
+
+1. all ten residual ordinary-weapon mismatches are Crossbows. The replay carried permanent range
+   but omitted the live Gun-set range bonus. This is not inferred from the counterfactual result:
+   direct extraction from the installed, hash-pinned `Brotato.pck` shows the `set_gun` resources for
+   counts 2–6 contribute `stat_range` **+10/+20/+30/+40/+50**. The event-derived loadout already
+   records each weapon's sets, so this bonus is exactly recoverable at every decision.
+2. all loadout-trust failures begin after a recorded `shop_sell` whose action contains both an array
+   index and an explicit `item_id`. The replay removed by array index, but the telemetry's action
+   order is not the reconstructed signature order; in the first failure it removed a Pistol when
+   the action explicitly sold a Revolver. The repair will remove one matching `item_id`, falling
+   back to the index only when no id was recorded.
+
+The installed-resource extraction is an independent source control, and the post-repair held-loadout
+DPS check remains independent of candidate weapon `proj_dps_gain`. The same 95% trust and 99% parity
+bars remain binding. **No policy definition, dose, denominator, bar, prediction, or counterfactual
+rule changes.**

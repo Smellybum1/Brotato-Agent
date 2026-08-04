@@ -210,6 +210,13 @@ def _missing_dps_stats(weapons: list[dict[str, Any]], stats: dict[str, Any]) -> 
             if key not in stats or not _is_number(stats.get(key))}
 
 
+def _gun_set_range(loadout: list[str], catalog: dict[str, dict[str, Any]]) -> float:
+    gun_count = sum(
+        "set_gun" in (catalog[weapon_id].get("sets") or [])
+        for weapon_id in loadout if weapon_id in catalog)
+    return float(10 * (gun_count - 1)) if 2 <= gun_count <= 6 else 0.0
+
+
 def _effect_deltas(effects: list[dict[str, Any]], allowed: set[str]) -> dict[str, float]:
     deltas: dict[str, float] = {}
     for effect in effects:
@@ -322,6 +329,7 @@ class Analysis:
     row_join_ok: int = 0
     otherwise_eligible: int = 0
     trusted_eligible: int = 0
+    trust_failures: list[dict[str, Any]] = field(default_factory=list)
     parity_total: int = 0
     parity_ok: int = 0
     parity_failures: list[dict[str, Any]] = field(default_factory=list)
@@ -418,6 +426,7 @@ def analyse(runs_dir: Path) -> Analysis:
             offense = ((payload.get("build_metrics") or {}).get("offense") or {})
             stats = dict(ledger)
             stats.update(build_metrics_stats(offense))
+            stats["stat_range"] += _gun_set_range(loadout, catalog)
             trusted = recon.validate(loadout, stats, offense.get("weapon_dps"),
                                      offense.get("weapon_count"), offense.get("weapon_tier_sum"))
             if not trusted:
@@ -426,6 +435,22 @@ def analyse(runs_dir: Path) -> Analysis:
                 if fixed is not None:
                     loadout = fixed
                     trusted = True
+            if not trusted and len(out.trust_failures) < 40:
+                complete = all(weapon_id in catalog for weapon_id in loadout)
+                weapons = [catalog[weapon_id] for weapon_id in loadout] if complete else []
+                out.trust_failures.append({
+                    "run_id": run_id,
+                    "wave": wave,
+                    "recorded_weapon_dps": offense.get("weapon_dps"),
+                    "computed_weapon_dps": (total_effective_weapon_dps(weapons, stats)
+                                             if complete else None),
+                    "weapon_count": offense.get("weapon_count"),
+                    "weapon_tier_sum": offense.get("weapon_tier_sum"),
+                    "range_ledger": stats.get("stat_range"),
+                    "gun_count": sum("set_gun" in (weapon.get("sets") or [])
+                                     for weapon in weapons),
+                    "loadout": list(loadout),
+                })
 
             is_policy_buy = action.get("type") == "shop_buy" and WAVE_MIN <= wave <= WAVE_MAX
             if is_policy_buy:
@@ -463,6 +488,11 @@ def analyse(runs_dir: Path) -> Analysis:
                                     "run_id": run_id, "wave": wave, "item_id": item_id,
                                     "computed": computed, "recorded": recorded,
                                     "abs_error": abs(computed - recorded),
+                                    "range_ledger": stats.get("stat_range"),
+                                    "gun_count": sum(
+                                        "set_gun" in (catalog[weapon_id].get("sets") or [])
+                                        for weapon_id in loadout if weapon_id in catalog),
+                                    "loadout": list(loadout),
                                 })
                         if priced is None:
                             out.exclusions["gain_uncomputable"] += 1
@@ -493,9 +523,13 @@ def analyse(runs_dir: Path) -> Analysis:
                     else:
                         _apply_ledger_effects(ledger, chosen.get("effects", []) or [])
             elif action.get("type") == "shop_sell":
-                index = action.get("index")
-                if isinstance(index, int) and 0 <= index < len(loadout):
-                    loadout.pop(index)
+                sold_id = action.get("item_id")
+                if sold_id in loadout:
+                    loadout.remove(str(sold_id))
+                else:
+                    index = action.get("index")
+                    if isinstance(index, int) and 0 <= index < len(loadout):
+                        loadout.pop(index)
     return out
 
 
@@ -579,7 +613,8 @@ def _controls(analysis: Analysis) -> tuple[dict[str, Any], list[str]]:
                  "rate": join_rate, "bar": JOIN_BAR},
         "loadout_trust": {"ok": analysis.trusted_eligible,
                           "total": analysis.otherwise_eligible,
-                          "rate": trust_rate, "bar": TRUST_BAR},
+                          "rate": trust_rate, "bar": TRUST_BAR,
+                          "failures": analysis.trust_failures},
         "weapon_gain_parity": {"ok": analysis.parity_ok, "total": analysis.parity_total,
                                "rate": parity_rate, "bar": PARITY_BAR,
                                "failures": analysis.parity_failures},
@@ -757,6 +792,13 @@ def _self_test() -> int:
         {key: value for key, value in range_stats.items() if key != "stat_range"})
     assert missing_gain is None and missing_method == "missing_scaling_stat"
 
+    gun_weapon = {**weapon, "sets": ["set_gun"]}
+    gun_catalog = {"g1": gun_weapon, "g2": gun_weapon, "g3": gun_weapon,
+                   "g4": gun_weapon, "g5": gun_weapon, "g6": gun_weapon}
+    assert _gun_set_range(["g1"], gun_catalog) == 0.0
+    assert _gun_set_range(["g1", "g2"], gun_catalog) == 10.0
+    assert _gun_set_range(list(gun_catalog), gun_catalog) == 50.0
+
     ledger = dict(INITIAL_LEDGER)
     _apply_ledger_effects(ledger, [{"key": "stat_range", "value": 15, "sign": 3}])
     assert ledger["stat_range"] == 65.0
@@ -772,7 +814,7 @@ def _self_test() -> int:
     # Unknown decisions stay in the policy denominator but not the dosed set.
     assert analysis.policy_n == 3 and len(analysis.decisions) == 2
     print("self-test PASS (higher-DPS flip, incumbent-best no-flip, item/range gain, "
-          "missing-stat veto, ledger transition, combine gain, unchanged denominator)")
+          "missing-stat veto, ledger/set transitions, combine gain, unchanged denominator)")
     return 0
 
 

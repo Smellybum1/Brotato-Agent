@@ -1,0 +1,147 @@
+{
+  "status": "VOID",
+  "control_failures": [
+    "trust_rate 0.8836 < 0.95",
+    "parity_rate 0.9558 < 0.99"
+  ],
+  "controls": {
+    "run_count": 16,
+    "arm_errors": [],
+    "policy_n": 409,
+    "policy_by_run": {
+      "run_1785767708_21879": 16,
+      "run_1785767995_37848": 13,
+      "run_1785768455_42044": 33,
+      "run_1785769039_77971": 33,
+      "run_1785769630_27303": 30,
+      "run_1785770174_45166": 34,
+      "run_1785770704_59997": 13,
+      "run_1785770966_40695": 18,
+      "run_1785771251_53203": 28,
+      "run_1785771763_20515": 37,
+      "run_1785772372_66131": 12,
+      "run_1785772596_61603": 23,
+      "run_1785772987_71550": 44,
+      "run_1785773742_57796": 31,
+      "run_1785774268_7839": 14,
+      "run_1785774517_69209": 30
+    },
+    "exclusions": {
+      "slots_full": 130,
+      "loadout_untrusted": 27,
+      "gain_uncomputable": 1,
+      "no_scored_rows": 47,
+      "baseline_mismatch": 1
+    },
+    "join": {
+      "ok": 736,
+      "total": 736,
+      "rate": 1.0,
+      "bar": 0.99
+    },
+    "loadout_trust": {
+      "ok": 205,
+      "total": 232,
+      "rate": 0.8836206896551724,
+      "bar": 0.95
+    },
+    "weapon_gain_parity": {
+      "ok": 216,
+      "total": 226,
+      "rate": 0.9557522123893806,
+      "bar": 0.99,
+      "failures": [
+        {
+          "run_id": "run_1785767995_37848",
+          "wave": 2,
+          "item_id": "weapon_crossbow_1",
+          "computed": 22.09725,
+          "recorded": 26.44425,
+          "abs_error": 4.347000000000001
+        },
+        {
+          "run_id": "run_1785767995_37848",
+          "wave": 2,
+          "item_id": "weapon_crossbow_1",
+          "computed": 22.09725,
+          "recorded": 27.89325,
+          "abs_error": 5.795999999999999
+        },
+        {
+          "run_id": "run_1785768455_42044",
+          "wave": 4,
+          "item_id": "weapon_crossbow_1",
+          "computed": 28.5271875,
+          "recorded": 34.612987,
+          "abs_error": 6.085799499999997
+        },
+        {
+          "run_id": "run_1785769039_77971",
+          "wave": 6,
+          "item_id": "weapon_crossbow_1",
+          "computed": 31.443299999999994,
+          "recorded": 36.5769,
+          "abs_error": 5.133600000000008
+        },
+        {
+          "run_id": "run_1785769630_27303",
+          "wave": 8,
+          "item_id": "weapon_crossbow_2",
+          "computed": 47.22062400000001,
+          "recorded": 53.84808,
+          "abs_error": 6.627455999999995
+        },
+        {
+          "run_id": "run_1785770966_40695",
+          "wave": 6,
+          "item_id": "weapon_crossbow_1",
+          "computed": 39.767805,
+          "recorded": 46.143405,
+          "abs_error": 6.375599999999999
+        },
+        {
+          "run_id": "run_1785770966_40695",
+          "wave": 6,
+          "item_id": "weapon_crossbow_1",
+          "computed": 39.767805,
+          "recorded": 46.143405,
+          "abs_error": 6.375599999999999
+        },
+        {
+          "run_id": "run_1785771763_20515",
+          "wave": 4,
+          "item_id": "weapon_crossbow_1",
+          "computed": 24.929388,
+          "recorded": 30.972876,
+          "abs_error": 6.043488
+        },
+        {
+          "run_id": "run_1785773742_57796",
+          "wave": 1,
+          "item_id": "weapon_crossbow_1",
+          "computed": 20.7,
+          "recorded": 22.08,
+          "abs_error": 1.379999999999999
+        },
+        {
+          "run_id": "run_1785773742_57796",
+          "wave": 4,
+          "item_id": "weapon_crossbow_2",
+          "computed": 30.224249999999994,
+          "recorded": 36.58725,
+          "abs_error": 6.363000000000003
+        }
+      ]
+    },
+    "baseline_reproduction": {
+      "ok": 203,
+      "total": 204,
+      "rate": 0.9950980392156863,
+      "bar": 0.99
+    },
+    "gain_failures": {
+      "next_tier_missing": 1
+    },
+    "null_flips": 0
+  }
+}
