@@ -52,7 +52,8 @@ are written to the acquisition manifest in slot order; analysis may use only tho
 2. Verify the installed mod archive is byte-identical to repo source and re-read build/policy
    constants from the installed archive. No version bump or deploy is planned.
 3. Because the preceding §45 acquisition ended with a force-kill, run
-   `deploy_mod.py --repair-launch` before slot 1. This rewrites config, so arm only afterward.
+   `deploy_mod.py --repair-launch` before slot 1. Repair does not rewrite config, but arm and read
+   back afterward so every slot still starts from the full fixed dictionary.
 4. For each slot, arm and read back every fixed config field, baseline `mod_ready.json`, launch one
    bounded `--runs 1 --min-wins 0 --no-deploy` collection with a distinct state file, require a fresh
    exact `mod_ready.json`, and certify the terminal summary before recording the run ID.
