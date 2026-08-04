@@ -391,6 +391,11 @@ def collect(runs_dir, run_ids):
                 captures.append(
                     {
                         "run_id": run_id,
+                        # §44 sequence analysis needs stable joins back to the
+                        # full fresh capture stream. These observational fields
+                        # do not participate in any §40 calculation.
+                        "capture_seq": payload.get("capture_seq"),
+                        "ts_ms": event.get("ts_ms"),
                         "wave": wave,
                         "rows": rows,
                         "projectile_floor": projectile_floor,
