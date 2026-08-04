@@ -103,6 +103,8 @@ def write_agent_config(
     # SHOP arm: reachability-based rare-gun lock lifetime. Default False is the
     # shipped one-visit lifetime.
     rare_gun_lock_persist: bool = False,
+    # §41 route-conversion arm. Default False is byte-identical to the incumbent.
+    clearance_guarded_conversion: bool = False,
     # Float dose, not a bool arm: 1.0 is the inert default.
     engage_distance_scale: float = 1.0,
     calm_threat_mult: float = 1.0,
@@ -146,6 +148,7 @@ def write_agent_config(
     # behind by an earlier campaign would silently change how the agent SHOPS,
     # which changes the build a later trial plays.
     payload["rare_gun_lock_persist"] = rare_gun_lock_persist
+    payload["clearance_guarded_conversion"] = clearance_guarded_conversion
     # Written EVERY time for the same reason as the arms above: a stale non-1.0
     # dose left behind by an earlier campaign would silently shift the standoff.
     payload["engage_distance_scale"] = float(engage_distance_scale)
@@ -221,6 +224,7 @@ def validate_trial(
     expected_finale_ring_radius: bool = False,
     expected_human_movement: bool = False,
     expected_rare_gun_lock_persist: bool = False,
+    expected_clearance_guarded_conversion: bool = False,
     expected_engage_distance_scale: float = 1.0,
     expected_calm_threat_mult: float = 1.0,
     expected_tail_calm_penalty_mult: float = 1.0,
@@ -327,6 +331,18 @@ def validate_trial(
     # loudly on a stale build, because the requested True can never be recorded.
     if bool(summary.get("rare_gun_lock_persist", False)) != expected_rare_gun_lock_persist:
         return f"rare_gun_lock_persist_mismatch:{summary.get('rare_gun_lock_persist')}"
+    # Behaviour-changing bool introduced with a build-identity bump. Absence is
+    # therefore a stale build, including in the false/control arm.
+    if "clearance_guarded_conversion" not in summary:
+        return "clearance_guarded_conversion_absent:stale_build"
+    if (
+        bool(summary["clearance_guarded_conversion"])
+        != expected_clearance_guarded_conversion
+    ):
+        return (
+            "clearance_guarded_conversion_mismatch:"
+            f"{summary.get('clearance_guarded_conversion')}"
+        )
     # Float dose: compare with a tolerance, never with != on floats.
     #
     # ABSENCE IS A FAILURE, NOT A DEFAULT. Falling back to 1.0 when the key is
@@ -453,6 +469,7 @@ def run_trial(
         finale_ring_radius=args.finale_ring_radius,
         human_movement=args.human_movement,
         rare_gun_lock_persist=args.rare_gun_lock_persist,
+        clearance_guarded_conversion=args.clearance_guarded_conversion,
         engage_distance_scale=args.engage_distance_scale,
         calm_threat_mult=args.calm_threat_mult,
         tail_calm_penalty_mult=args.tail_calm_penalty_mult,
@@ -496,6 +513,7 @@ def run_trial(
         "finale_ring_radius": bool(args.finale_ring_radius),
         "human_movement": bool(args.human_movement),
         "rare_gun_lock_persist": bool(args.rare_gun_lock_persist),
+        "clearance_guarded_conversion": bool(args.clearance_guarded_conversion),
         "engage_distance_scale": float(args.engage_distance_scale),
         "calm_threat_mult": float(args.calm_threat_mult),
         "tail_calm_penalty_mult": float(args.tail_calm_penalty_mult),
@@ -601,6 +619,9 @@ def run_trial(
             bool(args.finale_ring_radius),
             bool(args.human_movement),
             expected_rare_gun_lock_persist=bool(args.rare_gun_lock_persist),
+            expected_clearance_guarded_conversion=bool(
+                args.clearance_guarded_conversion
+            ),
             expected_engage_distance_scale=float(args.engage_distance_scale),
             expected_calm_threat_mult=float(args.calm_threat_mult),
             expected_tail_calm_penalty_mult=float(args.tail_calm_penalty_mult),
@@ -662,6 +683,14 @@ def main() -> int:
             "of expiring it after a single visit. Hard-capped at "
             "RARE_GUN_LOCK_MAX_VISITS so a locked slot cannot persist for a run. "
             "Off (default) is byte-identical to the shipped lifetime."
+        ),
+    )
+    ap.add_argument(
+        "--clearance-guarded-conversion",
+        action="store_true",
+        help=(
+            "Enable the §41 PACK-80 route conversion controller with the fixed "
+            "0.80 body-clearance guard and 0.05 in-range deadband."
         ),
     )
     ap.add_argument(
@@ -742,6 +771,7 @@ def main() -> int:
         f"finale_ring_radius={bool(args.finale_ring_radius)}, "
         f"human_movement={bool(args.human_movement)}, "
         f"rare_gun_lock_persist={bool(args.rare_gun_lock_persist)}, "
+        f"clearance_guarded_conversion={bool(args.clearance_guarded_conversion)}, "
         f"engage_distance_scale={float(args.engage_distance_scale)}, "
         f"calm_threat_mult={float(args.calm_threat_mult)}, "
         f"tail_calm_penalty_mult={float(args.tail_calm_penalty_mult)}, "
@@ -805,6 +835,7 @@ def main() -> int:
                 finale_ring_radius=False,
                 human_movement=False,
                 rare_gun_lock_persist=False,
+                clearance_guarded_conversion=False,
                 engage_distance_scale=1.0,
                 calm_threat_mult=1.0,
                 tail_calm_penalty_mult=1.0,
@@ -851,6 +882,7 @@ def main() -> int:
         f"finale_ring_radius={bool(args.finale_ring_radius)}, "
         f"human_movement={bool(args.human_movement)}, "
         f"rare_gun_lock_persist={bool(args.rare_gun_lock_persist)}, "
+        f"clearance_guarded_conversion={bool(args.clearance_guarded_conversion)}, "
         f"engage_distance_scale={float(args.engage_distance_scale)}, "
         f"calm_threat_mult={float(args.calm_threat_mult)}, "
         f"tail_calm_penalty_mult={float(args.tail_calm_penalty_mult)}, "

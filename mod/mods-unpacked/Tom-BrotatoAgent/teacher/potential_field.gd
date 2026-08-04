@@ -88,6 +88,18 @@ var _finale_route_baseline := Vector2.ZERO
 # ⛔ THE FIELD WAS STALE IN 0.2.76 AND 0.2.77. For those builds, recover the true
 # vector by inverting cont_i = 85.0 * dot(cand_i, prev) across the admitted lanes.
 var _finale_route_prev := Vector2.ZERO
+# §41 guarded conversion telemetry. Scalars are always emitted so a treatment
+# arm can prove delivery without enabling the expensive per-lane scores array.
+var clearance_guarded_conversion_enabled: bool = false
+var _finale_route_conversion_applied := false
+var _finale_route_conversion_floor := -1.0e18
+var _finale_route_conversion_input_inrange := -1.0
+var _finale_route_conversion_selected_inrange := -1.0
+var _finale_route_conversion_gain := 0.0
+var _finale_route_conversion_input_body := -1.0
+var _finale_route_conversion_selected_body := -1.0
+var _finale_route_conversion_guard_vetoed := 0
+var _finale_route_conversion_admitted := 0
 # Finale controller v2 flag; the controller propagates agent_config.finale_v2.
 var finale_v2_enabled: bool = false
 # Wave-20 dev flags; the controller propagates agent_config.finale_no_panic and
@@ -271,7 +283,7 @@ func compute_movement(state, profile) -> Vector2:
 			enemies, profile)
 		safe_survival = _finale_body_safety(
 			pos, safe_survival, player_speed, arena, enemies, bosses,
-			projectiles, profile, wave, true)
+			projectiles, profile, weapons, wave, true)
 		_prev_move = safe_survival
 		return _prev_move
 	var finale = wave >= BotConfig.BOSS_FINALE_WAVE
@@ -301,7 +313,7 @@ func compute_movement(state, profile) -> Vector2:
 				enemies, profile)
 			v2_move = _finale_body_safety(
 				pos, v2_move, player_speed, arena, enemies, bosses,
-				projectiles, profile, wave, true)
+				projectiles, profile, weapons, wave, true)
 			_prev_move = v2_move
 			return _prev_move
 		# v97: survival and central map control are the finale's base objective.
@@ -423,7 +435,8 @@ func compute_movement(state, profile) -> Vector2:
 	# incoming route already meets the tier, preserving ordinary farming paths.
 	final_move = _finale_body_safety(
 		pos, final_move, player_speed, arena, enemies, bosses,
-		projectiles, profile, wave, not _loot_dash_active, _loot_dash_active)
+		projectiles, profile, weapons, wave,
+		not _loot_dash_active, _loot_dash_active)
 	if projectile_last:
 		final_move = _finale_projectile_safety(
 			pos, final_move, projectiles, player_speed, arena, enemies, bosses, profile)
@@ -1488,8 +1501,46 @@ func _best_wall_safe_projectile_lane(pos: Vector2, baseline: Vector2,
 	return best_dir
 
 
+func _route_inrange_after(pos: Vector2, direction: Vector2, player_speed: float,
+		enemies, bosses, weapons) -> float:
+	# Exact live counterpart of §§40-41's moving-threat counterfactual: advance
+	# the player and every living threat for ESCAPE_HORIZON, then count the
+	# fraction inside the longest held weapon range. This is opportunity, not
+	# damage dealt; the live screen remains responsible for the low-HP veto.
+	var safe_direction := _normalize(direction)
+	if safe_direction == Vector2.ZERO:
+		return -1.0
+	var max_range := -1.0
+	for weapon in weapons:
+		var weapon_range = weapon.get("max_range", 0.0)
+		if weapon_range != null and float(weapon_range) > max_range:
+			max_range = float(weapon_range)
+	if max_range <= 0.0:
+		return -1.0
+	var horizon := float(BotConfig.ESCAPE_HORIZON)
+	var future_player := pos + safe_direction * player_speed * horizon
+	var living := 0
+	var in_range := 0
+	for threat_group in [enemies, bosses]:
+		for threat in threat_group:
+			if float(threat.get("hp", 1.0)) <= 0.0:
+				continue
+			living += 1
+			var future_threat := Vector2(
+				float(threat.get("x", 0.0)),
+				float(threat.get("y", 0.0)))
+			future_threat += Vector2(
+				float(threat.get("vx", 0.0)),
+				float(threat.get("vy", 0.0))) * horizon
+			if future_player.distance_to(future_threat) <= max_range:
+				in_range += 1
+	if living <= 0:
+		return -1.0
+	return float(in_range) / float(living)
+
+
 func _finale_body_safety(pos: Vector2, desired: Vector2, player_speed: float,
-		arena, enemies, bosses, projectiles, profile, wave: int,
+		arena, enemies, bosses, projectiles, profile, weapons, wave: int,
 		enforce_pack_clearance := false, dash_active := false) -> Vector2:
 	# v129: clear the route record on ENTRY, never inside the ranking loop. This
 	# function has SIX return paths and a loop-scoped clear would emit the
@@ -1822,7 +1873,106 @@ func _finale_body_safety(pos: Vector2, desired: Vector2, player_speed: float,
 			best_dir = candidate
 			_finale_body_selected_clearance = body_clearance
 			_finale_body_selected_projectile_clearance = projectile_clearance
-	_finale_route_exit = "ranked"
+	# §41: the incumbent route above remains byte-identical and is the safety
+	# reference. Only after it is fully reconstructed may the guarded conversion
+	# controller inspect the broader PACK-80 tier. This runs only on the exact
+	# `ranked` surface priced offline; every early return above stays untouched.
+	if (clearance_guarded_conversion_enabled
+			and wave <= BotConfig.ROUTE_CONVERSION_MAX_WAVE
+			and best_score > -1.0e17):
+		var conversion_floor := body_floor
+		if body_emergency_active:
+			conversion_floor = (highest_body_clearance
+				- BotConfig.BOSS_FINALE_BODY_EMERGENCY_CLEARANCE_SLACK)
+		elif _finale_wall_body_relief_active:
+			conversion_floor = max(
+				BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE,
+				highest_body_clearance
+					- BotConfig.BOSS_FINALE_WALL_BODY_RELIEF_CLEARANCE_SLACK)
+		elif (enforce_pack_clearance
+				and highest_body_clearance
+					>= BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE):
+			conversion_floor = max(
+				BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE,
+				min(BotConfig.ROUTE_CONVERSION_PACK_CLEARANCE,
+					highest_body_clearance - body_slack))
+		elif highest_body_clearance >= BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE:
+			conversion_floor = BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE
+		else:
+			conversion_floor = highest_body_clearance - body_slack
+		_finale_route_conversion_floor = conversion_floor
+		var conversion_lowest_enemy_penalty := INF
+		for conversion_row in rows:
+			if (float(conversion_row[2]) >= projectile_floor
+					and float(conversion_row[1]) >= conversion_floor):
+				conversion_lowest_enemy_penalty = min(
+					conversion_lowest_enemy_penalty, float(conversion_row[3]))
+		var incumbent_body := _finale_body_selected_clearance
+		_finale_route_conversion_input_body = incumbent_body
+		var incumbent_inrange := _route_inrange_after(
+			pos, best_dir, player_speed, enemies, bosses, weapons)
+		_finale_route_conversion_input_inrange = incumbent_inrange
+		var conversion_best_dir := best_dir
+		var conversion_best_body := incumbent_body
+		var conversion_best_projectile := _finale_body_selected_projectile_clearance
+		var conversion_best_score := best_score
+		var conversion_best_inrange := incumbent_inrange
+		if incumbent_inrange >= 0.0 and conversion_lowest_enemy_penalty < INF:
+			for conversion_row in rows:
+				var conversion_body := float(conversion_row[1])
+				var conversion_projectile := float(conversion_row[2])
+				var conversion_penalty := float(conversion_row[3])
+				if (conversion_projectile < projectile_floor
+						or conversion_body < conversion_floor
+						or conversion_penalty > conversion_lowest_enemy_penalty
+							+ BotConfig.BOSS_FINALE_ENEMY_PENALTY_SLACK):
+					continue
+				_finale_route_conversion_admitted += 1
+				var guard_floor := incumbent_body
+				if incumbent_body >= BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE:
+					guard_floor = max(
+						BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE,
+						incumbent_body
+							* BotConfig.ROUTE_CONVERSION_BODY_RETENTION)
+				if conversion_body < guard_floor:
+					_finale_route_conversion_guard_vetoed += 1
+					continue
+				var conversion_candidate: Vector2 = conversion_row[0]
+				var conversion_inrange := _route_inrange_after(
+					pos, conversion_candidate, player_speed,
+					enemies, bosses, weapons)
+				var conversion_align := (
+					BotConfig.ESCAPE_ALIGN_BONUS
+						* conversion_candidate.dot(baseline))
+				var conversion_continuity := 0.0
+				if _prev_move.length() > 0.1:
+					conversion_continuity = (
+						BotConfig.BOSS_FINALE_ESCAPE_CONTINUITY
+							* conversion_candidate.dot(_prev_move))
+				var conversion_score := conversion_projectile - conversion_penalty
+				conversion_score += conversion_align
+				conversion_score += conversion_continuity
+				if (conversion_inrange > conversion_best_inrange
+						or (is_equal_approx(conversion_inrange, conversion_best_inrange)
+							and conversion_score > conversion_best_score)):
+					conversion_best_dir = conversion_candidate
+					conversion_best_body = conversion_body
+					conversion_best_projectile = conversion_projectile
+					conversion_best_score = conversion_score
+					conversion_best_inrange = conversion_inrange
+		_finale_route_conversion_selected_inrange = conversion_best_inrange
+		_finale_route_conversion_selected_body = conversion_best_body
+		_finale_route_conversion_gain = conversion_best_inrange - incumbent_inrange
+		if (_finale_route_conversion_gain
+				> BotConfig.ROUTE_CONVERSION_GAIN_DEADBAND):
+			best_dir = conversion_best_dir
+			best_score = conversion_best_score
+			_finale_body_selected_clearance = conversion_best_body
+			_finale_body_selected_projectile_clearance = conversion_best_projectile
+			_finale_route_conversion_applied = true
+			_finale_route_exit = "conversion"
+	if not _finale_route_conversion_applied:
+		_finale_route_exit = "ranked"
 	_finale_route_selected = best_dir
 	_finale_route_best_score = best_score
 	_finale_body_safety_active = best_dir.dot(baseline) < 0.999
@@ -1883,6 +2033,15 @@ func _reset_finale_route() -> void:
 	_finale_route_best_score = -1.0e18
 	_finale_route_baseline = Vector2.ZERO
 	_finale_route_prev = Vector2.ZERO
+	_finale_route_conversion_applied = false
+	_finale_route_conversion_floor = -1.0e18
+	_finale_route_conversion_input_inrange = -1.0
+	_finale_route_conversion_selected_inrange = -1.0
+	_finale_route_conversion_gain = 0.0
+	_finale_route_conversion_input_body = -1.0
+	_finale_route_conversion_selected_body = -1.0
+	_finale_route_conversion_guard_vetoed = 0
+	_finale_route_conversion_admitted = 0
 
 
 func _route_record(candidate: Vector2, body_clearance: float,
@@ -1922,6 +2081,20 @@ func finale_route_debug() -> Dictionary:
 		"sel_x": stepify(_finale_route_selected.x, 0.0001),
 		"sel_y": stepify(_finale_route_selected.y, 0.0001),
 		"best_score": stepify(_finale_route_best_score, 0.01),
+		"conversion_enabled": clearance_guarded_conversion_enabled,
+		"conversion_applied": _finale_route_conversion_applied,
+		"conversion_floor": stepify(_finale_route_conversion_floor, 0.01),
+		"conversion_input_inrange": stepify(
+			_finale_route_conversion_input_inrange, 0.0001),
+		"conversion_selected_inrange": stepify(
+			_finale_route_conversion_selected_inrange, 0.0001),
+		"conversion_gain": stepify(_finale_route_conversion_gain, 0.0001),
+		"conversion_input_body": stepify(
+			_finale_route_conversion_input_body, 0.01),
+		"conversion_selected_body": stepify(
+			_finale_route_conversion_selected_body, 0.01),
+		"conversion_guard_vetoed": _finale_route_conversion_guard_vetoed,
+		"conversion_admitted": _finale_route_conversion_admitted,
 		"scores": _finale_route_scores,
 	}
 

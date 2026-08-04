@@ -274,6 +274,13 @@ const BOSS_FINALE_BODY_CLEARANCE_SLACK := 20.0
 # On wave 20, prefer a genuinely open lane when the active projectile tier
 # exposes one; body-clearance values above this cap are already comfortably open.
 const BOSS_FINALE_BODY_PACK_CLEARANCE := 160.0
+# §41: the production pack tier remains 160 for the incumbent route. The
+# conversion controller may inspect lanes down to 80, but only if they retain
+# 80% of the incumbent lane's clearance and improve projected in-range by >5%.
+const ROUTE_CONVERSION_PACK_CLEARANCE := 80.0
+const ROUTE_CONVERSION_BODY_RETENTION := 0.80
+const ROUTE_CONVERSION_GAIN_DEADBAND := 0.05
+const ROUTE_CONVERSION_MAX_WAVE := 11
 # If a bounded projectile tier hides a materially clearer body lane, an
 # emergency concession may broaden the projectile tier by at most 60 units and
 # never below panic while a panic-safe lane exists. In that exceptional case

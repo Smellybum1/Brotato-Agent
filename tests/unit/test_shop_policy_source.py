@@ -134,12 +134,12 @@ def test_wp2_capture_build_versions_the_v122_crossing_tier_policy():
     # student-inference path (learned/ bridge, default-off) is unchanged —
     # deploy surface bumps together: manifest, controller meta, telemetry
     # default, and the collector identity gate.
-    assert '"version_number": "0.2.79"' in manifest
+    assert '"version_number": "0.2.80"' in manifest
     assert "v128 deterministic teacher" in manifest
     assert controller.count("teacher_v1-0.1.129-gun-wp1") == 1
-    assert controller.count("0.2.79-wp2-capture") == 1
+    assert controller.count("0.2.80-wp2-capture") == 1
     assert telemetry.count("teacher_v1-0.1.129-gun-wp1") == 1
-    assert telemetry.count("0.2.79-wp2-capture") == 1
+    assert telemetry.count("0.2.80-wp2-capture") == 1
 
 
 def test_starting_weapon_select_cannot_stall_on_any_character():
@@ -1212,7 +1212,7 @@ def test_v110_final_body_gate_stays_near_best_inside_the_projectile_tier():
         1,
     )[1].split("else:", 1)[0]
 
-    assert "projectiles, profile, wave, true)" in potential
+    assert "projectiles, profile, weapons, wave, true)" in potential
     assert "enforce_pack_clearance := false" in safety
     assert "body_floor = max(" in ordinary_floor
     assert "BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE" in ordinary_floor
@@ -1519,7 +1519,7 @@ def test_v114_final_body_gate_covers_every_combat_wave_and_uses_open_pack_tier()
     return_move = final_tail.index("return _prev_move")
     assert late_guard < all_wave_comment < all_wave_body < return_move
     assert (
-        "projectiles, profile, wave, not _loot_dash_active, _loot_dash_active)"
+        "projectiles, profile, weapons, wave,"
         in final_tail[all_wave_body:return_move]
     )
 

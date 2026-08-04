@@ -119,6 +119,9 @@ def write_agent_config(auto_start: bool = True) -> None:
         "character": "character_well_rounded",
         "danger": 0,
         "weapon_prefixes": ["weapon_smg", "weapon_stick"],
+        # Behaviour-changing §41 arm. Deploy always returns to inert; campaign
+        # drivers must arm treatment only after deploy and verify readback.
+        "clearance_guarded_conversion": False,
     }
     path = cfg_dir / "agent_config.json"
     path.write_text(json.dumps(cfg, indent=2), encoding="utf-8")

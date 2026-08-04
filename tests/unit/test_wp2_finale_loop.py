@@ -67,6 +67,7 @@ def _summary(**overrides):
         # Safety-tail doses: same "absence is a failure" contract as above.
         "tail_calm_penalty_mult": 1.0,
         "tail_calm_clearance_mult": 1.0,
+        "clearance_guarded_conversion": False,
     }
     base.update(overrides)
     return base
