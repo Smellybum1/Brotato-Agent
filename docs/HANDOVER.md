@@ -49,6 +49,7 @@ tells you whether a *different* mechanism on the same defect is still live.
 | **Shop valuation — DPS band** (§36) | fails Gate 0 on a **structural ceiling** | The gate's guard needs `slots_full AND not pairs_combine AND gain < floor`; that conjunction is reachable on only **4.66%** of D5 decisions **at any dose**. |
 | **Shop valuation — danger-aware marginal DPS** (§37) | weak additive doses `lambda <= 4` fail Gate 0; broader defect still live | Higher-DPS surface passes at **100/409 = 24.45%**, but the strongest fixed dose flips only **63/409 = 15.40%** against 20%. Every flip is positive and magnitude/planning bars pass: this is **score-margin-limited, not surface-limited**. Do not merely extend lambda post hoc; a different constraint mechanism remains viable. |
 | **Shop valuation — positive-score lexicographic DPS** (§38) | fails Gate 0 narrowly; do not shave the boundary | Making DPS decisive among incumbent-positive candidates flips **78/409 = 19.07%**, four short of 20%; median leave-one-run-out is likewise 19.04%. All sign, magnitude, planning, coverage and concentration bars pass, but selected score retention already falls as low as 1.28%. Relaxing the positive boundary after seeing this would be threshold fishing. |
+| **Target-backed extra search at shop exit** (§39) | fails Gate 0 on four independent axes | The explicit bootstrap target is `1.75×` the D0 curve, but only **22/133 = 16.54%** of waves 1–10 exits can afford one more reroll after locks; useful observed next-board yield is **26/139 = 18.71%**; median/p90 reroll cost is **39%/98%** of remaining gold. Raising the target to `2.63×` changes zero actionable exits: post-shop liquidity and search yield bind. |
 | **Character selection** (§29) | excluded | ranger 0/16 despite a 2.4x D0 edge; cyborg 0/23 despite the largest offensive multiplier in the game. **Stat block does not predict win rate.** |
 | **Build / economy** | excluded | Same DPS, HP, weapons and materials-per-wave at D0 and D5 (matched pair, 16/arm). There is no economic starvation. |
 | **Idle materials** | not a problem | Post-shop balance is **13** at wave 9 against a 436 budget — it converts ~97%. |
@@ -80,13 +81,15 @@ at specific builds. They do **not** bound the size of the underlying deficit.
    happened.**
 4. **The bootstrap.** A D5 target curve cannot be fitted the way the D0 one was, because there are
    zero nominal-D5 victories to fit to. Any D5 curve must be *derived*, which makes the derivation a
-   modelling assumption rather than a measurement.
+   modelling assumption rather than a measurement. §39 now records the low-dose planning derivation
+   explicitly as `1.314 × 1/0.75 ≈ 1.75` times the D0 curve. It is reusable as an assumption, not a
+   measured sufficient trajectory; the target-backed exit-search mechanism itself failed Gate 0.
 
-**Direction chosen by the operator on 2026-08-04:** price the danger-aware decision layer offline
-before attacking the bootstrap. §§37–38 now close both preregistered target-free mechanisms for
-campaign purposes. The recommended next fork is the bootstrap: derive an explicit D5 clearance
-requirement from §28's enemy-health intervention and measured wave demand, expose its assumptions,
-then Gate 0 the resulting planner offline. No campaign is licensed.
+**Direction chosen by the operator on 2026-08-04:** price the danger-aware decision layer, then the
+bootstrap, offline. §§37–39 now close both target-free buy mechanisms and the target-backed extra
+search mechanism for campaign purposes. No campaign is licensed. Any next clearance mechanism must
+either allocate offense earlier through a genuinely different action surface or attack the still-open
+combat-conversion/in-range gap; it may not re-label these closed rules with the `1.75×` target.
 
 ## 5. ⭐ The methodology — this is the most valuable thing here
 

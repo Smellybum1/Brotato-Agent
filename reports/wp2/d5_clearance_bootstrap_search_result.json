@@ -1,0 +1,614 @@
+{
+  "status": "FAIL",
+  "reason": "actionable_rate+run_coverage+loo_min+loo_median+max_run_share+useful_board_yield+cost_median+cost_p90",
+  "controls": {
+    "run_count": 16,
+    "arm_errors": [],
+    "exit_n": 133,
+    "target_complete": {
+      "ok": 133,
+      "total": 133,
+      "rate": 1.0,
+      "bar": 0.99
+    },
+    "budget_complete": {
+      "ok": 132,
+      "total": 133,
+      "rate": 0.9924812030075187,
+      "bar": 0.99
+    },
+    "legal_rerolls": {
+      "legal": 133,
+      "total": 133
+    },
+    "unaffordable_after_lock": 110,
+    "null_flips": 0
+  },
+  "derivation": {
+    "observed_d5_ratio": 1.314,
+    "health_low": 0.75,
+    "k_primary": 1.75,
+    "health_high": 0.5,
+    "k_high": 2.63,
+    "targets": {
+      "1": {
+        "d0": 45.0,
+        "primary": 78.75,
+        "high": 118.35
+      },
+      "2": {
+        "d0": 110.0,
+        "primary": 192.5,
+        "high": 289.3
+      },
+      "3": {
+        "d0": 175.0,
+        "primary": 306.25,
+        "high": 460.25
+      },
+      "4": {
+        "d0": 230.0,
+        "primary": 402.5,
+        "high": 604.9
+      },
+      "5": {
+        "d0": 300.0,
+        "primary": 525.0,
+        "high": 789.0
+      },
+      "6": {
+        "d0": 380.0,
+        "primary": 665.0,
+        "high": 999.4
+      },
+      "7": {
+        "d0": 450.0,
+        "primary": 787.5,
+        "high": 1183.5
+      },
+      "8": {
+        "d0": 540.0,
+        "primary": 945.0,
+        "high": 1420.2
+      },
+      "9": {
+        "d0": 645.0,
+        "primary": 1128.75,
+        "high": 1696.35
+      },
+      "10": {
+        "d0": 765.0,
+        "primary": 1338.75,
+        "high": 2011.9499999999998
+      }
+    }
+  },
+  "exits": {
+    "total": 133,
+    "unchanged_reasons": {
+      "no_clearance_debt": 12,
+      "unaffordable_after_lock": 98,
+      "actionable": 22,
+      "budget_missing": 1
+    },
+    "by_run": {
+      "run_1785767708_21879": 6,
+      "run_1785767995_37848": 6,
+      "run_1785768455_42044": 10,
+      "run_1785769039_77971": 10,
+      "run_1785769630_27303": 10,
+      "run_1785770174_45166": 10,
+      "run_1785770704_59997": 6,
+      "run_1785770966_40695": 6,
+      "run_1785771251_53203": 10,
+      "run_1785771763_20515": 10,
+      "run_1785772372_66131": 5,
+      "run_1785772596_61603": 8,
+      "run_1785772987_71550": 10,
+      "run_1785773742_57796": 10,
+      "run_1785774268_7839": 6,
+      "run_1785774517_69209": 10
+    }
+  },
+  "primary": {
+    "actionable": 22,
+    "rate": 0.16541353383458646,
+    "by_run": {
+      "run_1785767708_21879": 2,
+      "run_1785767995_37848": 0,
+      "run_1785768455_42044": 1,
+      "run_1785769039_77971": 2,
+      "run_1785769630_27303": 2,
+      "run_1785770174_45166": 5,
+      "run_1785770704_59997": 1,
+      "run_1785770966_40695": 1,
+      "run_1785771251_53203": 3,
+      "run_1785771763_20515": 0,
+      "run_1785772372_66131": 1,
+      "run_1785772596_61603": 0,
+      "run_1785772987_71550": 0,
+      "run_1785773742_57796": 2,
+      "run_1785774268_7839": 2,
+      "run_1785774517_69209": 0
+    },
+    "details": [
+      {
+        "run_id": "run_1785767708_21879",
+        "wave": 4,
+        "dps": 292.328473,
+        "target": 402.5,
+        "target_ratio": 0.7262819204968943,
+        "gold": 11.0,
+        "reroll_price": 4.0,
+        "locked_reserve": 0.0,
+        "cost_ratio": 0.36363636363636365
+      },
+      {
+        "run_id": "run_1785767708_21879",
+        "wave": 5,
+        "dps": 326.794526,
+        "target": 525.0,
+        "target_ratio": 0.6224657638095239,
+        "gold": 9.0,
+        "reroll_price": 7.0,
+        "locked_reserve": 0.0,
+        "cost_ratio": 0.7777777777777778
+      },
+      {
+        "run_id": "run_1785768455_42044",
+        "wave": 3,
+        "dps": 260.339822,
+        "target": 306.25,
+        "target_ratio": 0.8500892146938777,
+        "gold": 10.0,
+        "reroll_price": 3.0,
+        "locked_reserve": 0.0,
+        "cost_ratio": 0.3
+      },
+      {
+        "run_id": "run_1785769039_77971",
+        "wave": 2,
+        "dps": 136.98,
+        "target": 192.5,
+        "target_ratio": 0.7115844155844155,
+        "gold": 6.0,
+        "reroll_price": 2.0,
+        "locked_reserve": 0.0,
+        "cost_ratio": 0.3333333333333333
+      },
+      {
+        "run_id": "run_1785769039_77971",
+        "wave": 5,
+        "dps": 388.734412,
+        "target": 525.0,
+        "target_ratio": 0.7404464990476191,
+        "gold": 13.0,
+        "reroll_price": 5.0,
+        "locked_reserve": 0.0,
+        "cost_ratio": 0.38461538461538464
+      },
+      {
+        "run_id": "run_1785769630_27303",
+        "wave": 2,
+        "dps": 143.1225,
+        "target": 192.5,
+        "target_ratio": 0.7434935064935065,
+        "gold": 5.0,
+        "reroll_price": 2.0,
+        "locked_reserve": 0.0,
+        "cost_ratio": 0.4
+      },
+      {
+        "run_id": "run_1785769630_27303",
+        "wave": 3,
+        "dps": 273.1806,
+        "target": 306.25,
+        "target_ratio": 0.8920182857142858,
+        "gold": 9.0,
+        "reroll_price": 3.0,
+        "locked_reserve": 0.0,
+        "cost_ratio": 0.3333333333333333
+      },
+      {
+        "run_id": "run_1785770174_45166",
+        "wave": 3,
+        "dps": 183.503612,
+        "target": 306.25,
+        "target_ratio": 0.599195467755102,
+        "gold": 8.0,
+        "reroll_price": 3.0,
+        "locked_reserve": 0.0,
+        "cost_ratio": 0.375
+      },
+      {
+        "run_id": "run_1785770174_45166",
+        "wave": 5,
+        "dps": 304.041885,
+        "target": 525.0,
+        "target_ratio": 0.5791274,
+        "gold": 12.0,
+        "reroll_price": 5.0,
+        "locked_reserve": 0.0,
+        "cost_ratio": 0.4166666666666667
+      },
+      {
+        "run_id": "run_1785770174_45166",
+        "wave": 6,
+        "dps": 443.219293,
+        "target": 665.0,
+        "target_ratio": 0.666495177443609,
+        "gold": 11.0,
+        "reroll_price": 8.0,
+        "locked_reserve": 0.0,
+        "cost_ratio": 0.7272727272727273
+      },
+      {
+        "run_id": "run_1785770174_45166",
+        "wave": 8,
+        "dps": 693.562215,
+        "target": 945.0,
+        "target_ratio": 0.7339282698412699,
+        "gold": 35.0,
+        "reroll_price": 9.0,
+        "locked_reserve": 0.0,
+        "cost_ratio": 0.2571428571428571
+      },
+      {
+        "run_id": "run_1785770174_45166",
+        "wave": 9,
+        "dps": 798.616736,
+        "target": 1128.75,
+        "target_ratio": 0.7075231326688814,
+        "gold": 41.0,
+        "reroll_price": 15.0,
+        "locked_reserve": 0.0,
+        "cost_ratio": 0.36585365853658536
+      },
+      {
+        "run_id": "run_1785770704_59997",
+        "wave": 1,
+        "dps": 65.674421,
+        "target": 78.75,
+        "target_ratio": 0.8339609015873015,
+        "gold": 2.0,
+        "reroll_price": 1.0,
+        "locked_reserve": 0.0,
+        "cost_ratio": 0.5
+      },
+      {
+        "run_id": "run_1785770966_40695",
+        "wave": 2,
+        "dps": 117.531818,
+        "target": 192.5,
+        "target_ratio": 0.6105548987012988,
+        "gold": 2.0,
+        "reroll_price": 2.0,
+        "locked_reserve": 0.0,
+        "cost_ratio": 1.0
+      },
+      {
+        "run_id": "run_1785771251_53203",
+        "wave": 2,
+        "dps": 157.969286,
+        "target": 192.5,
+        "target_ratio": 0.8206196675324676,
+        "gold": 3.0,
+        "reroll_price": 2.0,
+        "locked_reserve": 0.0,
+        "cost_ratio": 0.6666666666666666
+      },
+      {
+        "run_id": "run_1785771251_53203",
+        "wave": 4,
+        "dps": 287.588165,
+        "target": 402.5,
+        "target_ratio": 0.7145047577639752,
+        "gold": 18.0,
+        "reroll_price": 5.0,
+        "locked_reserve": 0.0,
+        "cost_ratio": 0.2777777777777778
+      },
+      {
+        "run_id": "run_1785771251_53203",
+        "wave": 5,
+        "dps": 381.314346,
+        "target": 525.0,
+        "target_ratio": 0.72631304,
+        "gold": 16.0,
+        "reroll_price": 5.0,
+        "locked_reserve": 0.0,
+        "cost_ratio": 0.3125
+      },
+      {
+        "run_id": "run_1785772372_66131",
+        "wave": 4,
+        "dps": 204.849855,
+        "target": 402.5,
+        "target_ratio": 0.5089437391304348,
+        "gold": 5.0,
+        "reroll_price": 4.0,
+        "locked_reserve": 0.0,
+        "cost_ratio": 0.8
+      },
+      {
+        "run_id": "run_1785773742_57796",
+        "wave": 1,
+        "dps": 72.75,
+        "target": 78.75,
+        "target_ratio": 0.9238095238095239,
+        "gold": 1.0,
+        "reroll_price": 1.0,
+        "locked_reserve": 0.0,
+        "cost_ratio": 1.0
+      },
+      {
+        "run_id": "run_1785773742_57796",
+        "wave": 8,
+        "dps": 480.243985,
+        "target": 945.0,
+        "target_ratio": 0.5081946931216932,
+        "gold": 12.0,
+        "reroll_price": 12.0,
+        "locked_reserve": 0.0,
+        "cost_ratio": 1.0
+      },
+      {
+        "run_id": "run_1785774268_7839",
+        "wave": 3,
+        "dps": 267.161241,
+        "target": 306.25,
+        "target_ratio": 0.8723632359183674,
+        "gold": 9.0,
+        "reroll_price": 3.0,
+        "locked_reserve": 0.0,
+        "cost_ratio": 0.3333333333333333
+      },
+      {
+        "run_id": "run_1785774268_7839",
+        "wave": 4,
+        "dps": 304.117023,
+        "target": 402.5,
+        "target_ratio": 0.755570243478261,
+        "gold": 5.0,
+        "reroll_price": 4.0,
+        "locked_reserve": 0.0,
+        "cost_ratio": 0.8
+      }
+    ]
+  },
+  "high_sensitivity": {
+    "actionable": 22,
+    "rate": 0.16541353383458646,
+    "by_run": {
+      "run_1785767708_21879": 2,
+      "run_1785767995_37848": 0,
+      "run_1785768455_42044": 1,
+      "run_1785769039_77971": 2,
+      "run_1785769630_27303": 2,
+      "run_1785770174_45166": 5,
+      "run_1785770704_59997": 1,
+      "run_1785770966_40695": 1,
+      "run_1785771251_53203": 3,
+      "run_1785771763_20515": 0,
+      "run_1785772372_66131": 1,
+      "run_1785772596_61603": 0,
+      "run_1785772987_71550": 0,
+      "run_1785773742_57796": 2,
+      "run_1785774268_7839": 2,
+      "run_1785774517_69209": 0
+    }
+  },
+  "stability": {
+    "run_coverage": 11,
+    "max_run_actions": 5,
+    "max_run_share": 0.22727272727272727,
+    "leave_one_run_out": [
+      {
+        "left_out_run": "run_1785767708_21879",
+        "actionable": 20,
+        "exits": 127,
+        "rate": 0.15748031496062992
+      },
+      {
+        "left_out_run": "run_1785767995_37848",
+        "actionable": 22,
+        "exits": 127,
+        "rate": 0.1732283464566929
+      },
+      {
+        "left_out_run": "run_1785768455_42044",
+        "actionable": 21,
+        "exits": 123,
+        "rate": 0.17073170731707318
+      },
+      {
+        "left_out_run": "run_1785769039_77971",
+        "actionable": 20,
+        "exits": 123,
+        "rate": 0.16260162601626016
+      },
+      {
+        "left_out_run": "run_1785769630_27303",
+        "actionable": 20,
+        "exits": 123,
+        "rate": 0.16260162601626016
+      },
+      {
+        "left_out_run": "run_1785770174_45166",
+        "actionable": 17,
+        "exits": 123,
+        "rate": 0.13821138211382114
+      },
+      {
+        "left_out_run": "run_1785770704_59997",
+        "actionable": 21,
+        "exits": 127,
+        "rate": 0.16535433070866143
+      },
+      {
+        "left_out_run": "run_1785770966_40695",
+        "actionable": 21,
+        "exits": 127,
+        "rate": 0.16535433070866143
+      },
+      {
+        "left_out_run": "run_1785771251_53203",
+        "actionable": 19,
+        "exits": 123,
+        "rate": 0.15447154471544716
+      },
+      {
+        "left_out_run": "run_1785771763_20515",
+        "actionable": 22,
+        "exits": 123,
+        "rate": 0.17886178861788618
+      },
+      {
+        "left_out_run": "run_1785772372_66131",
+        "actionable": 21,
+        "exits": 128,
+        "rate": 0.1640625
+      },
+      {
+        "left_out_run": "run_1785772596_61603",
+        "actionable": 22,
+        "exits": 125,
+        "rate": 0.176
+      },
+      {
+        "left_out_run": "run_1785772987_71550",
+        "actionable": 22,
+        "exits": 123,
+        "rate": 0.17886178861788618
+      },
+      {
+        "left_out_run": "run_1785773742_57796",
+        "actionable": 20,
+        "exits": 123,
+        "rate": 0.16260162601626016
+      },
+      {
+        "left_out_run": "run_1785774268_7839",
+        "actionable": 20,
+        "exits": 127,
+        "rate": 0.15748031496062992
+      },
+      {
+        "left_out_run": "run_1785774517_69209",
+        "actionable": 22,
+        "exits": 123,
+        "rate": 0.17886178861788618
+      }
+    ],
+    "loo_rates": {
+      "n": 16,
+      "min": 0.13821138211382114,
+      "p10": 0.15597592983803854,
+      "p25": 0.16132129825235259,
+      "median": 0.16470841535433073,
+      "p75": 0.17392125984251966,
+      "p90": 0.17886178861788618,
+      "max": 0.17886178861788618
+    }
+  },
+  "observed_search_yield": {
+    "target_deficient_actual_rerolls": 139,
+    "joined_next_boards": 139,
+    "join_rate": 1.0,
+    "useful_boards": 26,
+    "useful_board_rate": 0.18705035971223022,
+    "useful_weapon_rows": 33,
+    "positive_affordable_scored_weapon_rows": 38,
+    "actual_rerolls_by_wave": {
+      "1": 17,
+      "2": 12,
+      "3": 12,
+      "4": 11,
+      "5": 16,
+      "6": 18,
+      "7": 12,
+      "8": 12,
+      "9": 16,
+      "10": 13
+    },
+    "useful_boards_by_wave": {
+      "1": 3,
+      "2": 1,
+      "3": 3,
+      "4": 4,
+      "5": 5,
+      "6": 6,
+      "7": 2,
+      "8": 1,
+      "9": 1,
+      "10": 0
+    }
+  },
+  "cost_ratio": {
+    "n": 22,
+    "min": 0.2571428571428571,
+    "p10": 0.30125,
+    "p25": 0.3333333333333333,
+    "median": 0.39230769230769236,
+    "p75": 0.7651515151515151,
+    "p90": 0.9800000000000004,
+    "max": 1.0
+  },
+  "bars": {
+    "actionable_rate": {
+      "value": 0.16541353383458646,
+      "bar": 0.2,
+      "pass": false
+    },
+    "run_coverage": {
+      "value": 11,
+      "bar": 12,
+      "pass": false
+    },
+    "loo_min": {
+      "value": 0.13821138211382114,
+      "bar": 0.18,
+      "pass": false
+    },
+    "loo_median": {
+      "value": 0.16470841535433073,
+      "bar": 0.2,
+      "pass": false
+    },
+    "max_run_share": {
+      "value": 0.22727272727272727,
+      "cap": 0.2,
+      "pass": false
+    },
+    "yield_n": {
+      "value": 139,
+      "bar": 30,
+      "pass": true
+    },
+    "yield_join": {
+      "value": 1.0,
+      "bar": 0.99,
+      "pass": true
+    },
+    "useful_board_yield": {
+      "value": 0.18705035971223022,
+      "bar": 0.3,
+      "pass": false
+    },
+    "cost_median": {
+      "value": 0.39230769230769236,
+      "cap": 0.1,
+      "pass": false
+    },
+    "cost_p90": {
+      "value": 0.9800000000000004,
+      "cap": 0.25,
+      "pass": false
+    },
+    "locked_preserved": {
+      "value": 1.0,
+      "bar": 1.0,
+      "pass": true
+    }
+  }
+}

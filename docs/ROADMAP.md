@@ -40,7 +40,11 @@ an offline fork; simply extending lambda post hoc does not. **§38 then tested t
 lexicographically decisive among incumbent-positive candidates reached **78/409 = 19.07%**, four
 decisions short; median leave-one-run-out exposure was 19.04%. Every other bar passed, but relaxing
 the boundary after seeing the shortfall would be threshold fishing. Return to the explicit bootstrap
-fork before spending live trials.
+fork before spending live trials. **§39 completed that bootstrap:** the documented low-dose planning
+curve is `1.75×` the D0 target, but target-backed extra search at shop exit fails broadly—only
+**22/133 = 16.54%** actionable exits, **18.71%** useful observed reroll yield, and median/p90 cost
+**39%/98%** of remaining gold. The `2.63×` sensitivity exposes no additional exits. No live screen is
+licensed; liquidity and search yield bind before target scale.
 
 **NS2 additionally contains a bootstrap.** D5 is *not* difficulty-gated —
 `max_selectable_difficulty` reads 5 for every character. But 7 characters are locked and every
