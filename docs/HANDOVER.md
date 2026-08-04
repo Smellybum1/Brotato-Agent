@@ -55,6 +55,7 @@ tells you whether a *different* mechanism on the same defect is still live.
 | **Live clearance-guarded conversion** (§42) | clean mediator null; no survival campaign | Treatment changed the final route **1,715/9,026 = 19.00%** of ranked opportunities across **4/4** runs with median projected gain **0.1538** and **0/1,715** guard violations, but realised in-range moved only **+0.0097** against the fixed +0.05 bar (exact permutation **p = 0.9429**). Both low-HP measures improved. The local one-step gains do not persist into engagement geometry; this is dynamics-limited, not unsafe or undelivered. |
 | **Route-conversion persistence** (§43) | valid `TRANSIENT_REVERSAL` diagnosis; temporal gate licensed | The 1,715 changes collapse into 1,241 episodes: median duration **0.051 s**, only **1/1,238** matched episodes lasts 0.60 s, and median executed forward progress is **0.377**. Projection calibration passes (median absolute error **0.071**, Spearman **0.685**). The controller replaces useful headings; another one-step dose is closed. |
 | **Safety-revalidated conversion latch, archive Gate 0** (§44) | `DATA_LIMITED`; all-exit instrument licensed, latch not closed | All §40/41 controls reproduce exactly and visible retained steps are safe **8,469/8,469**, but active-future candidate observability is only **9,400/12,429 = 75.63%** versus the fixed 90% adequacy bar. `baseline_kept` alone causes 2,854/4,039 conservative releases. The 73/3,985 horizon lower bound cannot be read as a mechanism null. |
+| **All-exit latch revalidation acquisition** (§45) | instrument qualified; `INSUFFICIENT_INSTRUMENT`, no latch result | Row parity is **215,901/215,901**, living `baseline_kept` readiness **15,457/15,457**, and active-future observability **6,242/6,248 = 99.904%**. But the fixed four runs yielded **885** stateful episodes against the preregistered 1,000 minimum. The analyzer stopped before latch bars; no fifth run or lowered boundary is allowed. |
 | **Character selection** (§29) | excluded | ranger 0/16 despite a 2.4x D0 edge; cyborg 0/23 despite the largest offensive multiplier in the game. **Stat block does not predict win rate.** |
 | **Build / economy** | excluded | Same DPS, HP, weapons and materials-per-wave at D0 and D5 (matched pair, 16/arm). There is no economic starvation. |
 | **Idle materials** | not a problem | Post-shop balance is **13** at wave 9 against a 436 budget — it converts ~97%. |
@@ -108,8 +109,10 @@ its fixed doses. §43 then priced persistence from those already-collected treat
 projection calibration passed. The selected next fork is a bounded conversion latch with
 current-tick safety revalidation. §44's archive Gate 0 is `DATA_LIMITED`: candidate rows disappear on
 `baseline_kept` early returns, leaving only 75.63% active-future observability. The next licensed work
-is a default-inert all-exit revalidation instrument and fixed acquisition protocol—not latch
-implementation or a live treatment campaign.
+was a default-inert all-exit revalidation instrument and fixed acquisition protocol. §45 qualified
+that instrument and raised observability to 99.904%, but its fixed cohort supplied only 885/1,000
+required stateful episodes. Per protocol, no latch result was computed and no top-up is allowed.
+The temporal latch remains unresolved; implementation and live treatment are unlicensed.
 
 ## 5. ⭐ The methodology — this is the most valuable thing here
 

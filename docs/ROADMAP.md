@@ -89,6 +89,14 @@ reaches 0.60 s only **73/3,985** times, but the preregistered <90% rule makes th
 a policy null. The next licensed step is an observational, default-inert all-exit candidate instrument
 and fixed acquisition protocol. Latch implementation and live treatment remain unlicensed.
 
+**§45 fixes the instrument but stops on its preregistered sample-sufficiency bar.** Build 0.2.81
+records all-exit revalidation geometry without changing actions: ranked-row parity is
+**215,901/215,901**, living `baseline_kept` readiness **15,457/15,457**, action delivery
+**9,079/9,079**, and active-future observability **6,242/6,248 = 99.904%**. The fixed four runs,
+however, contain only **885** non-overlapping stateful episodes versus the declared 1,000 minimum.
+Verdict `INSUFFICIENT_INSTRUMENT`; the analyzer did not compute the latch endpoints. The fixed
+acquisition cannot be extended post hoc, and latch implementation/live treatment remain unlicensed.
+
 **NS2 additionally contains a bootstrap.** D5 is *not* difficulty-gated —
 `max_selectable_difficulty` reads 5 for every character. But 7 characters are locked and every
 remaining unlock is behind *"win a run with character X"* (the stat gates are measured dead), so

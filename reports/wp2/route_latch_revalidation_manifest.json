@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "design": "s45_route_latch_revalidation_acquisition",
+  "fixed_slots": [1, 2, 3, 4],
+  "mod_version": "0.2.81-wp2-capture",
+  "slots": [
+    {"slot": 1, "arm": "I", "run_id": "run_1785826116_89378"},
+    {"slot": 2, "arm": "I", "run_id": "run_1785826737_53506"},
+    {"slot": 3, "arm": "I", "run_id": "run_1785827267_71832"},
+    {"slot": 4, "arm": "I", "run_id": "run_1785827488_46830"}
+  ]
+}
