@@ -36,7 +36,11 @@ enough structural surface (**100/409 = 24.45%**) but weak additive doses through
 only **63/409 = 15.40%**, below the fixed 20% intervention bar. All flips improve immediate DPS and
 the magnitude/planning proxies pass, so this is **score-margin-limited**, unlike the surface ceilings
 in §§30/36. No campaign is licensed. A mechanism-distinct constraint/lexicographic version remains
-an offline fork; simply extending lambda post hoc does not.
+an offline fork; simply extending lambda post hoc does not. **§38 then tested that fork:** making DPS
+lexicographically decisive among incumbent-positive candidates reached **78/409 = 19.07%**, four
+decisions short; median leave-one-run-out exposure was 19.04%. Every other bar passed, but relaxing
+the boundary after seeing the shortfall would be threshold fishing. Return to the explicit bootstrap
+fork before spending live trials.
 
 **NS2 additionally contains a bootstrap.** D5 is *not* difficulty-gated —
 `max_selectable_difficulty` reads 5 for every character. But 7 characters are locked and every

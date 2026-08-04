@@ -48,6 +48,7 @@ tells you whether a *different* mechanism on the same defect is still live.
 | **Shop valuation — damage tilt** (§30) | fails Gate 0 | 66.3% of buys are already damage-bearing; flippable surface only 13.1%. |
 | **Shop valuation — DPS band** (§36) | fails Gate 0 on a **structural ceiling** | The gate's guard needs `slots_full AND not pairs_combine AND gain < floor`; that conjunction is reachable on only **4.66%** of D5 decisions **at any dose**. |
 | **Shop valuation — danger-aware marginal DPS** (§37) | weak additive doses `lambda <= 4` fail Gate 0; broader defect still live | Higher-DPS surface passes at **100/409 = 24.45%**, but the strongest fixed dose flips only **63/409 = 15.40%** against 20%. Every flip is positive and magnitude/planning bars pass: this is **score-margin-limited, not surface-limited**. Do not merely extend lambda post hoc; a different constraint mechanism remains viable. |
+| **Shop valuation — positive-score lexicographic DPS** (§38) | fails Gate 0 narrowly; do not shave the boundary | Making DPS decisive among incumbent-positive candidates flips **78/409 = 19.07%**, four short of 20%; median leave-one-run-out is likewise 19.04%. All sign, magnitude, planning, coverage and concentration bars pass, but selected score retention already falls as low as 1.28%. Relaxing the positive boundary after seeing this would be threshold fishing. |
 | **Character selection** (§29) | excluded | ranger 0/16 despite a 2.4x D0 edge; cyborg 0/23 despite the largest offensive multiplier in the game. **Stat block does not predict win rate.** |
 | **Build / economy** | excluded | Same DPS, HP, weapons and materials-per-wave at D0 and D5 (matched pair, 16/arm). There is no economic starvation. |
 | **Idle materials** | not a problem | Post-shop balance is **13** at wave 9 against a 436 budget — it converts ~97%. |
@@ -69,8 +70,9 @@ at specific builds. They do **not** bound the size of the underlying deficit.
    **Five levers have failed to convert this gap. The gap itself is untouched.**
 2. **The decision layer is danger-blind.** Verified from source: the only occurrence of `danger` in
    the entire decision tree is the literal string `"item_dangerous_bunny"`. The agent plays D5 with a
-   policy tuned at D0, and its wave constants assume 20-wave runs. §37 tested the first target-free
-   mechanism: its surface passes, but additive doses through 4 are score-margin-limited.
+   policy tuned at D0, and its wave constants assume 20-wave runs. §§37–38 tested two target-free
+   mechanisms: the unconstrained surface exists, but neither the fixed additive ladder nor the
+   positive-score lexicographic rule crosses the predeclared campaign bar.
 3. **The DPS target is calibrated on the wrong tier.** `OFFENSE_DPS_TARGETS_BY_WAVE` was fitted to
    **41 Danger-0 victories**. Measured over 10,275 D5 decisions, the agent sits a **median 1.314x
    above** that target and dies anyway. §36 showed the *band gate* cannot exploit this. A different
@@ -81,9 +83,10 @@ at specific builds. They do **not** bound the size of the underlying deficit.
    modelling assumption rather than a measurement.
 
 **Direction chosen by the operator on 2026-08-04:** price the danger-aware decision layer offline
-before attacking the bootstrap. §37 closes weak additive marginal-DPS doses but leaves a
-mechanism-distinct constraint/lexicographic version viable. The next decision is whether to
-preregister that stricter offline mechanism or return to the bootstrap; no campaign is licensed.
+before attacking the bootstrap. §§37–38 now close both preregistered target-free mechanisms for
+campaign purposes. The recommended next fork is the bootstrap: derive an explicit D5 clearance
+requirement from §28's enemy-health intervention and measured wave demand, expose its assumptions,
+then Gate 0 the resulting planner offline. No campaign is licensed.
 
 ## 5. ⭐ The methodology — this is the most valuable thing here
 
