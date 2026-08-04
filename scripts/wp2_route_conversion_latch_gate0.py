@@ -71,6 +71,8 @@ def choose_near_heading(
 
 
 def stateless_selected(capture: dict) -> dict:
+    if capture.get("trigger_evaluated"):
+        return capture.get("trigger_selected", capture["current"])
     admitted = guard.pack80_pool(capture)
     guarded = guard.guarded_candidates(admitted, capture["current"])
     return guard.choose(capture, guarded)
@@ -79,7 +81,9 @@ def stateless_selected(capture: dict) -> dict:
 def retained_candidate(
     capture: dict, heading: tuple[float, float]
 ) -> tuple[dict | None, float | None, list[dict]]:
-    admitted = guard.pack80_pool(capture)
+    admitted = capture.get("revalidation_admitted")
+    if admitted is None:
+        admitted = guard.pack80_pool(capture)
     guarded = guard.guarded_candidates(admitted, capture["current"])
     candidate, angle = choose_near_heading(guarded, heading)
     if candidate is None or angle is None or angle > ANGLE_LIMIT_DEG:
@@ -194,11 +198,13 @@ def simulate_run(stream: list[dict]) -> dict:
                 close("missing_future_window")
                 continue
             counters["active_future_captures"] += 1
+            counters[f"active_exit:{row['route_exit']}"] += 1
             if capture is None:
                 counters["unobservable_future_captures"] += 1
                 close(f"unobservable_{row['route_exit']}")
                 continue
             counters["observable_future_captures"] += 1
+            counters[f"observable_exit:{row['route_exit']}"] += 1
             selected_now = stateless_selected(capture)
             if base.key(selected_now) != base.key(capture["current"]):
                 counters["suppressed_overlapping_triggers"] += 1
@@ -213,7 +219,12 @@ def simulate_run(stream: list[dict]) -> dict:
             projectile_ok = float(candidate.get("proj", -1e18)) >= capture["projectile_floor"]
             body_ok = guard.body_guard_ok(new_body, old_body)
             subcritical_ok = new_body >= base.CRITICAL or new_body >= old_body
-            enemy_ok = base.key(candidate) in {base.key(item) for item in guard.pack80_pool(capture)}
+            admitted_for_check = capture.get("revalidation_admitted")
+            if admitted_for_check is None:
+                admitted_for_check = guard.pack80_pool(capture)
+            enemy_ok = base.key(candidate) in {
+                base.key(item) for item in admitted_for_check
+            }
             angle_ok = angle is not None and angle <= ANGLE_LIMIT_DEG
             counters["retained_steps"] += 1
             counters["projectile_ok"] += projectile_ok

@@ -122,6 +122,7 @@ def write_agent_config(auto_start: bool = True) -> None:
         # Behaviour-changing §41 arm. Deploy always returns to inert; campaign
         # drivers must arm treatment only after deploy and verify readback.
         "clearance_guarded_conversion": False,
+        "route_latch_revalidation_enabled": False,
     }
     path = cfg_dir / "agent_config.json"
     path.write_text(json.dumps(cfg, indent=2), encoding="utf-8")

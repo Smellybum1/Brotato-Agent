@@ -88,6 +88,7 @@ var body_clearance_scale: float = 1.0
 # available with this flag OFF, which is what makes a default-off array cheap.
 # Recording is pure observation; flag-off is byte-identical on the emitted command.
 var route_scores_enabled: bool = false
+var route_latch_revalidation_enabled: bool = false
 # §41 D5 combat-conversion arm. Default false keeps the shipped controller
 # inert; treatment enables the exact PACK-80/0.80-guard policy qualified offline.
 var clearance_guarded_conversion: bool = false
@@ -193,7 +194,7 @@ var policy_version: String = "teacher_v1-0.1.129-gun-wp1"
 # Single source of truth for the deployed mod identity: stamped into every run's
 # meta AND into the mod-ready sentinel, so the collector cannot accept a build
 # whose identity disagrees with what it asked for.
-const MOD_VERSION := "0.2.80-wp2-capture"
+const MOD_VERSION := "0.2.81-wp2-capture"
 const _MOD_READY_PATH := "user://brotato_agent/mod_ready.json"
 var last_move_debug: Dictionary = {}
 var last_meta_debug: Dictionary = {}
@@ -356,6 +357,7 @@ func _ready() -> void:
 		_field.engage_distance_scale = engage_distance_scale
 		_field.body_clearance_scale = body_clearance_scale
 		_field.route_scores_enabled = route_scores_enabled
+		_field.route_latch_revalidation_enabled = route_latch_revalidation_enabled
 		_field.clearance_guarded_conversion_enabled = clearance_guarded_conversion
 		_field.calm_threat_mult = calm_threat_mult
 		_field.tail_calm_penalty_mult = tail_calm_penalty_mult
@@ -420,6 +422,7 @@ func _write_mod_ready() -> void:
 		"engage_distance_scale": engage_distance_scale,
 		"body_clearance_scale": body_clearance_scale,
 		"route_scores_enabled": route_scores_enabled,
+		"route_latch_revalidation_enabled": route_latch_revalidation_enabled,
 		"clearance_guarded_conversion": clearance_guarded_conversion,
 		"calm_threat_mult": calm_threat_mult,
 		"tail_calm_penalty_mult": tail_calm_penalty_mult,
@@ -2642,6 +2645,7 @@ func _start_run() -> void:
 		"engage_distance_scale": engage_distance_scale,
 		"body_clearance_scale": body_clearance_scale,
 		"route_scores_enabled": route_scores_enabled,
+		"route_latch_revalidation_enabled": route_latch_revalidation_enabled,
 		"clearance_guarded_conversion": clearance_guarded_conversion,
 		"calm_threat_mult": calm_threat_mult,
 		"tail_calm_penalty_mult": tail_calm_penalty_mult,
@@ -2963,6 +2967,9 @@ func _load_auto_config() -> void:
 		body_clearance_scale = float(cfg["body_clearance_scale"])
 	if cfg.has("route_scores_enabled"):
 		route_scores_enabled = bool(cfg["route_scores_enabled"])
+	if cfg.has("route_latch_revalidation_enabled"):
+		route_latch_revalidation_enabled = bool(
+			cfg["route_latch_revalidation_enabled"])
 	if cfg.has("clearance_guarded_conversion"):
 		clearance_guarded_conversion = bool(cfg["clearance_guarded_conversion"])
 	if cfg.has("calm_threat_mult"):

@@ -59,6 +59,17 @@ var _finale_body_selected_projectile_clearance := -1.0
 # nothing is appended and the emitted command is byte-identical.
 var route_scores_enabled: bool = false
 var _finale_route_scores := []
+# §45 default-inert all-exit geometry instrument. Unlike route_scores, this
+# snapshot is populated before baseline_kept can return so a shadow latch can
+# revalidate current safety without changing the selected route.
+var route_latch_revalidation_enabled: bool = false
+var _finale_route_revalidation_ready := false
+var _finale_route_revalidation_rows := []
+var _finale_route_revalidation_reference_body := -1.0e18
+var _finale_route_revalidation_reference_projectile := -1.0e18
+var _finale_route_revalidation_reference := Vector2.ZERO
+var _finale_route_revalidation_body_floor := -1.0e18
+var _finale_route_revalidation_lowest_penalty := -1.0e18
 var _finale_route_exit := ""
 var _finale_route_body_floor := -1.0e18
 var _finale_route_projectile_floor := -1.0e18
@@ -1810,6 +1821,30 @@ func _finale_body_safety(pos: Vector2, desired: Vector2, player_speed: float,
 		_finale_route_lowest_enemy_penalty = lowest_enemy_penalty
 	var baseline_enemy_penalty := _predictive_enemy_path_penalty(
 		pos, baseline, player_speed, times, enemies, bosses, 1.0)
+	if route_latch_revalidation_enabled:
+		var revalidation_floor := body_floor
+		if body_emergency_active:
+			revalidation_floor = (highest_body_clearance
+				- BotConfig.BOSS_FINALE_BODY_EMERGENCY_CLEARANCE_SLACK)
+		elif _finale_wall_body_relief_active:
+			revalidation_floor = max(
+				BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE,
+				highest_body_clearance
+					- BotConfig.BOSS_FINALE_WALL_BODY_RELIEF_CLEARANCE_SLACK)
+		elif (enforce_pack_clearance
+				and highest_body_clearance
+					>= BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE):
+			revalidation_floor = max(
+				BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE,
+				min(BotConfig.ROUTE_CONVERSION_PACK_CLEARANCE,
+					highest_body_clearance - body_slack))
+		elif highest_body_clearance >= BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE:
+			revalidation_floor = BotConfig.BOSS_FINALE_BODY_CRITICAL_CLEARANCE
+		else:
+			revalidation_floor = highest_body_clearance - body_slack
+		_capture_route_revalidation(
+			rows, baseline, _finale_body_input_clearance,
+			baseline_projectile_clearance, projectile_floor, revalidation_floor)
 	# v118: an active loot dash deliberately accepts crowd pressure; the soft
 	# enemy-penalty preference must not replace a dash route that already
 	# satisfies the body and projectile floors.
@@ -1877,6 +1912,12 @@ func _finale_body_safety(pos: Vector2, desired: Vector2, player_speed: float,
 	# reference. Only after it is fully reconstructed may the guarded conversion
 	# controller inspect the broader PACK-80 tier. This runs only on the exact
 	# `ranked` surface priced offline; every early return above stays untouched.
+	# The ranked incumbent, not a later conversion, is the §41 body reference.
+	if route_latch_revalidation_enabled:
+		_finale_route_revalidation_reference = best_dir
+		_finale_route_revalidation_reference_body = _finale_body_selected_clearance
+		_finale_route_revalidation_reference_projectile = (
+			_finale_body_selected_projectile_clearance)
 	if (clearance_guarded_conversion_enabled
 			and wave <= BotConfig.ROUTE_CONVERSION_MAX_WAVE
 			and best_score > -1.0e17):
@@ -2022,6 +2063,13 @@ func _reset_finale_route() -> void:
 	# never be mistaken for a fresh one. Counters reset to -1 for the same
 	# reason: 0 is a plausible measurement, -1 is not.
 	_finale_route_scores = []
+	_finale_route_revalidation_ready = false
+	_finale_route_revalidation_rows = []
+	_finale_route_revalidation_reference_body = -1.0e18
+	_finale_route_revalidation_reference_projectile = -1.0e18
+	_finale_route_revalidation_reference = Vector2.ZERO
+	_finale_route_revalidation_body_floor = -1.0e18
+	_finale_route_revalidation_lowest_penalty = -1.0e18
 	_finale_route_exit = "not_reached"
 	_finale_route_body_floor = -1.0e18
 	_finale_route_projectile_floor = -1.0e18
@@ -2064,6 +2112,57 @@ func _route_record(candidate: Vector2, body_clearance: float,
 	})
 
 
+func _capture_route_revalidation(rows: Array, reference: Vector2, reference_body: float,
+		reference_projectile: float, projectile_floor: float,
+		body_floor: float) -> void:
+	# Load-bearing default-inert boundary: no allocation, iteration, or record
+	# mutation occurs while the §45 instrument is disabled.
+	if not route_latch_revalidation_enabled:
+		return
+	_finale_route_revalidation_rows = []
+	for row in rows:
+		var candidate: Vector2 = row[0]
+		_finale_route_revalidation_rows.append({
+			"x": stepify(candidate.x, 0.0001),
+			"y": stepify(candidate.y, 0.0001),
+			"body": stepify(float(row[1]), 0.01),
+			"proj": stepify(float(row[2]), 0.01),
+			"pen": stepify(float(row[3]), 0.01),
+		})
+	_finale_route_revalidation_ready = not _finale_route_revalidation_rows.empty()
+	_finale_route_revalidation_reference = reference
+	_finale_route_revalidation_reference_body = reference_body
+	_finale_route_revalidation_reference_projectile = reference_projectile
+	_finale_route_revalidation_body_floor = body_floor
+	_finale_route_revalidation_lowest_penalty = INF
+	for row in rows:
+		if (float(row[2]) >= projectile_floor
+				and float(row[1]) >= body_floor):
+			_finale_route_revalidation_lowest_penalty = min(
+				_finale_route_revalidation_lowest_penalty, float(row[3]))
+
+
+func _route_revalidation_debug() -> Dictionary:
+	if not route_latch_revalidation_enabled:
+		return {"enabled": false}
+	return {
+		"enabled": true,
+		"ready": _finale_route_revalidation_ready,
+		"reason": "ready" if _finale_route_revalidation_ready else _finale_route_exit,
+		"reference_body": stepify(
+			_finale_route_revalidation_reference_body, 0.01),
+		"reference_x": stepify(_finale_route_revalidation_reference.x, 0.0001),
+		"reference_y": stepify(_finale_route_revalidation_reference.y, 0.0001),
+		"reference_projectile": stepify(
+			_finale_route_revalidation_reference_projectile, 0.01),
+		"projectile_floor": stepify(_finale_route_projectile_floor, 0.01),
+		"body_floor": stepify(_finale_route_revalidation_body_floor, 0.01),
+		"lowest_penalty": stepify(
+			_finale_route_revalidation_lowest_penalty, 0.01),
+		"rows": _finale_route_revalidation_rows,
+	}
+
+
 func finale_route_debug() -> Dictionary:
 	return {
 		"exit": _finale_route_exit,
@@ -2095,6 +2194,7 @@ func finale_route_debug() -> Dictionary:
 			_finale_route_conversion_selected_body, 0.01),
 		"conversion_guard_vetoed": _finale_route_conversion_guard_vetoed,
 		"conversion_admitted": _finale_route_conversion_admitted,
+		"revalidation": _route_revalidation_debug(),
 		"scores": _finale_route_scores,
 	}
 
