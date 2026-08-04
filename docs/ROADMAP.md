@@ -54,6 +54,13 @@ retention **0.726/0.516**, plus 10 newly worse subcritical choices. The unsafe c
 conversion authority is measured in the recorded action surface. The next offline gate is the fixed
 0.80 clearance-retention/subcritical guard already declared by §40, not another dose sweep.
 
+**§41 passes that fixed guarded gate.** It retains **11,457/23,501 = 48.75%** flips and
+**11,457/15,274 = 75.01%** of the unguarded conversion actions, with median conditional gain
+**0.2222**, integrated gain **0.0461**, and 100% preservation of projectile, body-retention and
+subcritical rules. Every wave 1–11 retains a nontrivial surface, including **540/1,387 = 38.93%** at
+wave 11. Exact implementation plus an in-range/low-HP mediator screen is licensed; survival benefit
+is not yet measured.
+
 **NS2 additionally contains a bootstrap.** D5 is *not* difficulty-gated —
 `max_selectable_difficulty` reads 5 for every character. But 7 characters are locked and every
 remaining unlock is behind *"win a run with character X"* (the stat gates are measured dead), so
