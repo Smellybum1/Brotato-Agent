@@ -1,0 +1,283 @@
+{
+  "status": "VOID",
+  "control_failures": [
+    "trust_rate 0.8836 < 0.95",
+    "parity_rate 0.8805 < 0.99"
+  ],
+  "controls": {
+    "run_count": 16,
+    "arm_errors": [],
+    "policy_n": 409,
+    "policy_by_run": {
+      "run_1785767708_21879": 16,
+      "run_1785767995_37848": 13,
+      "run_1785768455_42044": 33,
+      "run_1785769039_77971": 33,
+      "run_1785769630_27303": 30,
+      "run_1785770174_45166": 34,
+      "run_1785770704_59997": 13,
+      "run_1785770966_40695": 18,
+      "run_1785771251_53203": 28,
+      "run_1785771763_20515": 37,
+      "run_1785772372_66131": 12,
+      "run_1785772596_61603": 23,
+      "run_1785772987_71550": 44,
+      "run_1785773742_57796": 31,
+      "run_1785774268_7839": 14,
+      "run_1785774517_69209": 30
+    },
+    "exclusions": {
+      "slots_full": 130,
+      "loadout_untrusted": 27,
+      "gain_uncomputable": 1,
+      "no_scored_rows": 47,
+      "baseline_mismatch": 1
+    },
+    "join": {
+      "ok": 736,
+      "total": 736,
+      "rate": 1.0,
+      "bar": 0.99
+    },
+    "loadout_trust": {
+      "ok": 205,
+      "total": 232,
+      "rate": 0.8836206896551724,
+      "bar": 0.95
+    },
+    "weapon_gain_parity": {
+      "ok": 199,
+      "total": 226,
+      "rate": 0.8805309734513275,
+      "bar": 0.99,
+      "failures": [
+        {
+          "run_id": "run_1785767708_21879",
+          "wave": 2,
+          "item_id": "weapon_icicle_1",
+          "computed": 14.805,
+          "recorded": 13.3245,
+          "abs_error": 1.4804999999999993
+        },
+        {
+          "run_id": "run_1785767708_21879",
+          "wave": 5,
+          "item_id": "weapon_icicle_1",
+          "computed": 16.285500000000003,
+          "recorded": 14.65695,
+          "abs_error": 1.6285500000000024
+        },
+        {
+          "run_id": "run_1785767708_21879",
+          "wave": 5,
+          "item_id": "weapon_icicle_1",
+          "computed": 16.285500000000003,
+          "recorded": 14.65695,
+          "abs_error": 1.6285500000000024
+        },
+        {
+          "run_id": "run_1785767708_21879",
+          "wave": 5,
+          "item_id": "weapon_taser_1",
+          "computed": 10.574666666666666,
+          "recorded": 9.366133,
+          "abs_error": 1.208533666666666
+        },
+        {
+          "run_id": "run_1785767708_21879",
+          "wave": 5,
+          "item_id": "weapon_taser_1",
+          "computed": 11.209146666666665,
+          "recorded": 9.928101,
+          "abs_error": 1.2810456666666656
+        },
+        {
+          "run_id": "run_1785767995_37848",
+          "wave": 2,
+          "item_id": "weapon_crossbow_1",
+          "computed": 15.576749999999999,
+          "recorded": 26.44425,
+          "abs_error": 10.867500000000001
+        },
+        {
+          "run_id": "run_1785767995_37848",
+          "wave": 2,
+          "item_id": "weapon_crossbow_1",
+          "computed": 15.576749999999999,
+          "recorded": 27.89325,
+          "abs_error": 12.3165
+        },
+        {
+          "run_id": "run_1785767995_37848",
+          "wave": 6,
+          "item_id": "weapon_taser_2",
+          "computed": 20.7648,
+          "recorded": 22.84128,
+          "abs_error": 2.07648
+        },
+        {
+          "run_id": "run_1785767995_37848",
+          "wave": 6,
+          "item_id": "weapon_taser_2",
+          "computed": 20.7648,
+          "recorded": 22.84128,
+          "abs_error": 2.07648
+        },
+        {
+          "run_id": "run_1785768455_42044",
+          "wave": 4,
+          "item_id": "weapon_crossbow_1",
+          "computed": 18.6377625,
+          "recorded": 34.612987,
+          "abs_error": 15.975224499999996
+        },
+        {
+          "run_id": "run_1785769039_77971",
+          "wave": 6,
+          "item_id": "weapon_crossbow_1",
+          "computed": 18.609299999999994,
+          "recorded": 36.5769,
+          "abs_error": 17.967600000000008
+        },
+        {
+          "run_id": "run_1785769630_27303",
+          "wave": 8,
+          "item_id": "weapon_taser_3",
+          "computed": 34.060320000000004,
+          "recorded": 36.979776,
+          "abs_error": 2.9194559999999967
+        },
+        {
+          "run_id": "run_1785769630_27303",
+          "wave": 8,
+          "item_id": "weapon_taser_2",
+          "computed": 21.48608,
+          "recorded": 23.634688,
+          "abs_error": 2.1486079999999994
+        },
+        {
+          "run_id": "run_1785769630_27303",
+          "wave": 8,
+          "item_id": "weapon_icicle_2",
+          "computed": 38.38208000000001,
+          "recorded": 40.301184,
+          "abs_error": 1.9191039999999902
+        },
+        {
+          "run_id": "run_1785769630_27303",
+          "wave": 8,
+          "item_id": "weapon_crossbow_2",
+          "computed": 29.823552000000003,
+          "recorded": 53.84808,
+          "abs_error": 24.024528
+        },
+        {
+          "run_id": "run_1785770704_59997",
+          "wave": 3,
+          "item_id": "weapon_icicle_2",
+          "computed": 35.406666666666666,
+          "recorded": 33.636333,
+          "abs_error": 1.7703336666666658
+        },
+        {
+          "run_id": "run_1785770704_59997",
+          "wave": 3,
+          "item_id": "weapon_icicle_2",
+          "computed": 35.406666666666666,
+          "recorded": 33.636333,
+          "abs_error": 1.7703336666666658
+        },
+        {
+          "run_id": "run_1785770966_40695",
+          "wave": 6,
+          "item_id": "weapon_crossbow_1",
+          "computed": 19.525275,
+          "recorded": 46.143405,
+          "abs_error": 26.61813
+        },
+        {
+          "run_id": "run_1785770966_40695",
+          "wave": 6,
+          "item_id": "weapon_crossbow_1",
+          "computed": 19.525275,
+          "recorded": 46.143405,
+          "abs_error": 26.61813
+        },
+        {
+          "run_id": "run_1785771763_20515",
+          "wave": 4,
+          "item_id": "weapon_crossbow_1",
+          "computed": 15.108719999999998,
+          "recorded": 30.972876,
+          "abs_error": 15.864156000000001
+        },
+        {
+          "run_id": "run_1785772372_66131",
+          "wave": 3,
+          "item_id": "weapon_taser_1",
+          "computed": 9.613333333333333,
+          "recorded": 10.712,
+          "abs_error": 1.0986666666666665
+        },
+        {
+          "run_id": "run_1785772372_66131",
+          "wave": 3,
+          "item_id": "weapon_taser_1",
+          "computed": 9.613333333333333,
+          "recorded": 10.712,
+          "abs_error": 1.0986666666666665
+        },
+        {
+          "run_id": "run_1785772987_71550",
+          "wave": 1,
+          "item_id": "weapon_shuriken_1",
+          "computed": 12.337499999999999,
+          "recorded": 11.896875,
+          "abs_error": 0.44062499999999893
+        },
+        {
+          "run_id": "run_1785772987_71550",
+          "wave": 3,
+          "item_id": "weapon_shuriken_1",
+          "computed": 12.337499999999999,
+          "recorded": 11.45625,
+          "abs_error": 0.8812499999999979
+        },
+        {
+          "run_id": "run_1785772987_71550",
+          "wave": 3,
+          "item_id": "weapon_shuriken_1",
+          "computed": 12.337499999999999,
+          "recorded": 11.45625,
+          "abs_error": 0.8812499999999979
+        },
+        {
+          "run_id": "run_1785773742_57796",
+          "wave": 1,
+          "item_id": "weapon_crossbow_1",
+          "computed": 13.799999999999999,
+          "recorded": 22.08,
+          "abs_error": 8.28
+        },
+        {
+          "run_id": "run_1785773742_57796",
+          "wave": 4,
+          "item_id": "weapon_crossbow_2",
+          "computed": 19.089,
+          "recorded": 36.58725,
+          "abs_error": 17.49825
+        }
+      ]
+    },
+    "baseline_reproduction": {
+      "ok": 203,
+      "total": 204,
+      "rate": 0.9950980392156863,
+      "bar": 0.99
+    },
+    "gain_failures": {
+      "next_tier_missing": 1
+    },
+    "null_flips": 0
+  }
+}

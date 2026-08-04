@@ -218,3 +218,28 @@ The analyzer is amended only to use that two-copy initial state and to print row
 if the independent `proj_dps_gain` control still misses. **No dose, denominator, bar, prediction, or
 counterfactual rule changes.** The fixed controls remain binding; if the repair does not lift loadout
 trust to 95% and weapon-gain parity to 99%, the result remains VOID.
+
+## §37k — Second measurement amendment after a second control-only VOID
+
+The two-copy initial-state repair lifted loadout trust **44.8% → 88.4%**, but the fixed 95% bar still
+failed; independent ordinary-weapon parity remained 88.1% against its 99% bar. The analyzer again
+returned **VOID before computing or printing any reachable count, dose flip, or Gate 0 result.**
+
+All 27 printed parity failures identify the omitted state precisely: Crossbow (scales with range),
+Taser/Icicle (elemental damage), or Shuriken (melee damage). `build_metrics.offense` records only
+ranged damage, percent damage, attack speed and crit chance, while the live
+`_projected_weapon_dps_gain` consumes the full build stats. Filling the missing scaling stats with
+zero is therefore wrong; the positive parity failures caught it.
+
+Those stats are recoverable without approximation from the same immutable event streams:
+
+- Ranger starts with source-established **range +50**; the other missing weapon-scaling stats start
+  at zero;
+- every level-up choice records its selected effects;
+- every bought shop item is joined to its recorded offer effects; and
+- every crate choice is paired with its recorded crate-offer effects.
+
+The replay will maintain the missing stat ledger from those transitions, while continuing to take the
+four directly recorded offense stats from each decision. Loadout DPS validation and independent
+`proj_dps_gain` parity remain the adjudicators: a missed dynamic/stat transition will fail the same
+unchanged 95% / 99% bars. **No policy definition, dose, denominator, bar, or prediction changes.**

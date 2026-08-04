@@ -31,8 +31,8 @@ from scripts.wp2_offer_dps_replay import (
     apply_deltas,
     build_metrics_stats,
     combined_id,
-    combat_deltas,
     effective_weapon_dps,
+    effect_signed_value,
     sig_ids,
     tier_of,
     total_effective_weapon_dps,
@@ -64,11 +64,24 @@ TOL = 1e-9
 # Ranger's character effect, source-noted in combat_model.gd:161.  Only the
 # offense-relevant gain modifier is needed here.
 RANGER_GAIN_MODS = {"stat_ranged_damage": 50.0}
-KNOWN_CURRENT_STATS = frozenset({
+DIRECT_OFFENSE_STATS = frozenset({
     "stat_ranged_damage", "stat_percent_damage", "stat_attack_speed",
     "stat_crit_chance",
 })
-UNKNOWN_DPS_STATE = frozenset({"stat_crit_damage"})
+LEDGER_STATS = frozenset({
+    "stat_range", "stat_melee_damage", "stat_elemental_damage",
+    "stat_crit_damage",
+})
+INITIAL_LEDGER = {
+    "stat_range": 50.0,
+    "stat_melee_damage": 0.0,
+    "stat_elemental_damage": 0.0,
+    "stat_crit_damage": 0.0,
+}
+DPS_UNIVERSAL_STATS = frozenset({
+    "stat_percent_damage", "stat_attack_speed", "stat_crit_chance",
+    "stat_crit_damage",
+})
 
 
 def _is_number(value: Any) -> bool:
@@ -108,7 +121,8 @@ def _unlock_stamp(summary: dict[str, Any]) -> tuple[Any, ...]:
 
 def _read_relevant_events(path: Path) -> list[dict[str, Any]]:
     wanted = ('"run_start"', '"purchase_offer"', '"purchase_decision"',
-              '"shop_combine_confirmed"', '"run_end"')
+              '"shop_combine_confirmed"', '"level_up_decision"',
+              '"crate_offer"', '"crate_decision"', '"run_end"')
     out: list[dict[str, Any]] = []
     with path.open("r", encoding="utf-8", errors="replace") as stream:
         for line in stream:
@@ -182,20 +196,54 @@ def _join_rows(rows: list[dict[str, Any]], offer: dict[str, Any] | None
     return joined, missing
 
 
+def _scaling_stats(weapons: list[dict[str, Any]]) -> set[str]:
+    keys: set[str] = set()
+    for weapon in weapons:
+        for scaling in weapon.get("scaling", []) or []:
+            if isinstance(scaling, (list, tuple)) and len(scaling) >= 2:
+                keys.add(str(scaling[0]))
+    return keys
+
+
+def _missing_dps_stats(weapons: list[dict[str, Any]], stats: dict[str, Any]) -> set[str]:
+    return {key for key in DPS_UNIVERSAL_STATS | _scaling_stats(weapons)
+            if key not in stats or not _is_number(stats.get(key))}
+
+
+def _effect_deltas(effects: list[dict[str, Any]], allowed: set[str]) -> dict[str, float]:
+    deltas: dict[str, float] = {}
+    for effect in effects:
+        key = str(effect.get("key", ""))
+        if key in allowed:
+            deltas[key] = deltas.get(key, 0.0) + effect_signed_value(effect)
+    return deltas
+
+
+def _apply_ledger_effects(ledger: dict[str, float], effects: list[dict[str, Any]]) -> None:
+    deltas = _effect_deltas(effects, set(LEDGER_STATS))
+    ledger.update(apply_deltas(ledger, deltas, RANGER_GAIN_MODS))
+
+
+def _levelup_key(payload: dict[str, Any]) -> tuple[Any, ...]:
+    metrics = payload.get("build_metrics") or {}
+    action = payload.get("action") or {}
+    alternatives = json.dumps(payload.get("legal_alternatives"), sort_keys=True)
+    return (metrics.get("wave"), alternatives, action.get("index"), action.get("type"))
+
+
 def _item_gain(item: dict[str, Any], loadout: list[str], catalog: dict[str, dict[str, Any]],
                stats: dict[str, Any]) -> tuple[float | None, str]:
-    effects = item.get("effects", []) or []
-    deltas = combat_deltas(effects)
-    if set(deltas) & UNKNOWN_DPS_STATE:
-        return None, "unknown_current_stat"
-    modeled = {key: value for key, value in deltas.items() if key in KNOWN_CURRENT_STATS}
-    if not modeled:
-        return 0.0, "no_modeled_weapon_dps_effect"
     if any(weapon_id not in catalog for weapon_id in loadout):
         return None, "catalog_incomplete"
     weapons = [catalog[weapon_id] for weapon_id in loadout]
+    if _missing_dps_stats(weapons, stats):
+        return None, "missing_scaling_stat"
+    allowed = set(DPS_UNIVERSAL_STATS) | _scaling_stats(weapons)
+    deltas = _effect_deltas(item.get("effects", []) or [], allowed)
+    if not deltas:
+        return 0.0, "no_modeled_weapon_dps_effect"
     before = total_effective_weapon_dps(weapons, stats)
-    after_stats = apply_deltas(stats, modeled, RANGER_GAIN_MODS)
+    after_stats = apply_deltas(stats, deltas, RANGER_GAIN_MODS)
     after = total_effective_weapon_dps(weapons, after_stats)
     return after - before, "item_stats"
 
@@ -212,9 +260,14 @@ def _weapon_gain(item: dict[str, Any], row: dict[str, Any], loadout: list[str],
         next_id = combined_id(item_id)
         if next_id not in catalog:
             return None, "next_tier_missing"
+        weapons = [catalog[item_id], catalog[next_id]]
+        if _missing_dps_stats(weapons, stats):
+            return None, "missing_scaling_stat"
         gain = (effective_weapon_dps(catalog[next_id], stats)
                 - effective_weapon_dps(catalog[item_id], stats))
         return gain, "combine"
+    if _missing_dps_stats([catalog[item_id]], stats):
+        return None, "missing_scaling_stat"
     return effective_weapon_dps(catalog[item_id], stats), "weapon_add"
 
 
@@ -321,13 +374,38 @@ def analyse(runs_dir: Path) -> Analysis:
         # run_start field names the selected id once; §37j records the recovery.
         loadout: list[str] = ([str(start_weapon), str(start_weapon)]
                               if start_weapon else [])
+        ledger = dict(INITIAL_LEDGER)
         last_offer: dict[str, Any] | None = None
+        last_crate_offer: dict[str, Any] | None = None
+        seen_levelups: set[tuple[Any, ...]] = set()
 
         for event in events:
             kind = event.get("event")
             payload = event.get("payload") or {}
             if kind == "purchase_offer":
                 last_offer = payload
+                continue
+            if kind == "level_up_decision":
+                key = _levelup_key(payload)
+                if key in seen_levelups:
+                    continue
+                seen_levelups.add(key)
+                action = payload.get("action") or {}
+                if action.get("type") == "levelup_choose":
+                    chosen = next((option for option in payload.get("legal_alternatives", []) or []
+                                   if option.get("index") == action.get("index")), None)
+                    if chosen:
+                        _apply_ledger_effects(ledger, chosen.get("effects", []) or [])
+                continue
+            if kind == "crate_offer":
+                last_crate_offer = payload
+                continue
+            if kind == "crate_decision":
+                action = payload.get("action") or {}
+                if action.get("type") == "crate_take" and last_crate_offer:
+                    crate_item = last_crate_offer.get("item") or {}
+                    _apply_ledger_effects(ledger, crate_item.get("effects", []) or [])
+                last_crate_offer = None
                 continue
             if kind == "shop_combine_confirmed" and payload.get("state_changed"):
                 loadout = sig_ids(payload.get("after_signature", "[]"))
@@ -338,7 +416,8 @@ def analyse(runs_dir: Path) -> Analysis:
             action = payload.get("action") or {}
             wave = int(payload.get("wave", -1))
             offense = ((payload.get("build_metrics") or {}).get("offense") or {})
-            stats = build_metrics_stats(offense)
+            stats = dict(ledger)
+            stats.update(build_metrics_stats(offense))
             trusted = recon.validate(loadout, stats, offense.get("weapon_dps"),
                                      offense.get("weapon_count"), offense.get("weapon_tier_sum"))
             if not trusted:
@@ -405,9 +484,14 @@ def analyse(runs_dir: Path) -> Analysis:
             # Apply the actual action after measuring its pre-decision state.
             if action.get("type") == "shop_buy" and last_offer:
                 chosen = next((item for item in last_offer.get("items", []) or []
-                               if item.get("slot") == action.get("slot")), None)
-                if chosen and chosen.get("category") == "weapon":
-                    loadout.append(str(chosen.get("id")))
+                               if (item.get("slot") == action.get("slot")
+                                   and (not action.get("item_id")
+                                        or item.get("id") == action.get("item_id")))), None)
+                if chosen:
+                    if chosen.get("category") == "weapon":
+                        loadout.append(str(chosen.get("id")))
+                    else:
+                        _apply_ledger_effects(ledger, chosen.get("effects", []) or [])
             elif action.get("type") == "shop_sell":
                 index = action.get("index")
                 if isinstance(index, int) and 0 <= index < len(loadout):
@@ -653,20 +737,42 @@ def _self_test() -> int:
         {"effects": [{"key": "stat_ranged_damage", "value": 2, "sign": 3}]},
         ["weapon_x_1"], catalog,
         {"stat_ranged_damage": 0, "stat_percent_damage": 0,
-         "stat_attack_speed": 0, "stat_crit_chance": 0})
+         "stat_attack_speed": 0, "stat_crit_chance": 0,
+         "stat_crit_damage": 0})
     assert method == "item_stats" and abs(float(gain) - 3.0) < 1e-9
+
+    # Recovered range state and range-changing items affect range-scaled weapons.
+    range_weapon = {**weapon, "scaling": [["stat_range", 0.1]]}
+    range_catalog = {"weapon_range_1": range_weapon}
+    range_stats = {
+        "stat_range": 50, "stat_ranged_damage": 0, "stat_percent_damage": 0,
+        "stat_attack_speed": 0, "stat_crit_chance": 0, "stat_crit_damage": 0,
+    }
+    range_gain, range_method = _item_gain(
+        {"effects": [{"key": "stat_range", "value": 10, "sign": 3}]},
+        ["weapon_range_1"], range_catalog, range_stats)
+    assert range_method == "item_stats" and abs(float(range_gain) - 1.0) < 1e-9
+    missing_gain, missing_method = _weapon_gain(
+        {"id": "weapon_range_1"}, {}, [], range_catalog,
+        {key: value for key, value in range_stats.items() if key != "stat_range"})
+    assert missing_gain is None and missing_method == "missing_scaling_stat"
+
+    ledger = dict(INITIAL_LEDGER)
+    _apply_ledger_effects(ledger, [{"key": "stat_range", "value": 15, "sign": 3}])
+    assert ledger["stat_range"] == 65.0
 
     # Combine replaces one owned copy with the next tier.
     gain2, method2 = _weapon_gain(
         {"id": "weapon_x_1"}, {"pairs_combine": True}, ["weapon_x_1"], catalog,
         {"stat_ranged_damage": 0, "stat_percent_damage": 0,
-         "stat_attack_speed": 0, "stat_crit_chance": 0})
+         "stat_attack_speed": 0, "stat_crit_chance": 0,
+         "stat_crit_damage": 0})
     assert method2 == "combine" and abs(float(gain2) - 10.0) < 1e-9
 
     # Unknown decisions stay in the policy denominator but not the dosed set.
     assert analysis.policy_n == 3 and len(analysis.decisions) == 2
-    print("self-test PASS (higher-DPS flip, incumbent-best no-flip, item gain, "
-          "combine gain, unchanged policy denominator)")
+    print("self-test PASS (higher-DPS flip, incumbent-best no-flip, item/range gain, "
+          "missing-stat veto, ledger transition, combine gain, unchanged denominator)")
     return 0
 
 
