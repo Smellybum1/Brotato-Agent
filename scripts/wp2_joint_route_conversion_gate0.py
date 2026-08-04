@@ -351,6 +351,7 @@ def collect(runs_dir, run_ids):
 
                 px, py = float(player.get("x", 0)), float(player.get("y", 0))
                 inrange = {}
+                lane_value_missing = False
                 for row in rows:
                     value = inrange_after(
                         px,
@@ -361,9 +362,18 @@ def collect(runs_dir, run_ids):
                         threats,
                         max(ranges),
                     )
-                    if value is not None:
+                    if value is None:
+                        lane_value_missing = True
+                    else:
                         inrange[key(row)] = value
-                if key(current) not in inrange or len(inrange) != len(rows):
+                # Candidate headings can repeat after four-decimal telemetry
+                # quantisation. Equal headings have equal in-range values, so a
+                # key collision is not a missing counterfactual. The initial
+                # analyzer incorrectly required one distinct key per row and
+                # excluded 4,231 valid captures; §40a records that correction.
+                if len({key(row) for row in rows}) != len(rows):
+                    controls["rounded_key_collision_captures"] += 1
+                if lane_value_missing or key(current) not in inrange:
                     excluded["degenerate_lane"] += 1
                     continue
 
@@ -471,6 +481,7 @@ def analyse(runs_dir, output):
         "disabled_changes": controls["disabled_changes"],
         "primary_adds_lanes": controls["primary_adds_lanes"],
         "primary_adds_none": controls["primary_adds_none"],
+        "rounded_key_collision_captures": controls["rounded_key_collision_captures"],
     }
 
     print("=" * 76)
@@ -489,6 +500,7 @@ def analyse(runs_dir, output):
     print(f"  selection(160) reproduction         : {controls['selection_ok']}/{selection_n} = {selection_rate:.4f}")
     print(f"  disabled-policy changes             : {controls['disabled_changes']}/{len(captures)}")
     print(f"  PACK80 adds / does not add lanes    : {controls['primary_adds_lanes']}/{controls['primary_adds_none']}")
+    print(f"  rounded-key collision captures      : {controls['rounded_key_collision_captures']} (reported, not excluded)")
 
     controls_pass = (
         len(summaries) == 8
@@ -661,6 +673,14 @@ def self_test():
     check("ranking alone cannot see the gated good lane", key(max(actual, key=lambda r: inrange[key(r)])) == key(current))
     check("joint policy selects the newly admitted good lane", key(joint_pick) == key(rows[1]))
     check("disabled policy is an exact null", key(choose_joint(primary, current, inrange, baseline, previous, False)) == key(current))
+
+    duplicate = dict(rows[1])
+    primary_with_duplicate = primary + [duplicate]
+    check(
+        "duplicate rounded heading remains analysable",
+        key(choose_joint(primary_with_duplicate, current, inrange, baseline, previous))
+        == key(rows[1]),
+    )
 
     no_gain = dict(inrange)
     no_gain[key(rows[1])] = 0.25

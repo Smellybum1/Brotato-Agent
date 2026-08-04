@@ -1,0 +1,281 @@
+{
+  "status": "FAIL",
+  "reason": "body_ratio_median+body_ratio_p10",
+  "policy": {
+    "pack_primary": 80.0,
+    "pack_sensitivities": [
+      120.0,
+      45.0
+    ],
+    "horizon": 0.6,
+    "gain_deadband": 0.05,
+    "wave_min": 1,
+    "wave_max": 11
+  },
+  "controls": {
+    "summaries_scanned": 8,
+    "selected_runs": [
+      "run_1785754965_28036",
+      "run_1785755965_44537",
+      "run_1785756364_37779",
+      "run_1785756664_17215",
+      "run_1785757198_83975",
+      "run_1785757742_9445",
+      "run_1785758500_77660",
+      "run_1785758909_7977"
+    ],
+    "arm_errors": {},
+    "route_total_waves_1_11": 65662,
+    "ranked_total": 25788,
+    "analysis_set": 19270,
+    "per_run_analysis_set": {
+      "run_1785754965_28036": 2964,
+      "run_1785755965_44537": 1879,
+      "run_1785756364_37779": 1377,
+      "run_1785756664_17215": 2910,
+      "run_1785757198_83975": 2792,
+      "run_1785757742_9445": 3269,
+      "run_1785758500_77660": 1859,
+      "run_1785758909_7977": 2220
+    },
+    "excluded": {
+      "route_exit_no_threats": 8093,
+      "route_exit_baseline_kept": 31781,
+      "degenerate_lane": 4231,
+      "fewer_than_2_recorded_admitted": 2066,
+      "vector_unrecoverable": 213,
+      "admission_mismatch": 7,
+      "selection_mismatch": 1
+    },
+    "vector_recovery": {
+      "ok": 23509,
+      "n": 23722,
+      "rate": 0.9910209931708962
+    },
+    "floor_model": {
+      "ok": 23722,
+      "n": 23722,
+      "rate": 1.0,
+      "bar": 0.99
+    },
+    "admission_reproduction": {
+      "ok": 23502,
+      "n": 23509,
+      "rate": 0.9997022416946701,
+      "bar": 0.99
+    },
+    "selection_reproduction": {
+      "ok": 23501,
+      "n": 23502,
+      "rate": 0.9999574504297507,
+      "bar": 0.99
+    },
+    "disabled_changes": 0,
+    "primary_adds_lanes": 16238,
+    "primary_adds_none": 3032
+  },
+  "primary": {
+    "flips": 12487,
+    "analysis_set": 19270,
+    "flip_rate": 0.6480020757654386,
+    "by_run": {
+      "run_1785754965_28036": 1945,
+      "run_1785755965_44537": 1125,
+      "run_1785756364_37779": 872,
+      "run_1785756664_17215": 1861,
+      "run_1785757198_83975": 1834,
+      "run_1785757742_9445": 2227,
+      "run_1785758500_77660": 1233,
+      "run_1785758909_7977": 1390
+    },
+    "gain": {
+      "median": 0.25,
+      "p10": 0.09090909090909088,
+      "p90": 0.5384615384615384,
+      "sum": 3594.1624847829007
+    },
+    "body_ratio": {
+      "n": 12487,
+      "median": 0.7351247600767754,
+      "p10": 0.5242873949685568
+    },
+    "projectile_preserved": 12487,
+    "subcritical_nonworsening": 12487
+  },
+  "stability": {
+    "contributing_runs": 8,
+    "leave_one_run_out": [
+      {
+        "left_out_run": "run_1785754965_28036",
+        "flips": 10542,
+        "denom": 16306,
+        "rate": 0.6465104869373237
+      },
+      {
+        "left_out_run": "run_1785755965_44537",
+        "flips": 11362,
+        "denom": 17391,
+        "rate": 0.6533264332125812
+      },
+      {
+        "left_out_run": "run_1785756364_37779",
+        "flips": 11615,
+        "denom": 17893,
+        "rate": 0.6491365338400492
+      },
+      {
+        "left_out_run": "run_1785756664_17215",
+        "flips": 10626,
+        "denom": 16360,
+        "rate": 0.6495110024449878
+      },
+      {
+        "left_out_run": "run_1785757198_83975",
+        "flips": 10653,
+        "denom": 16478,
+        "rate": 0.6464983614516325
+      },
+      {
+        "left_out_run": "run_1785757742_9445",
+        "flips": 10260,
+        "denom": 16001,
+        "rate": 0.6412099243797262
+      },
+      {
+        "left_out_run": "run_1785758500_77660",
+        "flips": 11254,
+        "denom": 17411,
+        "rate": 0.6463729825972087
+      },
+      {
+        "left_out_run": "run_1785758909_7977",
+        "flips": 11097,
+        "denom": 17050,
+        "rate": 0.650850439882698
+      }
+    ],
+    "loo_min": 0.6412099243797262,
+    "loo_median": 0.6478235103886865,
+    "max_run_share": 0.17834547929847042
+  },
+  "integrated_gain": {
+    "sum": 3594.1624847829007,
+    "route_denom": 65662,
+    "rate": 0.05473732881701594
+  },
+  "sensitivities": {
+    "120": {
+      "flips": 11699,
+      "analysis_set": 19270,
+      "flip_rate": 0.6071094966268812,
+      "by_run": {
+        "run_1785754965_28036": 1813,
+        "run_1785755965_44537": 1033,
+        "run_1785756364_37779": 833,
+        "run_1785756664_17215": 1753,
+        "run_1785757198_83975": 1712,
+        "run_1785757742_9445": 2111,
+        "run_1785758500_77660": 1162,
+        "run_1785758909_7977": 1282
+      },
+      "gain": {
+        "median": 0.25,
+        "p10": 0.08333333333333337,
+        "p90": 0.5,
+        "sum": 3287.4580661840178
+      },
+      "body_ratio": {
+        "n": 11699,
+        "median": 0.824582338902148,
+        "p10": 0.6405061353274156
+      },
+      "projectile_preserved": 11699,
+      "subcritical_nonworsening": 11699
+    },
+    "45": {
+      "flips": 12487,
+      "analysis_set": 19270,
+      "flip_rate": 0.6480020757654386,
+      "by_run": {
+        "run_1785754965_28036": 1945,
+        "run_1785755965_44537": 1125,
+        "run_1785756364_37779": 872,
+        "run_1785756664_17215": 1861,
+        "run_1785757198_83975": 1834,
+        "run_1785757742_9445": 2227,
+        "run_1785758500_77660": 1233,
+        "run_1785758909_7977": 1390
+      },
+      "gain": {
+        "median": 0.25,
+        "p10": 0.09090909090909088,
+        "p90": 0.5384615384615384,
+        "sum": 3595.3815451343144
+      },
+      "body_ratio": {
+        "n": 12487,
+        "median": 0.7349291301535023,
+        "p10": 0.5240378470089649
+      },
+      "projectile_preserved": 12487,
+      "subcritical_nonworsening": 12487
+    }
+  },
+  "bars": {
+    "flip_rate": {
+      "value": 0.6480020757654386,
+      "bar": 0.2,
+      "pass": true
+    },
+    "run_coverage": {
+      "value": 8,
+      "bar": 7,
+      "pass": true
+    },
+    "loo_min": {
+      "value": 0.6412099243797262,
+      "bar": 0.18,
+      "pass": true
+    },
+    "loo_median": {
+      "value": 0.6478235103886865,
+      "bar": 0.2,
+      "pass": true
+    },
+    "max_run_share": {
+      "value": 0.17834547929847042,
+      "cap": 0.25,
+      "pass": true
+    },
+    "conditional_gain_median": {
+      "value": 0.25,
+      "bar": 0.1,
+      "pass": true
+    },
+    "integrated_gain": {
+      "value": 0.05473732881701594,
+      "bar": 0.02,
+      "pass": true
+    },
+    "body_ratio_median": {
+      "value": 0.7351247600767754,
+      "bar": 0.8,
+      "pass": false
+    },
+    "body_ratio_p10": {
+      "value": 0.5242873949685568,
+      "bar": 0.6,
+      "pass": false
+    },
+    "projectile_preserved": {
+      "value": 1.0,
+      "bar": 1.0,
+      "pass": true
+    },
+    "subcritical_nonworsening": {
+      "value": 1.0,
+      "bar": 1.0,
+      "pass": true
+    }
+  }
+}
