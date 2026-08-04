@@ -31,6 +31,13 @@ halving enemy health moved terminal wave **+7.375**; cutting enemy damage 25% di
 interpretable. **The agent does not die at D5 because it is fragile — it dies because it kills
 too slowly.** A defensive lever justified by *"D5 kills us"* is therefore **not licensed**.
 
+**Latest NS1 Gate 0 (§37, 2026-08-04):** a target-free danger-aware marginal-DPS shop override has
+enough structural surface (**100/409 = 24.45%**) but weak additive doses through `lambda = 4` flip
+only **63/409 = 15.40%**, below the fixed 20% intervention bar. All flips improve immediate DPS and
+the magnitude/planning proxies pass, so this is **score-margin-limited**, unlike the surface ceilings
+in §§30/36. No campaign is licensed. A mechanism-distinct constraint/lexicographic version remains
+an offline fork; simply extending lambda post hoc does not.
+
 **NS2 additionally contains a bootstrap.** D5 is *not* difficulty-gated —
 `max_selectable_difficulty` reads 5 for every character. But 7 characters are locked and every
 remaining unlock is behind *"win a run with character X"* (the stat gates are measured dead), so
