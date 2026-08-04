@@ -1,0 +1,111 @@
+{
+  "status": "FAIL",
+  "runs": [
+    "run_1785826116_89378",
+    "run_1785826737_53506",
+    "run_1785827267_71832",
+    "run_1785827488_46830"
+  ],
+  "identity": {
+    "run_1785826116_89378": {
+      "complete": 8887,
+      "unique": 8887,
+      "denominator": 8887,
+      "rate": 1.0
+    },
+    "run_1785826737_53506": {
+      "complete": 8253,
+      "unique": 8253,
+      "denominator": 8253,
+      "rate": 1.0
+    },
+    "run_1785827267_71832": {
+      "complete": 3174,
+      "unique": 3174,
+      "denominator": 3174,
+      "rate": 1.0
+    },
+    "run_1785827488_46830": {
+      "complete": 4222,
+      "unique": 4222,
+      "denominator": 4222,
+      "rate": 1.0
+    }
+  },
+  "state": {
+    "trigger_captures": 710,
+    "eligible_episodes": 708,
+    "active_future_steps": 8547,
+    "retained_steps": 8529,
+    "selected_steps": 8514,
+    "projectile_ok": 8514,
+    "body_ok": 8514,
+    "subcritical_ok": 8514,
+    "enemy_ok": 8514,
+    "override_steps": 6351,
+    "no_override_steps": 2178,
+    "suppressed_triggers": 1114,
+    "objective_complete_steps": 15,
+    "trigger_exclusion:no_matched_future": 2
+  },
+  "releases": {
+    "horizon": 690,
+    "revalidation_not_ready": 9,
+    "no_safe_candidate": 9
+  },
+  "temporal": {
+    "episodes": 708,
+    "duration": {
+      "p10": 0.6,
+      "median": 0.6,
+      "p90": 0.6
+    },
+    "reached": 690,
+    "horizon_rate": 0.9745762711864406,
+    "by_run": {
+      "run_1785826116_89378": 268,
+      "run_1785826737_53506": 235,
+      "run_1785827267_71832": 82,
+      "run_1785827488_46830": 105
+    },
+    "loo": [
+      0.9745958429561201,
+      0.974304068522484,
+      0.9759229534510433,
+      0.9733777038269551
+    ],
+    "largest_share": 0.3884180790960452
+  },
+  "authority": {
+    "retained": 8529,
+    "selected_steps": 8514,
+    "overrides": 6351,
+    "override_rate": 0.7446359479423145,
+    "median_override_advantage": 0.0,
+    "mean_all_advantage": 0.05769378635372659,
+    "invariants": {
+      "projectile_ok": 8514,
+      "body_ok": 8514,
+      "subcritical_ok": 8514,
+      "enemy_ok": 8514
+    }
+  },
+  "bars": {
+    "median_duration": true,
+    "horizon_rate": true,
+    "all_runs_contribute": true,
+    "loo_min": true,
+    "loo_median": true,
+    "largest_run_share": false,
+    "safety": true,
+    "override_rate": true,
+    "median_override_advantage": false,
+    "mean_all_advantage": true
+  },
+  "terminal_context": {
+    "run_1785826116_89378": 12,
+    "run_1785826737_53506": 11,
+    "run_1785827267_71832": 6,
+    "run_1785827488_46830": 7
+  }
+}

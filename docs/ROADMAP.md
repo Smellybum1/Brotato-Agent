@@ -97,6 +97,18 @@ however, contain only **885** non-overlapping stateful episodes versus the decla
 Verdict `INSUFFICIENT_INSTRUMENT`; the analyzer did not compute the latch endpoints. The fixed
 acquisition cannot be extended post hoc, and latch implementation/live treatment remain unlicensed.
 
+**§46 makes the persistence mechanism objective-based and fails Gate 0.** It retains the original
+threat identities for 0.60 seconds but recomputes the safest current heading every tick; no heading
+or angular window persists. Archive, identity, branch, and safety controls all pass. This repairs
+the temporal defect—**690/708 = 97.46%** of eligible episodes reach the horizon, with 97.34–97.59%
+leave-one-run-out rates—but two frozen bars fail. The largest run contributes **275/708 = 38.84%**
+against ≤35%, and median projected cohort advantage across **6,351/8,529** override steps is exactly
+**0.000** against ≥0.05. A post-result denominator check finds 2,420 positive, 3,805 zero, and 126
+negative override advantages. The coarse cohort objective plus safety-grid tie rule changes heading
+too often without improving engagement. The exact selector is closed; no implementation or live
+treatment is licensed. A strict-positive deadband would be mechanism-distinct but is now a
+discovery-derived hypothesis requiring new preregistered sealed evidence.
+
 **NS2 additionally contains a bootstrap.** D5 is *not* difficulty-gated —
 `max_selectable_difficulty` reads 5 for every character. But 7 characters are locked and every
 remaining unlock is behind *"win a run with character X"* (the stat gates are measured dead), so

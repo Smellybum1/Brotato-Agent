@@ -56,6 +56,7 @@ tells you whether a *different* mechanism on the same defect is still live.
 | **Route-conversion persistence** (§43) | valid `TRANSIENT_REVERSAL` diagnosis; temporal gate licensed | The 1,715 changes collapse into 1,241 episodes: median duration **0.051 s**, only **1/1,238** matched episodes lasts 0.60 s, and median executed forward progress is **0.377**. Projection calibration passes (median absolute error **0.071**, Spearman **0.685**). The controller replaces useful headings; another one-step dose is closed. |
 | **Safety-revalidated conversion latch, archive Gate 0** (§44) | `DATA_LIMITED`; all-exit instrument licensed, latch not closed | All §40/41 controls reproduce exactly and visible retained steps are safe **8,469/8,469**, but active-future candidate observability is only **9,400/12,429 = 75.63%** versus the fixed 90% adequacy bar. `baseline_kept` alone causes 2,854/4,039 conservative releases. The 73/3,985 horizon lower bound cannot be read as a mechanism null. |
 | **All-exit latch revalidation acquisition** (§45) | instrument qualified; `INSUFFICIENT_INSTRUMENT`, no latch result | Row parity is **215,901/215,901**, living `baseline_kept` readiness **15,457/15,457**, and active-future observability **6,242/6,248 = 99.904%**. But the fixed four runs yielded **885** stateful episodes against the preregistered 1,000 minimum. The analyzer stopped before latch bars; no fifth run or lowered boundary is allowed. |
+| **Original-cohort objective commitment** (§46) | fails Gate 0; exact selector closed | Objective persistence works (**690/708 = 97.46%** reach 0.60 s) and safety is **8,514/8,514**, but the largest run supplies **275/708 = 38.84%** against the 35% bar and median cohort advantage on **6,351** overrides is exactly **0.000** against +0.05. Post-result: 3,805/6,351 overrides are zero-gain. No live treatment. |
 | **Character selection** (§29) | excluded | ranger 0/16 despite a 2.4x D0 edge; cyborg 0/23 despite the largest offensive multiplier in the game. **Stat block does not predict win rate.** |
 | **Build / economy** | excluded | Same DPS, HP, weapons and materials-per-wave at D0 and D5 (matched pair, 16/arm). There is no economic starvation. |
 | **Idle materials** | not a problem | Post-shop balance is **13** at wave 9 against a 436 budget — it converts ~97%. |
@@ -74,12 +75,14 @@ at specific builds. They do **not** bound the size of the underlying deficit.
 1. **The in-range gap is real and unexplained.** A human player keeps **0.4417** of the living pack
    inside weapon range; the agent manages **0.2801** (d = 4.03, every human trial above every agent
    trial). Enemy presence is nearly identical, so this is a *conversion* difference, not exposure.
-   **Six live/offline lever families have failed to convert this gap.** §42 is the sharpest null:
+   **Seven live/offline lever families have failed to convert this gap.** §42 is the sharpest live null:
    1,715 delivered final-route changes produced only +0.0097 realised in-range. The gap itself is
    untouched. §43 now explains the mechanism: median conversion persistence is one 0.051-second
    capture and median 0.60-second forward execution is only 0.377, while the projection-calibration
-   bars pass. Temporal authority, not candidate availability or gross projection error, binds this
-   exact controller.
+   bars pass. §46 shows that retaining threat identity fixes persistence (690/708 horizons), but its
+   coarse objective changes direction without conditional benefit (median 0.000 across 6,351
+   overrides). Temporal authority bound the one-step controller; objective discrimination now binds
+   the exact cohort selector.
 2. **The decision layer is danger-blind.** Verified from source: the only occurrence of `danger` in
    the entire decision tree is the literal string `"item_dangerous_bunny"`. The agent plays D5 with a
    policy tuned at D0, and its wave constants assume 20-wave runs. §§37–38 tested two target-free
@@ -112,7 +115,13 @@ current-tick safety revalidation. §44's archive Gate 0 is `DATA_LIMITED`: candi
 was a default-inert all-exit revalidation instrument and fixed acquisition protocol. §45 qualified
 that instrument and raised observability to 99.904%, but its fixed cohort supplied only 885/1,000
 required stateful episodes. Per protocol, no latch result was computed and no top-up is allowed.
-The temporal latch remains unresolved; implementation and live treatment are unlicensed.
+§46 then tested a mechanism-distinct objective latch on the fixed archive: retain original threat
+identities for 0.60 seconds but recompute the safest heading each tick. Temporal persistence passed
+strongly (690/708 horizons), but the gate failed concentration (38.84% from one run) and conditional
+benefit (median override advantage 0.000; 3,805/6,351 overrides had zero gain). The exact cohort
+selector is closed and live treatment remains unlicensed. A strict-positive-advantage deadband is
+only a discovery lead; because §46 revealed it, it needs new preregistered sealed evidence rather
+than relaxed reuse of these four runs.
 
 ## 5. ⭐ The methodology — this is the most valuable thing here
 
