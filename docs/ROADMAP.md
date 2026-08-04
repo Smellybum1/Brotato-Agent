@@ -46,6 +46,14 @@ curve is `1.75×` the D0 target, but target-backed extra search at shop exit fai
 **39%/98%** of remaining gold. The `2.63×` sensitivity exposes no additional exits. No live screen is
 licensed; liquidity and search yield bind before target scale.
 
+**§40 returned to the open combat-conversion gap with a genuinely joint route mechanism.** PACK 80
+plus lexicographic projected in-range selection flips **15,274/23,501 = 64.99%** of analysable
+wave-1–11 ranked decisions, with median conditional gain **0.25** and integrated gain **0.065** across
+all route ticks. It nevertheless fails the predeclared geometry veto: median/p10 body-clearance
+retention **0.726/0.516**, plus 10 newly worse subcritical choices. The unsafe controller is closed;
+conversion authority is measured in the recorded action surface. The next offline gate is the fixed
+0.80 clearance-retention/subcritical guard already declared by §40, not another dose sweep.
+
 **NS2 additionally contains a bootstrap.** D5 is *not* difficulty-gated —
 `max_selectable_difficulty` reads 5 for every character. But 7 characters are locked and every
 remaining unlock is behind *"win a run with character X"* (the stat gates are measured dead), so

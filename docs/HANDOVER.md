@@ -50,6 +50,7 @@ tells you whether a *different* mechanism on the same defect is still live.
 | **Shop valuation — danger-aware marginal DPS** (§37) | weak additive doses `lambda <= 4` fail Gate 0; broader defect still live | Higher-DPS surface passes at **100/409 = 24.45%**, but the strongest fixed dose flips only **63/409 = 15.40%** against 20%. Every flip is positive and magnitude/planning bars pass: this is **score-margin-limited, not surface-limited**. Do not merely extend lambda post hoc; a different constraint mechanism remains viable. |
 | **Shop valuation — positive-score lexicographic DPS** (§38) | fails Gate 0 narrowly; do not shave the boundary | Making DPS decisive among incumbent-positive candidates flips **78/409 = 19.07%**, four short of 20%; median leave-one-run-out is likewise 19.04%. All sign, magnitude, planning, coverage and concentration bars pass, but selected score retention already falls as low as 1.28%. Relaxing the positive boundary after seeing this would be threshold fishing. |
 | **Target-backed extra search at shop exit** (§39) | fails Gate 0 on four independent axes | The explicit bootstrap target is `1.75×` the D0 curve, but only **22/133 = 16.54%** of waves 1–10 exits can afford one more reroll after locks; useful observed next-board yield is **26/139 = 18.71%**; median/p90 reroll cost is **39%/98%** of remaining gold. Raising the target to `2.63×` changes zero actionable exits: post-shop liquidity and search yield bind. |
+| **Joint route admission + in-range selection** (§40) | unguarded controller fails the geometry-safety veto; guarded conversion remains live | PACK 80 plus lexicographic conversion flips **15,274/23,501 = 64.99%** with median gain **0.25** and integrated gain **0.065**, but body-clearance retention is median/p10 **0.726/0.516** and 10 choices newly worsen subcritical clearance. This proves conversion authority exists; it does not license the unsafe controller. |
 | **Character selection** (§29) | excluded | ranger 0/16 despite a 2.4x D0 edge; cyborg 0/23 despite the largest offensive multiplier in the game. **Stat block does not predict win rate.** |
 | **Build / economy** | excluded | Same DPS, HP, weapons and materials-per-wave at D0 and D5 (matched pair, 16/arm). There is no economic starvation. |
 | **Idle materials** | not a problem | Post-shop balance is **13** at wave 9 against a 436 budget — it converts ~97%. |
@@ -85,11 +86,12 @@ at specific builds. They do **not** bound the size of the underlying deficit.
    explicitly as `1.314 × 1/0.75 ≈ 1.75` times the D0 curve. It is reusable as an assumption, not a
    measured sufficient trajectory; the target-backed exit-search mechanism itself failed Gate 0.
 
-**Direction chosen by the operator on 2026-08-04:** price the danger-aware decision layer, then the
-bootstrap, offline. §§37–39 now close both target-free buy mechanisms and the target-backed extra
-search mechanism for campaign purposes. No campaign is licensed. Any next clearance mechanism must
-either allocate offense earlier through a genuinely different action surface or attack the still-open
-combat-conversion/in-range gap; it may not re-label these closed rules with the `1.75×` target.
+**Direction chosen by the operator on 2026-08-04:** price the danger-aware decision layer, bootstrap,
+and combat conversion offline. §§37–39 close both target-free buy mechanisms and target-backed extra
+search. §40 then found decisive route-level conversion authority but failed its predeclared
+contact-clearance veto. No campaign is licensed. The next offline mechanism is a per-decision
+clearance-retention guard using §40's already-preregistered 0.80 and subcritical constraints; it is
+not another PACK/weight dose and must retain the unchanged exposure and gain bars.
 
 ## 5. ⭐ The methodology — this is the most valuable thing here
 
