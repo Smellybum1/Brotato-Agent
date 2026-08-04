@@ -72,6 +72,19 @@ This diagnostic does not rescue the gate. It identifies the defect in the exact 
 manufactures many direction changes without an engagement improvement. A strict-improvement
 deadband would be a different mechanism and cannot be retrofitted to §46's result.
 
+As a discovery-only screen for that possible next mechanism, retaining only strictly positive
+overrides leaves **2,420/8,529 = 28.37%** of all retained steps. The surface is present in every run:
+
+| run | positive / retained | rate | median positive advantage |
+|---|---:|---:|---:|
+| `run_1785826116_89378` | 905/3,318 | 27.28% | 0.1667 |
+| `run_1785826737_53506` | 806/2,905 | 27.75% | 0.1623 |
+| `run_1785827267_71832` | 297/1,013 | 29.32% | 0.2000 |
+| `run_1785827488_46830` | 412/1,293 | 31.86% | 0.2000 |
+
+These numbers are hypothesis-generating only. They were computed after the §46 verdict and therefore
+must not be treated as a passed gate or reused as confirmatory evidence.
+
 ## Interpretation
 
 The prediction was **PASS** and was wrong. Objective identity does repair the temporal failure of
