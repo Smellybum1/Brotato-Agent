@@ -80,6 +80,15 @@ latch with current-tick projectile/body/enemy-slack revalidation. It must first 
 preregistered offline availability and safety gate; §43 licenses neither implementation nor live
 trials.
 
+**§44 cannot yet qualify or close the temporal latch because the archive instrument is incomplete.**
+The stateful replay exactly reproduces §41 and keeps **8,469/8,469** visible retained steps inside all
+five safety rules, with **7,548/8,469 = 89.13%** materially overriding the recorded route. But only
+**9,400/12,429 = 75.63%** of active future captures are reconstructable: `baseline_kept` returns
+before candidate rows are recorded and forces **2,854/4,039** conservative releases. The lower bound
+reaches 0.60 s only **73/3,985** times, but the preregistered <90% rule makes this `DATA_LIMITED`, not
+a policy null. The next licensed step is an observational, default-inert all-exit candidate instrument
+and fixed acquisition protocol. Latch implementation and live treatment remain unlicensed.
+
 **NS2 additionally contains a bootstrap.** D5 is *not* difficulty-gated —
 `max_selectable_difficulty` reads 5 for every character. But 7 characters are locked and every
 remaining unlock is behind *"win a run with character X"* (the stat gates are measured dead), so

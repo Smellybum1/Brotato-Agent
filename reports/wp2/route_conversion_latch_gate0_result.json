@@ -1,0 +1,291 @@
+{
+  "status": "DATA_LIMITED",
+  "control_faults": [],
+  "policy": {
+    "horizon_ms": 600,
+    "future_tolerance_ms": 75,
+    "angle_limit_deg": 15.1,
+    "body_retention": 0.8
+  },
+  "controls": {
+    "selected_runs": [
+      "run_1785754965_28036",
+      "run_1785755965_44537",
+      "run_1785756364_37779",
+      "run_1785756664_17215",
+      "run_1785757198_83975",
+      "run_1785757742_9445",
+      "run_1785758500_77660",
+      "run_1785758909_7977"
+    ],
+    "route_total": 65662,
+    "ranked_total": 25788,
+    "analysis_set": 23501,
+    "stream": {
+      "raw": 65662,
+      "fresh": 65662
+    },
+    "reproduction": {
+      "guarded_flips": 11457,
+      "unguarded_flips": 15274,
+      "disabled_changes": 0
+    },
+    "rates": {
+      "vector": 0.9910209931708962,
+      "floor": 1.0,
+      "admission": 0.9997022416946701,
+      "selection": 0.9999574504297507
+    },
+    "trigger_by_run": {
+      "run_1785754965_28036": 655,
+      "run_1785755965_44537": 359,
+      "run_1785756364_37779": 283,
+      "run_1785756664_17215": 610,
+      "run_1785757198_83975": 588,
+      "run_1785757742_9445": 687,
+      "run_1785758500_77660": 423,
+      "run_1785758909_7977": 434
+    },
+    "nontrigger_by_run": {
+      "run_1785754965_28036": 1513,
+      "run_1785755965_44537": 1003,
+      "run_1785756364_37779": 682,
+      "run_1785756664_17215": 1585,
+      "run_1785757198_83975": 1544,
+      "run_1785757742_9445": 1576,
+      "run_1785758500_77660": 991,
+      "run_1785758909_7977": 1164
+    },
+    "retained_invariants": {
+      "projectile_ok": {
+        "ok": 8469,
+        "n": 8469
+      },
+      "body_ok": {
+        "ok": 8469,
+        "n": 8469
+      },
+      "subcritical_ok": {
+        "ok": 8469,
+        "n": 8469
+      },
+      "enemy_ok": {
+        "ok": 8469,
+        "n": 8469
+      },
+      "angle_ok": {
+        "ok": 8469,
+        "n": 8469
+      }
+    }
+  },
+  "observability": {
+    "reconstructable": 9400,
+    "active_future": 12429,
+    "rate": 0.7562957599163247,
+    "bar": 0.9,
+    "by_run": {
+      "run_1785754965_28036": {
+        "reconstructable": 1486,
+        "active_future": 1959,
+        "rate": 0.7585502807554875
+      },
+      "run_1785755965_44537": {
+        "reconstructable": 750,
+        "active_future": 1032,
+        "rate": 0.7267441860465116
+      },
+      "run_1785756364_37779": {
+        "reconstructable": 698,
+        "active_future": 910,
+        "rate": 0.7670329670329671
+      },
+      "run_1785756664_17215": {
+        "reconstructable": 1451,
+        "active_future": 1912,
+        "rate": 0.7588912133891214
+      },
+      "run_1785757198_83975": {
+        "reconstructable": 1378,
+        "active_future": 1813,
+        "rate": 0.7600661886376172
+      },
+      "run_1785757742_9445": {
+        "reconstructable": 1603,
+        "active_future": 2131,
+        "rate": 0.7522290004692632
+      },
+      "run_1785758500_77660": {
+        "reconstructable": 971,
+        "active_future": 1282,
+        "rate": 0.7574102964118564
+      },
+      "run_1785758909_7977": {
+        "reconstructable": 1063,
+        "active_future": 1390,
+        "rate": 0.7647482014388489
+      }
+    },
+    "releases": {
+      "unobservable_baseline_kept": 2854,
+      "no_near_safe_candidate": 931,
+      "unobservable_ranked": 158,
+      "horizon": 73,
+      "unobservable_no_threats": 17,
+      "missing_future_window": 6
+    }
+  },
+  "temporal": {
+    "episodes": 4039,
+    "duration": {
+      "p10": 0.051,
+      "median": 0.102,
+      "p90": 0.34920000000000023
+    },
+    "fraction_ge_030": 0.14533300321861847,
+    "future_eligible": 3985,
+    "reached_horizon": 73,
+    "horizon_rate": 0.01831869510664994,
+    "contributing_runs": 8,
+    "leave_one_run_out": [
+      {
+        "left_out_run": "run_1785754965_28036",
+        "reached": 56,
+        "eligible": 3330,
+        "rate": 0.016816816816816817
+      },
+      {
+        "left_out_run": "run_1785755965_44537",
+        "reached": 64,
+        "eligible": 3644,
+        "rate": 0.01756311745334797
+      },
+      {
+        "left_out_run": "run_1785756364_37779",
+        "reached": 71,
+        "eligible": 3715,
+        "rate": 0.01911170928667564
+      },
+      {
+        "left_out_run": "run_1785756664_17215",
+        "reached": 60,
+        "eligible": 3376,
+        "rate": 0.017772511848341232
+      },
+      {
+        "left_out_run": "run_1785757198_83975",
+        "reached": 67,
+        "eligible": 3406,
+        "rate": 0.019671168526130357
+      },
+      {
+        "left_out_run": "run_1785757742_9445",
+        "reached": 62,
+        "eligible": 3306,
+        "rate": 0.018753781004234724
+      },
+      {
+        "left_out_run": "run_1785758500_77660",
+        "reached": 66,
+        "eligible": 3566,
+        "rate": 0.018508132361189006
+      },
+      {
+        "left_out_run": "run_1785758909_7977",
+        "reached": 65,
+        "eligible": 3552,
+        "rate": 0.01829954954954955
+      }
+    ],
+    "largest_run_share": 0.2328767123287671
+  },
+  "authority": {
+    "retained_steps": 8469,
+    "override_steps": 7548,
+    "override_rate": 0.8912504427913567,
+    "suppressed_overlapping_triggers": 7415,
+    "angle": {
+      "p10": 0.0,
+      "median": 0.0,
+      "p90": 14.999328942043041
+    },
+    "body_ratio": {
+      "p10": 0.8494587452900761,
+      "median": 1.0,
+      "p90": 1.4923473100883482
+    },
+    "projected_inrange_delta": {
+      "p10": 0.0,
+      "median": 0.15384615384615385,
+      "p90": 0.4666666666666667
+    },
+    "recorded_command_angle": {
+      "p10": 0.0,
+      "median": 104.99927221917262,
+      "p90": 165.00067105795696
+    }
+  },
+  "reported_context": {
+    "trigger_by_wave": {
+      "1": 133,
+      "2": 132,
+      "3": 226,
+      "4": 258,
+      "5": 445,
+      "6": 445,
+      "7": 658,
+      "8": 480,
+      "9": 543,
+      "10": 471,
+      "11": 248
+    },
+    "suppressed_by_run": {
+      "run_1785754965_28036": 1111,
+      "run_1785755965_44537": 603,
+      "run_1785756364_37779": 579,
+      "run_1785756664_17215": 1156,
+      "run_1785757198_83975": 1104,
+      "run_1785757742_9445": 1292,
+      "run_1785758500_77660": 781,
+      "run_1785758909_7977": 789
+    },
+    "suppressed_by_wave": {
+      "1": 338,
+      "2": 344,
+      "3": 515,
+      "4": 345,
+      "5": 870,
+      "6": 742,
+      "7": 1305,
+      "8": 751,
+      "9": 1049,
+      "10": 864,
+      "11": 292
+    },
+    "initial_gain": {
+      "p10": 0.07142857142857145,
+      "median": 0.18181818181818188,
+      "p90": 0.4736842105263158
+    },
+    "terminal_waves_context_only": {
+      "run_1785754965_28036": 18,
+      "run_1785755965_44537": 9,
+      "run_1785756364_37779": 7,
+      "run_1785756664_17215": 11,
+      "run_1785757198_83975": 11,
+      "run_1785757742_9445": 14,
+      "run_1785758500_77660": 9,
+      "run_1785758909_7977": 9
+    }
+  },
+  "bars": {
+    "median_duration": false,
+    "horizon_rate": false,
+    "contributing_runs": true,
+    "loo_min": false,
+    "loo_median": false,
+    "largest_run_share": true,
+    "safety_invariants": true,
+    "override_rate": true
+  }
+}
