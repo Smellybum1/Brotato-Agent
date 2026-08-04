@@ -70,6 +70,16 @@ unsafe; its one-step gains simply do not persist into realised engagement geomet
 campaign is licensed. Retuning PACK, retention or deadband on these runs is closed; any next combat
 fork must price trajectory persistence or a direct clearance consequence with a new instrument.
 
+**§43 identifies trajectory persistence as the failed mechanism.** Across the four fixed §42
+treatment runs, 1,715 applied changes formed 1,241 episodes; **1,238/1,241** had a matched +0.60 s
+future. Median episode duration was **0.051 s**, only **1/1,238** persisted for 0.60 s, and median
+forward execution along the initial heading was **0.377** against the frozen ≥0.50 bar. The
+one-step projection passed its separate calibration bars (median absolute error **0.071**, Spearman
+**0.685**). Verdict: `TRANSIENT_REVERSAL`. The next combat fork is a bounded temporal conversion
+latch with current-tick projectile/body/enemy-slack revalidation. It must first pass a separately
+preregistered offline availability and safety gate; §43 licenses neither implementation nor live
+trials.
+
 **NS2 additionally contains a bootstrap.** D5 is *not* difficulty-gated —
 `max_selectable_difficulty` reads 5 for every character. But 7 characters are locked and every
 remaining unlock is behind *"win a run with character X"* (the stat gates are measured dead), so

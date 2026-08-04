@@ -1,0 +1,193 @@
+{
+  "status": "PASS",
+  "labels": [
+    "TRANSIENT_REVERSAL"
+  ],
+  "control_faults": [],
+  "runs": [
+    "run_1785820603_11732",
+    "run_1785821156_74146",
+    "run_1785822002_63879",
+    "run_1785823323_53547"
+  ],
+  "controls": {
+    "capture_counters": {
+      "raw_captures": 26346,
+      "fresh_captures": 26346,
+      "stale_captures": 0,
+      "nonincreasing_ts": 0,
+      "applied": 1715,
+      "nonconversion_routes": 24631,
+      "heading_seen": 1715,
+      "heading_match": 1715,
+      "living_threats": 229688,
+      "identified_threats": 229688,
+      "missing_instance_id": 0,
+      "duplicate_id_captures": 0,
+      "parse_errors": 0
+    },
+    "heading_match_rate": 1.0,
+    "instance_id_rate": 1.0,
+    "future_coverage": 0.9975825946817083,
+    "per_run_exclusions": {
+      "run_1785820603_11732": {
+        "episode_starts": 484,
+        "missing_start_inputs": 0,
+        "missing_future_600": 0,
+        "matched_future_600": 484,
+        "matched_future_200": 484,
+        "cohort_bookkeeping_fail": 0,
+        "survivor_zero": 6
+      },
+      "run_1785821156_74146": {
+        "episode_starts": 136,
+        "missing_start_inputs": 0,
+        "missing_future_600": 1,
+        "matched_future_600": 135,
+        "matched_future_200": 135,
+        "cohort_bookkeeping_fail": 0,
+        "survivor_zero": 6
+      },
+      "run_1785822002_63879": {
+        "episode_starts": 442,
+        "missing_start_inputs": 0,
+        "missing_future_600": 0,
+        "matched_future_600": 442,
+        "matched_future_200": 442,
+        "cohort_bookkeeping_fail": 0,
+        "survivor_zero": 12
+      },
+      "run_1785823323_53547": {
+        "episode_starts": 179,
+        "missing_start_inputs": 0,
+        "missing_future_600": 2,
+        "matched_future_600": 177,
+        "matched_future_200": 176,
+        "cohort_bookkeeping_fail": 0,
+        "survivor_zero": 4
+      }
+    }
+  },
+  "temporal": {
+    "episodes": 1238,
+    "duration": {
+      "p10": 0.051,
+      "median": 0.051,
+      "p90": 0.102
+    },
+    "fraction_ge_030": 0.008885298869143781,
+    "fraction_ge_060": 0.0008077544426494346,
+    "transient": true
+  },
+  "execution": {
+    "forward": {
+      "p10": -0.3160370720037661,
+      "median": 0.37695869822136674,
+      "p90": 0.8963156492107078
+    },
+    "lateral": {
+      "p10": 0.05282946324568921,
+      "median": 0.28446467460703556,
+      "p90": 0.643774732420222
+    },
+    "reversal": true
+  },
+  "calibration": {
+    "n": 1238,
+    "median_absolute_error": 0.07144285714285714,
+    "spearman": 0.6854877066476502,
+    "resolved_share": {
+      "p10": 0.08695652173913043,
+      "median": 0.25,
+      "p90": 0.5
+    },
+    "survivor_in_range": {
+      "p10": 0.125,
+      "median": 0.6,
+      "p90": 1.0
+    },
+    "miscalibrated": false
+  },
+  "reported_context": {
+    "all_capture_conversion": {
+      "numerator": 1715,
+      "denominator": 26346,
+      "rate": 0.06509527062931754
+    },
+    "episode_counts": {
+      "run_1785820603_11732": 484,
+      "run_1785821156_74146": 136,
+      "run_1785822002_63879": 442,
+      "run_1785823323_53547": 179
+    },
+    "projected_gain_by_duration_band": {
+      "lt_030": {
+        "n": 1227,
+        "gain": {
+          "p10": 0.0667,
+          "median": 0.1538,
+          "p90": 0.4
+        }
+      },
+      "ge_030_lt_060": {
+        "n": 10,
+        "gain": {
+          "p10": 0.08085,
+          "median": 0.25,
+          "p90": 0.4349999999999999
+        }
+      },
+      "ge_060": {
+        "n": 1,
+        "gain": {
+          "p10": 0.125,
+          "median": 0.125,
+          "p90": 0.125
+        }
+      }
+    },
+    "heading_dot_200": {
+      "n": 1237,
+      "distribution": {
+        "p10": -0.8660255376565422,
+        "median": 0.7071068613490586,
+        "p90": 1.0
+      }
+    },
+    "heading_dot_600": {
+      "n": 1238,
+      "distribution": {
+        "p10": -0.9659258492011171,
+        "median": 0.08552639898029989,
+        "p90": 0.9659258580035675
+      }
+    },
+    "cohort_size": {
+      "n": 1238,
+      "distribution": {
+        "p10": 4.0,
+        "median": 10.0,
+        "p90": 21.0
+      }
+    },
+    "wave_counts": {
+      "1": 53,
+      "2": 57,
+      "3": 122,
+      "4": 124,
+      "5": 142,
+      "6": 163,
+      "7": 134,
+      "8": 102,
+      "9": 151,
+      "10": 155,
+      "11": 35
+    },
+    "terminal_waves_context_only": {
+      "run_1785820603_11732": 11,
+      "run_1785821156_74146": 6,
+      "run_1785822002_63879": 10,
+      "run_1785823323_53547": 6
+    }
+  }
+}
