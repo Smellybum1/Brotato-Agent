@@ -52,15 +52,16 @@ tells you whether a *different* mechanism on the same defect is still live.
 | **Target-backed extra search at shop exit** (§39) | fails Gate 0 on four independent axes | The explicit bootstrap target is `1.75×` the D0 curve, but only **22/133 = 16.54%** of waves 1–10 exits can afford one more reroll after locks; useful observed next-board yield is **26/139 = 18.71%**; median/p90 reroll cost is **39%/98%** of remaining gold. Raising the target to `2.63×` changes zero actionable exits: post-shop liquidity and search yield bind. |
 | **Joint route admission + in-range selection** (§40) | unguarded controller fails the geometry-safety veto; guarded conversion remains live | PACK 80 plus lexicographic conversion flips **15,274/23,501 = 64.99%** with median gain **0.25** and integrated gain **0.065**, but body-clearance retention is median/p10 **0.726/0.516** and 10 choices newly worsen subcritical clearance. This proves conversion authority exists; it does not license the unsafe controller. |
 | **Clearance-guarded route conversion** (§41) | **passes Gate 0; implementation + mediator screen licensed** | The already-preregistered 0.80 retention/subcritical guard keeps **11,457/23,501 = 48.75%** flips, median gain **0.222**, integrated gain **0.0461**, and preserves projectile/body/subcritical rules **11,457/11,457**. It retains 75.01% of §40's conversion authority without its geometry violation. Survival benefit remains unmeasured. |
+| **Live clearance-guarded conversion** (§42) | clean mediator null; no survival campaign | Treatment changed the final route **1,715/9,026 = 19.00%** of ranked opportunities across **4/4** runs with median projected gain **0.1538** and **0/1,715** guard violations, but realised in-range moved only **+0.0097** against the fixed +0.05 bar (exact permutation **p = 0.9429**). Both low-HP measures improved. The local one-step gains do not persist into engagement geometry; this is dynamics-limited, not unsafe or undelivered. |
 | **Character selection** (§29) | excluded | ranger 0/16 despite a 2.4x D0 edge; cyborg 0/23 despite the largest offensive multiplier in the game. **Stat block does not predict win rate.** |
 | **Build / economy** | excluded | Same DPS, HP, weapons and materials-per-wave at D0 and D5 (matched pair, 16/arm). There is no economic starvation. |
 | **Idle materials** | not a problem | Post-shop balance is **13** at wave 9 against a 436 budget — it converts ~97%. |
 | **Weapon tier progression** | works | 293 combine events across 64/67 runs. |
 
 ⇒ **No parameter currently exposed in either the movement policy or the purchasing policy changes D5
-behaviour enough to license a campaign.** The next move has to be structural. §37 is important nuance:
-danger-aware DPS prioritization has enough surface, but a weak additive score dose does not cross the
-predeclared intervention bar.
+behaviour enough to license a campaign.** The next move has to be structural. §37 showed shop surface
+without enough score authority; §42 showed route authority without persistent realised geometry.
+Those are different failure mechanisms and neither is repaired by a larger sample of the same policy.
 
 ⚠️ **Scope this honestly.** These bound the *reachability of specific levers*, mostly on ranger/mutant
 at specific builds. They do **not** bound the size of the underlying deficit.
@@ -70,7 +71,9 @@ at specific builds. They do **not** bound the size of the underlying deficit.
 1. **The in-range gap is real and unexplained.** A human player keeps **0.4417** of the living pack
    inside weapon range; the agent manages **0.2801** (d = 4.03, every human trial above every agent
    trial). Enemy presence is nearly identical, so this is a *conversion* difference, not exposure.
-   **Five levers have failed to convert this gap. The gap itself is untouched.**
+   **Six live/offline lever families have failed to convert this gap.** §42 is the sharpest null:
+   1,715 delivered final-route changes produced only +0.0097 realised in-range. The gap itself is
+   untouched.
 2. **The decision layer is danger-blind.** Verified from source: the only occurrence of `danger` in
    the entire decision tree is the literal string `"item_dangerous_bunny"`. The agent plays D5 with a
    policy tuned at D0, and its wave constants assume 20-wave runs. §§37–38 tested two target-free
@@ -91,8 +94,11 @@ at specific builds. They do **not** bound the size of the underlying deficit.
 and combat conversion offline. §§37–39 close both target-free buy mechanisms and target-backed extra
 search. §40 found decisive route-level conversion authority but failed its contact-clearance veto;
 §41 then applied the already-preregistered 0.80/subcritical guard and **passed every offline bar**.
-The exact guarded controller is licensed for implementation and a separately preregistered
-in-range/low-HP mediator screen. It is not yet licensed as a survival improvement or D5 win policy.
+§42 completed the separately preregistered live mediator screen and returned a clean null:
+behavioural delivery and every live guard passed, but realised in-range improved only +0.0097
+(p = 0.9429). No survival campaign is licensed. The exact one-step controller is closed; a future
+combat fork must price trajectory persistence or a direct clearance consequence rather than retune
+its fixed doses.
 
 ## 5. ⭐ The methodology — this is the most valuable thing here
 

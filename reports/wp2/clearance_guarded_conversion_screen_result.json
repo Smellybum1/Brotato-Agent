@@ -1,0 +1,145 @@
+{
+  "status": "INERT_OR_TOO_SMALL",
+  "reason": "realised in-range primary failed",
+  "validity_faults": [],
+  "delivery_faults": [],
+  "primary": {
+    "control": [
+      0.3390516555567245,
+      0.3175276254824465,
+      0.4052463229018689,
+      0.3958740155454525
+    ],
+    "treatment": [
+      0.5326967556431604,
+      0.2936015457673977,
+      0.38892707765169054,
+      0.28136922015989047
+    ],
+    "delta": 0.009723744933911704,
+    "permutation_p": 0.9428571428571428,
+    "pass": false
+  },
+  "safety": {
+    "low_hp": {
+      "control": [
+        0.013605442176870748,
+        0.029741251115296918,
+        0.0626538146021329,
+        0.036653551459929594
+      ],
+      "treatment": [
+        0.04216371863430687,
+        0.002748625687156422,
+        0.021802836713163756,
+        0.002445585717779408
+      ],
+      "delta": -0.01837332315045593
+    },
+    "hp_auc": {
+      "control": [
+        0.008577931096090908,
+        0.018304245130853585,
+        0.043937792386315816,
+        0.024228618761648356
+      ],
+      "treatment": [
+        0.029013387814152625,
+        0.001374312843578211,
+        0.015075707388173291,
+        0.0014673514306676448
+      ],
+      "delta": -0.012029456974584223
+    }
+  },
+  "safety_pass": true,
+  "delivery": {
+    "applied": 1715,
+    "gain_n": 1715,
+    "gain_median": 0.1538,
+    "gain_violations": 0,
+    "body_violations": 0
+  },
+  "context": [
+    {
+      "slot": 1,
+      "arm": "C",
+      "run_id": "run_1785820106_59147",
+      "result": "defeat",
+      "last_wave": 10,
+      "duration_ms": 486971,
+      "damage_taken": 45,
+      "wave11_captures": 0
+    },
+    {
+      "slot": 2,
+      "arm": "T",
+      "run_id": "run_1785820603_11732",
+      "result": "defeat",
+      "last_wave": 11,
+      "duration_ms": 541559,
+      "damage_taken": 75,
+      "wave11_captures": 884
+    },
+    {
+      "slot": 3,
+      "arm": "T",
+      "run_id": "run_1785821156_74146",
+      "result": "defeat",
+      "last_wave": 6,
+      "duration_ms": 225457,
+      "damage_taken": 9,
+      "wave11_captures": 0
+    },
+    {
+      "slot": 4,
+      "arm": "C",
+      "run_id": "run_1785821392_75205",
+      "result": "defeat",
+      "last_wave": 12,
+      "duration_ms": 599313,
+      "damage_taken": 55,
+      "wave11_captures": 1246
+    },
+    {
+      "slot": 5,
+      "arm": "T",
+      "run_id": "run_1785822002_63879",
+      "result": "defeat",
+      "last_wave": 10,
+      "duration_ms": 471077,
+      "damage_taken": 34,
+      "wave11_captures": 0
+    },
+    {
+      "slot": 6,
+      "arm": "C",
+      "run_id": "run_1785822483_77431",
+      "result": "defeat",
+      "last_wave": 11,
+      "duration_ms": 547623,
+      "damage_taken": 112,
+      "wave11_captures": 896
+    },
+    {
+      "slot": 7,
+      "arm": "C",
+      "run_id": "run_1785823041_50632",
+      "result": "defeat",
+      "last_wave": 7,
+      "duration_ms": 271503,
+      "damage_taken": 12,
+      "wave11_captures": 0
+    },
+    {
+      "slot": 8,
+      "arm": "T",
+      "run_id": "run_1785823323_53547",
+      "result": "defeat",
+      "last_wave": 6,
+      "duration_ms": 235866,
+      "damage_taken": 9,
+      "wave11_captures": 0
+    }
+  ]
+}

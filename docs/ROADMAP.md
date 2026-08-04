@@ -61,6 +61,15 @@ subcritical rules. Every wave 1–11 retains a nontrivial surface, including **5
 wave 11. Exact implementation plus an in-range/low-HP mediator screen is licensed; survival benefit
 is not yet measured.
 
+**§42 rejects the live policy at the mediator screen.** Delivery was strong and interpretable:
+**1,715/9,026 = 19.00%** live ranked opportunities changed across **4/4** treatment runs, median
+projected gain was **0.1538**, and the live guard had **0/1,715** violations. Nevertheless realised
+wave-1–11 in-range fraction moved only **+0.0097** against the fixed +0.05 bar (exact permutation
+**p = 0.9429**). Low-HP exposure and HP-deficit AUC both decreased, so the policy is not rejected as
+unsafe; its one-step gains simply do not persist into realised engagement geometry. No survival
+campaign is licensed. Retuning PACK, retention or deadband on these runs is closed; any next combat
+fork must price trajectory persistence or a direct clearance consequence with a new instrument.
+
 **NS2 additionally contains a bootstrap.** D5 is *not* difficulty-gated —
 `max_selectable_difficulty` reads 5 for every character. But 7 characters are locked and every
 remaining unlock is behind *"win a run with character X"* (the stat gates are measured dead), so
