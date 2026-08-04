@@ -239,6 +239,23 @@ def run_result(run_id: str, simulation: dict) -> dict:
     }
 
 
+def branch_summary(run_id: str, simulation: dict) -> dict:
+    counters = simulation["counters"]
+    return {
+        "run_id": run_id,
+        "eligible_episodes": counters["eligible_episodes"],
+        "retained_steps": counters["retained_steps"],
+        "strict_overrides": counters["strict_overrides"],
+        "deadband_retained": counters["deadband_retained"],
+        "objective_complete_steps": counters["objective_complete_steps"],
+        "deadband_correct": counters["deadband_correct"],
+        "decision_steps": counters["decision_steps"],
+        "trigger_exclusions": {
+            key: value for key, value in counters.items() if key.startswith("trigger_exclusion:")
+        },
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -271,12 +288,14 @@ def main() -> int:
         return 2
 
     simulations = {run_id: simulate_run(stream) for run_id, stream in streams.items()}
-    per_run = {run_id: run_result(run_id, simulations[run_id]) for run_id in streams}
+    branch_by_run = {
+        run_id: branch_summary(run_id, simulations[run_id]) for run_id in streams
+    }
     branch_faults = []
     print("\n" + "=" * 88)
     print("STEP 2 — EPISODE, STEP, AND BRANCH CONTROLS")
     print("=" * 88)
-    for run_id, result in per_run.items():
+    for run_id, result in branch_by_run.items():
         sim = simulations[run_id]
         counters = sim["counters"]
         print(
@@ -302,12 +321,13 @@ def main() -> int:
             "status": "VOID",
             "stage": "branch_controls",
             "faults": branch_faults,
-            "runs": per_run,
+            "runs": branch_by_run,
         }
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
         return 2
 
+    per_run = {run_id: run_result(run_id, simulations[run_id]) for run_id in streams}
     duration_bars = [result["duration"]["median"] >= 0.30 for result in per_run.values()]
     horizon_bars = [result["horizon_rate"] >= 0.25 for result in per_run.values()]
     strict_rates = [result["strict_override_rate"] for result in per_run.values()]

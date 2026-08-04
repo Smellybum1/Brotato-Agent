@@ -47,6 +47,12 @@ def test_threshold_is_exact_and_not_a_sweep():
 def test_controls_and_branches_precede_result():
     text = SCRIPT.read_text(encoding="utf-8")
     assert text.index("STEP 1 —") < text.index("STEP 2 —") < text.index("STEP 3 —")
+    branch_return = text.index('"stage": "branch_controls"')
+    endpoint_computation = text.index(
+        "per_run = {run_id: run_result(run_id, simulations[run_id]) for run_id in streams}"
+    )
+    assert branch_return < endpoint_computation
+    assert '"runs": branch_by_run' in text
     assert 'value >= 0.20 for value in strict_rates' in text
     assert 'value >= 0.02 for value in integrated' in text
 
