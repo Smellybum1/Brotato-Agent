@@ -14,7 +14,7 @@ import os
 import random
 from collections import Counter, defaultdict
 
-ROOT = r"C:/Codex/Brotato Agent"
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 LEDGER = os.path.join(ROOT, ".tmp/winrate/ledger.jsonl")
 OUT_TXT = os.path.join(ROOT, ".tmp/winrate/estimates.txt")
 OUT_JSON = os.path.join(ROOT, ".tmp/winrate/estimates.json")

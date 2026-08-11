@@ -13,7 +13,8 @@ RUNS = os.environ.get(
     "BROTATO_RUNS",
     r"C:/Users/moxhe/AppData/Roaming/Brotato/brotato_agent/runs",
 )
-OUT = r"C:/Codex/Brotato Agent/.tmp/winrate/raw_runs.jsonl"
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+OUT = os.path.join(ROOT, ".tmp/winrate/raw_runs.jsonl")
 
 HEAD_BYTES = 4 * 1024 * 1024
 TAIL_BYTES = 1 * 1024 * 1024

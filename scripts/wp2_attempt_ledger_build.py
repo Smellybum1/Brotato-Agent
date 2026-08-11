@@ -11,7 +11,7 @@ import os
 import re
 import sys
 
-ROOT = r"C:/Codex/Brotato Agent"
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RAW = os.path.join(ROOT, ".tmp/winrate/raw_runs.jsonl")
 OUT_JSONL = os.path.join(ROOT, ".tmp/winrate/ledger.jsonl")
 OUT_CSV = os.path.join(ROOT, ".tmp/winrate/ledger.csv")

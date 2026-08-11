@@ -1,5 +1,5 @@
 ﻿from pathlib import Path
-path = Path(r"C:\Codex\Brotato Agent\mod\mods-unpacked\Tom-BrotatoAgent\runtime\agent_controller.gd")
+path = Path(__file__).resolve().parents[1] / "mod/mods-unpacked/Tom-BrotatoAgent/runtime/agent_controller.gd"
 text = path.read_text(encoding="utf-8")
 
 # Update header comment and add module preloads / state after current_move_vector

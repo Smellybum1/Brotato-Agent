@@ -23,7 +23,7 @@ if [ "$ARM" != "bare" ] && [ "$ARM" != "ported" ]; then
   echo "usage: bash scripts/gen_campaign.sh <bare|ported>" >&2; exit 64
 fi
 
-cd "C:/Codex/Brotato Agent" || exit 1
+cd "$(dirname "${BASH_SOURCE[0]}")/.." || exit 1
 # Order drawn with secrets (§25b); cyborg->artificer and fisherman->ranger were
 # substituted in place for ERA SAFETY (§25f): a win by a character whose reward
 # is still locked unlocks an item, which moves the shop pool mid-campaign and

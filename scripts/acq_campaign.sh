@@ -22,7 +22,7 @@
 # objective, not a fault. Win rates from this campaign are NOT era-matched.
 set -u
 
-cd "C:/Codex/Brotato Agent" || exit 1
+cd "$(dirname "${BASH_SOURCE[0]}")/.." || exit 1
 CHARACTERS="soldier renegade cyborg hunter one_arm"
 RUNS=8
 PY=".venv/Scripts/python.exe"

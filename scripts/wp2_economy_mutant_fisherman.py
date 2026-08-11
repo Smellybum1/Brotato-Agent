@@ -21,7 +21,10 @@ import statistics
 from collections import defaultdict
 
 RUNS_DIR = r"C:\Users\moxhe\AppData\Roaming\Brotato\brotato_agent\runs"
-OUT_DIR = r"C:\Codex\Brotato Agent\.tmp\economy_mutant_fisherman"
+OUT_DIR = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+    ".tmp", "economy_mutant_fisherman",
+)
 
 MUTANT = [
     "run_1785438259_55252", "run_1785439201_12867",

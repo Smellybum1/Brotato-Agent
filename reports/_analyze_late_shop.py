@@ -49,7 +49,7 @@ for i, d in enumerate(decisions):
     else:
         out_lines.append(f"w{wave} {at} gold={offer.get('gold')}")
 
-Path(r"C:\Codex\Brotato Agent\reports\_late_shop_buys.txt").write_text("\n".join(out_lines) + "\n", encoding="utf-8")
+(Path(__file__).resolve().parent / "_late_shop_buys.txt").write_text("\n".join(out_lines) + "\n", encoding="utf-8")
 print("--- all decisions wave>=11 ---")
 for line in out_lines:
     try:

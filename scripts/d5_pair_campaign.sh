@@ -17,7 +17,7 @@
 #   * --no-deploy: the build is FROZEN for the campaign's whole duration.
 set -u
 
-cd "C:/Codex/Brotato Agent" || exit 1
+cd "$(dirname "${BASH_SOURCE[0]}")/.." || exit 1
 CHARACTER="mutant"
 RUNS=16
 PY=".venv/Scripts/python.exe"

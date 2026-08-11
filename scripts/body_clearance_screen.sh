@@ -20,7 +20,7 @@
 #   * A dose yielding 0 runs ABORTS -- dead is not the same as unlucky.
 set -u
 
-cd "C:/Codex/Brotato Agent" || exit 1
+cd "$(dirname "${BASH_SOURCE[0]}")/.." || exit 1
 CHARACTER="ranger"
 DANGER=5
 RUNS=4

@@ -11,7 +11,7 @@ Well-Rounded · SMG (else Stick) · Danger 0 · 100% multipliers · Endless off 
 ## Quick start
 
 ```powershell
-cd "C:\Codex\Brotato Agent"
+cd "path\to\Brotato Agent"   # repo root
 git submodule update --init --recursive
 python scripts\bootstrap.py
 .\.venv\Scripts\python.exe scripts\discover_install.py

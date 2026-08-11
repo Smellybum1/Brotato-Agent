@@ -9,7 +9,7 @@ import math
 import os
 from collections import Counter
 
-ROOT = r"C:/Codex/Brotato Agent"
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 L = [json.loads(l) for l in open(os.path.join(ROOT, ".tmp/winrate/ledger.jsonl"), encoding="utf-8")]
 EST = json.load(open(os.path.join(ROOT, ".tmp/winrate/estimates.json"), encoding="utf-8"))
 BUF = []
